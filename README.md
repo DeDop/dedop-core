@@ -1,2 +1,4 @@
-# dedop-app
-A User Configurable Tool for Processing Delay Doppler Altimeter Data
+# dedop
+
+A User Configurable Tool for Processing Delay Doppler Altimeter Data.
+"DeDop" stands for Delay Doppler (Altimeter) Processor.
