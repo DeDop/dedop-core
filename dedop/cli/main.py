@@ -1,7 +1,7 @@
 import sys
 
 
-def _main(args=None):
+def main(args=None):
     if not args:
         args = sys.argv[1:]
     print(">> Welcome to the DeDop CLI! <<")
@@ -12,4 +12,4 @@ def _main(args=None):
 
 # check if I'm invoked as script
 if __name__ == "__main__":
-    _main()
+    main()
