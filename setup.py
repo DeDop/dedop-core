@@ -9,14 +9,17 @@ setup(
     packages=['dedop.core',
               'dedop.io',
               'dedop.proc',
+              'dedop.conf',
               'dedop.cli',
               'dedop.gui'],
     entry_points={
         'console_scripts': [
-            'dedop_cli = dedop.cli.__main__:main',
-            'dedop_gui = dedop.gui.__main__:main',
+            'dedop_cli = dedop.cli.main:main',
+            'dedop_gui = dedop.gui.main:main',
         ]
     },
+    install_requires=['numpy>=1.9', 'netCDF4>=1.1'],
+    extras_require=['PyQt5>=5.5'],
     # author_email='',
     # maintainer='',
     # maintainer_email='',
