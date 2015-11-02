@@ -18,7 +18,7 @@ setup(
             'dedop_gui = dedop.gui.main:main',
         ]
     },
-    install_requires=['numpy>=1.9', 'netCDF4>=1.1'],
+    install_requires=['numpy>=1.9', 'netCDF4>=1.1', 'scipy'],
     extras_require=['PyQt5>=5.5'],
     # author_email='',
     # maintainer='',
