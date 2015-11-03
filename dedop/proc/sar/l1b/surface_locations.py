@@ -1,7 +1,8 @@
-# import tables as tab
 import numpy as np
 from numpy.linalg import norm
+
 from ...geo.lla2ecef import lla2ecef
+from ....io.consts import cst
 
 
 class SurfaceLocationAlgorithm:
