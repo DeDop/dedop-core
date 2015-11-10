@@ -1,7 +1,8 @@
 from .record import CryosatRecord
+from .packet import CryosatPacket
+
 import ctypes as ct
 import array
-import numpy as np
 from collections import namedtuple
 
 DSD = namedtuple("DSD", "name type filename offset size num_dsr dsr_size")
@@ -76,9 +77,9 @@ class CryosatDatafile:
 
     def __getitem__(self, index):
         if not isinstance(index, slice):
-            return self.get_record(index)
+            return self.get_packet(index)
         start, stop, stride = index.indices(self.num_items)
-        return [self.get_record(i)
+        return [self.get_packet(i)
                 for i in range(start, stop, stride)]
 
 
@@ -94,3 +95,10 @@ class CryosatDatafile:
         record = CryosatRecord()
         ct.memmove(ct.addressof(record), raw, self.item_size)
         return record
+
+    def get_packet(self, index):
+        i_record = int(index / 20)
+        i_packet = index % 20
+
+        record = self.get_record(i_record)
+        return CryosatPacket(index, *record[i_packet])

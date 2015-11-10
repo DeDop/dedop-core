@@ -1,6 +1,8 @@
 from ..input_dataset import InputDataset
 import netCDF4 as ncdf
 
+from .packet import Sentinel6Packet
+
 class Sentinel6Dataset(InputDataset):
     @property
     def l1_mode_id_ku(self):
@@ -145,3 +147,6 @@ class Sentinel6Dataset(InputDataset):
     def __init__(self, filename):
         dset = ncdf.Dataset(filename)
         InputDataset.__init__(self, dset)
+
+    def __getitem__(self, index):
+        return Sentinel6Packet(index, self)

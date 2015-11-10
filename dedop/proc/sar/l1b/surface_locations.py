@@ -4,6 +4,11 @@ from numpy.linalg import norm
 from ...geo.lla2ecef import lla2ecef
 from ....io.consts import cst
 
+def angle_between(vec1, vec2):
+    return np.arccos(
+        np.dot(vec1, vec2) /
+        norm(vec1) * norm(vec2)
+    )
 
 class SurfaceLocationAlgorithm:
     def __init__(self):
@@ -17,6 +22,17 @@ class SurfaceLocationAlgorithm:
         self.lat_surf = 0
         self.lon_surf = 0
         self.alt_surf = 0
+
+    def get_surface(self):
+        return {
+            'time_surf': self.time_surf,
+            'x_surf': self.x_surf,
+            'y_surf': self.y_surf,
+            'z_surf': self.z_surf,
+            'lat_surf': self.lat_surf,
+            'lon_surf': self.lon_surf,
+            'alt_surf': self.alt_surf
+        }
 
     def store_first_location(self, isps):
         isp_record = isps[-1]
@@ -41,6 +57,7 @@ class SurfaceLocationAlgorithm:
         else:
             self.first_surf = False
             self.new_surf = self.find_new_location(locs, isps)
+        return self.new_surf
 
     def find_new_location(self, locs, isps):
         surface = locs[-1]
@@ -52,9 +69,8 @@ class SurfaceLocationAlgorithm:
              [isp_curr.y_sar_surf - surface.y_sat],
              [isp_curr.z_sar_surf - surface.z_sat]]
         )
-        ground_surf_orbit_angle = np.arccos(
-            np.dot(isp_curr.surf_sat_vector, ground_surf_orbit_vector) /
-            (norm(isp_curr.surf_sat_vector) * norm(ground_surf_orbit_vector))
+        ground_surf_orbit_angle = angle_between(
+            isp_curr.surf_sat_vector, ground_surf_orbit_vector
         )
         if ground_surf_orbit_angle < surface.angular_azimuth_beam_resolution:
             return False
@@ -64,9 +80,8 @@ class SurfaceLocationAlgorithm:
              [isp_prev.y_sar_surf - surface.y_sat],
              [isp_prev.z_sar_surf - surface.z_sat]]
         )
-        ground_surf_orbit_angle_prev = np.arccos(
-            np.dot(isp_prev.surf_sat_vector, ground_surf_orbit_vector_prev) /
-            (norm(isp_prev.surf_sat_vector) * norm(ground_surf_orbit_vector_prev))
+        ground_surf_orbit_angle_prev = angle_between(
+            isp_prev.surf_sat_vector, ground_surf_orbit_vector_prev
         )
 
         alpha = (surface.angular_azimuth_beam_resolution - ground_surf_orbit_angle_prev) /\

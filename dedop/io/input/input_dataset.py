@@ -5,3 +5,6 @@ class InputDataset:
     def close(self):
         self._dset.close()
 
+    def __iter__(self):
+        for packet in self._dset:
+            yield packet

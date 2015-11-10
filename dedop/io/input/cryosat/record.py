@@ -1,5 +1,6 @@
 from ctypes import *
 from collections import namedtuple
+from .packet import CryosatPacket
 
 
 CHD = namedtuple('CHD', 'n_ku_pulses_burst n_samples_sar')
@@ -187,10 +188,10 @@ class CryosatRecord(Structure):
         if isinstance(index, slice):
             start, stop, step = index.indices(20)
             return [self[i] for i in range(start, stop, step)]
-        return self.time_orbit[index],\
-            self.measurements[index],\
-            self.corrections,\
-            self.waveforms[index]
+        return self.measurements[index],\
+               self.time_orbit[index],\
+               self.waveforms[index],\
+               self.corrections
 
     def __iter__(self):
         for i in range(20):
