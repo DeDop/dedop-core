@@ -105,7 +105,7 @@ i_sample_start = 1
 ## Weightings
 azimuth_weighting_filename = []
 
-pri_sar = 0
+pri_sar = 1.
 
 
 

@@ -17,11 +17,11 @@ class SurfaceLocationData:
 
         self.x_sat = data.x_sar_sat
         self.y_sat = data.y_sar_sat
-        self.z_sat = data.z_sar_sar
+        self.z_sat = data.z_sar_sat
 
         self.lat_sat = data.lat_sar_sat
         self.lon_sat = data.lon_sar_sat
-        self.alt_sat = data.alt_sar_sar
+        self.alt_sat = data.alt_sar_sat
 
         self.x_vel_sat = data.x_vel_sat_sar
         self.y_vel_sat = data.y_vel_sat_sar
@@ -37,15 +37,15 @@ class SurfaceLocationData:
         self.compute_surf_sat_vector()
 
     def compute_angular_azimuth_beam_resolution(self):
-        vel_sat = np.matrix([[self.x_vel_sat],
-                             [self.y_vel_sat],
-                             [self.z_vel_sat]])
+        vel_sat = np.array([self.x_vel_sat,
+                            self.y_vel_sat,
+                            self.z_vel_sat]).T
         self.angular_azimuth_beam_resolution = np.arcsin(
-            cst.c / (2 * chd.freq_ku * norm(vel_sat) *
+            cst.c / (2. * chd.freq_ku * norm(vel_sat) *
                      chd.N_ku_pulses_burst * chd.pri_sar)
         )
 
     def compute_surf_sat_vector(self):
-        self.surf_sat = np.matrix([[self.x_surf - self.x_sat],
-                                   [self.y_surf - self.y_sat],
-                                   [self.z_surf - self.z_sat]])
+        self.surf_sat = np.array([self.x_surf - self.x_sat,
+                                  self.y_surf - self.y_sat,
+                                  self.z_surf - self.z_sat]).T

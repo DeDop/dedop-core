@@ -77,6 +77,10 @@ class Sentinel6Dataset(InputDataset):
         return self._dset['attenuator_calibrated_ku']
 
     @property
+    def altimeter_range_calibrated_ku(self):
+        return self._dset['altimeter_range_calibrated_ku']
+
+    @property
     def altimeter_power_drift_ku(self):
         return self._dset['altimeter_power_drift_ku']
 
@@ -148,5 +152,11 @@ class Sentinel6Dataset(InputDataset):
         dset = ncdf.Dataset(filename)
         InputDataset.__init__(self, dset)
 
+        self.max_index = len(self.burst_counter_ku)
+
     def __getitem__(self, index):
         return Sentinel6Packet(index, self)
+
+    def __iter__(self):
+        for i in range(self.max_index):
+            yield self[i]
