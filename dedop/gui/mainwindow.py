@@ -133,7 +133,7 @@ class MainWindow(QMainWindow):
                                         shortcut=QKeySequence.Save,
                                         statusTip="Save the current configuration", triggered=self.saveConfig)
 
-        self.saveConfigAsAction = QAction(self.getIcon('res/actions/document-save-as.svg'), "Save Configuration &As...",
+        self.saveConfigAsAction = QAction(self.getIcon('actions/document-save-as.svg'), "Save Configuration &As...",
                                           self,
                                           shortcut=QKeySequence.SaveAs,
                                           statusTip="Save the current configuration with a new name",
