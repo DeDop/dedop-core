@@ -1,14 +1,13 @@
 import json
 
+import netCDF4
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (QIcon, QKeySequence)
-from PyQt5.QtWidgets import (QAction, QApplication, QDockWidget, QTabWidget,
+from PyQt5.QtWidgets import (QAction, QDockWidget, QTabWidget,
                              QDesktopWidget, QListWidget, QMainWindow, QMessageBox, QTextEdit, QTreeView)
-import netCDF4
 
 from dedop.gui.io import IO
 from dedop.gui.preferences import Preferences
-
 
 APP_NAME = 'DeDop'
 APP_VERSION = '0.1'
@@ -120,6 +119,11 @@ class MainWindow(QMainWindow):
                           "<b>DeDop</b> - A User Configurable Tool for Processing Delay Doppler Altimeter Data.\n"
                           + "DeDop stands for <b>De</b>lay <b>Do</b>ppler (Altimeter) <b>P</b>rocessor.")
 
+    def showMatplotlibFigure(self):
+        import dedop.gui.mpinteg as mpinteg
+        dialog = mpinteg.Window(self)
+        dialog.show()
+
     def createActions(self):
         self.newConfigAction = QAction(self.getIcon('actions/document-new.svg'), "&New Configuration",
                                        self, shortcut=QKeySequence.New,
@@ -165,6 +169,11 @@ class MainWindow(QMainWindow):
         self.quitAction = QAction("&Quit", self, shortcut="Ctrl+Q",
                                   statusTip="Quit the application", triggered=self.close)
 
+        self.matplotlibAction = QAction("&Matplotlib Example...", self,
+                                        shortcut="Ctrl+M",
+                                        statusTip="Open a dialog displaying a matplotlib figure",
+                                        triggered=self.showMatplotlibFigure)
+
         self.pluginsAction = QAction(self.getIcon('apps/system-software-update.svg'), "&Plugins...", self,
                                      shortcut="Ctrl+P",
                                      statusTip="Open the application's plugin manager", triggered=self.plugins)
@@ -201,6 +210,7 @@ class MainWindow(QMainWindow):
         self.viewMenu = self.menuBar().addMenu("&View")
 
         self.toolsMenu = self.menuBar().addMenu("&Tools")
+        self.toolsMenu.addAction(self.matplotlibAction)
         self.toolsMenu.addAction(self.pluginsAction)
 
         self.menuBar().addSeparator()
@@ -278,4 +288,3 @@ class MainWindow(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
