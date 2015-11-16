@@ -19,7 +19,7 @@ setup(
         ]
     },
     install_requires=['numpy>=1.9', 'netCDF4>=1.1'],
-    extras_require=['PyQt5>=5.5'],
+    extras_require={'dedop.gui': 'PyQt5>=5.5'},
     # author_email='',
     # maintainer='',
     # maintainer_email='',
