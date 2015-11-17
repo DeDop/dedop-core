@@ -6,16 +6,17 @@ setup(
     description='Delay Doppler (Altimeter) Processor',
     license='GPL 3',
     author='DeDop Development Team',
-    packages=['dedop.core',
+    packages=['dedop.model',
               'dedop.io',
               'dedop.proc',
               'dedop.conf',
+              'dedop.util',
               'dedop.cli',
               'dedop.gui'],
     entry_points={
         'console_scripts': [
-            'dedop_cli = dedop.cli.main:main',
-            'dedop_gui = dedop.gui.main:main',
+            'dedop-cli = dedop.cli.main:main',
+            'dedop-gui = dedop.gui.main:main',
         ]
     },
     install_requires=['numpy >= 1.9',
