@@ -1,13 +1,14 @@
 import numpy as np
 from numpy.linalg import norm
+from math import acos
 
 from ...geo.lla2ecef import lla2ecef
 from ....io.consts import cst
 
 def angle_between(vec1, vec2):
-    return np.arccos(
-        np.dot(vec1, vec2) /
-        norm(vec1) * norm(vec2)
+    return acos(
+        np.dot(vec1.T, vec2) /
+        (norm(vec1) * norm(vec2))
     )
 
 class SurfaceLocationAlgorithm:
@@ -69,29 +70,28 @@ class SurfaceLocationAlgorithm:
         isp_curr = isps[-1]
         isp_prev = isps[-2]
 
-        ground_surf_orbit_vector = np.matrix(
+        ground_surf_orbit_vector = np.array(
             [[isp_curr.x_sar_surf - surface.x_sat],
              [isp_curr.y_sar_surf - surface.y_sat],
              [isp_curr.z_sar_surf - surface.z_sat]]
         )
         ground_surf_orbit_angle = angle_between(
-            isp_curr.surf_sat_vector, ground_surf_orbit_vector
+            isp_curr.surf_sat_vector.T, ground_surf_orbit_vector
         )
         if ground_surf_orbit_angle < surface.angular_azimuth_beam_resolution:
             return False
 
-        ground_surf_orbit_vector_prev = np.matrix(
+        ground_surf_orbit_vector_prev = np.array(
             [[isp_prev.x_sar_surf - surface.x_sat],
              [isp_prev.y_sar_surf - surface.y_sat],
              [isp_prev.z_sar_surf - surface.z_sat]]
         )
         ground_surf_orbit_angle_prev = angle_between(
-            isp_prev.surf_sat_vector, ground_surf_orbit_vector_prev
+            isp_prev.surf_sat_vector.T, ground_surf_orbit_vector_prev
         )
 
         alpha = (surface.angular_azimuth_beam_resolution - ground_surf_orbit_angle_prev) /\
                 (ground_surf_orbit_angle - ground_surf_orbit_angle_prev)
-
         self.time_surf = surface.time_surf +\
             alpha * (isp_curr.time_sar_ku - isp_prev.time_sar_ku)
         self.x_surf = surface.x_surf +\
@@ -101,12 +101,12 @@ class SurfaceLocationAlgorithm:
         self.z_surf = surface.z_surf +\
             alpha * (isp_curr.z_sar_surf - isp_prev.z_sar_surf)
 
-        # surf_loc_cart = np.array([self.x_surf,
-        #                           self.y_surf,
-        #                           self.z_surf])
-        # surf_loc_geod = lla2ecef(surf_loc_cart)
-        # self.lat_surf = surf_loc_geod[0]
-        # self.lon_surf = surf_loc_geod[1]
-        # self.alt_surf = surf_loc_geod[2]
+        surf_loc_cart = np.array([[self.x_surf],
+                                  [self.y_surf],
+                                  [self.z_surf]])
+        surf_loc_geod = lla2ecef(surf_loc_cart.T)
+        self.lat_surf = surf_loc_geod[0, 0]
+        self.lon_surf = surf_loc_geod[0, 1]
+        self.alt_surf = surf_loc_geod[0, 2]
 
         return True

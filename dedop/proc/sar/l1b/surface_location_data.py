@@ -4,7 +4,8 @@ import numpy as np
 from numpy.linalg import norm
 
 class SurfaceLocationData:
-    def __init__(self, location_data, data):
+    def __init__(self, index, location_data, data):
+        self.index = index
         self.time_surf = location_data['time_surf']
 
         self.x_surf = location_data['x_surf']
@@ -49,3 +50,9 @@ class SurfaceLocationData:
         self.surf_sat = np.array([self.x_surf - self.x_sat,
                                   self.y_surf - self.y_sat,
                                   self.z_surf - self.z_sat]).T
+
+    def add_stack_burst(self, isp):
+        self.stack_burst = None
+
+    def add_stack_beam_index(self, index):
+        self.stack_beam_index = index
