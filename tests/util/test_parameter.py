@@ -1,5 +1,5 @@
 from unittest import TestCase
-from dedop.core.parameter import Parameter
+from dedop.util.parameter import Parameter
 
 
 class ParamFree:
