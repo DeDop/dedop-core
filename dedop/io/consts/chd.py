@@ -16,7 +16,6 @@
 #
 # ########################################################
 from .cst import *
-from math import pi
 
 ## Other (not in the DPM)
 
