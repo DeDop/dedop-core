@@ -1,0 +1,33 @@
+# ########################################################
+# --------------------------------------------------------
+# Created by isardSAT S.L. 
+# --------------------------------------------------------
+# JasonCS 
+# This code implements the algorithm as described in the
+# isardSAT_JasonCS_DPM_JC-DS-ISR-SY-0006_v5a_20130605
+#
+# ---------------------------------------------------------
+# Objective: Define Constants parameters
+# 
+# INPUTs : - 
+# OUTPUTs: -
+#
+# ----------------------------------------------------------
+# Author:    Roger Escolà  / isardSAT
+#            Albert Garcia / isardSAT
+# Reviewer:  Mònica Roca   / isardSAT
+# Last rev.: Mònica Roca   / isardSAT (11/09/2013)
+#
+# ########################################################
+from math import pi
+
+flat_coeff_cst = 0.00335281067183084
+earth_radius_cst = 6378137
+semi_major_axis_cst = 6378137
+semi_minor_axis_cst = 6356752.3142
+
+c_cst = 299792458 #[meters]
+pi_cst = pi
+mean_sat_alt_cst = 1400000
+sec_in_day_cst = 86400
+

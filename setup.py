@@ -21,7 +21,7 @@ setup(
     },
     install_requires=['numpy >= 1.9',
                       'netCDF4 >= 1.1',
-                      ],
+                      'scipy'],
     extras_require={'dedop.gui': ['PyQt5 >= 5.5', 'matplotlib >= 1.4']},
     # author_email='',
     # maintainer='',
