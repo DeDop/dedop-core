@@ -1,4 +1,8 @@
-# from http://stackoverflow.com/questions/12459811/how-to-embed-matplotib-in-pyqt-for-dummies
+"""
+Experimental code demonstrating how to integrate matplotlib with PyQt5.
+See http://stackoverflow.com/questions/12459811/how-to-embed-matplotib-in-pyqt-for-dummies.
+"""
+
 import random
 
 import matplotlib.pyplot as plt

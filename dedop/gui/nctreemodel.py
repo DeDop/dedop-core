@@ -1,3 +1,7 @@
+"""
+Experimental code demonstrating how to implemen t a PyQt tree model
+"""
+
 from abc import ABCMeta, abstractmethod
 import sys
 

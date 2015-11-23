@@ -1,7 +1,7 @@
 import json
 
 import netCDF4
-from PyQt5.QtCore import (Qt, QSize)
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (QIcon, QKeySequence)
 from PyQt5.QtWidgets import (QAction, QDockWidget, QTabWidget,
                              QDesktopWidget, QListWidget, QMainWindow, QMessageBox, QTextEdit, QTreeView)
@@ -16,6 +16,10 @@ APP_TITLE = APP_NAME + ' ' + APP_VERSION
 
 
 class MainWindow(QMainWindow):
+    """
+    DeDop's Main Application Window.
+    """
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
