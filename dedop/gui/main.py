@@ -1,6 +1,8 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import (Qt, QSize)
+from PyQt5.QtGui import (QIcon, QKeySequence)
 
 from dedop.gui.mainwindow import MainWindow
 
@@ -14,6 +16,12 @@ def main(args=None):
     # you want your project to do.
 
     app = QApplication(args)
+
+    app_icon = QIcon()
+    for sz in (16, 24, 32, 48, 64, 128, 256):
+        app_icon.addFile('dedop/gui/res/icons/dedop-%s.png' % sz, QSize(sz, sz))
+    app.setWindowIcon(app_icon)
+
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())

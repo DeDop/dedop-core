@@ -1,7 +1,7 @@
 import json
 
 import netCDF4
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import (Qt, QSize)
 from PyQt5.QtGui import (QIcon, QKeySequence)
 from PyQt5.QtWidgets import (QAction, QDockWidget, QTabWidget,
                              QDesktopWidget, QListWidget, QMainWindow, QMessageBox, QTextEdit, QTreeView)
@@ -36,7 +36,6 @@ class MainWindow(QMainWindow):
         self.createToolBars()
         self.createStatusBar()
         self.createDockWindows()
-        self.setWindowIcon(self.getIcon('dedop-128.png'))
 
         self.newConfig()
 
