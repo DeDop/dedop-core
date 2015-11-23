@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DeDop's documentation!
-=================================
+|DeDop3| User Manual
+====================
 
 Contents:
 
@@ -23,3 +23,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. |DeDop3| replace:: DeDop\ :sup:`3`

@@ -1,6 +1,6 @@
-===================
-DeDop API Reference
-===================
+======================
+|DeDop3| API Reference
+======================
 
 Processor API
 =============
@@ -21,3 +21,7 @@ Graphical User Interface API
 
 .. automodule:: dedop.gui
    :members:
+
+
+
+.. |DeDop3| replace:: DeDop\ :sup:`3`
