@@ -6,7 +6,7 @@ To install Sphinx run:
 
      > pip install Sphinx
 
-To build the CAB-LAB documentation run:
+To build the DeDop documentation run:
 
      > cd dedop/docs
      > make html
