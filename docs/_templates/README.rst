@@ -1,0 +1,1 @@
+The '_templates' directory static documentation templates.
