@@ -14,7 +14,7 @@ To build the CAB-LAB documentation run:
 or to force regeneration of docs, run:
 
      > cd dedop
-     > sphinx-build -E -a -b html doc doc/_build/html
+     > sphinx-build -E -a -b html docs docs/_build/html
 
 Then find the html documentation in `dedop/docs/_build/html`
 
