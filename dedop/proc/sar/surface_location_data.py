@@ -1,9 +1,9 @@
-from ....io.consts import cst, chd
+from dedop.io.consts import cst, chd
 
 import numpy as np
 from numpy.linalg import norm
 
-class SurfaceLocationData:
+class SurfaceLocationData():
     def __init__(self, location_data, data):
         self.time_surf = location_data['time_surf']
 

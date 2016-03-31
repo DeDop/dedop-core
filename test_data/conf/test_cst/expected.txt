@@ -1,0 +1,7 @@
+pi_cst	3.141592653589793
+semi_minor_axis_cst	6356752.3142
+earth_radius_cst	6378137.0
+c_cst	299792458.0
+flat_coeff_cst	0.003352810664747
+semi_major_axis_cst	6378137.0
+sec_in_day_cst	86400

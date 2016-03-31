@@ -1,16 +1,12 @@
 import numpy as np
-from numpy.linalg import norm
+
 
 from ...geo.lla2ecef import lla2ecef
-from ....io.consts import cst
+from ....conf import cst
+from ..base_algorithm import BaseAlgorithm
+from ...functions import *
 
-def angle_between(vec1, vec2):
-    return np.arccos(
-        np.dot(vec1, vec2) /
-        norm(vec1) * norm(vec2)
-    )
-
-class SurfaceLocationAlgorithm:
+class SurfaceLocationAlgorithm(BaseAlgorithm):
     def __init__(self):
         self.first_surf = False
         self.new_surf = False
@@ -22,6 +18,8 @@ class SurfaceLocationAlgorithm:
         self.lat_surf = 0
         self.lon_surf = 0
         self.alt_surf = 0
+
+        super().__init__()
 
     def get_surface(self):
         return {
@@ -53,7 +51,7 @@ class SurfaceLocationAlgorithm:
         self.y_surf = surf[0, 1]
         self.z_surf = surf[0, 2]
 
-    def process_surface_location(self, locs, isps):
+    def __call__(self, locs, isps):
         if not locs:
             self.first_surf = True
             self.new_surf = True
