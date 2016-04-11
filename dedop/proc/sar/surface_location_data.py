@@ -2,6 +2,7 @@ from dedop.io.consts import cst, chd
 
 import numpy as np
 from numpy.linalg import norm
+from enum import Enum
 
 class SurfaceLocationData():
     def __init__(self, location_data, data):
@@ -49,3 +50,6 @@ class SurfaceLocationData():
         self.surf_sat = np.array([self.x_surf - self.x_sat,
                                   self.y_surf - self.y_sat,
                                   self.z_surf - self.z_sat]).T
+
+class SurfaceType(Enum):
+    surface_rmc = 1

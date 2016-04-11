@@ -1,7 +1,14 @@
 from .surface_location_data import SurfaceLocationData
 from .algorithms import *
 
+from ...util.parameter import Parameter
+
+
+@Parameter("N_looks_stack")
 class L1BProcessor:
+    """
+    class for the L1B Processing chain
+    """
 
     def __init__(self, source):
         self.source = source
@@ -14,8 +21,13 @@ class L1BProcessor:
         self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm()
         self.stacking_algorithm = StackingAlgorithm()
         self.geometry_corrections_algorithm = GeometryCorrectionsAlgorithm()
+        self.range_compression_algorithm = RangeCompressionAlgorithm()
+        self.stack_masking_algorithm = StackMaskingAlgorithm()
 
     def process(self):
+        """
+        runs the L1B Processing Chain
+        """
         running = True
         surface_processing = False
 
@@ -53,6 +65,8 @@ class L1BProcessor:
                 stack = self.stacking(working_loc)
 
                 self.geometry_corrections(working_loc, stack)
+                self.range_compression(working_loc)
+                self.stack_masking(working_loc)
 
             if not self.surf_locs:
                 running = False
@@ -63,6 +77,7 @@ class L1BProcessor:
         if self.surface_locations_algorithm(self.surf_locs, self.source_isps):
             loc = self.surface_locations_algorithm.get_surface()
             return self.new_surface(loc, first=self.surface_locations_algorithm.first_surf)
+        return None
 
     def beam_angles(self, surfaces, isp, working_surface_location):
         self.beam_angles_algorithm(surfaces, isp, working_surface_location)
@@ -71,10 +86,16 @@ class L1BProcessor:
         self.azimuth_processing_algorithm(isp)
 
     def geometry_corrections(self, working_surface_location, stack):
-        self.geometry_corrections_algorithm(working_surface_location, stack, cnf.N_looksstacking_algorithmck)
+        self.geometry_corrections_algorithm(working_surface_location, stack, self.N_looks_stack)
+
+    def range_compression(self, working_surface_location):
+        working_surface_location.beams_range_compr = self.range_compression_algorithm(working_surface_location)
 
     def stacking(self, working_surface_location):
         self.stacking_algorithm(working_surface_location)
+
+    def stack_masking(self, working_surface_location):
+        self.stack_masking_algorithm(working_surface_location)
 
     def new_surface(self, loc_data, first=False):
         if first:
