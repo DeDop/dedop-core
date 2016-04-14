@@ -1,5 +1,6 @@
 from .surface_location_data import SurfaceLocationData
-from ...conf import CST, CHD
+from ...conf import ConstantsFile as CST
+from ...conf import CharacterisationFile as CHD
 from .algorithms import *
 
 from ...util.parameter import Parameter
