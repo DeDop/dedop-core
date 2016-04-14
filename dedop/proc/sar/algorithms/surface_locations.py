@@ -45,10 +45,12 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.alt_surf = isp_record.alt_sar_sat -\
                         isp_record.win_delay_sar_ku * self.cst.c / 2.
 
-        surf = lla2ecef(np.array([self.lat_surf, self.lon_surf, self.alt_surf]).T)
-        self.x_surf = surf[0, 0]
-        self.y_surf = surf[0, 1]
-        self.z_surf = surf[0, 2]
+        surf = lla2ecef(
+            [self.lat_surf, self.lon_surf, self.alt_surf], self.cst
+        )
+        self.x_surf = surf[0]
+        self.y_surf = surf[1]
+        self.z_surf = surf[2]
 
     def __call__(self, locs, isps):
         if not locs:
