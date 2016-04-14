@@ -2,7 +2,6 @@ import numpy as np
 
 
 from ...geo.lla2ecef import lla2ecef
-from ....conf import cst
 from ..base_algorithm import BaseAlgorithm
 from ...functions import *
 
@@ -44,7 +43,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.lat_surf = isp_record.lat_sar_sat
         self.lon_surf = isp_record.lon_sar_sat
         self.alt_surf = isp_record.alt_sar_sat -\
-                        isp_record.win_delay_sar_ku * cst.c / 2.
+                        isp_record.win_delay_sar_ku * self.cst.c / 2.
 
         surf = lla2ecef(np.array([self.lat_surf, self.lon_surf, self.alt_surf]).T)
         self.x_surf = surf[0, 0]
