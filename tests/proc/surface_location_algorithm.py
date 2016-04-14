@@ -29,44 +29,49 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         self.surface_location_algorithm = SurfaceLocationAlgorithm(chd, cst)
 
     def test_surface_location_algorithm_01(self):
-        expected_data = TestDataLoader(self.expected_01)
+        expected_data = TestDataLoader(self.expected_01, delim=' ')
         isp = MockObject(self.input_01)
+        print(isp._values)
 
-        surf = self.surface_location_algorithm([], [isp])
+        new_surf = self.surface_location_algorithm([], [isp])
 
-        self.assertIsNotNone(surf)
+        self.assertTrue(new_surf, msg="failed to create new surface")
 
-        self.assertAlmostEqual(surf.time_surf, expected_data["time_surf"])
+        surf = self.surface_location_algorithm.get_surface()
 
-        self.assertAlmostEqual(surf.x_surf, expected_data["x_surf"])
-        self.assertAlmostEqual(surf.y_surf, expected_data["y_surf"])
-        self.assertAlmostEqual(surf.z_surf, expected_data["z_surf"])
+        self.assertAlmostEqual(surf["time_surf"], expected_data["time_surf"])
 
-        self.assertAlmostEqual(surf.lat_surf, expected_data["lat_surf"])
-        self.assertAlmostEqual(surf.lon_surf, expected_data["lon_surf"])
-        self.assertAlmostEqual(surf.alt_surf, expected_data["alt_surf"])
+        self.assertAlmostEqual(surf["x_surf"], expected_data["x_surf"])
+        self.assertAlmostEqual(surf["y_surf"], expected_data["y_surf"])
+        self.assertAlmostEqual(surf["z_surf"], expected_data["z_surf"])
+
+        self.assertAlmostEqual(surf["lat_surf"], expected_data["lat_surf"])
+        self.assertAlmostEqual(surf["lon_surf"], expected_data["lon_surf"])
+        self.assertAlmostEqual(surf["alt_surf"], expected_data["alt_surf"])
 
     def test_surface_location_algorithm_02(self):
         isp = MockObject(self.input_02)
 
-        surf = self.surface_location_algorithm(isp)
+        new_surf = self.surface_location_algorithm(isp)
 
-        self.assertIsNone(surf)
+        self.assertFalse(surf, msg="erroneously created new surface")
 
     def test_surface_location_algorithm_03(self):
-        expected_data = TestDataLoader(self.expected_03)
+        expected_data = TestDataLoader(self.expected_03, delim=' ')
         isp = MockObject(self.input_03)
 
-        surf = self.surface_location_algorithm(isp)
+        new_surf = self.surface_location_algorithm(isp)
 
-        self.assertIsNotNone(surf)
+        self.assertTrue(new_surf, msg="failed to create new surface")
 
-        self.assertAlmostEqual(surf.time_surf, expected_data["time_surf"])
+        surf = self.surface_location_algorithm.get_surface()
 
-        self.assertAlmostEqual(surf.x_surf, expected_data["x_surf"])
-        self.assertAlmostEqual(surf.y_surf, expected_data["y_surf"])
-        self.assertAlmostEqual(surf.z_surf, expected_data["z_surf"])
+        self.assertAlmostEqual(surf["time_surf"], expected_data["time_surf"])
 
-        self.assertAlmostEqual(surf.lat_surf, expected_data["lat_surf"])
-        self.assertAlmostEqual(surf.lon_surf, expected_data["lon_surf"])
-        self.assertAlmostEqual(surf.alt_surf, expected_data["alt_surf"])
+        self.assertAlmostEqual(surf["x_surf"], expected_data["x_surf"])
+        self.assertAlmostEqual(surf["y_surf"], expected_data["y_surf"])
+        self.assertAlmostEqual(surf["z_surf"], expected_data["z_surf"])
+
+        self.assertAlmostEqual(surf["lat_surf"], expected_data["lat_surf"])
+        self.assertAlmostEqual(surf["lon_surf"], expected_data["lon_surf"])
+        self.assertAlmostEqual(surf["alt_surf"], expected_data["alt_surf"])
