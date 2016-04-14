@@ -1,9 +1,8 @@
 from ...util.parameter import Parameter
-from ...conf import chd, cst
 
 @Parameter('n_looks_stack')
 @Parameter('zp_fact_range')
 class BaseAlgorithm:
-    def __init__(self):
+    def __init__(self, chd, cst):
         self.chd = chd
         self.cst = cst

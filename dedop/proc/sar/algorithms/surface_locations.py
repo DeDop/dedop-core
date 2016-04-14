@@ -7,7 +7,7 @@ from ..base_algorithm import BaseAlgorithm
 from ...functions import *
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
-    def __init__(self):
+    def __init__(self, chd, cst):
         self.first_surf = False
         self.new_surf = False
 
@@ -19,7 +19,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.lon_surf = 0
         self.alt_surf = 0
 
-        super().__init__()
+        super().__init__(chd, cst)
 
     def get_surface(self):
         return {

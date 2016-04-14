@@ -9,12 +9,12 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
     """
     Class for finding beam angles
     """
-    def __init__(self):
+    def __init__(self, chd, cst):
         self.work_location_seen = False
         self.beam_angles = []
         self.surfaces_seen = []
 
-        super().__init__()
+        super().__init__(chd, cst)
 
     def __call__(self, surface_locations, isp_record, work_location_index):
         """

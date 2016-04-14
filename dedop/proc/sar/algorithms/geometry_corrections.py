@@ -6,13 +6,13 @@ from ..base_algorithm import BaseAlgorithm
 
 class GeometryCorrectionsAlgorithm(BaseAlgorithm):
 
-    def __init__(self):
+    def __init__(self, chd, cst):
         self.slant_range_corrections = []
         self.range_sat_surf = []
         self.doppler_corrections = []
         self.win_delay_corrections = []
 
-        super().__init__()
+        super().__init__(chd, cst)
 
     def __call__(self, working_surface_location):
         beam_geo_corr = np.zeros(

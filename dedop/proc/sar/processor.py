@@ -1,4 +1,5 @@
 from .surface_location_data import SurfaceLocationData
+from ...conf import CST, CHD
 from .algorithms import *
 
 from ...util.parameter import Parameter
@@ -9,20 +10,32 @@ class L1BProcessor:
     """
     class for the L1B Processing chain
     """
+    _chd_file = "common/chd.json"
+    _cst_file = "common/cst.json"
 
-    def __init__(self, source):
+    def __init__(self, source, chd_file=None, cst_file=None):
+        if self.chd_file is not None:
+            self.chd = CHD(chd_file)
+        else:
+            self.chd = CHD(self._chd_file)
+
+        if self.cst_file is not None:
+            self.cst = CST(cst_file)
+        else:
+            self.cst = CST(self._cst_file)
+
         self.source = source
         self.surf_locs = []
         self.source_isps = []
         self.min_surfs = 8
 
-        self.surface_locations_algorithm = SurfaceLocationAlgorithm()
-        self.beam_angles_algorithm = BeamAnglesAlgorithm()
-        self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm()
-        self.stacking_algorithm = StackingAlgorithm()
-        self.geometry_corrections_algorithm = GeometryCorrectionsAlgorithm()
-        self.range_compression_algorithm = RangeCompressionAlgorithm()
-        self.stack_masking_algorithm = StackMaskingAlgorithm()
+        self.surface_locations_algorithm = SurfaceLocationAlgorithm(self.chd, self.cst)
+        self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst)
+        self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm(self.chd, self.cst)
+        self.stacking_algorithm = StackingAlgorithm(self.chd, self.cst)
+        self.geometry_corrections_algorithm = GeometryCorrectionsAlgorithm(self.chd, self.cst)
+        self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
+        self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
 
     def process(self):
         """
