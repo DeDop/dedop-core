@@ -17,3 +17,7 @@ class TestDataLoader:
 
     def __getitem__(self, index):
         return self._values[index]
+
+class MockObject(TestDataLoader):
+    def __getattr__(self, item):
+        return self._values.get(item, None)
