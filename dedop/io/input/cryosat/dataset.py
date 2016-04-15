@@ -3,6 +3,6 @@ from .datafile import CryosatDatafile
 
 
 class CryosatDataset(InputDataset):
-    def __init__(self, filename):
+    def __init__(self, filename, cst):
         dset = CryosatDatafile(filename)
-        InputDataset.__init__(self, dset)
+        super().__init__(dset, cst)

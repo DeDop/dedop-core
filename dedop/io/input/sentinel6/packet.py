@@ -6,7 +6,7 @@ import numpy as np
 from math import radians
 
 class Sentinel6Packet(InstrumentSourcePacket):
-    def __init__(self, index, dataset):
+    def __init__(self, index, cst, dataset):
         self.days = dataset.time_day_ku[index] * cst.sec_in_day
         self.seconds = dataset.time_seconds_ku[index]
 
@@ -46,4 +46,4 @@ class Sentinel6Packet(InstrumentSourcePacket):
         self.time_sar_ku = self.days + self.seconds
         self.win_delay_sar_ku = (dataset.altimeter_range_calibrated_ku[index] / cst.c) * 2.
 
-        InstrumentSourcePacket.__init__(self, index)
+        super().__init__(index, cst)

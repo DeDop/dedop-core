@@ -148,14 +148,14 @@ class Sentinel6Dataset(InputDataset):
     def snr_estimation_ku(self):
         return self._dset['snr_estimation_ku']
 
-    def __init__(self, filename):
+    def __init__(self, filename, cst):
         dset = ncdf.Dataset(filename)
-        InputDataset.__init__(self, dset)
+        super().__init__(dset, cst)
 
         self.max_index = len(self.burst_counter_ku)
 
     def __getitem__(self, index):
-        return Sentinel6Packet(index, self)
+        return Sentinel6Packet(index, self.cst, self)
 
     def __iter__(self):
         for i in range(self.max_index):

@@ -1,8 +1,9 @@
 from .packet import InstrumentSourcePacket
 
 class InputDataset:
-    def __init__(self, dataset):
+    def __init__(self, dataset, cst):
         self._dset = dataset
+        self.cst = cst
 
     def close(self):
         self._dset.close()

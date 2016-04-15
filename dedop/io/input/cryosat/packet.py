@@ -6,8 +6,8 @@ from math import atan
 import numpy as np
 
 class CryosatPacket(InstrumentSourcePacket):
-    def __init__(self, index, measurement, time_orbit, waveforms, corrections):
-        InstrumentSourcePacket.__init__(self, index)
+    def __init__(self, index, measurement, time_orbit, waveforms, corrections, cst):
+        super().__init__(index, cst)
 
         #  set time-orbit data
         self.days = time_orbit.days * cst.sec_in_day

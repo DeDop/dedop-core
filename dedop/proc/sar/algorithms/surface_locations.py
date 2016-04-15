@@ -74,7 +74,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
              [isp_curr.z_sar_surf - surface.z_sat]]
         )
         ground_surf_orbit_angle = angle_between(
-            isp_curr.surf_sat_vector, ground_surf_orbit_vector
+            surface.surf_sat_vector, ground_surf_orbit_vector
         )
         if ground_surf_orbit_angle < surface.angular_azimuth_beam_resolution:
             return False
@@ -85,7 +85,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
              [isp_prev.z_sar_surf - surface.z_sat]]
         )
         ground_surf_orbit_angle_prev = angle_between(
-            isp_prev.surf_sat_vector, ground_surf_orbit_vector_prev
+            surface.surf_sat_vector, ground_surf_orbit_vector_prev
         )
 
         alpha = (surface.angular_azimuth_beam_resolution - ground_surf_orbit_angle_prev) /\
