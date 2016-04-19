@@ -17,7 +17,7 @@ class InputDataset:
 
     def get_interpolated(self, time):
         params = ["days", "seconds", "process_id", "seq_count_sar_ku_fbr", "inst_id_sar_isp",
-                  "pri_sar", "ambiguity_order_sar", "burst_sar_ku", "burst_sar_ku_fbr", "lat_sar_sat",
+                  "pri_sar_pre_dat", "ambiguity_order_sar", "burst_sar_ku", "burst_sar_ku_fbr", "lat_sar_sat",
                   "lon_sar_sat", "alt_sar_sat", "alt_rate_sat_sar", "x_vel_sat_sar", "y_vel_sat_sar",
                   "z_vel_sat_sar", "roll_sar", "pitch_sar", "yaw_sar", "h0_sar", "cor2_sar", "time_sar_ku"]
 

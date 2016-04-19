@@ -1,49 +1,61 @@
 import numpy as np
 from numpy.linalg import norm
 from math import cos, sqrt
+from enum import Enum
 
-from ....conf import cst, chd
 from ..base_algorithm import BaseAlgorithm
 
-APPROXIMATE_METHOD = 'approx'
-EXACT_METHOD = 'exact'
+class AzimuthProessingMethods(Enum):
+    dynamic = 0
+    approximate = 1
+    exact = 2
+
+class AzimuthWeighting(Enum):
+    enabled = 1
+    disabled = 0
 
 class AzimuthProcessingAlgorithm(BaseAlgorithm):
 
-    def __call__(self, isps, method=EXACT_METHOD):
+    def __call__(self, isps, method=AzimuthProessingMethods.dynamic, weighting=AzimuthWeighting.disabled):
         """
-        :param isps:
-        :param wavelength_ku:
-        :param method:
-        :return:
+        Executes the azimuth processing algorithm
+
+        :param isps: The list of InstrumentSourcePacket instances
+        :param method: The method to use
+        :param weighting: Azimuth weighting flag
         """
-        wavelength_ku = chd.wv_length_ku
+        wavelength_ku = self.chd.wv_length_ku
+
+        if weighting == AzimuthWeighting.enabled:
+            # TODO: perform azimuth weighting
+            pass
+
+        # azimuth processing with surface dependant method
+        if method == AzimuthProessingMethods.dynamic:
+            # TODO: change method based on surface
+            self.computeApproximateMethod(isps, wavelength_ku)
 
         # azimuth processing with approx. method
-        if method == APPROXIMATE_METHOD:
+        elif method == AzimuthProessingMethods.approximate:
             self.computeApproximateMethod(isps, wavelength_ku)
         # azimuth processing with exact method
-        elif method == EXACT_METHOD:
+        elif method == AzimuthProessingMethods.exact:
             self.computeExactMethod(isps, wavelength_ku)
-        # throw an error if the method isn't valid
-        else:
-            raise ValueError("Method '{}' is not valid - must be '{}' or '{}'".format(
-                method, APPROXIMATE_METHOD, EXACT_METHOD
-            ))
 
     def computeApproximateMethod(self, isp, wavelength_ku):
         """
-        :param isps:
-        :param wavelength_ku:
-        :return:
+        Azimuth processing approximate method
+
+        :param isps: InstrumentSourcePacket instances
+        :param wavelength_ku: signal wavelength
         """
 
         # create empty fft waveforms
         waveform_fft_azimuth = np.zeros(
-            (chd.N_samples_sar, chd.N_ku_pulses_burst), dtype=complex
+            (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst), dtype=complex
         )
         waveform_phase_shift = np.zeros(
-            (chd.N_samples_sar, chd.N_ku_pulses_burst), dtype=complex
+            (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst), dtype=complex
         )
 
         # the azimuth processing is done only once, using the beam
@@ -74,12 +86,19 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         self.beams_focused = waveform_fft_azimuth[beams_offset:]
 
     def computeExactMethod(self, isp, wavelength_ku):
+        """
+        Azimuth processing approx. method
+
+        :param isp: InstrumentSourcePacket
+        :param wavelength_ku: signal wavelength
+        :return:
+        """
         # create empty fft waveforms
         waveform_fft_azimuth = np.zeros(
-            (chd.N_samples_sar, chd.N_ku_pulses_burst), dtype=complex
+            (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst), dtype=complex
         )
         waveform_phase_shift = np.zeros(
-            (chd.N_samples_sar, chd.N_ku_pulses_burst), dtype=complex
+            (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst), dtype=complex
         )
 
         for beam_index, beam_angle_value in enumerate(isp.beam_angles_list):
@@ -91,7 +110,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
                 waveform_phase_shift, waveform_fft_azimuth
             )
             self.beams_focused[beam_index, :] =\
-                waveform_fft_azimuth[chd.N_ku_pulses_burst // 2, :]
+                waveform_fft_azimuth[self.chd.n_ku_pulses_burst // 2, :]
 
 
     def computePhaseShift(self, isp, nadir_beam_angle, wavelength_ku, waveform_phase_shift):
@@ -102,13 +121,13 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         :param waveform_phase_shift:
         :return:
         """
-        for pulse_index in range(chd.N_ku_pulses_burst):
-            beam_angle_phase = np.exp(-2j *\
-                2. * cst.pi * wavelength_ku *\
-                norm(isp.vel_sat_sar) *\
-                cos(nadir_beam_angle) *\
-                isp.pri_sar * pulse_index
-            )
+        for pulse_index in range(self.chd.n_ku_pulses_burst):
+            beam_angle_phase = np.exp(-2j * \
+                                      2. * self.cst.pi * wavelength_ku * \
+                                      norm(isp.vel_sat_sar) * \
+                                      cos(nadir_beam_angle) * \
+                                      isp.pri_sar_pre_dat * pulse_index
+                                      )
             waveform_phase_shift[pulse_index, :] =\
                 beam_angle_phase * isp.waveform_cor_sar[pulse_index, :]
 
@@ -118,16 +137,16 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         :param waveform_fft_azimuth:
         :return:
         """
-        for sample_index in range(chd.N_samples_sar):
+        for sample_index in range(self.chd.n_samples_sar):
             out_fft = np.fft.fft(
                 waveform_phase_shift[:, sample_index]
             )
 
-            for pulse_index in range(chd.N_ku_pulses_burst):
+            for pulse_index in range(self.chd.n_ku_pulses_burst):
                 pulse_index_shifted =\
-                    pulse_index + (chd.N_ku_pulses_burst // 2) % chd.N_ku_pulses_burst
+                    pulse_index + (self.chd.n_ku_pulses_burst // 2) % self.chd.n_ku_pulses_burst
                 waveform_fft_azimuth[pulse_index, sample_index] =\
-                    sqrt(chd.N_ku_pulses_burst) * out_fft[pulse_index_shifted]
+                    sqrt(self.chd.n_ku_pulses_burst) * out_fft[pulse_index_shifted]
 
     def getNadirBeamAngle(self, isp):
         """
@@ -138,16 +157,16 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         nadir_beam_index = 0
 
         if isp.beam_angles_trend == 1:
-            nadir_beam_index = beam_angles_list_size - chd.N_ku_pulses_burst // 2
+            nadir_beam_index = beam_angles_list_size - self.chd.n_ku_pulses_burst // 2
 
         elif isp.beam_angles_trend == -1:
-            if beam_angles_list_size <= (chd.N_ku_pulses_burst // 2):
+            if beam_angles_list_size <= (self.chd.n_ku_pulses_burst // 2):
                 nadir_beam_index = beam_angles_list_size - 1
             else:
-                nadir_beam_index = chd.N_ku_pulses_burst // 2
+                nadir_beam_index = self.chd.n_ku_pulses_burst // 2
 
         elif isp.beam_angles_trend == 0:
-            nadir_beam_index = chd.N_ku_pulses_burst // 2
+            nadir_beam_index = self.chd.n_ku_pulses_burst // 2
 
         nadir_beam_angle = isp.beam_angles_list[nadir_beam_index]
         return nadir_beam_angle

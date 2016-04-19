@@ -63,7 +63,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
             y_vel_sat_sar=input_data["y_vel_sat_sar"],
             z_vel_sat_sar=input_data["z_vel_sat_sar"],
-            pri_sar=input_data["pri_sar_pre_dat"]
+            pri_sar_pre_dat=input_data["pri_sar_pre_dat"]
         )
         work_loc = input_data["working_surface_location_counter"]
 
@@ -130,7 +130,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
             y_vel_sat_sar=input_data["y_vel_sat_sar"],
             z_vel_sat_sar=input_data["z_vel_sat_sar"],
-            pri_sar=input_data["pri_sar_pre_dat"]
+            pri_sar_pre_dat=input_data["pri_sar_pre_dat"]
         )
         work_loc = input_data["working_surface_location_counter"]
 

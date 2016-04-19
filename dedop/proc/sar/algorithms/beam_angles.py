@@ -44,7 +44,7 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
         """
         # the q angles define the max. & min. view angle for satellite
         # at the position of the burst
-        q_min = acos(self.cst.c / isp_record.pri_sar / 4. /
+        q_min = acos(self.cst.c / isp_record.pri_sar_pre_dat / 4. /
                      self.chd.freq_ku / norm(isp_record.vel_sat_sar))
         q_max = self.cst.pi - q_min
 

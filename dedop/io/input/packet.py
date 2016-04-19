@@ -102,19 +102,19 @@ class InstrumentSourcePacket:
         del self["inst_id_sar_isp"]
 
     @property
-    def pri_sar(self):
+    def pri_sar_pre_dat(self):
         """
-        The pri_sar property of the ISP
+        The pri_sar_pre_dat property of the ISP
         """
-        return self["pri_sar"]
+        return self["pri_sar_pre_dat"]
 
-    @pri_sar.setter
-    def pri_sar(self, value):
-        self["pri_sar"] = value
+    @pri_sar_pre_dat.setter
+    def pri_sar_pre_dat(self, value):
+        self["pri_sar_pre_dat"] = value
 
-    @pri_sar.deleter
-    def pri_sar(self):
-        del self["pri_sar"]
+    @pri_sar_pre_dat.deleter
+    def pri_sar_pre_dat(self):
+        del self["pri_sar_pre_dat"]
 
     @property
     def ambiguity_order_sar(self):
