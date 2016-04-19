@@ -1,54 +1,581 @@
-from ...proc.geo.lla2ecef import lla2ecef
+from ...proc.geo import lla2ecef
+
+from collections import OrderedDict
 import numpy as np
 
 class InstrumentSourcePacket:
-    days = None
-    seconds = None
-    process_id = None
-    seq_count_sar_ku_fbr = None
-    inst_id_sar_isp = None
-    pri_sar = None
-    ambiguity_order_sar = None
-    burst_sar_ku = None
-    burst_sar_ku_fbr = None
-    lat_sar_sat = None
-    lon_sar_sat = None
-    alt_sar_sat = None
-    alt_rate_sat_sar = None
-    x_vel_sat_sar = None
-    y_vel_sat_sar = None
-    z_vel_sat_sar = None
-    roll_sar = None
-    pitch_sar = None
-    yaw_sar = None
-    h0_sar = None
-    cor2_sar = None
-    win_delay_sar_ku = None
-    time_sar_ku = None
+    """
+    The base InstrumentSourcePacket (ISP) class
 
+    Each ISP contains the data from one position in the
+    satellite's orbit
+    """
 
-    def __init__(self, packet_num, cst, **kwargs):
-        self.seq_count_sar = packet_num
-        for k in kwargs:
-            if hasattr(self, k):
-                setattr(self, k, kwargs[k])
+    @property
+    def time_sar_ku(self):
+        """
+        The time_sar_ku property of the ISP
+        """
+        return self["time_sar_ku"]
 
-        arr = np.asarray([self.lat_sar_sat, self.lon_sar_sat, self.alt_sar_sat])
-        sar_sat = lla2ecef(arr, cst)
-        self.x_sar_sat = sar_sat[0]
-        self.y_sar_sat = sar_sat[1]
-        self.z_sar_sat = sar_sat[2]
+    @time_sar_ku.setter
+    def time_sar_ku(self, value):
+        self["time_sar_ku"] = value
 
-        self.compute_location_sar_surf(cst)
+    @time_sar_ku.deleter
+    def time_sar_ku(self):
+        del self["time_sar_ku"]
 
-    def compute_location_sar_surf(self, cst):
+    @property
+    def days(self):
+        """
+        The days property of the ISP
+        """
+        return self["days"]
+
+    @days.setter
+    def days(self, value):
+        self["days"] = value
+
+    @days.deleter
+    def days(self):
+        del self["days"]
+
+    @property
+    def seconds(self):
+        """
+        The seconds property of the ISP
+        """
+        return self["seconds"]
+
+    @seconds.setter
+    def seconds(self, value):
+        self["seconds"] = value
+
+    @seconds.deleter
+    def seconds(self):
+        del self["seconds"]
+
+    @property
+    def process_id(self):
+        """
+        The process_id property of the ISP
+        """
+        return self["process_id"]
+
+    @process_id.setter
+    def process_id(self, value):
+        self["process_id"] = value
+
+    @process_id.deleter
+    def process_id(self):
+        del self["process_id"]
+
+    @property
+    def seq_count_sar_ku_fbr(self):
+        """
+        The seq_count_sar_ku_fbr property of the ISP
+        """
+        return self["seq_count_sar_ku_fbr"]
+
+    @seq_count_sar_ku_fbr.setter
+    def seq_count_sar_ku_fbr(self, value):
+        self["seq_count_sar_ku_fbr"] = value
+
+    @seq_count_sar_ku_fbr.deleter
+    def seq_count_sar_ku_fbr(self):
+        del self["seq_count_sar_ku_fbr"]
+
+    @property
+    def inst_id_sar_isp(self):
+        """
+        The inst_id_sar_isp property of the ISP
+        """
+        return self["inst_id_sar_isp"]
+
+    @inst_id_sar_isp.setter
+    def inst_id_sar_isp(self, value):
+        self["inst_id_sar_isp"] = value
+
+    @inst_id_sar_isp.deleter
+    def inst_id_sar_isp(self):
+        del self["inst_id_sar_isp"]
+
+    @property
+    def pri_sar(self):
+        """
+        The pri_sar property of the ISP
+        """
+        return self["pri_sar"]
+
+    @pri_sar.setter
+    def pri_sar(self, value):
+        self["pri_sar"] = value
+
+    @pri_sar.deleter
+    def pri_sar(self):
+        del self["pri_sar"]
+
+    @property
+    def ambiguity_order_sar(self):
+        """
+        The ambiguity_order_sar property of the ISP
+        """
+        return self["ambiguity_order_sar"]
+
+    @ambiguity_order_sar.setter
+    def ambiguity_order_sar(self, value):
+        self["ambiguity_order_sar"] = value
+
+    @ambiguity_order_sar.deleter
+    def ambiguity_order_sar(self):
+        del self["ambiguity_order_sar"]
+
+    @property
+    def burst_sar_ku(self):
+        """
+        The burst_sar_ku property of the ISP
+        """
+        return self["burst_sar_ku"]
+
+    @burst_sar_ku.setter
+    def burst_sar_ku(self, value):
+        self["burst_sar_ku"] = value
+
+    @burst_sar_ku.deleter
+    def burst_sar_ku(self):
+        del self["burst_sar_ku"]
+
+    @property
+    def burst_sar_ku_fbr(self):
+        """
+        The burst_sar_ku_fbr property of the ISP
+        """
+        return self["burst_sar_ku_fbr"]
+
+    @burst_sar_ku_fbr.setter
+    def burst_sar_ku_fbr(self, value):
+        self["burst_sar_ku_fbr"] = value
+
+    @burst_sar_ku_fbr.deleter
+    def burst_sar_ku_fbr(self):
+        del self["burst_sar_ku_fbr"]
+
+    @property
+    def lat_sar_sat(self):
+        """
+        The lat_sar_sat property of the ISP
+        """
+        return self["lat_sar_sat"]
+
+    @lat_sar_sat.setter
+    def lat_sar_sat(self, value):
+        self["lat_sar_sat"] = value
+
+    @lat_sar_sat.deleter
+    def lat_sar_sat(self):
+        del self["lat_sar_sat"]
+
+    @property
+    def lon_sar_sat(self):
+        """
+        The lon_sar_sat property of the ISP
+        """
+        return self["lon_sar_sat"]
+
+    @lon_sar_sat.setter
+    def lon_sar_sat(self, value):
+        self["lon_sar_sat"] = value
+
+    @lon_sar_sat.deleter
+    def lon_sar_sat(self):
+        del self["lon_sar_sat"]
+
+    @property
+    def alt_sar_sat(self):
+        """
+        The alt_sar_sat property of the ISP
+        """
+        return self["alt_sar_sat"]
+
+    @alt_sar_sat.setter
+    def alt_sar_sat(self, value):
+        self["alt_sar_sat"] = value
+
+    @alt_sar_sat.deleter
+    def alt_sar_sat(self):
+        del self["alt_sar_sat"]
+
+    @property
+    def geodetic_sat(self):
+        """
+        The Lat, Lon, and Alt of the satellite position
+        """
+        return [self.lat_sar_sat,
+                self.lon_sar_sat,
+                self.alt_sar_sat]
+
+    @geodetic_sat.setter
+    def geodetic_sat(self, value):
+        self.lat_sar_sat,\
+         self.lon_sar_sat,\
+         self.alt_sar_sat = value
+
+    @property
+    def alt_rate_sat_sar(self):
+        """
+        The alt_rate_sar_sat property of the ISP
+        """
+        return self["alt_rate_sat_sar"]
+
+    @alt_rate_sat_sar.setter
+    def alt_rate_sat_sar(self, value):
+        self["alt_rate_sat_sar"] = value
+
+    @alt_rate_sat_sar.deleter
+    def alt_rate_sat_sar(self):
+        del self["alt_rate_sat_sar"]
+
+    @property
+    def x_vel_sat_sar(self):
+        """
+        The x_vel_sat_sar property of the ISP
+        """
+        return self["x_vel_sat_sar"]
+
+    @x_vel_sat_sar.setter
+    def x_vel_sat_sar(self, value):
+        self["x_vel_sat_sar"] = value
+
+    @x_vel_sat_sar.deleter
+    def x_vel_sat_sar(self):
+        del self["x_vel_sat_sar"]
+
+    @property
+    def y_vel_sat_sar(self):
+        """
+        The y_vel_sat_sar property of the ISP
+        """
+        return self["y_vel_sat_sar"]
+
+    @y_vel_sat_sar.setter
+    def y_vel_sat_sar(self, value):
+        self["y_vel_sat_sar"] = value
+
+    @y_vel_sat_sar.deleter
+    def y_vel_sat_sar(self):
+        del self["y_vel_sat_sar"]
+
+    @property
+    def z_vel_sat_sar(self):
+        """
+        The z_vel_sat_sar property of the ISP
+        """
+        return self["z_vel_sat_sar"]
+
+    @z_vel_sat_sar.setter
+    def z_vel_sat_sar(self, value):
+        self["z_vel_sat_sar"] = value
+
+    @z_vel_sat_sar.deleter
+    def z_vel_sat_sar(self):
+        del self["z_vel_sat_sar"]
+
+    @property
+    def vel_sat_sar(self):
+        """
+        The Lat, Lon, and Alt of the satellite position
+        """
+        return [self.x_vel_sat_sar,
+                self.y_vel_sat_sar,
+                self.z_vel_sat_sar]
+
+    @vel_sat_sar.setter
+    def vel_sat_sar(self, value):
+        self.x_vel_sat_sar, \
+         self.y_vel_sat_sar, \
+         self.z_vel_sat_sar = value
+
+    @property
+    def roll_sar(self):
+        """
+        The roll_sar property of the ISP
+        """
+        return self["roll_sar"]
+
+    @roll_sar.setter
+    def roll_sar(self, value):
+        self["roll_sar"] = value
+
+    @roll_sar.deleter
+    def roll_sar(self):
+        del self["roll_sar"]
+
+    @property
+    def pitch_sar(self):
+        """
+        The pitch_sar property of the ISP
+        """
+        return self["pitch_sar"]
+
+    @pitch_sar.setter
+    def pitch_sar(self, value):
+        self["pitch_sar"] = value
+
+    @pitch_sar.deleter
+    def pitch_sar(self):
+        del self["pitch_sar"]
+
+    @property
+    def yaw_sar(self):
+        """
+        The yaw_sar property of the ISP
+        """
+        return self["yaw_sar"]
+
+    @yaw_sar.setter
+    def yaw_sar(self, value):
+        self["yaw_sar"] = value
+
+    @yaw_sar.deleter
+    def yaw_sar(self):
+        del self["yaw_sar"]
+
+    @property
+    def orientation_sar(self):
+        """
+        The roll, pitch and yaw of the satellite position
+        """
+        return [self.roll_sar,
+                self.pitch_sar,
+                self.yaw_sar]
+
+    @orientation_sar.setter
+    def orientation_sar(self, value):
+        self.roll_sar, \
+         self.pitch_sar, \
+         self.yaw_sar = value
+
+    @property
+    def h0_sar(self):
+        """
+        The h0_sar property of the ISP
+        """
+        return self["h0_sar"]
+
+    @h0_sar.setter
+    def h0_sar(self, value):
+        self["h0_sar"] = value
+
+    @h0_sar.deleter
+    def h0_sar(self):
+        del self["h0_sar"]
+
+    @property
+    def cor2_sar(self):
+        """
+        The cor2_sar property of the ISP
+        """
+        return self["cor2_sar"]
+
+    @cor2_sar.setter
+    def cor2_sar(self, value):
+        self["cor2_sar"] = value
+
+    @cor2_sar.deleter
+    def cor2_sar(self):
+        del self["cor2_sar"]
+
+    @property
+    def win_delay_sar_ku(self):
+        """
+        The win_delay_sar_ku property of the ISP
+        """
+        return self["win_delay_sar_ku"]
+
+    @win_delay_sar_ku.setter
+    def win_delay_sar_ku(self, value):
+        self["win_delay_sar_ku"] = value
+
+    @win_delay_sar_ku.deleter
+    def win_delay_sar_ku(self):
+        del self["win_delay_sar_ku"]
+
+    @property
+    def x_sar_surf(self):
+        """
+        The x-coordinate of the ECEF vector for the
+        surface position below the satellite
+        """
+        return self["x_sar_surf"]
+
+    @x_sar_surf.setter
+    def x_sar_surf(self, value):
+        self["x_sar_surf"] = value
+
+    @x_sar_surf.deleter
+    def x_sar_surf(self):
+        del self["x_sar_surf"]
+
+    @property
+    def y_sar_surf(self):
+        """
+        The y-coordinate of the ECEF vector for the
+        surface position below the satellite
+        """
+        return self["y_sar_surf"]
+
+    @y_sar_surf.setter
+    def y_sar_surf(self, value):
+        self["y_sar_surf"] = value
+
+    @y_sar_surf.deleter
+    def y_sar_surf(self):
+        del self["y_sar_surf"]
+
+    @property
+    def z_sar_surf(self):
+        """
+        The z-coordinate of the ECEF vector for the
+        surface position below the satellite
+        """
+        return self["z_sar_surf"]
+
+    @z_sar_surf.setter
+    def z_sar_surf(self, value):
+        self["z_sar_surf"] = value
+
+    @z_sar_surf.deleter
+    def z_sar_surf(self):
+        del self["z_sar_surf"]
+
+    @property
+    def sar_surf(self):
+        """
+        The ECEF vector for the surface position
+        below the satellite
+        """
+        return [self.x_sar_surf,
+                self.y_sar_surf,
+                self.z_sar_surf]
+
+    @sar_surf.setter
+    def sar_surf(self, value):
+        self.x_sar_surf, \
+         self.y_sar_surf, \
+         self.z_sar_surf = value
+
+    @property
+    def x_sar_sat(self):
+        """
+        The x-coordinate of the ECEF vector for the
+        position of the satellite
+        """
+        return self["x_sar_sat"]
+
+    @x_sar_sat.setter
+    def x_sar_sat(self, value):
+        self["x_sar_sat"] = value
+
+    @x_sar_sat.deleter
+    def x_sar_sat(self):
+        del self["x_sar_sat"]
+
+    @property
+    def y_sar_sat(self):
+        """
+        The y-coordinate of the ECEF vector for the
+        position of the satellite
+        """
+        return self["y_sar_sat"]
+
+    @y_sar_sat.setter
+    def y_sar_sat(self, value):
+        self["y_sar_sat"] = value
+
+    @y_sar_sat.deleter
+    def y_sar_sat(self):
+        del self["y_sar_sat"]
+
+    @property
+    def z_sar_sat(self):
+        """
+        The z-coordinate of the ECEF vector for the
+        position of the satellite
+        """
+        return self["z_sar_sat"]
+
+    @z_sar_sat.setter
+    def z_sar_sat(self, value):
+        self["z_sar_sat"] = value
+
+    @z_sar_sat.deleter
+    def z_sar_sat(self):
+        del self["z_sar_sat"]
+
+    @property
+    def sar_sat(self):
+        """
+        The ECEF vector for the position of the satellite
+        """
+        return [self.x_sar_sat,
+                self.y_sar_sat,
+                self.z_sar_sat]
+
+    @sar_sat.setter
+    def sar_sat(self, value):
+        self.x_sar_sat, \
+        self.y_sar_sat, \
+        self.z_sar_sat = value
+
+    @property
+    def seq_count_sar(self):
+        """
+        The sequence number of the ISP
+        """
+        return self._seq_count_sar
+
+    def __init__(self, cst, chd, seq_num=None, *dicts, **values):
+        self._seq_count_sar = seq_num
+        self._data = OrderedDict()
+
+        for values_group in dicts:
+            self._data.update(values_group)
+        self._data.update(values)
+
+        self.cst = cst
+        self.chd = chd
+
+    def __setitem__(self, key, value):
+        if not hasattr(self.__class__, key):
+            raise KeyError("{} has no attribute '{}'".format(self, key))
+        self._data[key] = value
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __delitem__(self, key):
+        del self._data[key]
+
+    def compute_location_sar_surf(self):
+        lla = (
+            self.lat_sar_sat,
+            self.lon_sar_sat,
+            self.alt_sar_sat
+        )
+        x, y, z = lla2ecef(lla, self.cst)
+
+        self.x_sar_sat = x
+        self.y_sar_sat = y
+        self.z_sar_sat = z
+
         lat_sar_surf = self.lat_sar_sat
         lon_sar_surf = self.lon_sar_sat
-        alt_sar_surf = self.alt_sar_sat - self.win_delay_sar_ku * cst.c / 2
+        alt_sar_surf = self.alt_sar_sat - self.win_delay_sar_ku * self.cst.c / 2
 
         lla = (lat_sar_surf, lon_sar_surf, alt_sar_surf)
-        ecef = lla2ecef(lla, cst)
+        x, y, z = lla2ecef(lla, self.cst)
 
-        self.x_sar_surf,\
-        self.y_sar_surf,\
-        self.z_sar_surf = ecef
+        self.x_sar_surf = x
+        self.y_sar_surf = y
+        self.z_sar_surf = z
