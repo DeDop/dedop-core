@@ -123,6 +123,13 @@ class L1BProcessor:
         return SurfaceLocationData(loc_data, data=self.source_isps[-1])
 
     def _new_surface(self, loc_data):
+        """
+        returns a new surface lcoation interpolated between two points of
+         data from the ISPs. This is in place of using the OSV data, and
+         will be done by linear interpolation with the 'alpha' value computed
+         in the surface location algorithm
+        """
+        # TODO: write interpolation method + tests
         time = loc_data['time_surf']
         data = self.source.get_interpolated(time)
         return SurfaceLocationData(loc_data, data)
