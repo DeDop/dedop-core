@@ -1,8 +1,0 @@
-time_sar_ku 601281600.003682
-x_sar_sat 7699792.857471
-y_sar_sat 637700.840065
-z_sar_sat 474384.456306
-x_vel_sat_sar -594.831016
-y_vel_sat_sar 2315.362908
-z_vel_sat_sar 6543.040883
-pri_sar_pre_dat 0.00010896202562

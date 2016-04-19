@@ -1,7 +1,0 @@
-working_surface_location_counter 1
-c_cst 299792458.0
-pi_cst 3.141592653589793
-freq_ku_chd 13575000000.0
-n_ku_pulses_burst_chd 64
-time_sar_ku 601281600.003682
-pri_sar_pre_dat 0.00010896202562
