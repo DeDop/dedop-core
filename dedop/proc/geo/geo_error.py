@@ -1,0 +1,2 @@
+class GeolocationError(Exception):
+    pass
