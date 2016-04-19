@@ -11,7 +11,7 @@
  	},
  	"flat_coeff_cst": {
 		"units": null,
- 		"value": 0.003352810664747,
+ 		"value": 0.00335281067183084,
  		"description": "Flattening coefficient of WGS84 ellipsoid"
  	},
  	"earth_radius_cst": {

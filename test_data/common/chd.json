@@ -1,6 +1,6 @@
 {
 	"freq_ku_chd": {
-		"value": 13575097717.8047,
+		"value":13575000000.0,
  		"description": "Emitted frequency in Ku-band",
  		"units": "Hz"
  	},
