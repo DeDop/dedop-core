@@ -1,7 +1,7 @@
 import numpy as np
 
 
-from ...geo.lla2ecef import lla2ecef
+from ...geo import lla2ecef, ecef2lla
 from ..base_algorithm import BaseAlgorithm
 from ...functions import *
 
@@ -71,7 +71,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         ground_surf_orbit_vector = np.matrix(
             [[isp_curr.x_sar_surf - surface.x_sat],
              [isp_curr.y_sar_surf - surface.y_sat],
-             [isp_curr.z_sar_surf - surface.z_sat]]
+             [isp_curr.z_sar_surf - surface.z_sat]],
+            dtype=np.float64
         )
         ground_surf_orbit_angle = angle_between(
             surface.surf_sat_vector, ground_surf_orbit_vector
@@ -82,30 +83,33 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         ground_surf_orbit_vector_prev = np.matrix(
             [[isp_prev.x_sar_surf - surface.x_sat],
              [isp_prev.y_sar_surf - surface.y_sat],
-             [isp_prev.z_sar_surf - surface.z_sat]]
+             [isp_prev.z_sar_surf - surface.z_sat]],
+            dtype=np.float64
         )
         ground_surf_orbit_angle_prev = angle_between(
             surface.surf_sat_vector, ground_surf_orbit_vector_prev
         )
 
+        # compute alpha - the ratio of the position of the surface
+        #   between the two ISP readings
         alpha = (surface.angular_azimuth_beam_resolution - ground_surf_orbit_angle_prev) /\
                 (ground_surf_orbit_angle - ground_surf_orbit_angle_prev)
 
-        self.time_surf = surface.time_surf +\
+        self.time_surf = isp_prev.time_sar_ku +\
             alpha * (isp_curr.time_sar_ku - isp_prev.time_sar_ku)
-        self.x_surf = surface.x_surf +\
+        self.x_surf = isp_prev.x_sar_surf +\
             alpha * (isp_curr.x_sar_surf - isp_prev.x_sar_surf)
-        self.y_surf = surface.y_surf +\
+        self.y_surf = isp_prev.y_sar_surf +\
             alpha * (isp_curr.y_sar_surf - isp_prev.y_sar_surf)
-        self.z_surf = surface.z_surf +\
+        self.z_surf = isp_prev.z_sar_surf +\
             alpha * (isp_curr.z_sar_surf - isp_prev.z_sar_surf)
 
-        # surf_loc_cart = np.array([self.x_surf,
-        #                           self.y_surf,
-        #                           self.z_surf])
-        # surf_loc_geod = lla2ecef(surf_loc_cart)
-        # self.lat_surf = surf_loc_geod[0]
-        # self.lon_surf = surf_loc_geod[1]
-        # self.alt_surf = surf_loc_geod[2]
+        surf_loc_cart = np.array([self.x_surf,
+                                  self.y_surf,
+                                  self.z_surf])
+        surf_loc_geod = ecef2lla(surf_loc_cart, self.cst)
+        self.lat_surf = surf_loc_geod[0][0, 0]
+        self.lon_surf = surf_loc_geod[1][0, 0]
+        self.alt_surf = surf_loc_geod[2][0, 0]
 
         return True
