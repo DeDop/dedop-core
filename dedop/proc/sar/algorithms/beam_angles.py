@@ -28,12 +28,12 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
                 self.compute_beam_angle(surface, isp_record)
             if curr_location_seen:
                 self.beam_angles.append(beam_angle)
-                self.surfaces_seen.append(surface.index)
+                self.surfaces_seen.append(surface.surface_counter)
 
                 if len(self.beam_angles) > self.chd.n_ku_pulses_burst:
                     self.beam_angles.pop(0)
                     self.surfaces_seen.pop(0)
-                if work_location_index == surface.index:
+                if work_location_index == surface.surface_counter:
                     self.work_location_seen = True
             elif prev_location_seen:
                 break
@@ -57,7 +57,7 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
         # compute angle between surface vector and satellite's velocity
         # vector
         beam_angle = acos(
-            np.dot(surf_burst, isp_record.vel_sat_sar) /
+            np.dot(surf_burst.T, isp_record.vel_sat_sar) /
             (norm(surf_burst) * norm(isp_record.vel_sat_sar))
         )
         # if the angle is within the q-range, it can be seen
