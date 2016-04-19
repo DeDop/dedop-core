@@ -1,4 +1,3 @@
-from ....conf import cst, chd
 from ..base_algorithm import BaseAlgorithm
 
 import numpy as np
@@ -31,7 +30,7 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
                 self.beam_angles.append(beam_angle)
                 self.surfaces_seen.append(surface.index)
 
-                if len(self.beam_angles) > chd.N_ku_pulses_burst:
+                if len(self.beam_angles) > self.chd.n_ku_pulses_burst:
                     self.beam_angles.pop(0)
                     self.surfaces_seen.pop(0)
                 if work_location_index == surface.index:
@@ -45,9 +44,9 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
         """
         # the q angles define the max. & min. view angle for satellite
         # at the position of the burst
-        q_min = acos(cst.c / isp_record.pri_sar / 4. /
-                     chd.freq_ku / norm(isp_record.vel_sat_sar))
-        q_max = cst.pi - q_min
+        q_min = acos(self.cst.c / isp_record.pri_sar / 4. /
+                     self.chd.freq_ku / norm(isp_record.vel_sat_sar))
+        q_max = self.cst.pi - q_min
 
         # create vector from satellite position to surface
         surf_burst = np.matrix([
