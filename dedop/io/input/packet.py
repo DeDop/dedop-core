@@ -211,9 +211,9 @@ class InstrumentSourcePacket:
         """
         The Lat, Lon, and Alt of the satellite position
         """
-        return [self.lat_sar_sat,
-                self.lon_sar_sat,
-                self.alt_sar_sat]
+        return np.asmatrix([self.lat_sar_sat,
+                            self.lon_sar_sat,
+                            self.alt_sar_sat]).T
 
     @geodetic_sat.setter
     def geodetic_sat(self, value):
@@ -286,9 +286,9 @@ class InstrumentSourcePacket:
         """
         The Lat, Lon, and Alt of the satellite position
         """
-        return [self.x_vel_sat_sar,
-                self.y_vel_sat_sar,
-                self.z_vel_sat_sar]
+        return np.asmatrix([self.x_vel_sat_sar,
+                            self.y_vel_sat_sar,
+                            self.z_vel_sat_sar]).T
 
     @vel_sat_sar.setter
     def vel_sat_sar(self, value):
@@ -346,9 +346,9 @@ class InstrumentSourcePacket:
         """
         The roll, pitch and yaw of the satellite position
         """
-        return [self.roll_sar,
-                self.pitch_sar,
-                self.yaw_sar]
+        return np.asmatrix([self.roll_sar,
+                            self.pitch_sar,
+                            self.yaw_sar]).T
 
     @orientation_sar.setter
     def orientation_sar(self, value):
@@ -455,9 +455,9 @@ class InstrumentSourcePacket:
         The ECEF vector for the surface position
         below the satellite
         """
-        return [self.x_sar_surf,
-                self.y_sar_surf,
-                self.z_sar_surf]
+        return np.asmatrix([self.x_sar_surf,
+                            self.y_sar_surf,
+                            self.z_sar_surf]).T
 
     @sar_surf.setter
     def sar_surf(self, value):
@@ -518,9 +518,9 @@ class InstrumentSourcePacket:
         """
         The ECEF vector for the position of the satellite
         """
-        return [self.x_sar_sat,
-                self.y_sar_sat,
-                self.z_sar_sat]
+        return np.asmatrix([self.x_sar_sat,
+                            self.y_sar_sat,
+                            self.z_sar_sat]).T
 
     @sar_sat.setter
     def sar_sat(self, value):
