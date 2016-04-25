@@ -535,9 +535,54 @@ class InstrumentSourcePacket:
         """
         return self._seq_count_sar
 
+    @property
+    def beam_angles_list(self):
+        """
+        The computed list of beam angles
+        """
+        return self["beam_angles_list"]
+
+    @beam_angles_list.setter
+    def beam_angles_list(self, value):
+        self["beam_angles_list"] = value
+
+    @beam_angles_list.deleter
+    def beam_angles_list(self):
+        del self["beam_angles_list"]
+
+    @property
+    def beam_angles_trend(self):
+        """
+        the trend direction of the ISP's beam angles
+        """
+        if self._beam_angles_trend is None:
+            return AttributeError("'beam_angles_trend' not set")
+        return self._beam_angles_trend
+
+    @beam_angles_trend.deleter
+    def beam_angles_trend(self):
+        self._beam_angles_trend = None
+
+    @property
+    def waveform_cor_sar(self):
+        """
+        The corrected SAR waveform
+        """
+        return self["waveform_cor_sar"]
+
+    @waveform_cor_sar.setter
+    def waveform_cor_sar(self, value):
+        self["waveform_cor_sar"] = value
+
+    @waveform_cor_sar.deleter
+    def waveform_cor_sar(self):
+        del self["waveform_cor_sar"]
+
+
     def __init__(self, cst, chd, seq_num=None, *dicts, **values):
         self._seq_count_sar = seq_num
         self._data = OrderedDict()
+        self._beam_angles_trend = None
 
         for values_group in dicts:
             self._data.update(values_group)
@@ -579,3 +624,23 @@ class InstrumentSourcePacket:
         self.x_sar_surf = x
         self.y_sar_surf = y
         self.z_sar_surf = z
+
+    def calculate_beam_angles_trend(self, prev_beam_angles_list_size, prev_beam_angles_trend):
+        """
+        computes the beam angles trend of the ISP
+
+        :param prev_beam_angles_list_size: the size of the beam angles list of the previous ISP
+        :param prev_beam_angles_trend: the trend of the beam angles of the previous ISP
+        """
+
+        beam_angles_list_size = len(self.beam_angles_list)
+        if beam_angles_list_size == self.chd.n_ku_pulses_burst:
+            self._beam_angles_trend = 0
+            return
+
+        if prev_beam_angles_list_size == -1 or beam_angles_list_size > prev_beam_angles_list_size:
+            self._beam_angles_trend = 1
+        elif beam_angles_list_size < prev_beam_angles_list_size:
+            self._beam_angles_trend = -1
+        else:
+            self._beam_angles_trend = prev_beam_angles_trend
