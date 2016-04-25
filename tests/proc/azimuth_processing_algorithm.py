@@ -5,7 +5,6 @@ from ..testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
 from dedop.io.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
 
