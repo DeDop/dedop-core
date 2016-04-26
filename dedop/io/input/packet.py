@@ -372,6 +372,21 @@ class InstrumentSourcePacket:
         del self["h0_sar"]
 
     @property
+    def t0_sar(self):
+        """
+        The t0_sar property of the ISP
+        """
+        return self["t0_sar"]
+
+    @t0_sar.setter
+    def t0_sar(self, value):
+        self["t0_sar"] = value
+
+    @t0_sar.deleter
+    def t0_sar(self):
+        del self["t0_sar"]
+
+    @property
     def cor2_sar(self):
         """
         The cor2_sar property of the ISP
@@ -577,6 +592,36 @@ class InstrumentSourcePacket:
     @waveform_cor_sar.deleter
     def waveform_cor_sar(self):
         del self["waveform_cor_sar"]
+
+    @property
+    def doppler_angle_sar_sat(self):
+        """
+        the doppler_angle_sar_sat property
+        """
+        return self["doppler_angle_sar_sat"]
+
+    @doppler_angle_sar_sat.setter
+    def doppler_angle_sar_sat(self, value):
+        self["doppler_angle_sar_sat"] = value
+
+    @doppler_angle_sar_sat.deleter
+    def doppler_angle_sar_sat(self):
+        del self["doppler_angle_sar_sat"]
+
+    @property
+    def beams_focused(self):
+        """
+        the focused beams
+        """
+        return self["beams_focused"]
+
+    @beams_focused.setter
+    def beams_focused(self, value):
+        self["beams_focused"] = value
+
+    @beams_focused.deleter
+    def beams_focused(self):
+        del self["beams_focused"]
 
 
     def __init__(self, cst, chd, seq_num=None, *dicts, **values):

@@ -448,19 +448,41 @@ class SurfaceLocationData:
         del self["surface_type"]
 
     @property
+    def stack_all_beams_indices(self):
+        """
+        the stack_all_beams_indices property of the surface location
+        """
+        return self["stack_all_beams_indices"]
+
+    @stack_all_beams_indices.setter
+    def stack_all_beams_indices(self, value):
+        self["stack_all_beams_indices"] = value
+
+    @stack_all_beams_indices.deleter
+    def stack_all_beams_indices(self):
+        del self["stack_all_beams_indices"]
+
+    @property
+    def stack_all_bursts(self):
+        """
+        the stack_all_bursts property of the surface location
+        """
+        return self["stack_all_bursts"]
+
+    @stack_all_bursts.setter
+    def stack_all_bursts(self, value):
+        self["stack_all_bursts"] = value
+
+    @stack_all_bursts.deleter
+    def stack_all_bursts(self):
+        del self["stack_all_bursts"]
+
+    @property
     def data_stack_size(self):
         """
-        the data_stack_size property of the surface location
+        The number of bursts in the stack
         """
-        return self["data_stack_size"]
-
-    @data_stack_size.setter
-    def data_stack_size(self, value):
-        self["data_stack_size"] = value
-
-    @data_stack_size.deleter
-    def data_stack_size(self):
-        del self["data_stack_size"]
+        return len(self.stack_all_bursts)
 
     @property
     def surf_sat_vector(self):

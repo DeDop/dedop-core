@@ -70,6 +70,7 @@ class StackingAlgorithmTests(unittest.TestCase):
             self.stacking_algorithm.data_stack_size,
             expected["data_stack_size"]
         )
+        # TODO: Activate this test when surface types are implemented
         # self.assertEqual(
         #     self.stacking_algorithm.surface_type,
         #     SurfaceType(expected["surface_type"])
