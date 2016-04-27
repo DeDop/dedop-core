@@ -17,6 +17,8 @@ class TestDataLoader:
         with open(filepath, 'rt') as csv_file:
             reader = csv.reader(csv_file, delimiter=delim)
             for row in reader:
+                if not row: continue
+
                 name, *values = filter(bool, row)
 
                 vals = list(map(literal_eval, values))
