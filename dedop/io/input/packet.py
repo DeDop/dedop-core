@@ -529,7 +529,7 @@ class InstrumentSourcePacket:
         del self["z_sar_sat"]
 
     @property
-    def sar_sat(self):
+    def pos_sar_sat(self):
         """
         The ECEF vector for the position of the satellite
         """
@@ -537,8 +537,8 @@ class InstrumentSourcePacket:
                             self.y_sar_sat,
                             self.z_sar_sat]).T
 
-    @sar_sat.setter
-    def sar_sat(self, value):
+    @pos_sar_sat.setter
+    def pos_sar_sat(self, value):
         self.x_sar_sat, \
         self.y_sar_sat, \
         self.z_sar_sat = value

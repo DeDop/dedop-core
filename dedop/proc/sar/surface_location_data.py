@@ -482,7 +482,50 @@ class SurfaceLocationData:
         """
         The number of bursts in the stack
         """
-        return len(self.stack_all_bursts)
+        try:
+            return self["data_stack_size"]
+        except KeyError:
+            self["data_stack_size"] =\
+                len(self.stack_all_bursts)
+            return self["data_stack_size"]
+
+    @data_stack_size.setter
+    def data_stack_size(self, value):
+        self["data_stack_size"] = value
+
+    @data_stack_size.deleter
+    def data_stack_size(self):
+        del self["data_stack_size"]
+
+    @property
+    def stack_bursts(self):
+        """
+        the stack_bursts property of the surface location
+        """
+        return self["stack_bursts"]
+
+    @stack_bursts.setter
+    def stack_bursts(self, value):
+        self["stack_bursts"] = value
+
+    @stack_bursts.deleter
+    def stack_bursts(self):
+        del self["stack_bursts"]
+
+    @property
+    def beam_angles_surf(self):
+        """
+        the beam_angles_surf property of the surface location
+        """
+        return self["beam_angles_surf"]
+
+    @beam_angles_surf.setter
+    def beam_angles_surf(self, value):
+        self["beam_angles_surf"] = value
+
+    @beam_angles_surf.deleter
+    def beam_angles_surf(self):
+        del self["beam_angles_surf"]
 
     @property
     def surf_sat_vector(self):
@@ -498,6 +541,37 @@ class SurfaceLocationData:
     @surf_sat_vector.deleter
     def surf_sat_vector(self):
         del self["surf_sat_vector"]
+
+    @property
+    def t0_surf(self):
+        """
+        the t0_surf property of the surface location
+        """
+        return self["t0_surf"]
+
+    @t0_surf.setter
+    def t0_surf(self, value):
+        self["t0_surf"] = value
+
+    @t0_surf.deleter
+    def t0_surf(self):
+        del self["t0_surf"]
+
+    @property
+    def beams_surf(self):
+        """
+        the beams_surf property of the surface location
+        """
+        return self["beams_surf"]
+
+    @beams_surf.setter
+    def beams_surf(self, value):
+        self["beams_surf"] = value
+
+    @beams_surf.deleter
+    def beams_surf(self):
+        del self["beams_surf"]
+
 
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num
