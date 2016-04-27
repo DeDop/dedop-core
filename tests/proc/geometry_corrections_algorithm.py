@@ -49,12 +49,42 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
         """
         geometry corrections algorithm test 01
         --------------------------------------
-
+        doppler corrections enabled
+        slant range corrections enabled
         """
         # open data files
         input_data = TestDataLoader(self.inputs_01, delim=' ')
         expected = TestDataLoader(self.expected_01, delim=' ')
 
+        self._geometry_corrections_algorithm_tests(input_data, expected)
+
+    def test_geometry_corrections_algorithm_02(self):
+        """
+        geometry corrections algorithm test 02
+        --------------------------------------
+        doppler corrections disabled
+        slant range corrections enabled
+        """
+        # open data files
+        input_data = TestDataLoader(self.inputs_02, delim=' ')
+        expected = TestDataLoader(self.expected_02, delim=' ')
+
+        self._geometry_corrections_algorithm_tests(input_data, expected)
+
+    def test_geometry_corrections_algorithm_03(self):
+        """
+        geometry corrections algorithm test 03
+        --------------------------------------
+        doppler corrections enabled
+        slant range corrections disabled
+        """
+        # open data files
+        input_data = TestDataLoader(self.inputs_03, delim=' ')
+        expected = TestDataLoader(self.expected_03, delim=' ')
+
+        self._geometry_corrections_algorithm_tests(input_data, expected)
+
+    def _geometry_corrections_algorithm_tests(self, input_data, expected):
         # create stack of ISPs
         isps = []
 
@@ -93,6 +123,11 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
 
         self.geometry_corrections_algorithm.n_looks_stack =\
             input_data["n_looks_stack_cnf"]
+        self.geometry_corrections_algorithm.doppler_correction_enabled =\
+            bool(input_data["flag_doppler_range_correction_cnf"])
+        self.geometry_corrections_algorithm.slant_range_correction_enabled =\
+            bool(input_data["flag_slant_range_correction_cnf"])
+        # TODO: add window delay alignment method selection
 
         self.geometry_corrections_algorithm(working_loc, input_data["wv_length_ku"])
 
@@ -125,8 +160,9 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
             msg="window delay corrections do not match"
         )
         flat_corr = np.ravel(self.geometry_corrections_algorithm.beams_geo_corr)
+        components = zip(np.real(flat_corr), np.imag(flat_corr))
 
-        for index, (i, q) in enumerate(zip(np.real(flat_corr), np.imag(flat_corr))):
+        for index, (i, q) in enumerate(components):
             expected_i = expected["beams_geo_corr_i"][index]
             expected_q = expected["beams_geo_corr_q"][index]
 
