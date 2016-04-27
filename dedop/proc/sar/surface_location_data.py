@@ -572,6 +572,21 @@ class SurfaceLocationData:
     def beams_surf(self):
         del self["beams_surf"]
 
+    @property
+    def beams_geo_corr(self):
+        """
+        the beams_geo_corr property of the surface location
+        """
+        return self["beams_geo_corr"]
+
+    @beams_geo_corr.setter
+    def beams_geo_corr(self, value):
+        self["beams_geo_corr"] = value
+
+    @beams_geo_corr.deleter
+    def beams_geo_corr(self):
+        del self["beams_geo_corr"]
+
 
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num
