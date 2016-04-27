@@ -2,9 +2,17 @@ import numpy as np
 from numpy.linalg import norm
 
 from ..base_algorithm import BaseAlgorithm
+from ....util.parameter import Parameter
 
 
+@Parameter("doppler_correction_enabled", default_value=True)
+@Parameter("slant_range_correction_enabled", default_value=True)
+@Parameter("win_delay_misalignment_correction_enabled", default_value=0)
 class GeometryCorrectionsAlgorithm(BaseAlgorithm):
+    """
+    Algorithm class for the Geometry Corrections Algorithm
+    """
+    # TODO: Enable selection of window delay alignment method
 
     def __call__(self, working_surface_location, wv_length_ku):
         self.beams_geo_corr = np.zeros(
@@ -44,6 +52,9 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
             )
 
     def compute_doppler_correction(self, working_surface_location, stack_burst, beam_index, wv_length_ku):
+        if not self.doppler_correction_enabled:
+            return
+
         doppler_range = \
             -self.cst.c / wv_length_ku *\
             norm(stack_burst.vel_sat_sar) *\
@@ -63,6 +74,8 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
         self.range_sat_surf[beam_index] = norm(
             isp_orbit_surf_ground_vector
         )
+        if not self.slant_range_correction_enabled:
+            return
 
         slant_range_correction_time =\
             working_surface_location.win_delay_surf -\
@@ -82,13 +95,12 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
                 self.slant_range_corrections[beam_index] +\
                 self.win_delay_corrections[beam_index]
 
-        sampleCorrectionPhaseConstant =\
+        sample_correction_phase_constant =\
             2j * self.cst.pi / self.chd.n_samples_sar * shift
-
 
         def transform(sample_index, beam_sample):
             sample_correction = np.exp(
-                sampleCorrectionPhaseConstant * float(sample_index)
+                sample_correction_phase_constant * float(sample_index)
             )
 
             return beam_sample * sample_correction
