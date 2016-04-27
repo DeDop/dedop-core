@@ -1,33 +1,38 @@
 from ..base_algorithm import BaseAlgorithm
 
 import numpy as np
+from numpy.fft import fft, fftshift
 from math import sqrt
 
 class RangeCompressionAlgorithm(BaseAlgorithm):
     def __call__(self, working_surface_location):
+        # calc. size after zero padding factor applied
         padded_size = self.zp_fact_range * self.chd.n_samples_sar
+        stack_size = working_surface_location.data_stack_size
 
-        self.beams_range_corr = np.zeros(
-            (working_surface_location.data_stack_size, padded_size)
+        # create empty output arrays
+        self.beam_range_compr = np.empty(
+            (stack_size, padded_size),
+            dtype=np.float64
+        )
+        self.beam_range_compr_iq = np.empty(
+            (stack_size, padded_size),
+            dtype=np.complex128
         )
 
-        for beam_index in range(working_surface_location.data_stack_size):
-            beam_zp = np.zeros(
-                (padded_size, self.chd.n_looks_stack), dtype=complex
+        for beam_index in range(stack_size):
+
+            # calc. FFT with zero-padding & orthogonal scaling
+            beam_fft = fft(
+                working_surface_location.beams_geo_corr[beam_index, :],
+                n=padded_size, norm="ortho"
             )
+            # apply shift
+            beam_shift = fftshift(beam_fft)
 
-            copy_len = len(working_surface_location.beams_geo_corr[beam_index, :])
-            beam_zp[:copy_len] = working_surface_location.beams_geo_corr[beam_index, :]
+            # store complex result
+            self.beam_range_compr_iq[beam_index, :] = beam_shift
 
-            beam_fft = np.fft.fft(beam_zp)
-
-            beam_shift = np.zeros(
-                (padded_size, self.chd.n_looks_stack), dtype=complex
-            )
-            half_len = (self.chd.n_samples_sar * self.zp_fact_range) / 2
-            beam_shift[:half_len] = beam_fft[half_len:]
-            beam_shift[half_len:] = beam_fft[:half_len]
-
-            self.beams_range_corr[beam_index, :] = np.abs(beam_shift) / sqrt(self.chd.n_samples_sar)
-
-        return self.beams_range_corr
+            # compute square modulus
+            self.beam_range_compr[beam_index, :] =\
+                np.abs(beam_shift) ** 2
