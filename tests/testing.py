@@ -3,8 +3,6 @@ import numpy as np
 from ast import literal_eval
 from collections import OrderedDict
 
-from dedop.proc.geo.lla2ecef import lla2ecef
-
 class TestDataLoader:
     _default_delim = '\t'
 

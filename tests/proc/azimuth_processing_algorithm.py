@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
@@ -10,17 +10,17 @@ from dedop.conf import CharacterisationFile, ConstantsFile
 
 
 class AzimuthProcessingAlgorithmTests(unittest.TestCase):
-    chd_file = "common/chd.json"
-    cst_file = "common/cst.json"
+    chd_file = "test_data/common/chd.json"
+    cst_file = "test_data/common/cst.json"
 
-    expected_01 = "proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
+    expected_01 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
                   "expected/expected.txt"
-    inputs_01 = "proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
+    inputs_01 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
                 "input/inputs.txt"
 
-    expected_02 = "proc/azimuth_processing_algorithm/azimuth_processing_algorithm_02/" \
+    expected_02 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_02/" \
                   "expected/expected.txt"
-    inputs_02 = "proc/azimuth_processing_algorithm/azimuth_processing_algorithm_02/" \
+    inputs_02 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_02/" \
                 "input/inputs.txt"
 
     def setUp(self):

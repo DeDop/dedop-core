@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
 from dedop.proc.sar.surface_location_data import SurfaceLocationData
@@ -14,28 +14,28 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
     Set of tests for the Geometry Corrections Algorithm
     """
     # set paths for constants files
-    cst_file = "common/cst.json"
-    chd_file = "common/chd.json"
+    cst_file = "test_data/common/cst.json"
+    chd_file = "test_data/common/chd.json"
 
     # set paths for input / expected files
-    inputs_01 = "proc/geometry_corrections_algorithm/" \
+    inputs_01 = "test_data/proc/geometry_corrections_algorithm/" \
                 "geometry_corrections_algorithm_01/" \
                 "input/inputs.txt"
-    expected_01 = "proc/geometry_corrections_algorithm/" \
+    expected_01 = "test_data/proc/geometry_corrections_algorithm/" \
                   "geometry_corrections_algorithm_01/" \
                   "expected/expected.txt"
 
-    inputs_02 = "proc/geometry_corrections_algorithm/" \
+    inputs_02 = "test_data/proc/geometry_corrections_algorithm/" \
                 "geometry_corrections_algorithm_02/" \
                 "input/inputs.txt"
-    expected_02 = "proc/geometry_corrections_algorithm/" \
+    expected_02 = "test_data/proc/geometry_corrections_algorithm/" \
                   "geometry_corrections_algorithm_02/" \
                   "expected/expected.txt"
 
-    inputs_03 = "proc/geometry_corrections_algorithm/" \
+    inputs_03 = "test_data/proc/geometry_corrections_algorithm/" \
                 "geometry_corrections_algorithm_03/" \
                 "input/inputs.txt"
-    expected_03 = "proc/geometry_corrections_algorithm/" \
+    expected_03 = "test_data/proc/geometry_corrections_algorithm/" \
                   "geometry_corrections_algorithm_03/" \
                   "expected/expected.txt"
 

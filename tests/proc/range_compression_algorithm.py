@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import RangeCompressionAlgorithm
 from dedop.proc.sar.surface_location_data import SurfaceLocationData
@@ -12,12 +12,12 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
     """
     Range compression algorithm tests
     """
-    chd_file = "common/chd.json"
-    cst_file = "common/cst.json"
+    chd_file = "test_data/common/chd.json"
+    cst_file = "test_data/common/cst.json"
 
-    inputs_01 = "proc/range_compression_algorithm/range_compression_algorithm_01/" \
+    inputs_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
                 "input/inputs.txt"
-    expected_01 = "proc/range_compression_algorithm/range_compression_algorithm_01/" \
+    expected_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
                   "expected/expected.txt"
 
     def setUp(self):

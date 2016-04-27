@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import StackingAlgorithm
 from dedop.io.input.packet import InstrumentSourcePacket
@@ -10,12 +10,12 @@ from dedop.proc.sar.surface_location_data import SurfaceLocationData
 
 
 class StackingAlgorithmTests(unittest.TestCase):
-    chd_file = "common/chd.json"
-    cst_file = "common/cst.json"
+    chd_file = "test_data/common/chd.json"
+    cst_file = "test_data/common/cst.json"
 
-    inputs_01 = "proc/stacking_algorithm/stacking_algorithm_01/" \
+    inputs_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                 "input/input.txt"
-    expected_01 = "proc/stacking_algorithm/stacking_algorithm_01/" \
+    expected_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                   "expected/expected.txt"
 
     def setUp(self):

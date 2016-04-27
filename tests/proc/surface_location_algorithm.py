@@ -4,25 +4,26 @@ from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
 from dedop.proc.sar.surface_location_data import SurfaceLocationData
 from dedop.conf import ConstantsFile, CharacterisationFile
 from dedop.io.input.packet import InstrumentSourcePacket
-from ..testing import TestDataLoader, MockObject
+
+from tests.testing import TestDataLoader
 
 class SurfaceLocationAlgorithmTests(unittest.TestCase):
-    constants_file = "common/cst.json"
-    characterisation_file = "common/chd.json"
+    constants_file = "test_data/common/cst.json"
+    characterisation_file = "test_data/common/chd.json"
 
-    expected_01 = "proc/surface_location_algorithm/surface_location_algorithm_01/expected/"\
+    expected_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/expected/"\
                   "Hr_Algorithms.Surface_Location_Algorithm_Processing_01.Expected_01.txt"
-    input_01 = "proc/surface_location_algorithm/surface_location_algorithm_01/input/"\
+    input_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/input/"\
                "inputs.txt"
 
-    expected_02 = "proc/surface_location_algorithm/surface_location_algorithm_02/expected/" \
+    expected_02 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_02/expected/" \
                   "Hr_Algorithms.Surface_Location_Algorithm_Processing_02.Expected_01.txt"
-    input_02 = "proc/surface_location_algorithm/surface_location_algorithm_02/input/" \
+    input_02 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_02/input/" \
                "inputs.txt"
 
-    expected_03 = "proc/surface_location_algorithm/surface_location_algorithm_03/expected/" \
+    expected_03 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_03/expected/" \
                   "Hr_Algorithms.Surface_Location_Algorithm_Processing_03.Expected_01.txt"
-    input_03 = "proc/surface_location_algorithm/surface_location_algorithm_03/input/" \
+    input_03 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_03/input/" \
                "inputs.txt"
 
     def setUp(self):

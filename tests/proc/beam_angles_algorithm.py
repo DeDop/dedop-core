@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ..testing import TestDataLoader, MockObject
+from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
 from dedop.proc.sar.surface_location_data import SurfaceLocationData
@@ -9,17 +9,17 @@ from dedop.io.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
 
 class BeamAnglesAlgorithmTests(unittest.TestCase):
-    cst_file = "common/cst.json"
-    chd_file = "common/chd.json"
+    cst_file = "test_data/common/cst.json"
+    chd_file = "test_data/common/chd.json"
 
-    input_01 = "proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
+    input_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
                "input/inputs.txt"
-    expected_01 = "proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
+    expected_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
                   "expected/expected.txt"
 
-    input_02 = "proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
+    input_02 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
                "input/inputs.txt"
-    expected_02 = "proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
+    expected_02 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
                   "expected/expected.txt"
 
 
