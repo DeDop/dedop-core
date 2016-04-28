@@ -6,3 +6,4 @@ from .azimuth_processing_algorithm import AzimuthProcessingAlgorithmTests
 from .stacking_algorithm import StackingAlgorithmTests
 from .geometry_corrections_algorithm import GeometryCorrectionsAlgorithmTests
 from .range_compression_algorithm import RangeCompressionAlgorithmTests
+from .stack_masking_algorithm import StackMaskingAlgorithmTests

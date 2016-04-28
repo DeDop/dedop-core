@@ -404,7 +404,7 @@
 		"units": null
 	},
 	"i_sample_start_chd": {
-		"value": 22,
+		"value": 3,
 		"description": "The RMC ASIC truncates the time domain burst and keeps only the range gates with indexes going from (i_sample_start_chd) to (i_sample_start_chd + N_samples_sar_chd/2-1)",
 		"units": null
 	}
