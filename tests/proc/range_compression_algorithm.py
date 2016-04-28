@@ -95,7 +95,7 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
                     )
                 else:
                     rel_err = abs((expected_val - actual_val) / expected_val)
-                    self.assertLess(rel_err, 1e-10, msg=pos)
+                    self.assertLess(rel_err, 1e-9, msg=pos)
 
                 expected_val = expected["beams_range_compr_q"][expected_index]
                 actual_val = beam_range_compr_q[stack_index, sample_index]
@@ -108,4 +108,4 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
                     )
                 else:
                     rel_err = abs((expected_val - actual_val) / expected_val)
-                    self.assertLess(rel_err, 1e-10, msg=pos)
+                    self.assertLess(rel_err, 1e-9, msg=pos)
