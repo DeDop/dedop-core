@@ -3,8 +3,6 @@ from ..surface_location_data import SurfaceType
 from ....util.parameter import Parameter
 
 import numpy as np
-from math import ceil
-from operator import mul, truediv
 
 @Parameter("rmc_margin", default_value=6)
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
@@ -18,21 +16,27 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         stack_mask, stack_mask_vector = self.combine_masks(
             geom_mask, ambig_mask, rmc_mask
         )
-        working_surface_location.beams_masked = self.apply_mask(working_surface_location, stack_mask)
-        working_surface_location.stack_mask_vector = stack_mask_vector
+        self.beams_masked = self.apply_mask(working_surface_location, stack_mask)
+        self.stack_mask_vector = stack_mask_vector
 
     def compute_rmc_mask(self, working_surface_location):
         """
         Computes the RMC mask, if there is an RMC burst in the stack
         """
+        sample_start_max = self.chd.n_samples_sar // 2 + 1
+        if 1 <= self.chd.i_sample_start <= sample_start_max:
+            i_sample_start = self.chd.i_sample_start - 1
+        else:
+            i_sample_start = 0
+
 
         if working_surface_location.surface_type == SurfaceType.surface_rmc:
             rmc_beam_mask = np.zeros(
                 (self.chd.n_samples_sar * self.zp_fact_range)
             )
 
-            start = (self.chd.i_sample_start - 1) * self.zp_fact_range
-            end = (self.chd.i_sample_start - 1 + self.chd.n_samples_sar / 2
+            start = i_sample_start * self.zp_fact_range
+            end = (i_sample_start + self.chd.n_samples_sar // 2
                    - self.rmc_margin) * self.zp_fact_range
             rmc_beam_mask[start:end] = 1.
 
@@ -42,7 +46,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
     def compute_geometry_mask(self, working_surface_location):
         geom_mask = np.zeros(
-            (self.chd.n_samples_sar * self.zp_fact_range, self.n_looks_stack)
+            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
         )
 
         for beam_index in range(working_surface_location.data_stack_size):
@@ -50,7 +54,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
                     working_surface_location.slant_range_corrections[beam_index] +\
                     working_surface_location.win_delay_corrections[beam_index]
 
-            shift_coarse = ceil(shift)
+            shift_coarse = np.round(shift)
 
             if shift_coarse > 0:
                 start = shift_coarse * self.zp_fact_range
@@ -66,7 +70,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
     def compute_ambiguity_mask(self, working_surface_location):
         ambi_mask = np.zeros(
-            (self.chd.n_samples_sar * self.zp_fact_range, self.n_looks_stack)
+            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
         )
         ## TODO: to be defined
         ambi_mask[:, :] = 1.
@@ -74,8 +78,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         return ambi_mask
 
     def combine_masks(self, geom_mask, ambig_mask, rmc_mask=None):
-        beam_size, stack_size = geom_mask.shape
-        stack_mask = np.zeros((beam_size, stack_size))
+        stack_size, beam_size = geom_mask.shape
+        stack_mask = np.zeros((stack_size, beam_size))
         stack_mask_vector = np.zeros((stack_size))
 
         for beam_index in range(stack_size):

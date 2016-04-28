@@ -587,6 +587,66 @@ class SurfaceLocationData:
     def beams_geo_corr(self):
         del self["beams_geo_corr"]
 
+    @property
+    def doppler_corrections(self):
+        """
+        The doppler_corrections array
+        """
+        return self["doppler_corrections"]
+
+    @doppler_corrections.setter
+    def doppler_corrections(self, value):
+        self["doppler_corrections"] = value
+
+    @doppler_corrections.deleter
+    def doppler_corrections(self):
+        del self["doppler_corrections"]
+
+    @property
+    def slant_range_corrections(self):
+        """
+        The slant_range_corrections array
+        """
+        return self["slant_range_corrections"]
+
+    @slant_range_corrections.setter
+    def slant_range_corrections(self, value):
+        self["slant_range_corrections"] = value
+
+    @slant_range_corrections.deleter
+    def slant_range_corrections(self):
+        del self["slant_range_corrections"]
+
+    @property
+    def win_delay_corrections(self):
+        """
+        The win_delay_corrections array
+        """
+        return self["win_delay_corrections"]
+
+    @win_delay_corrections.setter
+    def win_delay_corrections(self, value):
+        self["win_delay_corrections"] = value
+
+    @win_delay_corrections.deleter
+    def win_delay_corrections(self):
+        del self["win_delay_corrections"]
+
+    @property
+    def beams_range_compr(self):
+        """
+        the range-compressed beams array
+        """
+        return self["beams_range_compr"]
+
+    @beams_range_compr.setter
+    def beams_range_compr(self, value):
+        self["beams_range_compr"] = value
+
+    @beams_range_compr.deleter
+    def beams_range_compr(self):
+        del self["beams_range_compr"]
+
 
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num
@@ -627,4 +687,5 @@ class SurfaceLocationData:
 
 class SurfaceType(Enum):
     surface_null = 0
-    surface_rmc = 1
+    surface_raw = 1
+    surface_rmc = 2
