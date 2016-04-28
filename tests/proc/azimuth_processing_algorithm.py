@@ -39,8 +39,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         input_data = TestDataLoader(self.inputs_01, delim=' ')
 
         # construct complex waveform
-        waveform_shape = (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst)
-            #(self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
+        waveform_shape = (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
         wfm_i = np.reshape(input_data["wfm_cor_sar_i"], waveform_shape)
         wfm_q = np.reshape(input_data["wfm_cor_sar_q"], waveform_shape)
         wv_len = input_data["wv_length_ku"]
@@ -69,16 +68,45 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         # execute azimuth processing algorithm
         self.azimuth_processing_algorithm(isp, wv_len, method=proc_method)
 
+        beams_focused = self.azimuth_processing_algorithm.beams_focused
+
         # construct focused beams waveform
         wfm_i = np.reshape(expected["beams_focused_i"], waveform_shape)
         wfm_q = np.reshape(expected["beams_focused_q"], waveform_shape)
-        expected_waveform = wfm_i + 1j * wfm_q
 
-        self.assertTrue(
-            np.allclose(self.azimuth_processing_algorithm.beams_focused,
-                        expected_waveform),
-            msg="beams_focused does not match expected waveform"
-        )
+        for pulse_index in range(self.chd.n_ku_pulses_burst):
+            for sample_index in range(self.chd.n_samples_sar):
+
+                pos = "\nstack: {}/{}, sample: {}/{}".format(
+                    pulse_index, self.chd.n_ku_pulses_burst,
+                    sample_index, self.chd.n_samples_sar
+                )
+
+                expected_val = wfm_i[pulse_index, sample_index]
+                actual_val = beams_focused[pulse_index, sample_index].real
+
+                if expected_val == 0:
+                    self.assertEqual(
+                        expected_val,
+                        actual_val,
+                        msg=pos
+                    )
+                else:
+                    rel_err = abs((expected_val - actual_val) / expected_val)
+                    self.assertLess(rel_err, 2e-10, msg=pos)
+
+                expected_val = wfm_q[pulse_index, sample_index]
+                actual_val = beams_focused[pulse_index, sample_index].imag
+
+                if expected_val == 0:
+                    self.assertEqual(
+                        expected_val,
+                        actual_val,
+                        msg=pos
+                    )
+                else:
+                    rel_err = abs((expected_val - actual_val) / expected_val)
+                    self.assertLess(rel_err, 2e-10, msg=pos)
 
     def test_azimuth_processing_algorithm_02(self):
         """
@@ -91,8 +119,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         input_data = TestDataLoader(self.inputs_02, delim=' ')
 
         # construct complex waveform
-        waveform_shape = (self.chd.n_samples_sar, self.chd.n_ku_pulses_burst)
-        # (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
+        waveform_shape = (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
         wfm_i = np.reshape(input_data["wfm_cor_sar_i"], waveform_shape)
         wfm_q = np.reshape(input_data["wfm_cor_sar_q"], waveform_shape)
         wv_len = input_data["wv_length_ku"]
@@ -121,13 +148,42 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         # execute azimuth processing algorithm
         self.azimuth_processing_algorithm(isp, wv_len, method=proc_method)
 
+        beams_focused = self.azimuth_processing_algorithm.beams_focused
+
         # construct focused beams waveform
         wfm_i = np.reshape(expected["beams_focused_i"], waveform_shape)
         wfm_q = np.reshape(expected["beams_focused_q"], waveform_shape)
-        expected_waveform = wfm_i + 1j * wfm_q
 
-        self.assertTrue(
-            np.allclose(self.azimuth_processing_algorithm.beams_focused,
-                        expected_waveform),
-            msg="beams_focused does not match expected waveform"
-        )
+        for pulse_index in range(self.chd.n_ku_pulses_burst):
+            for sample_index in range(self.chd.n_samples_sar):
+
+                pos = "\nstack: {}/{}, sample: {}/{}".format(
+                    pulse_index, self.chd.n_ku_pulses_burst,
+                    sample_index, self.chd.n_samples_sar
+                )
+
+                expected_val = wfm_i[pulse_index, sample_index]
+                actual_val = beams_focused[pulse_index, sample_index].real
+
+                if expected_val == 0:
+                    self.assertEqual(
+                        expected_val,
+                        actual_val,
+                        msg=pos
+                    )
+                else:
+                    rel_err = abs((expected_val - actual_val) / expected_val)
+                    self.assertLess(rel_err, 1e-10, msg=pos)
+
+                expected_val = wfm_q[pulse_index, sample_index]
+                actual_val = beams_focused[pulse_index, sample_index].imag
+
+                if expected_val == 0:
+                    self.assertEqual(
+                        expected_val,
+                        actual_val,
+                        msg=pos
+                    )
+                else:
+                    rel_err = abs((expected_val - actual_val) / expected_val)
+                    self.assertLess(rel_err, 1e-10, msg=pos)
