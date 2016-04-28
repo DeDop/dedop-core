@@ -2,11 +2,11 @@ import unittest
 import os
 
 from dedop.conf import ConfigurationFile
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 
 class TestCNF(unittest.TestCase):
-    _folder = os.path.join("conf", "test_cnf")
+    _folder = os.path.join("test_data", "conf", "test_cnf")
 
     _expected_file = os.path.join(
             _folder, "expected.txt"

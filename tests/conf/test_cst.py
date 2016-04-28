@@ -2,10 +2,10 @@ import unittest
 import os
 
 from dedop.conf import ConstantsFile
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 class TestCST(unittest.TestCase):
-    _folder = os.path.join("conf", "test_cst")
+    _folder = os.path.join("test_data", "conf", "test_cst")
 
     _expected_file = os.path.join(
             _folder, "expected.txt"

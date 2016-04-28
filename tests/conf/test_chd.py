@@ -2,10 +2,10 @@ import unittest
 import os
 
 from dedop.conf import CharacterisationFile
-from ..testing import TestDataLoader
+from tests.testing import TestDataLoader
 
 class TestCHD(unittest.TestCase):
-    _folder = os.path.join("conf", "test_chd")
+    _folder = os.path.join("test_data", "conf", "test_chd")
 
     _expected_file = os.path.join(
             _folder, "expected.txt"
