@@ -570,13 +570,15 @@ class InstrumentSourcePacket:
         """
         the trend direction of the ISP's beam angles
         """
-        if self._beam_angles_trend is None:
-            return AttributeError("'beam_angles_trend' not set")
-        return self._beam_angles_trend
+        return self["beam_angles_trend"]
+
+    @beam_angles_trend.setter
+    def beam_angles_trend(self, value):
+        self["beam_angles_trend"] = value
 
     @beam_angles_trend.deleter
     def beam_angles_trend(self):
-        self._beam_angles_trend = None
+        del self["beam_angles_trend"]
 
     @property
     def waveform_cor_sar(self):
@@ -679,13 +681,14 @@ class InstrumentSourcePacket:
         """
 
         beam_angles_list_size = len(self.beam_angles_list)
+
         if beam_angles_list_size == self.chd.n_ku_pulses_burst:
-            self._beam_angles_trend = 0
+            self.beam_angles_trend = 0
             return
 
         if prev_beam_angles_list_size == -1 or beam_angles_list_size > prev_beam_angles_list_size:
-            self._beam_angles_trend = 1
+            self.beam_angles_trend = 1
         elif beam_angles_list_size < prev_beam_angles_list_size:
-            self._beam_angles_trend = -1
+            self.beam_angles_trend = -1
         else:
-            self._beam_angles_trend = prev_beam_angles_trend
+            self.beam_angles_trend = prev_beam_angles_trend
