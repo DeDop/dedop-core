@@ -1,9 +1,9 @@
-from .conf import *
-from .cli import *
-from .gui import *
-from .io import *
-from .proc import *
-from .util import *
+from tests.conf import *
+from tests.cli import *
+from tests.gui import *
+from tests.io import *
+from tests.proc import *
+from tests.util import *
 
 import unittest
 import os
