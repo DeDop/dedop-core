@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
 class MultilookingAlgorithm(BaseAlgorithm):
 
-    def __call___(self, working_surface_location):
+    def __call__(self, working_surface_location):
         """
 
         :param working_surface_location:
