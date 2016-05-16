@@ -37,6 +37,7 @@ class L1BProcessor:
         self.geometry_corrections_algorithm = GeometryCorrectionsAlgorithm(self.chd, self.cst)
         self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
         self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
+        self.multilooking_algorithm = MultilookingAlgorithm(self.chd, self.cst)
 
     def process(self):
         """
@@ -81,6 +82,7 @@ class L1BProcessor:
                 self.geometry_corrections(working_loc, stack)
                 self.range_compression(working_loc)
                 self.stack_masking(working_loc)
+                self.multilooking(working_loc)
 
             if not self.surf_locs:
                 running = False
@@ -110,6 +112,9 @@ class L1BProcessor:
 
     def stack_masking(self, working_surface_location):
         self.stack_masking_algorithm(working_surface_location)
+
+    def multilooking(self, working_surface_location):
+        self.multilooking_algorithm(working_surface_location)
 
     def new_surface(self, loc_data, first=False):
         if first:

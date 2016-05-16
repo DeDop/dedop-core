@@ -5,10 +5,11 @@ from .stacking import StackingAlgorithm
 from .surface_locations import SurfaceLocationAlgorithm
 from .range_compression import RangeCompressionAlgorithm
 from .stack_masking import StackMaskingAlgorithm
+from .multilooking import MultilookingAlgorithm
 
 __all__ = [
     "AzimuthProcessingAlgorithm", "BeamAnglesAlgorithm",
     "GeometryCorrectionsAlgorithm", "StackingAlgorithm",
     "SurfaceLocationAlgorithm", "RangeCompressionAlgorithm",
-    "StackMaskingAlgorithm"
+    "StackMaskingAlgorithm", "MultilookingAlgorithm"
 ]
