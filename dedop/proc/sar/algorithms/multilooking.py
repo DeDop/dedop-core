@@ -1,12 +1,8 @@
 from ..base_algorithm import BaseAlgorithm
-# from ..surface_location_data import SurfaceType
 from ....util.parameter import Parameter
 
 import numpy as np
 from scipy.optimize import curve_fit
-from math import sqrt
-
-import matplotlib.pyplot as plt
 
 
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
@@ -34,7 +30,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         :param working_surface_location:
         :return:
         """
-        beam_power = np.zeros((working_surface_location.stack_size), dtype=np.float64)
+        beam_power = np.zeros((working_surface_location.data_stack_size), dtype=np.float64)
 
         max_beam_power = 0
 
@@ -49,7 +45,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
 
         beam_length = self.chd.n_samples_sar / 2 * self.zp_fact_range
-        for beam_index in range(working_surface_location.stack_size):
+        for beam_index in range(working_surface_location.data_stack_size):
             beam_power[beam_index] =\
                 np.sum(
                     working_surface_location.beams_masked[beam_index, :beam_length]
@@ -60,7 +56,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         # only the central 249 beams will be used in the gaussian fitting:
         # the doppler-central beam, 124 to the left and 124 to the right.
         last_right_beam = min(min_beam_angle_complementary_index + 124,
-                              working_surface_location.stack_size - 1)
+                              working_surface_location.data_stack_size - 1)
         first_left_beam = max(min_beam_angle_complementary_index - 124,
                               0)
         # the parameters and arrays for the gaussian fitting
@@ -82,20 +78,25 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
         x = np.arange(n_samples_fitting)
 
-        mean = np.mean(x * beam_power_center)
-        sigma = sqrt(
-            np.mean(beam_power_center * (x - mean) ** 2)
+        def gauss(x, a, b, c):
+            return a * np.exp(-(x - b) ** 2 / (c ** 2))
+
+        fit_params_l, _ = curve_fit(
+            gauss, look_angles_surf_center, beam_power_center
+        )
+        self.look_angle_centre = fit_params_l[1]
+        self.stack_std = fit_params_l[2] / 2
+
+        fit_params_p, _ = curve_fit(
+            gauss, pointing_angles_surf_center, beam_power_center
+        )
+        self.pointing_angle_centre = fit_params_p[1]
+
+        fit_params, _ = curve_fit(
+            gauss, x, beam_power_center
         )
 
-        def gauss(x, a, x0, sigma):
-            return a * -(x - x0) ** 2 / (2 * sigma ** 2)
-
-        popt, pcov = curve_fit(
-            gauss, x, beam_power_center, p0=[1, mean, sigma]
-        )
-
-        power_fitted = gauss(x, *popt)
-        plt.plot(x, beam_power_center, x, power_fitted)
+        power_fitted = gauss(x, *fit_params)
 
         power_fitted_mean = np.mean(
             power_fitted
@@ -130,14 +131,14 @@ class MultilookingAlgorithm(BaseAlgorithm):
         n_samples_max = self.chd.n_samples_sar * self.zp_fact_range
 
         self.waveform_multilooked = np.zeros(
-            (n_samples_max,), dtype=complex
+            (n_samples_max,), dtype=np.float64
         )
         self.sample_counter = np.zeros(
             (n_samples_max,), dtype=int
         )
 
 
-        for beam_index in range(working_surface_location.stack_size):
+        for beam_index in range(working_surface_location.data_stack_size):
 
             if working_surface_location.stack_mask_vector[beam_index] != 0:
 
@@ -154,7 +155,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
                 self.waveform_multilooked[sample_index] += working_surface_location.beams_masked[beam_index, sample_index]
                 self.sample_counter[sample_index] += 1
 
-        self.waveform_multilooked = self.sample_counter / self.waveform_multilooked
+        self.waveform_multilooked /= self.sample_counter# / self.waveform_multilooked
 
         self.start_look_angle =\
             working_surface_location.look_angles_surf[start_beam_index]

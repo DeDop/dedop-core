@@ -647,6 +647,95 @@ class SurfaceLocationData:
     def beams_range_compr(self):
         del self["beams_range_compr"]
 
+    @property
+    def beams_masked(self):
+        """
+        the result of the masking applied to the beams
+        """
+        return self['beams_masked']
+
+    @beams_masked.setter
+    def beams_masked(self, value):
+        self['beams_masked'] = value
+
+    @beams_masked.deleter
+    def beams_masked(self):
+        del self['beams_masked']
+
+    @property
+    def look_angles_surf(self):
+        """
+        the look_angles_surf property
+        """
+        return self['look_angles_surf']
+
+    @look_angles_surf.setter
+    def look_angles_surf(self, value):
+        self['look_angles_surf'] = value
+
+    @look_angles_surf.deleter
+    def look_angles_surf(self):
+        del self['look_angles_surf']
+
+    @property
+    def pointing_angles_surf(self):
+        """
+        the pointing_angles_surf property
+        """
+        return self['pointing_angles_surf']
+
+    @pointing_angles_surf.setter
+    def pointing_angles_surf(self, value):
+        self['pointing_angles_surf'] = value
+
+    @pointing_angles_surf.deleter
+    def pointing_angles_surf(self):
+        del self['pointing_angles_surf']
+
+    @property
+    def stack_mask_vector(self):
+        """
+        the stack_mask_vector property
+        """
+        return self['stack_mask_vector']
+
+    @stack_mask_vector.setter
+    def stack_mask_vector(self, value):
+        self['stack_mask_vector'] = value
+
+    @stack_mask_vector.deleter
+    def stack_mask_vector(self):
+        del self['stack_mask_vector']
+
+    @property
+    def doppler_angles_surf(self):
+        """
+        the doppler_angles_surf property
+        """
+        return self['doppler_angles_surf']
+
+    @doppler_angles_surf.setter
+    def doppler_angles_surf(self, value):
+        self['doppler_angles_surf'] = value
+
+    @doppler_angles_surf.deleter
+    def doppler_angles_surf(self):
+        del self['doppler_angles_surf']
+
+    @property
+    def stack_mask(self):
+        """
+        the stack_mask property
+        """
+        return self['stack_mask']
+
+    @stack_mask.setter
+    def stack_mask(self, value):
+        self['stack_mask'] = value
+
+    @stack_mask.deleter
+    def stack_mask(self):
+        del self['stack_mask']
 
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num

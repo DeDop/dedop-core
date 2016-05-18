@@ -61,7 +61,7 @@ class MultilookingAlgorithmTests(unittest.TestCase):
         :param expected:
         :return:
         """
-        zp_fact_range = input_data['zp_fact_range']
+        zp_fact_range = input_data['zp_fact_range_cnf']
         data_stack_size = input_data['data_stack_size']
 
         input_stack_mask_vector = input_data['stack_mask_vector']
@@ -78,7 +78,7 @@ class MultilookingAlgorithmTests(unittest.TestCase):
 
         working_location = SurfaceLocationData(
             self.cst, self.chd,
-            stacK_size=data_stack_size,
+            data_stack_size=data_stack_size,
             beam_angles_surf=input_data['beam_angles_surf'],
             look_angles_surf=input_data['look_angles_surf'],
             pointing_angles_surf=input_data['pointing_angles_surf'],
@@ -87,6 +87,10 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             stack_mask=stack_mask,
             beams_masked=beams_masked
         )
+        self.multilooking_algorithm.zp_fact_range =\
+            input_data['zp_fact_range_cnf']
+        self.multilooking_algorithm.flag_avoid_zeros_in_multilooking =\
+            input_data['flag_avoid_zeros_in_multilooking']
         self.multilooking_algorithm(working_location)
 
         expected_waveform = expected['wfm_ml_sar']
@@ -108,16 +112,12 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             self.multilooking_algorithm.stack_std
         )
         self.zero_float_assertion(
-            expected['stack_width'],
-            self.multilooking_algorithm.stack_width
+            expected['stack_look_angle_centre'],
+            self.multilooking_algorithm.look_angle_centre
         )
         self.zero_float_assertion(
-            expected['stack_look_angle_center'],
-            self.multilooking_algorithm.look_angle_center
-        )
-        self.zero_float_assertion(
-            expected['stack_pointing_angle_center'],
-            self.multilooking_algorithm.pointing_angle_center
+            expected['stack_pointing_angle_centre'],
+            self.multilooking_algorithm.pointing_angle_centre
         )
         # look angle
         self.assertEqual(
