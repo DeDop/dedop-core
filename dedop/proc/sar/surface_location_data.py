@@ -737,6 +737,21 @@ class SurfaceLocationData:
     def stack_mask(self):
         del self['stack_mask']
 
+    @property
+    def range_sat_surf(self):
+        """
+        the range_sat_surf property
+        """
+        return self['range_sat_surf']
+
+    @range_sat_surf.setter
+    def range_sat_surf(self, value):
+        self['range_sat_surf'] = value
+
+    @range_sat_surf.deleter
+    def range_sat_surf(self):
+        del self['range_sat_surf']
+
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num
         self._data = OrderedDict()
