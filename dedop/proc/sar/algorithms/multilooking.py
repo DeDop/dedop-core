@@ -8,6 +8,25 @@ from scipy.optimize import curve_fit
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
 class MultilookingAlgorithm(BaseAlgorithm):
 
+    def __init__(self, chd, cst):
+        super().__init__(chd, cst)
+
+        self.start_look_angle = 0
+        self.stop_look_angle = 0
+        self.start_doppler_angle = 0
+        self.stop_doppler_angle = 0
+        self.start_pointing_angle = 0
+        self.stop_pointing_angle = 0
+        self.look_angle_centre = 0
+        self.pointing_angle_centre = 0
+
+        self.stack_std = 0
+        self.stack_skewness = 0
+        self.stack_kurtosis = 0
+
+        self.n_beams_start_stop = 0
+        self.n_beams_multilooking = 0
+
     def __call__(self, working_surface_location):
         """
 
@@ -126,7 +145,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         start_beam_index = None
         stop_beam_index = None
 
-        self.n_beams_contributing = 0
+        self.n_beams_multilooking = 0
 
         n_samples_max = self.chd.n_samples_sar * self.zp_fact_range
 
@@ -137,16 +156,17 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (n_samples_max,), dtype=int
         )
 
-
         for beam_index in range(working_surface_location.data_stack_size):
 
             if working_surface_location.stack_mask_vector[beam_index] != 0:
 
-                self.n_beams_contributing += 1
+                self.n_beams_multilooking += 1
 
                 if start_beam_index is None:
                     start_beam_index = beam_index
                 stop_beam_index = beam_index
+
+            else: continue
 
             for sample_index in range(self.chd.n_samples_sar * self.zp_fact_range):
                 if self.flag_avoid_zeros_in_multilooking:
@@ -156,6 +176,8 @@ class MultilookingAlgorithm(BaseAlgorithm):
                 self.sample_counter[sample_index] += 1
 
         self.waveform_multilooked /= self.sample_counter# / self.waveform_multilooked
+
+        self.n_beams_start_stop = stop_beam_index - start_beam_index + 1
 
         self.start_look_angle =\
             working_surface_location.look_angles_surf[start_beam_index]
@@ -171,3 +193,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
             working_surface_location.pointing_angles_surf[start_beam_index]
         self.stop_pointing_angle = \
             working_surface_location.pointing_angles_surf[stop_beam_index]
+
+        self.stack_mask_vector_start_stop = np.zeros(
+            (self.n_looks_stack,),
+            dtype=working_surface_location.stack_mask_vector.dtype
+        )
+        self.stack_mask_vector_start_stop[:self.n_beams_start_stop] =\
+            working_surface_location.stack_mask_vector[start_beam_index:stop_beam_index+1]

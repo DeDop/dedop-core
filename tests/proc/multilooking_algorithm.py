@@ -91,6 +91,8 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             input_data['zp_fact_range_cnf']
         self.multilooking_algorithm.flag_avoid_zeros_in_multilooking =\
             input_data['flag_avoid_zeros_in_multilooking']
+        self.multilooking_algorithm.n_looks_stack =\
+            input_data['n_looks_stack_cnf']
         self.multilooking_algorithm(working_location)
 
         expected_waveform = expected['wfm_ml_sar']
@@ -148,6 +150,17 @@ class MultilookingAlgorithmTests(unittest.TestCase):
         )
         # beams contributing
         self.assertEqual(
-            expected['n_beams_contributing'],
-            self.multilooking_algorithm.n_beams_contributing
+            expected['n_beams_multilooking'],
+            self.multilooking_algorithm.n_beams_multilooking
+        )
+        self.assertEqual(
+            expected['n_beams_start_stop'],
+            self.multilooking_algorithm.n_beams_start_stop
+        )
+        for expect, actual in zip(expected['stack_mask_vector_start_stop'],
+                                  self.multilooking_algorithm.stack_mask_vector_start_stop):
+            self.assertEqual(expect, actual)
+        self.assertEqual(
+            len(expected['stack_mask_vector_start_stop']),
+            len(self.multilooking_algorithm.stack_mask_vector_start_stop)
         )
