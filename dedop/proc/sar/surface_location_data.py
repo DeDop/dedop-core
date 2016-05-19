@@ -463,6 +463,21 @@ class SurfaceLocationData:
         del self["stack_all_beams_indices"]
 
     @property
+    def stack_all_beams_indices_abs(self):
+        """
+        the stack_all_beams_indices_abs property of the surface location
+        """
+        return self["stack_all_beams_indices_abs"]
+
+    @stack_all_beams_indices_abs.setter
+    def stack_all_beams_indices_abs(self, value):
+        self["stack_all_beams_indices_abs"] = value
+
+    @stack_all_beams_indices_abs.deleter
+    def stack_all_beams_indices_abs(self):
+        del self["stack_all_beams_indices_abs"]
+
+    @property
     def stack_all_bursts(self):
         """
         the stack_all_bursts property of the surface location
@@ -756,6 +771,8 @@ class SurfaceLocationData:
         self._surface_counter = surf_num
         self._data = OrderedDict()
         self._data["surface_type"] = SurfaceType.surface_null
+        self.stack_all_beams_indices = []
+        self.stack_all_beams_indices_abs = []
 
         for values_group in dicts:
             self._data.update(values_group)
@@ -788,6 +805,19 @@ class SurfaceLocationData:
         self.surf_sat_vector =\
             np.asarray(self.ecef_surf, dtype=np.float64) -\
             np.asarray(self.ecef_sat,  dtype=np.float64)
+
+    def add_stack_beam_index(self, beam_index, beam_angle_trend, beam_angles_list_size):
+        self.stack_all_beams_indices.append(beam_index)
+
+        if beam_angle_trend == 1:
+            self.stack_all_beams_indices_abs.append(
+                beam_index + self.chd.n_ku_pulses_burst -\
+                    beam_angles_list_size - self.chd.n_ku_pulses_burst // 2
+            )
+        else:
+            self.stack_all_beams_indices_abs.append(
+                beam_index - self.chd.n_ku_pulses_burst // 2
+            )
 
 class SurfaceType(Enum):
     surface_null = 0

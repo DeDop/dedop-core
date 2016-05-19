@@ -1,7 +1,27 @@
 import numpy as np
 from ..base_algorithm import BaseAlgorithm
 
+from ..surface_location_data import SurfaceType
+from ....io.input.packet import IspPid
+
 class StackingAlgorithm(BaseAlgorithm):
+
+    def __init__(self, chd, cst):
+        super().__init__(chd, cst)
+
+        self.data_stack_size = 0
+        self.surface_type = SurfaceType.surface_null
+        self.closest_burst_index = 0
+
+        self.stack_bursts = None
+        self.beams_surf = None
+        self.beam_angles_surf = None
+        self.t0_surf = None
+        self.doppler_angles_surf = None
+        self.look_angles_surf = None
+        self.pointing_angles_surf = None
+        self.look_index_surf = None
+        self.look_counter_surf = None
 
     def __call__(self, working_surface_location):
         """
@@ -70,8 +90,15 @@ class StackingAlgorithm(BaseAlgorithm):
         self.pointing_angles_surf = np.zeros(
             (self.n_looks_stack,), dtype=np.float64
         )
+        self.look_index_surf = -128 * np.ones(
+            (self.n_looks_stack,), dtype=np.int32
+        )
+        self.look_counter_surf = np.zeros(
+            (self.n_looks_stack,), dtype=np.int32
+        )
 
-        # rmc_burst_in_stack = False
+        rmc_burst_in_stack = False
+        closest_burst_beam_angle = None
 
         for stack_index in range(stack_all_size - stack_elements_to_remove):
             stack_beam_index =\
@@ -87,6 +114,9 @@ class StackingAlgorithm(BaseAlgorithm):
             look_angle_beam = self.cst.pi / 2. + doppler_angle_beam - beam_angle
 
             pointing_angle_beam = look_angle_beam - stack_burst.pitch_sar
+            look_index_beam =\
+                working_surface_location.stack_all_beams_indices_abs[stack_index + stack_begin_offset]
+            look_counter_beam = stack_burst.seq_count_sar
 
             self.stack_bursts[stack_index] = stack_burst
             self.beams_surf[stack_index, :] = beam_focused
@@ -95,7 +125,19 @@ class StackingAlgorithm(BaseAlgorithm):
             self.doppler_angles_surf[stack_index] = doppler_angle_beam
             self.look_angles_surf[stack_index] = look_angle_beam
             self.pointing_angles_surf[stack_index] = pointing_angle_beam
+            self.look_index_surf[stack_index] = look_index_beam
+            self.look_counter_surf[stack_index] = look_counter_beam
 
-            # TODO: implement this once surface types are done
-            # if not rmc_burst_in_stack and stack_burst.isp_pid == IspPid.isp_echo_rmc:
-            #     rmc_burst_in_stack = True
+            if not rmc_burst_in_stack and stack_burst.isp_pid == IspPid.isp_echo_rmc:
+                rmc_burst_in_stack = True
+
+            burst_beam_angle = abs(beam_angle - self.cst.pi / 2.)
+            if closest_burst_beam_angle is None or\
+                burst_beam_angle < closest_burst_beam_angle:
+                closest_burst_beam_angle = burst_beam_angle
+                self.closest_burst_index = stack_index
+
+        if rmc_burst_in_stack:
+            self.surface_type = SurfaceType.surface_rmc
+        else:
+            self.surface_type = SurfaceType.surface_raw

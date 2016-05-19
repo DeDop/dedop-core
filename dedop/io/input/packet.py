@@ -1,7 +1,21 @@
 from ...proc.geo import lla2ecef
 
 from collections import OrderedDict
+from enum import Enum
+
 import numpy as np
+
+class IspPid(Enum):
+    isp_null = 0
+    isp_cal1_instr = 1
+    isp_cal1_lrm = 2
+    isp_cal1_sar = 3
+    isp_cal1_rmc = 4
+    isp_cal2 = 5
+    isp_echo_lrm = 6
+    isp_echo_sar = 7
+    isp_echo_rmc = 8
+    isp_echo_cal = 9
 
 class InstrumentSourcePacket:
     """
@@ -10,6 +24,21 @@ class InstrumentSourcePacket:
     Each ISP contains the data from one position in the
     satellite's orbit
     """
+    @property
+    def isp_pid(self):
+        """
+        the process id of the ISP
+        """
+        return self["isp_pid"]
+
+    @isp_pid.setter
+    def isp_pid(self, value):
+        self["isp_pid"] = value
+
+    @isp_pid.deleter
+    def isp_pid(self):
+        del self["isp_pid"]
+
 
     @property
     def time_sar_ku(self):
@@ -630,6 +659,8 @@ class InstrumentSourcePacket:
         self._seq_count_sar = seq_num
         self._data = OrderedDict()
         self._beam_angles_trend = None
+
+        self.isp_pid = IspPid.isp_null
 
         for values_group in dicts:
             self._data.update(values_group)
