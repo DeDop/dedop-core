@@ -6,7 +6,7 @@ from tests.testing import TestDataLoader
 from dedop.proc.sar.algorithms import StackingAlgorithm
 from dedop.io.input.packet import InstrumentSourcePacket, IspPid
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
+from dedop.proc.sar.surface_location_data import SurfaceLocationData, SurfaceType
 
 
 class StackingAlgorithmTests(unittest.TestCase):
@@ -77,11 +77,10 @@ class StackingAlgorithmTests(unittest.TestCase):
             self.stacking_algorithm.data_stack_size,
             expected["data_stack_size"]
         )
-        # TODO: Activate this test when surface types are implemented
-        # self.assertEqual(
-        #     self.stacking_algorithm.surface_type,
-        #     SurfaceType(expected["surface_type"])
-        # )
+        self.assertEqual(
+            self.stacking_algorithm.surface_type,
+            SurfaceType(expected["surface_type"])
+        )
 
         # beam_angles_surf
         self.assertTrue(
