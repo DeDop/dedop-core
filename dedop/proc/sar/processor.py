@@ -134,7 +134,6 @@ class L1BProcessor:
          will be done by linear interpolation with the 'alpha' value computed
          in the surface location algorithm
         """
-        # TODO: write interpolation method + tests
         time = loc_data['time_surf']
         data = self.source.get_interpolated(time)
         return SurfaceLocationData(loc_data, data)
