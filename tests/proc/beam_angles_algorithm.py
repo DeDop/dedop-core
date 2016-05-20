@@ -9,9 +9,6 @@ from dedop.io.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
 
 class BeamAnglesAlgorithmTests(unittest.TestCase):
-    cst_file = "test_data/common/cst.json"
-    chd_file = "test_data/common/chd.json"
-
     input_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
                "input/inputs.txt"
     expected_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
@@ -23,9 +20,16 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
                   "expected/expected.txt"
 
 
-    def setUp(self):
-        self.cst = ConstantsFile(self.cst_file)
-        self.chd = CharacterisationFile(self.chd_file)
+    def initialise_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            c_cst=input_data['c_cst'],
+            pi_cst=input_data['pi_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            freq_ku_chd=input_data['freq_ku_chd'],
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
+        )
         self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst)
 
     def test_beam_angles_algorithm_01(self):
@@ -39,6 +43,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
 
         # load the input data
         input_data = TestDataLoader(self.input_01, delim=' ')
+
+        self.initialise_algorithm(input_data)
 
         # create surface location objects
         surfs = []
@@ -107,6 +113,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         # load the input data
         input_data = TestDataLoader(self.input_02, delim=' ')
 
+        self.initialise_algorithm(input_data)
         # create surface location objects
         surfs = []
 

@@ -12,17 +12,16 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
     """
     Range compression algorithm tests
     """
-    chd_file = "test_data/common/chd.json"
-    cst_file = "test_data/common/cst.json"
-
     inputs_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
                 "input/inputs.txt"
     expected_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
                   "expected/expected.txt"
 
-    def setUp(self):
-        self.chd = CharacterisationFile(self.chd_file)
-        self.cst = ConstantsFile(self.cst_file)
+    def initialise_algotithm(self, input_data):
+        self.cst = ConstantsFile()
+        self.chd = CharacterisationFile(
+            self.cst, N_samples_sar_chd=input_data['n_samples_sar_chd']
+        )
         self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
 
     def test_range_compression_algorithm_01(self):
@@ -32,6 +31,8 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
         """
         input_data = TestDataLoader(self.inputs_01, delim=' ')
         expected = TestDataLoader(self.expected_01, delim=' ')
+
+        self.initialise_algotithm(input_data)
 
         input_beams_geo_corr = input_data["beams_geo_corr"]
         complex_beams_geo_corr = input_beams_geo_corr +\

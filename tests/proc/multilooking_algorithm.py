@@ -8,9 +8,6 @@ import unittest
 import numpy as np
 
 class MultilookingAlgorithmTests(unittest.TestCase):
-    chd_file = "test_data/common/chd.json"
-    cst_file = "test_data/common/cst.json"
-
     inputs_01 = "test_data/proc/multilooking_algorithm/" \
                   "multilooking_algorithm_01/input/input.txt"
     expected_01 = "test_data/proc/multilooking_algorithm/" \
@@ -21,9 +18,14 @@ class MultilookingAlgorithmTests(unittest.TestCase):
     expected_02 = "test_data/proc/multilooking_algorithm/" \
                   "multilooking_algorithm_02/expected/expected.txt"
 
-    def setUp(self):
-        self.cst = ConstantsFile(self.cst_file)
-        self.chd = CharacterisationFile(self.chd_file)
+    def initialise_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            pi_cst=input_data['pi_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_samples_sar_chd=input_data['n_samples_sar_chd']
+        )
         self.multilooking_algorithm =\
             MultilookingAlgorithm(self.chd, self.cst)
 
@@ -61,6 +63,8 @@ class MultilookingAlgorithmTests(unittest.TestCase):
         :param expected:
         :return:
         """
+        self.initialise_algorithm(input_data)
+
         zp_fact_range = input_data['zp_fact_range_cnf']
         data_stack_size = input_data['data_stack_size']
 

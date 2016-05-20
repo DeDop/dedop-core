@@ -10,17 +10,20 @@ from dedop.proc.sar.surface_location_data import SurfaceLocationData
 
 
 class StackingAlgorithmTests(unittest.TestCase):
-    chd_file = "test_data/common/chd.json"
-    cst_file = "test_data/common/cst.json"
-
     inputs_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                 "input/input.txt"
     expected_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                   "expected/expected.txt"
 
-    def setUp(self):
-        self.chd = CharacterisationFile(self.chd_file)
-        self.cst = ConstantsFile(self.cst_file)
+    def initialise_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            pi_cst=input_data['pi_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_samples_sar_chd=input_data['n_samples_sar_chd'],
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
+        )
         self.stacking_algorithm = StackingAlgorithm(self.chd, self.cst)
 
     def test_stacking_algorithm_01(self):
@@ -31,6 +34,8 @@ class StackingAlgorithmTests(unittest.TestCase):
 
         input_data = TestDataLoader(self.inputs_01, delim=' ')
         expected = TestDataLoader(self.expected_01, delim=' ')
+
+        self.initialise_algorithm(input_data)
 
         self.stacking_algorithm.n_looks_stack =\
             input_data["n_looks_stack_cnf"]

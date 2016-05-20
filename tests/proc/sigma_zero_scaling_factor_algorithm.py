@@ -8,23 +8,35 @@ import unittest
 import numpy as np
 
 class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
-    cst_file = 'test_data/common/cst.json'
-    chd_file = 'test_data/common/chd.json'
-
     inputs_01 = 'test_data/proc/sigma0_scaling_factor_algorithm/' \
                'sigma0_scaling_factor_algorithm_01/input/inputs.txt'
     expected_01 = 'test_data/proc/sigma0_scaling_factor_algorithm/' \
                   'sigma0_scaling_factor_algorithm_01/expected/expected.txt'
 
-    def setUp(self):
-        self.cst = ConstantsFile(self.cst_file)
-        self.chd = CharacterisationFile(self.chd_file)
+    def initialise_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            pi_cst=input_data['pi_cst'],
+            earth_radius_cst=input_data['earth_radius_cst'],
+            c_cst=input_data['c_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
+            N_samples_sar_chd=input_data['n_samples_sar_chd'],
+            wv_length_ku_chd=input_data['wv_length_ku'],
+            chirp_slope_ku_chd=input_data['chirp_slope_ku'],
+            pulse_length_chd=input_data['pulse_length_chd'],
+            power_tx_ant_ku_chd=input_data['power_tx_ant_ku_chd'],
+            antenna_gain_ku_chd=input_data['antenna_gain_ku_chd']
+        )
         self.sigma0_algorithm =\
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
     def test_sigma0_algorithm_01(self):
         input_data = TestDataLoader(self.inputs_01, delim=' ')
         expected = TestDataLoader(self.expected_01, delim=' ')
+
+        self.initialise_algorithm(input_data)
 
         data_stack_size = input_data['data_stack_size']
 

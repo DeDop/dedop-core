@@ -13,9 +13,6 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
     """
     Set of tests for the Geometry Corrections Algorithm
     """
-    # set paths for constants files
-    cst_file = "test_data/common/cst.json"
-    chd_file = "test_data/common/chd.json"
 
     # set paths for input / expected files
     inputs_01 = "test_data/proc/geometry_corrections_algorithm/" \
@@ -39,9 +36,18 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
                   "geometry_corrections_algorithm_03/" \
                   "expected/expected.txt"
 
-    def setUp(self):
-        self.chd = CharacterisationFile(self.chd_file)
-        self.cst = ConstantsFile(self.cst_file)
+    def initialize_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            c_cst=input_data['c_cst'],
+            pi_cst=input_data['pi_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_samples_sar_chd=input_data['n_samples_sar_chd'],
+            pulse_length_chd=input_data['pulse_length_chd'],
+            bw_ku_chd=input_data['bw_ku_chd'],
+            wv_length_ku_chd=input_data['wv_length_ku']
+        )
         self.geometry_corrections_algorithm =\
             GeometryCorrectionsAlgorithm(self.chd, self.cst)
 
@@ -85,6 +91,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
         self._geometry_corrections_algorithm_tests(input_data, expected)
 
     def _geometry_corrections_algorithm_tests(self, input_data, expected):
+        self.initialize_algorithm(input_data)
         # create stack of ISPs
         isps = []
 

@@ -13,9 +13,6 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
     test cases for the stack masking algorithm
     """
 
-    chd_file = "test_data/common/chd.json"
-    cst_file = "test_data/common/cst.json"
-
     inputs_01 = "test_data/proc/stack_masking_algorithm/" \
                 "stack_masking_algorithm_01/input/inputs.txt"
     expected_01 = "test_data/proc/stack_masking_algorithm/" \
@@ -26,9 +23,13 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
     expected_02 = "test_data/proc/stack_masking_algorithm/" \
                   "stack_masking_algorithm_02/expected/expected.txt"
 
-    def setUp(self):
-        self.chd = CharacterisationFile(self.chd_file)
-        self.cst = ConstantsFile(self.cst_file)
+    def initilise_algorithm(self, input_data):
+        self.cst = ConstantsFile()
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_samples_sar_chd=input_data['n_samples_sar_chd'],
+            i_sample_start_chd=input_data['i_sample_start_chd']
+        )
         self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
 
     def test_stack_masking_algorithm_01(self):
@@ -64,6 +65,7 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
         :param expected: TestDataLoader object containing expected values
         :return: None
         """
+        self.initilise_algorithm(input_data)
 
         stack_size = input_data["data_stack_size"]
         zp_fact_range = input_data["zp_fact_range_cnf"]
