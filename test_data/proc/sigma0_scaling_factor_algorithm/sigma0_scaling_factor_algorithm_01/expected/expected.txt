@@ -1,0 +1,1 @@
+sigma0_scaling_factor 154.097958612823959 

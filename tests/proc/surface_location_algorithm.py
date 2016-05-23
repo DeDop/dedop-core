@@ -8,9 +8,6 @@ from dedop.io.input.packet import InstrumentSourcePacket
 from tests.testing import TestDataLoader
 
 class SurfaceLocationAlgorithmTests(unittest.TestCase):
-    constants_file = "test_data/common/cst.json"
-    characterisation_file = "test_data/common/chd.json"
-
     expected_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/expected/"\
                   "Hr_Algorithms.Surface_Location_Algorithm_Processing_01.Expected_01.txt"
     input_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/input/"\
@@ -26,9 +23,20 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
     input_03 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_03/input/" \
                "inputs.txt"
 
-    def setUp(self):
-        self.cst = ConstantsFile(self.constants_file)
-        self.chd = CharacterisationFile(self.characterisation_file)
+    def initialise_algorithm(self, input_data):
+        self.cst = ConstantsFile(
+            c_cst=input_data['c_cst'],
+            pi_cst=input_data['pi_cst'],
+            semi_major_axis_cst=input_data['semi_major_axis_cst'],
+            flat_coeff_cst=input_data['flat_coeff_cst'],
+            semi_minor_axis_cst=input_data['semi_minor_axis_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            freq_ku_chd=input_data['freq_ku_chd'],
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
+            pri_sar_pre_dat=input_data['pri_sar_pre_dat']
+        )
         self.surface_location_algorithm = SurfaceLocationAlgorithm(self.chd, self.cst)
 
     def test_surface_location_algorithm_01(self):
@@ -47,6 +55,8 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         expected_data = TestDataLoader(self.expected_01, delim=' ')
         # load input data
         isp = TestDataLoader(self.input_01, delim=' ')
+
+        self.initialise_algorithm(isp)
 
         # create ISP object
         isps = [
@@ -91,6 +101,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         """
         # load input data
         inputs = TestDataLoader(self.input_02, delim=' ')
+        self.initialise_algorithm(inputs)
 
         # generate input ISP objects
         isps = [
@@ -145,6 +156,8 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
 
         # load the input data
         inputs = TestDataLoader(self.input_03, delim=' ')
+
+        self.initialise_algorithm(inputs)
 
         # create all input ISP objects
         isps = [

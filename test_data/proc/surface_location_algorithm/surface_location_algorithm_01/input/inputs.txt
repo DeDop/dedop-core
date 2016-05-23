@@ -1,9 +1,13 @@
 c_cst 299792458.0
 pi_cst 3.141592653589793
 semi_major_axis_cst 6378137
+semi_minor_axis_cst 6356752.3142
 flat_coeff_cst 0.00335281067183084
 time_sar_ku 601281600.00368214
 lat_sar_sat 0.061662097018422422
 lon_sar_sat 0.082631932559906904
 alt_sar_sat 1362648.5685155857
 win_delay_sar_ku 0.00909068575034
+freq_ku_chd 13575000000.0
+n_ku_pulses_burst_chd 64
+pri_sar_pre_dat 0.000108962024960517341

@@ -364,7 +364,7 @@
 	 	"units": "dB"
 	 },
 	"power_tx_ant_ku_chd": {
-		"value": 8.7506,
+		"value": 7.5,
 		"description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
 		"units": "dB"
 	},

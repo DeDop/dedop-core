@@ -10,9 +10,6 @@ from dedop.conf import CharacterisationFile, ConstantsFile
 
 
 class AzimuthProcessingAlgorithmTests(unittest.TestCase):
-    chd_file = "test_data/common/chd.json"
-    cst_file = "test_data/common/cst.json"
-
     expected_01 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
                   "expected/expected.txt"
     inputs_01 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_01/" \
@@ -23,9 +20,21 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
     inputs_02 = "test_data/proc/azimuth_processing_algorithm/azimuth_processing_algorithm_02/" \
                 "input/inputs.txt"
 
-    def setUp(self):
-        self.chd = CharacterisationFile(self.chd_file)
-        self.cst = ConstantsFile(self.cst_file)
+    def initialise_algorithm(self, input_data):
+        """
+        :param input_data: the input data
+
+        create cst and chd objects from input_data, then initialise
+        an instance of the azimuth processing algorithm
+        """
+        self.cst = ConstantsFile(
+            pi_cst=input_data['pi_cst']
+        )
+        self.chd = CharacterisationFile(
+            self.cst,
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
+            N_samples_sar_chd=input_data['n_samples_sar_chd']
+        )
         self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm(self.chd, self.cst)
 
     def test_azimuth_processing_algorithm_01(self):
@@ -37,6 +46,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         """
         expected = TestDataLoader(self.expected_01, delim=' ')
         input_data = TestDataLoader(self.inputs_01, delim=' ')
+        self.initialise_algorithm(input_data)
 
         # construct complex waveform
         waveform_shape = (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
@@ -117,6 +127,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         """
         expected = TestDataLoader(self.expected_02, delim=' ')
         input_data = TestDataLoader(self.inputs_02, delim=' ')
+        self.initialise_algorithm(input_data)
 
         # construct complex waveform
         waveform_shape = (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)

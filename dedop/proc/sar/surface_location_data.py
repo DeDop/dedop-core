@@ -463,6 +463,21 @@ class SurfaceLocationData:
         del self["stack_all_beams_indices"]
 
     @property
+    def stack_all_beams_indices_abs(self):
+        """
+        the stack_all_beams_indices_abs property of the surface location
+        """
+        return self["stack_all_beams_indices_abs"]
+
+    @stack_all_beams_indices_abs.setter
+    def stack_all_beams_indices_abs(self, value):
+        self["stack_all_beams_indices_abs"] = value
+
+    @stack_all_beams_indices_abs.deleter
+    def stack_all_beams_indices_abs(self):
+        del self["stack_all_beams_indices_abs"]
+
+    @property
     def stack_all_bursts(self):
         """
         the stack_all_bursts property of the surface location
@@ -647,11 +662,117 @@ class SurfaceLocationData:
     def beams_range_compr(self):
         del self["beams_range_compr"]
 
+    @property
+    def beams_masked(self):
+        """
+        the result of the masking applied to the beams
+        """
+        return self['beams_masked']
+
+    @beams_masked.setter
+    def beams_masked(self, value):
+        self['beams_masked'] = value
+
+    @beams_masked.deleter
+    def beams_masked(self):
+        del self['beams_masked']
+
+    @property
+    def look_angles_surf(self):
+        """
+        the look_angles_surf property
+        """
+        return self['look_angles_surf']
+
+    @look_angles_surf.setter
+    def look_angles_surf(self, value):
+        self['look_angles_surf'] = value
+
+    @look_angles_surf.deleter
+    def look_angles_surf(self):
+        del self['look_angles_surf']
+
+    @property
+    def pointing_angles_surf(self):
+        """
+        the pointing_angles_surf property
+        """
+        return self['pointing_angles_surf']
+
+    @pointing_angles_surf.setter
+    def pointing_angles_surf(self, value):
+        self['pointing_angles_surf'] = value
+
+    @pointing_angles_surf.deleter
+    def pointing_angles_surf(self):
+        del self['pointing_angles_surf']
+
+    @property
+    def stack_mask_vector(self):
+        """
+        the stack_mask_vector property
+        """
+        return self['stack_mask_vector']
+
+    @stack_mask_vector.setter
+    def stack_mask_vector(self, value):
+        self['stack_mask_vector'] = value
+
+    @stack_mask_vector.deleter
+    def stack_mask_vector(self):
+        del self['stack_mask_vector']
+
+    @property
+    def doppler_angles_surf(self):
+        """
+        the doppler_angles_surf property
+        """
+        return self['doppler_angles_surf']
+
+    @doppler_angles_surf.setter
+    def doppler_angles_surf(self, value):
+        self['doppler_angles_surf'] = value
+
+    @doppler_angles_surf.deleter
+    def doppler_angles_surf(self):
+        del self['doppler_angles_surf']
+
+    @property
+    def stack_mask(self):
+        """
+        the stack_mask property
+        """
+        return self['stack_mask']
+
+    @stack_mask.setter
+    def stack_mask(self, value):
+        self['stack_mask'] = value
+
+    @stack_mask.deleter
+    def stack_mask(self):
+        del self['stack_mask']
+
+    @property
+    def range_sat_surf(self):
+        """
+        the range_sat_surf property
+        """
+        return self['range_sat_surf']
+
+    @range_sat_surf.setter
+    def range_sat_surf(self, value):
+        self['range_sat_surf'] = value
+
+    @range_sat_surf.deleter
+    def range_sat_surf(self):
+        del self['range_sat_surf']
 
     def __init__(self, cst, chd, surf_num=None, *dicts, **values):
         self._surface_counter = surf_num
         self._data = OrderedDict()
         self._data["surface_type"] = SurfaceType.surface_null
+        self.stack_all_beams_indices = []
+        self.stack_all_beams_indices_abs = []
 
         for values_group in dicts:
             self._data.update(values_group)
@@ -684,6 +805,19 @@ class SurfaceLocationData:
         self.surf_sat_vector =\
             np.asarray(self.ecef_surf, dtype=np.float64) -\
             np.asarray(self.ecef_sat,  dtype=np.float64)
+
+    def add_stack_beam_index(self, beam_index, beam_angle_trend, beam_angles_list_size):
+        self.stack_all_beams_indices.append(beam_index)
+
+        if beam_angle_trend == 1:
+            self.stack_all_beams_indices_abs.append(
+                beam_index + self.chd.n_ku_pulses_burst -\
+                    beam_angles_list_size - self.chd.n_ku_pulses_burst // 2
+            )
+        else:
+            self.stack_all_beams_indices_abs.append(
+                beam_index - self.chd.n_ku_pulses_burst // 2
+            )
 
 class SurfaceType(Enum):
     surface_null = 0
