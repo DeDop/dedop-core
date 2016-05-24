@@ -92,7 +92,7 @@ class L1BProcessor:
         self.source_isps.append(isp)
         if self.surface_locations_algorithm(self.surf_locs, self.source_isps):
             loc = self.surface_locations_algorithm.get_surface()
-            return self.new_surface(loc, first=self.surface_locations_algorithm.first_surf)
+            return self.new_surface(loc)
         return None
 
     def beam_angles(self, surfaces, isp, working_surface_location):
@@ -116,25 +116,9 @@ class L1BProcessor:
     def multilooking(self, working_surface_location):
         self.multilooking_algorithm(working_surface_location)
 
-    def new_surface(self, loc_data, first=False):
-        if first:
-            surf = self._first_surface(loc_data)
-        else:
-            surf = self._new_surface(loc_data)
+    def new_surface(self, loc_data):
+        surf = SurfaceLocationData(
+            self.cst, self.chd, len(self.surf_locs), **loc_data
+        )
         self.surf_locs.append(surf)
         return surf
-
-    def _first_surface(self, loc_data):
-        return SurfaceLocationData(loc_data, data=self.source_isps[-1])
-
-    def _new_surface(self, loc_data):
-        """
-        returns a new surface lcoation interpolated between two points of
-         data from the ISPs. This is in place of using the OSV data, and
-         will be done by linear interpolation with the 'alpha' value computed
-         in the surface location algorithm
-        """
-        time = loc_data['time_surf']
-        data = self.source.get_interpolated(time)
-        return SurfaceLocationData(loc_data, data)
-

@@ -66,7 +66,17 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                 lat_sar_sat=isp["lat_sar_sat"],
                 lon_sar_sat=isp["lon_sar_sat"],
                 alt_sar_sat=isp["alt_sar_sat"],
-                win_delay_sar_ku=isp["win_delay_sar_ku"]
+                win_delay_sar_ku=isp["win_delay_sar_ku"],
+                x_sar_sat=0,
+                y_sar_sat=0,
+                z_sar_sat=0,
+                alt_rate_sat_sar=0,
+                roll_sar=0,
+                pitch_sar=0,
+                yaw_sar=0,
+                x_vel_sat_sar=0,
+                y_vel_sat_sar=0,
+                z_vel_sat_sar=0
             )
         ]
 
@@ -166,7 +176,17 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                                    lat_sar_sat=inputs["lat_sar_sat"][i],
                                    lon_sar_sat=inputs["lon_sar_sat"][i],
                                    alt_sar_sat=inputs["alt_sar_sat"][i],
-                                   win_delay_sar_ku=inputs["win_delay_sar_ku"][i]) \
+                                   win_delay_sar_ku=inputs["win_delay_sar_ku"][i],
+                                   x_sar_sat=0,
+                                   y_sar_sat=0,
+                                   z_sar_sat=0,
+                                   alt_rate_sat_sar=0,
+                                   roll_sar=0,
+                                   pitch_sar=0,
+                                   yaw_sar=0,
+                                   x_vel_sat_sar=0,
+                                   y_vel_sat_sar=0,
+                                   z_vel_sat_sar=0) \
             for i, time in enumerate(inputs["time_sar_ku"])
             ]
         # calculate surface position for each ISP
