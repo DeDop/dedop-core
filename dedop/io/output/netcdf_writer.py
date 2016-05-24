@@ -88,6 +88,7 @@ class NetCDFWriter:
 
         self.dimensions = {}
         self.variables = {}
+        self.output_index = 0
 
     def __enter__(self):
         """
@@ -96,7 +97,8 @@ class NetCDFWriter:
 
         :return: the current document
         """
-        return self._root
+        self.output_index = 0
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
@@ -187,7 +189,6 @@ class NetCDFWriter:
         the 'only' argument
 
         :param only: if present, an iterable of the names of dimensions to create
-        :return: an iterable of the dimension objects created
         """
         for dim_name in self._dimensions:
             # check if dimension is required
@@ -201,8 +202,6 @@ class NetCDFWriter:
                 )
                 # set attribute
                 setattr(self, dim.name, dim)
-                # yield the new dimension object
-                yield dim
 
     def create_all_variables(self, *only):
         """
@@ -211,7 +210,6 @@ class NetCDFWriter:
         'only' argument
 
         :param only: list of variables to create
-        :return: an iterable of the variable objects created
         """
         for var_name in self._variables:
             # check if the variable is required
@@ -225,8 +223,6 @@ class NetCDFWriter:
                 )
                 # set attribute
                 setattr(self, var.name, var)
-                # yield the new variable object
-                yield var
 
     def create_dimension(self, name, size=None):
         """
@@ -279,3 +275,15 @@ class NetCDFWriter:
         close the netCDF file
         """
         self._root.close()
+
+    def write_record(self, **record_values):
+        """
+        writes values to the output file
+
+        :param record_values:
+        """
+        for varname, value in record_values.items():
+            var = getattr(self, varname)
+            var[self.output_index] = value
+
+        self.output_index += 1

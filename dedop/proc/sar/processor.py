@@ -14,7 +14,7 @@ class L1BProcessor:
     _chd_file = "common/chd.json"
     _cst_file = "common/cst.json"
 
-    def __init__(self, source, chd_file=None, cst_file=None):
+    def __init__(self, source, l1b_output, l1bs_output=None, chd_file=None, cst_file=None):
         if self.chd_file is not None:
             self.chd = CHD(chd_file)
         else:
@@ -26,6 +26,8 @@ class L1BProcessor:
             self.cst = CST(self._cst_file)
 
         self.source = source
+        self.l1b_file = l1b_output
+        self.l1bs_file = l1bs_output
         self.surf_locs = []
         self.source_isps = []
         self.min_surfs = 8
@@ -38,6 +40,7 @@ class L1BProcessor:
         self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
         self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
         self.multilooking_algorithm = MultilookingAlgorithm(self.chd, self.cst)
+        self.sigma_zero_algorithm = Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
     def process(self):
         """
@@ -83,6 +86,11 @@ class L1BProcessor:
                 self.range_compression(working_loc)
                 self.stack_masking(working_loc)
                 self.multilooking(working_loc)
+                self.sigma_zero_scaling(working_loc)
+
+                self.l1b_file.write_record(working_loc)
+                if self.l1bs_file is not None:
+                    self.l1bs_file.write_record(working_loc)
 
             if not self.surf_locs:
                 running = False
@@ -115,6 +123,9 @@ class L1BProcessor:
 
     def multilooking(self, working_surface_location):
         self.multilooking_algorithm(working_surface_location)
+
+    def sigma_zero_scaling(self, working_surface_location):
+        self.sigma_zero_algorithm(working_surface_location)
 
     def new_surface(self, loc_data, first=False):
         if first:
