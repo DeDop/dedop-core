@@ -90,6 +90,7 @@ class L1BWriter(NetCDFWriter):
             L1BSDimensions.max_multi_stack_ind, None
         )
         # create variable definitions
+        # TODO: add long names
         self.define_variable(
             L1BSVariables.time_l1bs_echo_sar_ku,
             np.float64,
@@ -537,4 +538,58 @@ class L1BWriter(NetCDFWriter):
                     "one value of power for each individual echo",
             units="FFT power unit",
             fill_value=32767
+        )
+
+    def write_record(self, surface_location_data):
+        super().write_record(
+            time_l1bs_echo_sar_ku=surface_location_data.time_surf,
+            UTC_day_l1bs_echo_sar_ku=None,
+            UTC_sec_l1bs_echo_sar_ku=None,
+            lat_l1bs_echo_sar_ku=surface_location_data.lat_surf,
+            lon_l1bs_echo_sar_ku=surface_location_data.lon_surf,
+            surf_type_l1bs_echo_sar_ku=surface_location_data.surface_type.value,
+            records_count_l1bs_echo_sar_ku=None,
+            alt_l1bs_echo_sar_ku=surface_location_data.alt_sat,
+            orb_alt_rate_l1bs_echo_sar_ku=surface_location_data.alt_rate_sat,
+            x_pos_l1bs_echo_sar_ku=surface_location_data.x_sat,
+            y_pos_l1bs_echo_sar_ku=surface_location_data.y_sat,
+            z_pos_l1bs_echo_sar_ku=surface_location_data.z_sat,
+            x_vel_l1bs_echo_sar_ku=surface_location_data.x_vel_sat,
+            y_vel_l1bs_echo_sar_ku=surface_location_data.y_vel_sat,
+            z_vel_l1bs_echo_sar_ku=surface_location_data.z_vel_sat,
+            meas_x_pos_l1bs_echo_sar_ku=surface_location_data.x_surf,
+            meas_y_pos_l1bs_echo_sar_ku=surface_location_data.y_surf,
+            meas_z_pos_l1bs_echo_sar_ku=surface_location_data.z_surf,
+            roll_sat_pointing_l1bs_echo_sar_ku=surface_location_data.roll_sat,
+            pitch_sat_pointing_l1bs_echo_sar_ku=surface_location_data.pitch_sat,
+            yaw_sat_pointing_l1bs_echo_sar_ku=surface_location_data.yaw_sat,
+            roll_sral_mispointing_l1bs_echo_sar_ku=None,
+            pitch_sral_mispointing_l1bs_echo_sar_ku=None,
+            yaw_sral_mispointing_l1bs_echo_sar_ku=None,
+            range_ku_l1bs_echo_sar_ku=None,
+            int_path_cor_ku_l1bs_echo_sar_ku=None,
+            uso_cor_l1bs_echo_sar_ku=surface_location_data.closest_burst.uso_drift,
+            cog_cor_l1bs_echo_sar_ku=None,
+            agccode_ku_l1bs_echo_sar_ku=None,
+            agc_ku_l1bs_echo_sar_ku=None,
+            scale_factor_ku_l1bs_echo_sar_ku=None,
+            sig0_cal_ku_l1bs_echo_sar_ku=None,
+            snr_ku_l1bs_echo_sar_ku=None,
+            i2q2_meas_ku_l1bs_echo_sar_ku=None,
+            nb_stack_l1bs_echo_sar_ku=None,
+            max_stack_l1bs_echo_sar_ku=None,
+            max_loc_stack_l1bs_echo_sar_ku=None,
+            stdev_stack_l1bs_echo_sar_ku=surface_location_data.stack_std,
+            skew_stack_l1bs_echo_sar_ku=surface_location_data.stack_skewness,
+            kurt_stack_l1bs_echo_sar_ku=surface_location_data.stack_kurtosis,
+            beam_ang_l1bs_echo_sar_ku=None,
+            beam_form_l1bs_echo_sar_ku=None,
+            burst_start_ind_l1bs_echo_sar_ku=None,
+            burst_stop_ind_l1bs_echo_sar_ku=None,
+            i_echoes_ku_l1bs_echo_sar_ku=None,
+            q_echoes_ku_l1bs_echo_sar_ku=None,
+            start_look_angle_stack_l1bs_echo_sar_ku=None,
+            stop_look_angle_stack_l1bs_echo_sar_ku=None,
+            start_beam_ang_stack_l1bs_echo_sar_ku=None,
+            stop_beam_ang_stack_l1bs_echo_sar_ku=None,
         )
