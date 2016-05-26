@@ -1,1 +1,1 @@
-__author__ = 'DeDop Development Team'
+from .write_l1b import L1BWriterTests

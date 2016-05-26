@@ -656,8 +656,8 @@ class InstrumentSourcePacket:
 
 
     def __init__(self, cst, chd, seq_num=None, *dicts, **values):
-        self._seq_count_sar = seq_num
         self._data = OrderedDict()
+        self._seq_count_sar = seq_num
         self._beam_angles_trend = None
 
         self.isp_pid = IspPid.isp_null
