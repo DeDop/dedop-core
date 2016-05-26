@@ -103,6 +103,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.UTC_day_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="day UTC: l1bs_echo_sar_ku mode",
             units="days since 2000-01-01 00:00:00.0",
             fill_value=32767
         )
@@ -110,6 +111,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.UTC_sec_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="seconds in the day UTC: l1bs_echo_sar_ku mode",
             units="seconds in the day",
             fill_value=1.84467440737096e19
         )
@@ -118,6 +120,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.lat_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="latitude: l1bs_echo_sar_ku mode",
             units="degrees_north",
             scale_factor=1e-6,
             add_offset=0,
@@ -127,6 +130,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.lon_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="longitude: l1bs_echo_sar_ku mode",
             units="degrees_east",
             scale_factor=1e-6,
             add_offset=0,
@@ -137,6 +141,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.surf_type_l1bs_echo_sar_ku,
             np.int8,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="altimeter surface type: l1bs_echo_sar_ku mode",
             flag_values=(0x00, 0x01, 0x02, 0x03),
             flag_meanings=(
                 "open_ocean_or_semi-enclosed_seas",
@@ -152,6 +157,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.records_count_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="l1b record counters within the product: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=2147483647
         )
@@ -159,6 +165,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.alt_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="altitude of satellite: l1bs_echo_sar_ku mode",
             units="m",
             scale_factor=1e-4,
             add_offset=700000,
@@ -168,6 +175,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.orb_alt_rate_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="orbital altitude rate: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units='m/s',
@@ -177,6 +185,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.x_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite altitude - x component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -184,6 +193,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.y_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite altitude - y component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -191,6 +201,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.y_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite altitude - z component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -198,6 +209,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.x_vel_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite velocity - x component: l1bs_echo_sar_ku mode",
             units="m/s",
             fill_value=18446744073709551616
         )
@@ -205,6 +217,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.y_vel_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite velocity - y component: l1bs_echo_sar_ku mode",
             units="m/s",
             fill_value=18446744073709551616
         )
@@ -212,6 +225,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.y_vel_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite velocity - z component: l1bs_echo_sar_ku mode",
             units="m/s",
             fill_value=18446744073709551616
         )
@@ -219,6 +233,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.meas_x_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="measurement altitude - x component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -226,6 +241,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.meas_y_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="measurement altitude - y component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -233,6 +249,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.meas_y_pos_l1bs_echo_sar_ku,
             np.float64,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="measurement altitude - z component: l1bs_echo_sar_ku mode",
             units="m",
             fill_value=18446744073709551616
         )
@@ -240,6 +257,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.roll_sat_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite pointing angle - roll: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -251,6 +269,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.pitch_sat_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite pointing angle - pitch: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -262,6 +281,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.yaw_sat_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="satellite pointing angle - yaw: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -273,6 +293,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.roll_sral_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="SRAL mispointing angle - roll: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -284,6 +305,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.pitch_sral_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="SRAL mispointing angle - pitch: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -295,6 +317,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.yaw_sral_pointing_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="SRAL mispointing angle - yaw: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="degrees",
@@ -306,6 +329,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.range_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="corrected range for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=700000,
             units="m",
@@ -319,6 +343,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.int_path_cor_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="internal path correction for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="m",
@@ -329,6 +354,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.uso_cor_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="USO frequency drift correction: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="m",
@@ -339,6 +365,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.cog_cor_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="distance antenna-CoG correction: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="m",
@@ -350,6 +377,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.agccode_ku_l1bs_echo_sar_ku,
             np.int8,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="AGCCODE for ku band: l1bs_echo_sar_ku mode",
             units="dB",
             fill_value=127
         )
@@ -357,6 +385,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.agc_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="corrected AGC for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units="dB",
@@ -367,6 +396,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.scale_factor_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="scaling factor for sigma0 evaluation for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units="dB",
@@ -377,6 +407,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.sig0_cal_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="internal calibration correction on Sigma0 for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units="dB",
@@ -386,6 +417,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.snr_ku_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="snr estimation for ku band: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units="dB",
@@ -396,6 +428,7 @@ class L1BWriter(NetCDFWriter):
             np.uint32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.echo_sample_ind),
+            long_name="I2+Q2 measurement for ku band: l1bs_echo_sar_ku mode",
             comment="the echo is corrected for Doppler range effect, phase/power burst calibration " \
                     "and GPRW effect. The echo is scaled using the correctied AGC (agc_ku_l1b_echo_sar_ku)",
             scale_factor=1e-3,
@@ -407,6 +440,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.nb_stack_l1bs_echo_sar_ku,
             np.uint16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="number of waveforms summed in stack: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=65535
         )
@@ -414,6 +448,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.max_stack_l1bs_echo_sar_ku,
             np.uint32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="maximum power of stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-4,
             add_offset=0,
             units="FFT power unit",
@@ -423,6 +458,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.max_loc_stack_l1bs_echo_sar_ku,
             np.uint16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="location of the maximum power of stack: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=65535
         )
@@ -430,6 +466,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.stdev_stack_l1bs_echo_sar_ku,
             np.uint32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="standard deviation of stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
             add_offset=0,
             units="rad",
@@ -439,6 +476,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.skew_stack_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="skewness of stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
             add_offset=0,
             units="count",
@@ -448,6 +486,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.kurt_stack_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="kurtosis of stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
             add_offset=0,
             units="count",
@@ -458,6 +497,7 @@ class L1BWriter(NetCDFWriter):
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind),
+            long_name="doppler beam angles in stack: l1bs_echo_sar_ku mode",
             comment="the useful values of the table are the first nb_stack_l1bs_echo_sar_ku values",
             scale_factor=1e-6,
             add_offset=1.57,
@@ -468,6 +508,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.beam_form_l1bs_echo_sar_ku,
             np.uint8,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="flag on beam formation quality in stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-2,
             add_offset=0,
             units="percent",
@@ -477,6 +518,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.burst_start_ind_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="burst start index for stack building: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=2147483647
         )
@@ -484,6 +526,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.burst_stop_ind_l1bs_echo_sar_ku,
             np.int32,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="burst stop index for stack building: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=2147483647
         )
@@ -493,6 +536,8 @@ class L1BWriter(NetCDFWriter):
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind,
              L1BSDimensions.echo_sample_ind),
+            long_name="fully calibrated ky band echoes, i measurements aligned"\
+                      " within the stack: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=32767,
             comment="Fully calibrate ku band echoes, I values (300*128 samples) in the frequency domain, " \
@@ -505,6 +550,8 @@ class L1BWriter(NetCDFWriter):
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind,
              L1BSDimensions.echo_sample_ind),
+            long_name="fully calibrated ky band echoes, q measurements aligned" \
+                      " within the stack: l1bs_echo_sar_ku mode",
             units="count",
             fill_value=32767,
             comment="Fully calibrate ku band echoes, Q values (300*128 samples) in the frequency domain, " \
@@ -515,6 +562,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.start_look_angle_stack_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="start doppler beam angle in stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
             add_offset=1.57,
             units="rad",
@@ -524,6 +572,7 @@ class L1BWriter(NetCDFWriter):
             L1BSVariables.stop_look_angle_stack_l1bs_echo_sar_ku,
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="stop doppler beam angle in stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
             add_offset=1.57,
             units="rad",
@@ -534,6 +583,7 @@ class L1BWriter(NetCDFWriter):
             np.int16,
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind),
+            long_name="power variations within the stack: l1bs_echo_sar_ku mode",
             comment="The useful values of the table are the first nb_stack_l1bs_echo_sar_ku values, " \
                     "one value of power for each individual echo",
             units="FFT power unit",
