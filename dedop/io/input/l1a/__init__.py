@@ -1,9 +1,9 @@
 from ..input_dataset import InputDataset
-from ..packet import InstrumentSourcePacket
+from ..packet import InstrumentSourcePacket, IspPid
 
 import netCDF4 as nc
 from enum import Enum
-
+from math import log10, radians
 
 class L1ADimensions(Enum):
     echo_sample_ind = "echo_sample_ind"
@@ -77,9 +77,6 @@ class L1AVariables(Enum):
     burst_power_cor_ku_l1a_echo_sar_ku = "burst_power_cor_ku_l1a_echo_sar_ku"
     burst_phase_cor_ku_l1a_echo_sar_ku = "burst_phase_cor_ku_l1a_echo_sar_ku"
     cal1_ku_ind_l1a_echo_sar_ku = "cal1_ku_ind_l1a_echo_sar_ku"
-    time_l1a_echo_plrm = "time_l1a_echo_plrm"
-    i2q2_meas_ku_l1a_echo_plrm = "i2q2_meas_ku_l1a_echo_plrm"
-    i2q2_meas_c_l1a_echo_plrm = "i2q2_meas_c_l1a_echo_plrm"
 
 
 class L1ADataset(InputDataset):
@@ -96,9 +93,14 @@ class L1ADataset(InputDataset):
         super().__init__(dset, cst, chd)
 
     def __getitem__(self, index):
-        return InstrumentSourcePacket(
+        # convert scale factor to linear value
+        scale_factor = 20 * log10(self.scale_factor_ku_l1a_echo_sar_ku[index])
+        # construct waveform
+        waveform = scale_factor * (self.i_meas_ku_l1a_echo_sar_ku[index, :, :] +
+                              1j * self.i_meas_ku_l1a_echo_sar_ku[index, :, :])
+        packet = InstrumentSourcePacket(
             self.cst, self.chd, self.echo_sample_ind[index],
-            isp_pid=None,
+            isp_pid=IspPid.isp_echo_sar,
             time_sar_ku=self.time_l1a_echo_sar_ku[index],
             days=self.UTC_day_l1a_echo_sar_ku[index],
             seconds=self.UTC_sec_l1a_echo_sar_ku[index],
@@ -108,27 +110,29 @@ class L1ADataset(InputDataset):
             ambiguity_order_sar=None,
             burst_sar_ku=None,
             burst_sar_ku_fbr=None,
-            lat_sar_sat=self.lat_l1a_echo_sar_ku[index],
-            lon_sar_sat=self.lon_l1a_echo_sar_ku[index],
+            lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
+            lon_sar_sat=radians(self.lon_l1a_echo_sar_ku[index]),
             alt_sar_sat=self.alt_l1a_echo_sar_ku[index],
             alt_rate_sar_sat=self.orb_alt_rate_l1a_echo_sar_ku[index],
             x_vel_sar_sat=self.x_vel_l1a_echo_sar_ku[index],
             y_vel_sar_sat=self.y_vel_l1a_echo_sar_ku[index],
             z_vel_sar_sat=self.z_vel_l1a_echo_sar_ku[index],
-            roll_sar=self.roll_sat_pointing_l1a_echo_sar_ku[index],
-            pitch_sar=self.pitch_sat_pointing_l1a_echo_sar_ku[index],
-            yaw_sar=self.yaw_sat_pointing_l1a_echo_sar_ku[index],
+            roll_sar=radians(self.roll_sral_mispointing_l1a_echo_sar_ku[index]),
+            pitch_sar=radians(self.pitch_sral_mispointing_l1a_echo_sar_ku[index]),
+            yaw_sar=radians(self.yaw_sral_mispointing_l1a_echo_sar_ku[index]),
             h0_sar=None,
-            t0_sar=None,
+            t0_sar=0,
             cor2_sar=None,
             win_delay_sar_ku=self.range_ku_l1a_echo_sar_ku[index] * 2 / self.cst.c,
             x_sar_sat=self.x_pos_l1a_echo_sar_ku[index],
             y_sar_sat=self.y_pos_l1a_echo_sar_ku[index],
             z_sar_sat=self.z_pos_l1a_echo_sar_ku[index],
-            waveform_cor_sar=None,
+            waveform_cor_sar=waveform,
             doppler_angle_sar_sat=None,
             beams_focused=None
         )
+        packet.compute_location_sar_surf()
+        return packet
 
     def __iter__(self):
         for index in range(self.max_index):
