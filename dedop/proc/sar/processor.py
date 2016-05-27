@@ -32,15 +32,24 @@ class L1BProcessor:
         self.source_isps = []
         self.min_surfs = 8
 
-        self.surface_locations_algorithm = SurfaceLocationAlgorithm(self.chd, self.cst)
-        self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst)
-        self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm(self.chd, self.cst)
-        self.stacking_algorithm = StackingAlgorithm(self.chd, self.cst)
-        self.geometry_corrections_algorithm = GeometryCorrectionsAlgorithm(self.chd, self.cst)
-        self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
-        self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
-        self.multilooking_algorithm = MultilookingAlgorithm(self.chd, self.cst)
-        self.sigma_zero_algorithm = Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
+        self.surface_locations_algorithm =\
+            SurfaceLocationAlgorithm(self.chd, self.cst)
+        self.beam_angles_algorithm =\
+            BeamAnglesAlgorithm(self.chd, self.cst)
+        self.azimuth_processing_algorithm =\
+            AzimuthProcessingAlgorithm(self.chd, self.cst)
+        self.stacking_algorithm =\
+            StackingAlgorithm(self.chd, self.cst)
+        self.geometry_corrections_algorithm =\
+            GeometryCorrectionsAlgorithm(self.chd, self.cst)
+        self.range_compression_algorithm =\
+            RangeCompressionAlgorithm(self.chd, self.cst)
+        self.stack_masking_algorithm =\
+            StackMaskingAlgorithm(self.chd, self.cst)
+        self.multilooking_algorithm =\
+            MultilookingAlgorithm(self.chd, self.cst)
+        self.sigma_zero_algorithm =\
+            Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
     def process(self):
         """
@@ -53,14 +62,6 @@ class L1BProcessor:
             isp = next(self.source)
 
             if isp is not None:
-                #  pre. datation
-                #  pre WD
-                #  final burst dat.
-                #  onboard rev.
-                #  final WD
-                #  Instr. Gain
-                #  Wav. Correction
-
                 new_surface = self.surface_locations(isp)
 
                 if new_surface is None:

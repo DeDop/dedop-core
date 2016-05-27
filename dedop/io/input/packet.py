@@ -1,4 +1,5 @@
 from ...proc.geo import lla2ecef
+from ...proc.functions import angle_between
 
 from collections import OrderedDict
 from enum import Enum
@@ -86,21 +87,6 @@ class InstrumentSourcePacket:
         del self["seconds"]
 
     @property
-    def process_id(self):
-        """
-        The process_id property of the ISP
-        """
-        return self["process_id"]
-
-    @process_id.setter
-    def process_id(self, value):
-        self["process_id"] = value
-
-    @process_id.deleter
-    def process_id(self):
-        del self["process_id"]
-
-    @property
     def seq_count_sar_ku_fbr(self):
         """
         The seq_count_sar_ku_fbr property of the ISP
@@ -174,21 +160,6 @@ class InstrumentSourcePacket:
     @burst_sar_ku.deleter
     def burst_sar_ku(self):
         del self["burst_sar_ku"]
-
-    @property
-    def burst_sar_ku_fbr(self):
-        """
-        The burst_sar_ku_fbr property of the ISP
-        """
-        return self["burst_sar_ku_fbr"]
-
-    @burst_sar_ku_fbr.setter
-    def burst_sar_ku_fbr(self, value):
-        self["burst_sar_ku_fbr"] = value
-
-    @burst_sar_ku_fbr.deleter
-    def burst_sar_ku_fbr(self):
-        del self["burst_sar_ku_fbr"]
 
     @property
     def lat_sar_sat(self):
@@ -723,3 +694,30 @@ class InstrumentSourcePacket:
             self.beam_angles_trend = -1
         else:
             self.beam_angles_trend = prev_beam_angles_trend
+
+    def compute_doppler_angle(self):
+        """
+        calculate the doppler angle
+        """
+        alt_surf = self.alt_sar_sat - self.chd.mean_sat_alt
+        surf_geodetic = np.array([
+            self.lat_sar_sat,
+            self.lon_sar_sat,
+            alt_surf
+        ])
+
+        surf_cartesian = lla2ecef(surf_geodetic, self.cst)
+
+        # n vector - sat position normal to surface
+        n = np.asmatrix(
+            surf_cartesian.T - self.pos_sar_sat
+        )
+        # v vector - sat velocty (cartesian)
+        v = self.vel_sat_sar
+        # vector perpendicular to plane nv
+        w = np.cross(n, v)
+        # vector perpendicular to plane nw
+        m = np.cross(w, n)
+        # angle between v and m
+        self.doppler_angle_sar_sat =\
+            angle_between(v, m)

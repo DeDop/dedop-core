@@ -104,12 +104,10 @@ class L1ADataset(InputDataset):
             time_sar_ku=self.time_l1a_echo_sar_ku[index],
             days=self.UTC_day_l1a_echo_sar_ku[index],
             seconds=self.UTC_sec_l1a_echo_sar_ku[index],
-            process_id=None,
-            inst_id_sar_isp=None,
-            pri_sar_pre_dat=None,
-            ambiguity_order_sar=None,
-            burst_sar_ku=None,
-            burst_sar_ku_fbr=None,
+            inst_id_sar_isp=0,
+            pri_sar_pre_dat=0,
+            ambiguity_order_sar=0,
+            burst_sar_ku=self.burst_count_prod_l1a_echo_sar_ku[index],
             lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
             lon_sar_sat=radians(self.lon_l1a_echo_sar_ku[index]),
             alt_sar_sat=self.alt_l1a_echo_sar_ku[index],
@@ -120,18 +118,18 @@ class L1ADataset(InputDataset):
             roll_sar=radians(self.roll_sral_mispointing_l1a_echo_sar_ku[index]),
             pitch_sar=radians(self.pitch_sral_mispointing_l1a_echo_sar_ku[index]),
             yaw_sar=radians(self.yaw_sral_mispointing_l1a_echo_sar_ku[index]),
-            h0_sar=None,
+            h0_sar=self.h0_applied_l1a_echo_sar_ku[index],
             t0_sar=0,
-            cor2_sar=None,
+            cor2_sar=self.cor2_applied_l1a_echo_sar_ku[index],
             win_delay_sar_ku=self.range_ku_l1a_echo_sar_ku[index] * 2 / self.cst.c,
             x_sar_sat=self.x_pos_l1a_echo_sar_ku[index],
             y_sar_sat=self.y_pos_l1a_echo_sar_ku[index],
             z_sar_sat=self.z_pos_l1a_echo_sar_ku[index],
             waveform_cor_sar=waveform,
-            doppler_angle_sar_sat=None,
             beams_focused=None
         )
         packet.compute_location_sar_surf()
+        packet.compute_doppler_angle()
         return packet
 
     def __iter__(self):
