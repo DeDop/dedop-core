@@ -2,6 +2,8 @@
 |DeDop3| API Reference
 ======================
 
+Input / Output
+==============
 
 .. automodule:: dedop.io.input
    :members:
@@ -11,9 +13,15 @@
    :members:
 
 
+Configuration
+=============
+
 .. automodule:: dedop.conf
    :members:
 
+
+Processor
+=========
 
 .. automodule:: dedop.proc.sar
    :members:
