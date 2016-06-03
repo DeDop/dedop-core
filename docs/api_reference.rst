@@ -2,26 +2,33 @@
 |DeDop3| API Reference
 ======================
 
-Processor API
-=============
 
-.. automodule:: dedop.proc
+.. automodule:: dedop.io.input
    :members:
 
 
-I/O API
-=======
-
-.. automodule:: dedop.io
+.. automodule:: dedop.io.output
    :members:
 
 
-Graphical User Interface API
-============================
-
-.. automodule:: dedop.gui
+.. automodule:: dedop.conf
    :members:
 
+
+.. automodule:: dedop.proc.sar
+   :members:
+
+
+.. automodule:: dedop.proc.sar.algorithms
+   :members:
+
+
+.. automodule:: dedop.proc.geo
+   :members:
+
+
+.. automodule:: dedop.proc.functions
+   :members:
 
 
 .. |DeDop3| replace:: DeDop\ :sup:`3`

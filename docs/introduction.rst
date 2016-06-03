@@ -69,8 +69,8 @@ DDP core processor with a given configuration and finally to read in the process
 exploration and comparison with former outputs. It will have a clear, comprehensive, intuitive and 
 accessible graphical user interface and comprise a flexible and extendible set of data visualisations
 and analysis functions for the L1A, L1BS and L1B outputs. As stated before, the ultimate aim of the 
-DDP user interface is to attract community scientists to use and modify the pro
-cessing code and let them become acquainted with the new Level-1 altimeter products.
+DDP user interface is to attract community scientists to use and modify the processing code and let
+them become acquainted with the new Level-1 altimeter products.
 
 
 .. |DeDop3| replace:: DeDop\ :sup:`3`
