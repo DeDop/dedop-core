@@ -39,4 +39,12 @@ Processor
    :members:
 
 
+Utilities
+=========
+
+.. automodule:: dedop.util
+   :members:
+
+
+
 .. |DeDop3| replace:: DeDop\ :sup:`3`
