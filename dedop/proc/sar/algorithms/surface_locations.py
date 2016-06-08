@@ -113,9 +113,9 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         isp_prev = isps[-2]
 
         ground_surf_orbit_vector = np.matrix(
-            [[isp_curr.x_sar_surf - surface.x_sat],
-             [isp_curr.y_sar_surf - surface.y_sat],
-             [isp_curr.z_sar_surf - surface.z_sat]],
+            [[isp_curr.x_sar_surf - surface.x_sat,],
+             [isp_curr.y_sar_surf - surface.y_sat,],
+             [isp_curr.z_sar_surf - surface.z_sat,]],
             dtype=np.float64
         )
         ground_surf_orbit_angle = angle_between(
@@ -125,9 +125,9 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             return False
 
         ground_surf_orbit_vector_prev = np.matrix(
-            [[isp_prev.x_sar_surf - surface.x_sat],
-             [isp_prev.y_sar_surf - surface.y_sat],
-             [isp_prev.z_sar_surf - surface.z_sat]],
+            [[isp_prev.x_sar_surf - surface.x_sat,],
+             [isp_prev.y_sar_surf - surface.y_sat,],
+             [isp_prev.z_sar_surf - surface.z_sat,]],
             dtype=np.float64
         )
         ground_surf_orbit_angle_prev = angle_between(
@@ -152,9 +152,9 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
                                   self.y_surf,
                                   self.z_surf])
         surf_loc_geod = ecef2lla(surf_loc_cart, self.cst)
-        self.lat_surf = surf_loc_geod[0][0, 0]
-        self.lon_surf = surf_loc_geod[1][0, 0]
-        self.alt_surf = surf_loc_geod[2][0, 0]
+        self.lat_surf = surf_loc_geod[0]
+        self.lon_surf = surf_loc_geod[1]
+        self.alt_surf = surf_loc_geod[2]
 
         self.x_sat = isp_prev.x_sar_sat +\
             alpha * (isp_curr.x_sar_sat - isp_prev.x_sar_sat)
@@ -167,9 +167,9 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
                                  self.y_sat,
                                  self.z_sat])
         sat_loc_geod = ecef2lla(sat_loc_cart, self.cst)
-        self.lat_sat = sat_loc_geod[0][0, 0]
-        self.lon_sat = sat_loc_geod[1][0, 0]
-        self.alt_sat = sat_loc_geod[2][0, 0]
+        self.lat_sat = sat_loc_geod[0]
+        self.lon_sat = sat_loc_geod[1]
+        self.alt_sat = sat_loc_geod[2]
 
         self.x_vel_sat = isp_prev.x_vel_sat_sar + \
             alpha * (isp_curr.x_vel_sat_sar - isp_prev.x_vel_sat_sar)

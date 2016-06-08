@@ -101,6 +101,25 @@ class CharacterisationFile(ConstantsFileReader):
         return self["pri_T0_unit_conv_chd"]
 
     @property
+    def uso_freq_nom(self):
+        """uso freq nom value"""
+        return self["uso_freq_nom_chd"]
+
+    @property
+    def alt_freq_multiplier(self):
+        """alt freq multiplier value"""
+        return self["alt_freq_multiplier_chd"]
+
+    @property
+    def pri_sar(self):
+        return self["pri_sar_chd"]
+
+    @property
+    def t0_nom(self):
+        """nominal value for T0"""
+        return 1. / (self.uso_freq_nom * self.alt_freq_multiplier)
+
+    @property
     def chirp_slope_ku(self):
         """the chirp slope for the Ku-band (derived parameter)"""
         if self._chirp_slope_ku is None:
@@ -113,6 +132,10 @@ class CharacterisationFile(ConstantsFileReader):
         if self._wv_length_ku is None:
             self._wv_length_ku = self.cst.c / self.freq_ku
         return self._wv_length_ku
+
+    @property
+    def mean_sat_alt(self):
+        return self["mean_sat_alt_chd"]
     
     def __init__(self, cst, filename=None, **kwargs):
         self._wv_length_ku = kwargs.pop(

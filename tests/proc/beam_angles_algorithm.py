@@ -28,7 +28,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         self.chd = CharacterisationFile(
             self.cst,
             freq_ku_chd=input_data['freq_ku_chd'],
-            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
+            N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
+            pri_sar_chd=input_data['pri_sar_pre_dat']
         )
         self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst)
 
@@ -74,7 +75,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         work_loc = input_data["working_surface_location_counter"]
 
         # execute beam angles algorithm
-        self.beam_angles_algorithm(surfs, isp, work_loc)
+        self.beam_angles_algorithm(surfs, isp, surfs[work_loc])
 
         # confirm correct number of surfaces seen
         self.assertEqual(

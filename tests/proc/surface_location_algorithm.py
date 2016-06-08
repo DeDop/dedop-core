@@ -222,11 +222,11 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         surf = self.surface_location_algorithm.get_surface()
 
         # validate properties
-        self.assertAlmostEqual(surf["time_surf"][0, 0], expected_data["time_surf"])
+        self.assertAlmostEqual(surf["time_surf"], expected_data["time_surf"])
 
-        self.assertAlmostEqual(surf["x_surf"][0, 0], expected_data["x_surf"], delta=1e-5)
-        self.assertAlmostEqual(surf["y_surf"][0, 0], expected_data["y_surf"], delta=1e-5)
-        self.assertAlmostEqual(surf["z_surf"][0, 0], expected_data["z_surf"], delta=1e-5)
+        self.assertAlmostEqual(surf["x_surf"], expected_data["x_surf"], delta=1e-5)
+        self.assertAlmostEqual(surf["y_surf"], expected_data["y_surf"], delta=1e-5)
+        self.assertAlmostEqual(surf["z_surf"], expected_data["z_surf"], delta=1e-5)
 
         self.assertAlmostEqual(surf["lat_surf"], expected_data["lat_surf"], delta=1e-12)
         self.assertAlmostEqual(surf["lon_surf"], expected_data["lon_surf"], delta=1e-12)

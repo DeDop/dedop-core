@@ -117,7 +117,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         return stack_mask, stack_mask_vector
 
     def apply_mask(self, working_surface_location, stack_mask):
-        output = working_surface_location.beams_range_compr * stack_mask
+        output = working_surface_location.beams_range_compr *\
+                 stack_mask[:working_surface_location.data_stack_size, :]
 
         if self.flag_avoid_zeros_in_multilooking:
             invalid = np.flatnonzero(stack_mask == 0)

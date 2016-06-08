@@ -773,6 +773,7 @@ class SurfaceLocationData:
         self._data["surface_type"] = SurfaceType.surface_null
         self.stack_all_beams_indices = []
         self.stack_all_beams_indices_abs = []
+        self.stack_all_bursts = []
 
         for values_group in dicts:
             self._data.update(values_group)
@@ -818,6 +819,9 @@ class SurfaceLocationData:
             self.stack_all_beams_indices_abs.append(
                 beam_index - self.chd.n_ku_pulses_burst // 2
             )
+
+    def add_stack_burst(self, isp):
+        self.stack_all_bursts.append(isp)
 
 class SurfaceType(Enum):
     surface_null = 0

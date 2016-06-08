@@ -1,10 +1,10 @@
 from ...util.parameter import Parameter
 
-@Parameter('n_looks_stack', data_type=float)
-@Parameter('zp_fact_range', data_type=float)
+@Parameter('n_looks_stack', default_value=481)
+@Parameter('zp_fact_range', default_value=2)
 class BaseAlgorithm:
     """
-    THhe base class from which all other algorithm classes
+    The base class from which all other algorithm classes
     inherit properties.
 
     This class is also used to define configuration
@@ -20,3 +20,17 @@ class BaseAlgorithm:
         """
         self.chd = chd
         self.cst = cst
+
+        self.collect_parameter_values()
+
+    def collect_parameter_values(self):
+        """
+
+        :return:
+        """
+
+        for param in Parameter.get_parameters(self.__class__).values():
+            if param.value_set is not None:
+                setattr(self, param.name, param.value_set)
+            else:
+                setattr(self, param.name, param.default_value)

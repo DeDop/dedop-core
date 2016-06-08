@@ -4,8 +4,21 @@ from ....util.parameter import Parameter
 import numpy as np
 from scipy.optimize import curve_fit
 
+import matplotlib.pyplot as plt
 
-@Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
+def gauss(x, a, b, c):
+    return a * np.exp(-(x - b) ** 2 / (c ** 2))
+
+
+def gauss_fit(x, y):
+    fit_params, _ = curve_fit(
+        gauss, x, y
+    )
+
+    return fit_params
+
+
+@Parameter("flag_avoid_zeros_in_multilooking", default_value=False)
 class MultilookingAlgorithm(BaseAlgorithm):
 
     def __init__(self, chd, cst):
@@ -56,14 +69,12 @@ class MultilookingAlgorithm(BaseAlgorithm):
         beam_angles_complementary = np.abs(
             self.cst.pi / 2. - working_surface_location.beam_angles_surf
         )
+
         # find index and value of minimum complementary angle
         min_beam_angle_complementary_index =\
             np.argmin(beam_angles_complementary)
-        min_beam_angle_complementary = \
-            beam_angles_complementary[min_beam_angle_complementary_index]
 
-
-        beam_length = self.chd.n_samples_sar / 2 * self.zp_fact_range
+        beam_length = (self.chd.n_samples_sar / 2) * self.zp_fact_range
         for beam_index in range(working_surface_location.data_stack_size):
             beam_power[beam_index] =\
                 np.sum(
@@ -97,23 +108,14 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
         x = np.arange(n_samples_fitting)
 
-        def gauss(x, a, b, c):
-            return a * np.exp(-(x - b) ** 2 / (c ** 2))
-
-        fit_params_l, _ = curve_fit(
-            gauss, look_angles_surf_center, beam_power_center
-        )
+        fit_params_l = gauss_fit(look_angles_surf_center, beam_power_center)
         self.look_angle_centre = fit_params_l[1]
         self.stack_std = fit_params_l[2] / 2
 
-        fit_params_p, _ = curve_fit(
-            gauss, pointing_angles_surf_center, beam_power_center
-        )
+        fit_params_p = gauss_fit(pointing_angles_surf_center, beam_power_center)
         self.pointing_angle_centre = fit_params_p[1]
 
-        fit_params, _ = curve_fit(
-            gauss, x, beam_power_center
-        )
+        fit_params = gauss_fit(x, beam_power_center)
 
         power_fitted = gauss(x, *fit_params)
 
@@ -166,7 +168,8 @@ class MultilookingAlgorithm(BaseAlgorithm):
                     start_beam_index = beam_index
                 stop_beam_index = beam_index
 
-            else: continue
+            else:
+                continue
 
             for sample_index in range(self.chd.n_samples_sar * self.zp_fact_range):
                 if self.flag_avoid_zeros_in_multilooking:

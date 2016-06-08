@@ -119,7 +119,7 @@ class StackingAlgorithm(BaseAlgorithm):
             look_counter_beam = stack_burst.seq_count_sar
 
             self.stack_bursts[stack_index] = stack_burst
-            self.beams_surf[stack_index, :] = beam_focused
+            self.beams_surf[stack_index, :len(beam_focused)] = beam_focused
             self.beam_angles_surf[stack_index] = beam_angle
             self.t0_surf[stack_index] = t0_beam
             self.doppler_angles_surf[stack_index] = doppler_angle_beam

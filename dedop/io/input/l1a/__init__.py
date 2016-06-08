@@ -92,14 +92,16 @@ class L1ADataset(InputDataset):
         dset = nc.Dataset(filename)
         super().__init__(dset, cst, chd)
 
+        self._last_index = 0
+
     def __getitem__(self, index):
         # convert scale factor to linear value
         scale_factor = 20 * log10(self.scale_factor_ku_l1a_echo_sar_ku[index])
         # construct waveform
         waveform = scale_factor * (self.i_meas_ku_l1a_echo_sar_ku[index, :, :] +
-                              1j * self.i_meas_ku_l1a_echo_sar_ku[index, :, :])
+                              1j * self.q_meas_ku_l1a_echo_sar_ku[index, :, :])
         packet = InstrumentSourcePacket(
-            self.cst, self.chd, self.echo_sample_ind[index],
+            self.cst, self.chd, index,
             isp_pid=IspPid.isp_echo_sar,
             time_sar_ku=self.time_l1a_echo_sar_ku[index],
             days=self.UTC_day_l1a_echo_sar_ku[index],
@@ -111,15 +113,15 @@ class L1ADataset(InputDataset):
             lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
             lon_sar_sat=radians(self.lon_l1a_echo_sar_ku[index]),
             alt_sar_sat=self.alt_l1a_echo_sar_ku[index],
-            alt_rate_sar_sat=self.orb_alt_rate_l1a_echo_sar_ku[index],
-            x_vel_sar_sat=self.x_vel_l1a_echo_sar_ku[index],
-            y_vel_sar_sat=self.y_vel_l1a_echo_sar_ku[index],
-            z_vel_sar_sat=self.z_vel_l1a_echo_sar_ku[index],
+            alt_rate_sat_sar=self.orb_alt_rate_l1a_echo_sar_ku[index],
+            x_vel_sat_sar=self.x_vel_l1a_echo_sar_ku[index],
+            y_vel_sat_sar=self.y_vel_l1a_echo_sar_ku[index],
+            z_vel_sat_sar=self.z_vel_l1a_echo_sar_ku[index],
             roll_sar=radians(self.roll_sral_mispointing_l1a_echo_sar_ku[index]),
             pitch_sar=radians(self.pitch_sral_mispointing_l1a_echo_sar_ku[index]),
             yaw_sar=radians(self.yaw_sral_mispointing_l1a_echo_sar_ku[index]),
             h0_sar=self.h0_applied_l1a_echo_sar_ku[index],
-            t0_sar=0,
+            t0_sar=self.chd.t0_nom * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
             cor2_sar=self.cor2_applied_l1a_echo_sar_ku[index],
             win_delay_sar_ku=self.range_ku_l1a_echo_sar_ku[index] * 2 / self.cst.c,
             x_sar_sat=self.x_pos_l1a_echo_sar_ku[index],
@@ -135,6 +137,13 @@ class L1ADataset(InputDataset):
     def __iter__(self):
         for index in range(self.max_index):
             return self[index]
+
+    def __next__(self):
+        if self._last_index == self.max_index:
+            return None
+        isp = self[self._last_index]
+        self._last_index += 1
+        return isp
 
     def __getattr__(self, variable_name):
         """

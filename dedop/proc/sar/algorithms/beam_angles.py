@@ -8,17 +8,15 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
     """
     Class for finding beam angles
     """
-    def __init__(self, chd, cst):
+
+    def __call__(self, surface_locations, isp_record, work_location):
+        """
+
+        """
         self.work_location_seen = False
         self.beam_angles = []
         self.surfaces_seen = []
 
-        super().__init__(chd, cst)
-
-    def __call__(self, surface_locations, isp_record, work_location_index):
-        """
-
-        """
         curr_location_seen = False
 
         for surface in surface_locations:
@@ -33,8 +31,9 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
                 if len(self.beam_angles) > self.chd.n_ku_pulses_burst:
                     self.beam_angles.pop(0)
                     self.surfaces_seen.pop(0)
-                if work_location_index == surface.surface_counter:
+                if work_location == surface:
                     self.work_location_seen = True
+
             elif prev_location_seen:
                 break
 
@@ -44,7 +43,7 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
         """
         # the q angles define the max. & min. view angle for satellite
         # at the position of the burst
-        q_min = acos(self.cst.c / isp_record.pri_sar_pre_dat / 4. /
+        q_min = acos(self.cst.c / self.chd.pri_sar / 4. /
                      self.chd.freq_ku / norm(isp_record.vel_sat_sar))
         q_max = self.cst.pi - q_min
 

@@ -625,11 +625,27 @@ class InstrumentSourcePacket:
     def beams_focused(self):
         del self["beams_focused"]
 
+    @property
+    def burst_processed(self):
+        """varaible for tracking whether burst processing has been performed"""
+        return self._burst_processed
+
+    @burst_processed.setter
+    def burst_processed(self, value):
+        self._burst_processed = value
+
+    @property
+    def counter(self):
+        return self._counter
+
 
     def __init__(self, cst, chd, seq_num=None, *dicts, **values):
         self._data = OrderedDict()
+        self._counter = seq_num
+
         self._seq_count_sar = seq_num
         self._beam_angles_trend = None
+        self._burst_processed = False
 
         self.isp_pid = IspPid.isp_null
 
@@ -706,7 +722,7 @@ class InstrumentSourcePacket:
             alt_surf
         ])
 
-        surf_cartesian = lla2ecef(surf_geodetic, self.cst)
+        surf_cartesian = np.asmatrix(lla2ecef(surf_geodetic, self.cst))
 
         # n vector - sat position normal to surface
         n = np.asmatrix(
@@ -715,9 +731,9 @@ class InstrumentSourcePacket:
         # v vector - sat velocty (cartesian)
         v = self.vel_sat_sar
         # vector perpendicular to plane nv
-        w = np.cross(n, v)
+        w = np.cross(n.T, v.T)
         # vector perpendicular to plane nw
-        m = np.cross(w, n)
+        m = np.cross(w, n.T)
         # angle between v and m
         self.doppler_angle_sar_sat =\
             angle_between(v, m)

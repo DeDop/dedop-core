@@ -4,41 +4,30 @@
  		"description": "Emitted frequency in Ku-band",
  		"units": "Hz"
  	},
- 	"freq_c_chd": {
-		"value": 5410000000.0,
- 		"description": "Emitted frequency in C-band",
- 		"units": "Hz"
- 	},
 	"bw_ku_chd": {
 		"value": 320000000.0,
 	 	"description": "Ku-band bandwidth",
 	 	"units": "Hz"
 	},
-	"bw_c_chd": {
-		"value": 320000000.0,
-		"description": "C-band bandwidth",
-		"units": "Hz"
+	"pri_sar_chd": {
+		"value": 5.610000296769016e-05,
+		"description": "pulse repetition interval",
+		"units": "s"
 	},
 	"mean_sat_alt_chd": {
 		"value": 1347000.0,
 		"description": "Mean satellite altitude",
 		"units": "m"
 	},
-
+	"uso_freq_nom_chd": {
+		"value": 10e6,
+		"description": null,
+		"units": null
+	},
 
 	"N_bursts_cycle_chd": {
 		"value": 7,
 		"description": "Number of bursts in a tracking cycle",
-		"units": null
-	},
-	"N_ku_pulses_rc_chd": {
-		"value": 448,
-		"description": "Number of Ku-band pulses in a radar cycle",
-		"units": null
-	},
-	"N_c_pulses_rc_chd": {
-		"value": 7,
-		"description": "Number of C-band pulses in a radar cycle",
 		"units": null
 	},
 	"N_ku_pulses_burst_chd": {
@@ -46,39 +35,15 @@
 		"description": "Number of Ku-band pulses per burst",
 		"units": null
 	},
-	"N_c_pulses_burst_chd": {
-		"value": 1,
-		"description": "Number of C-band pulses per burst",
-		"units": null
-	},
-	"N_cal_pulses_burst_chd": {
-		"value": 1,
-		"description": "Number of Calibration pulses per burst",
-		"units": null
-	},
-	"N_samples_lrm_chd": {
-		"value": 256,
-		"description": "Number of samples per each LRM pulse",
-		"units": null
-	},
 	"N_samples_sar_chd": {
-		"value": 256,
+		"value": 128,
 		"description": "Number of samples per each SAR pulse",
 		"units": null
 	},
+
 	"pulse_length_chd": {
 		"value": 0.000032,
 		"description": "Pulse length",
-		"units": "s"
-	},
-	"tx1_lrm_chd": {
-		"value": 0.0,
-		"description": "Time characterised on ground to shift the telemetered time to the previous transmitted pulse in LRM mode",
-		"units": "s"
-	},
-	"tx1_sar_chd": {
-		"value": 0.0,
-		"description": "Time characterised on ground to shift the telemetered time to the previous transmitted pulse in SAR mode",
 		"units": "s"
 	},
 	"fai_shift_number_chd": {
@@ -86,39 +51,6 @@
 		"description": "Number of fai shifts to complete one sample in LRM and SAR science waveforms",
 		"units": null
 	},
-
-
-	"x_ant_chd": {
-		"value": 1.530,
-		"description": "Antenna X component in the satellite reference frame",
-		"units": "m"
-	},
-	"y_ant_chd": {
-		"value": 0.005,
-		"description": "Antenna Y component in the satellite reference frame",
-		"units": "m"
-	},
-	"z_ant_chd": {
-		"value": 0.039,
-		"description": "Antenna Z component in the satellite reference frame",
-		"units": "m"
-	},
-	"x_cog_chd": {
-		"value": 1.530,
-		"description": "Center of Gravity X component in the satellite reference frame",
-		"units": "m"
-	},
-	"y_cog_chd": {
-		"value": 0.005,
-		"description": "Center of Gravity Y component in the satellite reference frame",
-		"units": "m"
-	},
-	"z_cog_chd": {
-		"value": 0.039,
-		"description": "Center of Gravity Z component in the satellite reference frame",
-		"units": "m"
-	},
-
 
 	"pitch_bias_chd": {
 		"value": 0,
@@ -136,250 +68,36 @@
 		"units": "rad"
 	},
 
-
 	"antenna_gain_ku_chd": {
 		"value": 42.1,
 		"description": "Antenna gain for Ku-band",
 		"units": "dB"
 	},
-	"antenna_gain_c_chd": {
-		"value": 33.6,
-		"description": "Antenna gain for C-band",
-		"units": "dB"
-	},
-	"antenna_beamwidth_ku_chd": {
-		"value": 1.35,
-		"description": "Antenna beamwidth at 3 dB for Ku-band",
-		"units": "deg"
-	},
-	"antenna_beamwidth_c_chd": {
-		"value": 3.4,
-		"description": "Antenna beamwidth at 3 dB for C-band",
-		"units": "deg"
-	},
-
-
-	"attcode_ground_cal1_lrm_ku_chd": {
-		"value": 0,
-		"description": "Calibration ATT code for CAL1 LRM Ku measured on ground",
-		"un1its": null
-	},
-	"attcode_ground_cal1_lrm_c_chd": {
-		"value": 0,
-		"description": "Calibration ATT code for CAL1 C Ku measured on ground",
-		"units": null
-	},
-	"attcode_ground_cal1_sar_ku_chd": {
-		"value": 0,
-	 	"description": "Calibration ATT code for CAL1 SAR Ku measured on ground",
-	 	"units": null
-	},
-	"attcode_ground_cal1_sar_c_chd": {
-		"value": 0,
-		"description": "Calibration ATT code for CAL1 SAR C measured on ground",
-		"units": null
-	},
-	"fine_shift_number_chd": {
-		"value": 64,
-		"description": "Number of fine shifts to complete one sample in CAL1 LRM waveforms",
-		"units": null
-	},
-	"total_power_ref_ground_cal1_lrm_ku_chd": {
-		"value": 49.0,
-		"description": "Total power of the PTR (CAL1 LRM Ku) waveform measured on ground",
-		"units": "dB"
-	},
-	"total_power_ref_ground_cal1_lrm_c_chd": {
-		"value": 49.0,
-		"description": "Total power of the PTR (CAL1 LRM C) waveform measured on ground",
-		"units": "dB"
-	},
-	"total_power_ref_ground_cal1_sar_ku_chd": {
-		"value": 49.0,
-		"description": "Total power of the PTR (CAL1 SAR Ku) waveform measured on ground",
-		"units": "dB"
-	},
-	"total_power_ref_ground_cal1_sar_c_chd": {
-		"value": 49.0,
-		"description": "Total power of the PTR (CAL1 SAR C) waveform measured on ground",
-		"units": "dB"
-	},
-	"max_power_ref_ground_cal1_lrm_ku_chd": {
-		"value": 48.0,
-	 	"description": "Maximum power of the PTR (CAL1 LRM Ku) waveform measured on ground",
-	 	"units": "dB"
-	},
-	"max_power_ref_ground_cal1_lrm_c_chd": {
-		"value": 48.0,
-	 	"description": "Maximum power of the PTR (CAL1 LRM C) waveform measured on ground",
-	 	"units": "dB"
-	},
-	"max_power_ref_ground_cal1_sar_ku_chd": {
-		"value": 48.0,
-		"description": "Maximum power of the PTR (CAL1 SAR Ku) waveform measured on ground",
-		"units": "dB"
-	},
-	"max_power_ref_ground_cal1_sar_c_chd": {
-		"value": 48.0,
-		"description": "Maximum power of the PTR (CAL1 SAR C) waveform measured on ground",
-		"units": "dB"
-	},
-
-
-	"ext_delay_ground_ku_chd": {
-		"value": 0.000000001,
-		"description": "External delay between the duplexor and the antenna measured on ground (Ku-band)",
-		"units": "s"
-	},
-	"ext_delay_ground_c_chd": {
-		"value": 0.000000001,
-		"description": "External delay between the duplexor and the antenna measured on ground (C-band)",
-		"units": "s"
-	},
-	"int_delay_ground_cal1_lrm_ku_chd": {
-		"value": 0.000000007,
-		"description": "Internal delay of the PTR (CAL1 LRM Ku) waveform measured on ground",
-		"units": "s"
-	},
-	"int_delay_ground_cal1_lrm_c_chd": {
-		"value": 0.000000007,
-		"description": "Internal delay of the PTR (CAL1 LRM C) waveform measured on ground",
-		"units": "s"
-	},
-	"int_delay_ground_cal1_sar_ku_chd": {
-		"value": 0.000000007,
-		"description": "Internal delay of the PTR (CAL1 SAR Ku) waveform measured on ground",
-		"units": "s"
-	},
-	"int_delay_ground_cal1_sar_c_chd": {
-		"value": 0.000000007,
-		"description": "Internal delay of the PTR (CAL1 SAR C) waveform measured on ground",
-		"units": "s"
-	},
-
 
 	"rfu_rx_gain_ground_chd": {
 		"value": 95,
 		"description": "Combination of RFU gains in the receiving chain",
 		"units": "dB"
 	},
-	"onboard_proc_lrm_ku_chd": {
-		"value": 93.6,
-		"description": "Combination of on-board fixed digital gains for the LRM Ku-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha)",
-	 	"units": "dB"
-	},
-	"onboard_proc_lrm_c_chd": {
-		"value": 87.5,
-		"description": "Combination of on-board fixed digital gains for the LRM C-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha)",
-	 	"units": "dB"
-	},
 	"onboard_proc_sar_raw_chd": {
 		"value": 60.0,
 		"description": "Combination of on-board fixed digital gains for the SAR Raw digital chain from ADC converter to TM (it includes ADC, FFTs, beta)",
 	 	"units": "dB"
 	},
-	"onboard_proc_sar_rmc_chd": {
-		"value": 41.938,
-	 	"description": "Combination of on-board fixed digital gains for the SAR RMC digital chain from ADC converter to TM (it includes ADC, FFTs, delta)",
-	 	"units": "dB"
-	},
-	"onboard_proc_lrm_ku_cal1_chd": {
-		"value": 93.6,
-		"description": "Combination of on-board fixed digital gains for the CAL1 LRM Ku-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha)",
-	 	"units": "dB"
-	},
-	"onboard_proc_lrm_c_cal1_chd": {
-		"value": 87.5,
-	 	"description": "Combination of on-board fixed digital gains for the CAL1 LRM C-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha)",
-	 	"units": "dB"
-	},
-	"onboard_proc_sar_ku_cal1_chd": {
-		"value": 60.0,
-		"description": "Combination of on-board fixed digital gains for the CAL1 SAR Ku digital chain from ADC converter to TM (it includes ADC, FFTs, beta)",
-	 	"units": "dB"
-	},
-	"onboard_proc_sar_c_cal1_chd": {
-		"value": 60.0,
-	 	"description": "Combination of on-board fixed digital gains for the CAL1 SAR C digital chain from ADC converter to TM (it includes ADC, FFTs, beta)",
-	 	"units": "dB"
-	},
-	"onboard_proc_pulse_cal1_chd": {
-		"value": 60.0,
-	 	"description": "Combination of on-board fixed digital gains for the CAL1 Pulse digital chain from ADC converter to TM (it includes ADC, FFTs, beta)",
-	 	"units": "dB"
-	},
-	"onboard_proc_lrm_ku_cal1_ref_chd": {
-		"value": 93.6,
-	 	"description": "Combination of fixed digital gains for the CAL1 LRM Ku-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha) measured on-ground",
-	 	"units": "dB"
-	},
-	"onboard_proc_lrm_c_cal1_ref_chd": {
-		"value": 87.5,
-		"description": "Combination of fixed digital gains for the CAL1 LRM C-band digital chain from ADC converter to TM (it includes ADC, FFTs, alpha) measured on-ground",
-		"units": "dB"
-	},
-	"onboard_proc_sar_ku_cal1_ref_chd": {
-		"value": 60.0,
-		"description": "Combination of fixed digital gains for the CAL1 SAR Ku digital chain from ADC converter to TM (it includes ADC, FFTs, beta) measured on-ground",
-		"units": "dB"
-	},
-	"onboard_proc_sar_c_cal1_ref_chd": {
-		"value": 60.0,
-		"description": "Combination of fixed digital gains for the CAL1 SAR C digital chain from ADC converter to TM (it includes ADC, FFTs, beta) measured on-ground",
-	 	"units": "dB"
-	},
-	"onboard_proc_pulse_cal1_ref_chd": {
-		"value": 60.0,
-		"description": "Combination of fixed digital gains for the CAL1 Pulse digital chain from ADC converter to TM (it includes ADC, FFTs, beta) measured on-ground",
-		"units": "dB"
-	},
-	"var_dig_gain_lrm_ku_cal1_ref_chd": {
-		"value": 1.0,
-		"description": "Variable digital gain for the CAL1 LRM Ku digital chain measured on-ground",
-		"units": "dB"
-	},
-	"var_dig_gain_lrm_c_cal1_ref_chd": {
-		"value": 1.0,
-		"description": "Variable digital gain for the CAL1 LRM C digital chain measured on-ground",
-		"units": "dB"
-	},
-	"var_dig_gain_sar_ku_cal1_ref_chd": {
-		"value": 1.0,
-		"description": "Variable digital gain for the CAL1 SAR Ku digital chain measured on-ground",
-		"units": "dB"
-	},
-	"var_dig_gain_sar_c_cal1_ref_chd": {
-		"value": 1.0,
-		"description": "Variable digital gain for the CAL1 SAR C digital chain measured on-ground",
-		"units": "dB"
-	},
-	"var_dig_gain_pulse_cal1_ref_chd": {
-		"value": 1.0,
-		"description": "Variable digital gain for the CAL1 Pulse digital chain measured on-ground",
-		"units": "dB"
-	},
-	"ins_losses_ground_chd": {
-		"value": 1.0,
-		"description": "Combination of instrument power losses in the receiving chain (waveguides, etc.)",
-	 	"units": "dB"
-	 },
+
 	"power_tx_ant_ku_chd": {
 		"value": 7.5,
 		"description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
 		"units": "dB"
 	},
-	"power_tx_ant_c_chd": {
-		"value": 15.10545,
-		"description": "SSPA RF Peak Transmitted Power in C band",
-		"units": "dB"
-	},
+
 	"uso_nominal_freq_chd": {
 		"value": 10000000.0,
 		"description": "USO nominal frequency",
 		"units": "Hz"
 	},
 	"alt_freq_multiplier_chd": {
-		"value": 39.5,
+		"value": 32,
 		"description": "Factor to convert from USO frequency to altimeter frequency",
 		"units": null
 	},
