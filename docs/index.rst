@@ -3,6 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
+.. warning::  This page will soon provide the user manual for the DeDop software. As you can see,
+   it isn't even a skeleton yet, but we'll make it a useful place once we've released the first version
+   of the DeDop processing software.
+
+
 |DeDop3| User Manual
 ====================
 
