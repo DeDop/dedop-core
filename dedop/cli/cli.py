@@ -32,7 +32,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.
 
-Type "%s license" for details.
+Type "%s lic" for details.
 """ % (CLI_NAME, CLI_NAME)
 
 _LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
