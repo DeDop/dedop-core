@@ -14,8 +14,8 @@ import sys
 from abc import ABCMeta, abstractmethod
 from typing import Tuple, Optional
 
-from ect.core.monitor import ConsoleMonitor, Monitor
-from ect.version import __version__
+from dedop.util.monitor import ConsoleMonitor, Monitor
+from dedop.version import __version__
 
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
@@ -193,6 +193,7 @@ class CompareCommand(Command):
         # todo (nf, 20160616) - implement me
         return self.STATUS_OK
 
+
 class WorkspaceCommand(Command):
     @classmethod
     def name(cls):
@@ -209,6 +210,7 @@ class WorkspaceCommand(Command):
 
     def execute(self, command_args):
         pass
+
 
 class CopyrightCommand(Command):
     @classmethod
