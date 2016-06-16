@@ -5,9 +5,12 @@ import numpy as np
 from numpy.linalg import norm
 from math import sqrt, log10
 
+from ..surface_location_data import SurfaceLocationData
+
 
 class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
-    def __call__(self, working_surface_location, wavelength_ku, chirp_slope_ku):
+    def __call__(self, working_surface_location: SurfaceLocationData, wavelength_ku: float,
+                 chirp_slope_ku: float) -> float:
         """
         calculates the sigma0 scaling factor
 

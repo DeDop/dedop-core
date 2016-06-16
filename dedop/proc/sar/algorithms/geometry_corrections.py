@@ -4,6 +4,9 @@ from numpy.linalg import norm
 from ..base_algorithm import BaseAlgorithm
 from ....util.parameter import Parameter
 
+from ..surface_location_data import SurfaceLocationData
+from ....io.input import InstrumentSourcePacket
+
 
 @Parameter("doppler_correction_enabled", default_value=True)
 @Parameter("slant_range_correction_enabled", default_value=True)
@@ -14,7 +17,7 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
     """
     # TODO: Enable selection of window delay alignment method
 
-    def __call__(self, working_surface_location, wv_length_ku):
+    def __call__(self, working_surface_location: SurfaceLocationData, wv_length_ku: float) -> None:
         self.beams_geo_corr = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar),
             dtype=complex
@@ -51,7 +54,8 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
                 working_surface_location, stack_burst, beam_index
             )
 
-    def compute_doppler_correction(self, working_surface_location, stack_burst, beam_index, wv_length_ku):
+    def compute_doppler_correction(self, working_surface_location: SurfaceLocationData,
+                                   stack_burst: InstrumentSourcePacket, beam_index: int, wv_length_ku: float) -> None:
         if not self.doppler_correction_enabled:
             return
 
@@ -64,7 +68,8 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
         self.doppler_corrections[beam_index] =\
             2 / self.cst.c * doppler_range / working_surface_location.t0_surf[beam_index]
 
-    def compute_slant_range_correction(self, working_surface_location, stack_burst, beam_index):
+    def compute_slant_range_correction(self, working_surface_location: SurfaceLocationData,
+                                       stack_burst: InstrumentSourcePacket, beam_index: int) -> None:
         isp_orbit_surf_ground_vector = np.matrix([
             [stack_burst.x_sar_sat - working_surface_location.x_surf],
             [stack_burst.y_sar_sat - working_surface_location.y_surf],
@@ -84,13 +89,15 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
         self.slant_range_corrections[beam_index] =\
             slant_range_correction_time / working_surface_location.t0_surf[beam_index]
 
-    def compute_win_delay_misalignments_correction(self, working_surface_location, stack_burst, beam_index,
-                                                   win_delay_ref):
+    def compute_win_delay_misalignments_correction(self, working_surface_location: SurfaceLocationData,
+                                                   stack_burst: InstrumentSourcePacket, beam_index: int,
+                                                   win_delay_ref: float) -> None:
         self.win_delay_corrections[beam_index] =\
             -(win_delay_ref - stack_burst.win_delay_sar_ku) /\
             working_surface_location.t0_surf[beam_index]
 
-    def apply_corrections(self, working_surface_location, stack_burst, beam_index):
+    def apply_corrections(self, working_surface_location: SurfaceLocationData, stack_burst: InstrumentSourcePacket,
+                          beam_index: int) -> None:
         shift = self.doppler_corrections[beam_index] +\
                 self.slant_range_corrections[beam_index] +\
                 self.win_delay_corrections[beam_index]

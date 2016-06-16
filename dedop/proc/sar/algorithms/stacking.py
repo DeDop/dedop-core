@@ -1,12 +1,13 @@
 import numpy as np
 from ..base_algorithm import BaseAlgorithm
 
-from ..surface_location_data import SurfaceType
+from ..surface_location_data import SurfaceType, SurfaceLocationData
 from ....io.input.packet import IspPid
+from ....conf import CharacterisationFile, ConstantsFile
 
 class StackingAlgorithm(BaseAlgorithm):
 
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         super().__init__(chd, cst)
 
         self.data_stack_size = 0
@@ -23,7 +24,7 @@ class StackingAlgorithm(BaseAlgorithm):
         self.look_index_surf = None
         self.look_counter_surf = None
 
-    def __call__(self, working_surface_location):
+    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
         """
         Call the stacking algorithm
 

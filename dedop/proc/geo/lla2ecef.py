@@ -1,7 +1,11 @@
 from scipy import cos, sin, sqrt, radians
 import numpy as np
+from typing import Sequence, Tuple
 
-def lla2ecef(lla, cst, lla_as_degrees=False):
+from ...conf import ConstantsFile
+
+
+def lla2ecef(lla: Sequence[float], cst: ConstantsFile, lla_as_degrees: bool=False) -> Tuple[float, float, float]:
     """
     converts LLA (Latitude, Longitude, Altitude) coordinates
     to ECEF (Earth-Centre, Earth-First) XYZ coordinates.

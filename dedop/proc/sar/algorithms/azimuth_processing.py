@@ -4,6 +4,8 @@ from math import cos
 from enum import Enum
 
 from ..base_algorithm import BaseAlgorithm
+from ....conf import CharacterisationFile, ConstantsFile
+from ....io.input import InstrumentSourcePacket
 
 
 class AzimuthProcessingMethods(Enum):
@@ -29,13 +31,14 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
     """
     class for performing the Azimuth Processing Algorithm
     """
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile) -> None:
         super().__init__(chd, cst)
 
         self.beams_focused = None
 
-    def __call__(self, isp, wavelength_ku, method=AzimuthProcessingMethods.dynamic,
-                 weighting=AzimuthWeighting.disabled):
+    def __call__(self, isp: InstrumentSourcePacket, wavelength_ku: float,
+                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.dynamic,
+                 weighting: AzimuthWeighting=AzimuthWeighting.disabled) -> None:
         """
         Executes the azimuth processing algorithm
 
@@ -65,7 +68,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         elif method == AzimuthProcessingMethods.exact:
             self.compute_exact_method(isp, wavelength_ku)
 
-    def compute_approximate_method(self, isp, wavelength_ku):
+    def compute_approximate_method(self, isp: InstrumentSourcePacket, wavelength_ku: float) -> None:
         """
         Azimuth processing approximate method
 
@@ -103,7 +106,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         copy_end = self.chd.n_ku_pulses_burst - beams_offset
         self.beams_focused[:copy_end, :] = wfm_fft_azimuth[beams_offset:, :]
 
-    def compute_exact_method(self, isp, wavelength_ku):
+    def compute_exact_method(self, isp: InstrumentSourcePacket, wavelength_ku: float) -> None:
         """
         Azimuth processing exact method
 
@@ -132,7 +135,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             self.beams_focused[beam_index, :] =\
                 wfm_fft_azimuth[self.chd.n_ku_pulses_burst // 2, :]
 
-    def compute_phase_shift(self, isp, beam_angle, wavelength_ku):
+    def compute_phase_shift(self, isp: InstrumentSourcePacket, beam_angle: float, wavelength_ku: float) -> np.ndarray:
         """
         For each pulse of the burst, a phase (based on the given beam
         angle value) is applied to the waveform
@@ -159,7 +162,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
 
         return waveform_phase_shift
 
-    def compute_fft_azimuth_dimension(self, waveform_phase_shift):
+    def compute_fft_azimuth_dimension(self, waveform_phase_shift: np.ndarray) -> np.ndarray:
         """
         :param waveform_phase_shift: the phase shifted waveform to transform
 
@@ -176,7 +179,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             out_fft, axes=0
         )
 
-    def get_nadir_beam_angle(self, isp):
+    def get_nadir_beam_angle(self, isp: InstrumentSourcePacket) -> float:
         """
         :param isp: The InstrumentSourcePacket to be processed
 

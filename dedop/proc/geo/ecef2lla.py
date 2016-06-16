@@ -1,12 +1,15 @@
 from scipy import sqrt, arctan, arctan2, sin, cos
 from numpy.linalg import norm
+from typing import Sequence, Tuple
+
 
 from .geo_error import GeolocationError
+from ...conf import ConstantsFile
 
 COORD_ITERS = 10
 GEODETIC_ERR = 1e-9
 
-def ecef2lla(ecef, cst):
+def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, float]:
     """
     converts a cartesian (x, y, z) earth-centred
      earth-fixed coordinate to a radial (lat, lon, alt)

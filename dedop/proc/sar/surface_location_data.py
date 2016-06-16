@@ -3,6 +3,10 @@ from numpy.linalg import norm
 from enum import Enum
 from collections import OrderedDict
 
+from ...conf import CharacterisationFile, ConstantsFile
+from ...io.input import InstrumentSourcePacket
+
+from typing import Optional, Sequence, Dict, Any
 
 class SurfaceLocationData:
     """
@@ -767,7 +771,8 @@ class SurfaceLocationData:
     def range_sat_surf(self):
         del self['range_sat_surf']
 
-    def __init__(self, cst, chd, surf_num=None, *dicts, **values):
+    def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: Optional[int]=None,
+                 *dicts: Sequence[dict], **values: Dict[str, Any]):
         self._surface_counter = surf_num
         self._data = OrderedDict()
         self._data["surface_type"] = SurfaceType.surface_null
@@ -782,18 +787,18 @@ class SurfaceLocationData:
         self.cst = cst
         self.chd = chd
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         if not hasattr(self.__class__, key):
             raise KeyError("{} has no attribute '{}'".format(self, key))
         self._data[key] = value
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self._data[key]
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         del self._data[key]
 
-    def compute_angular_azimuth_beam_resolution(self, pri_sar):
+    def compute_angular_azimuth_beam_resolution(self, pri_sar: float) -> None:
         vel_sat = np.array([self.x_vel_sat,
                             self.y_vel_sat,
                             self.z_vel_sat]).T
@@ -802,12 +807,12 @@ class SurfaceLocationData:
                      self.chd.n_ku_pulses_burst * pri_sar)
         )
 
-    def compute_surf_sat_vector(self):
+    def compute_surf_sat_vector(self) -> None:
         self.surf_sat_vector =\
             np.asarray(self.ecef_surf, dtype=np.float64) -\
             np.asarray(self.ecef_sat,  dtype=np.float64)
 
-    def add_stack_beam_index(self, beam_index, beam_angle_trend, beam_angles_list_size):
+    def add_stack_beam_index(self, beam_index: int, beam_angle_trend: int, beam_angles_list_size: int) -> None:
         self.stack_all_beams_indices.append(beam_index)
 
         if beam_angle_trend == 1:
@@ -820,7 +825,7 @@ class SurfaceLocationData:
                 beam_index - self.chd.n_ku_pulses_burst // 2
             )
 
-    def add_stack_burst(self, isp):
+    def add_stack_burst(self, isp: InstrumentSourcePacket):
         self.stack_all_bursts.append(isp)
 
 class SurfaceType(Enum):

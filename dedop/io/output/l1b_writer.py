@@ -3,6 +3,10 @@ from enum import Enum
 
 from .netcdf_writer import NetCDFWriter
 
+from ...conf import CharacterisationFile
+from ...proc.sar.surface_location_data import SurfaceLocationData
+
+
 
 class L1BDimensions(Enum):
     time_l1b_echo_sar_ku = 'time_l1b_echo_sar_ku'
@@ -76,7 +80,7 @@ class L1BWriter(NetCDFWriter):
     """
     class for writing L1B netCDF files
     """
-    def __init__(self, chd, filename):
+    def __init__(self, chd: CharacterisationFile, filename: str):
         """
         Initialize the L1BWriter Instance
 
@@ -696,7 +700,7 @@ class L1BWriter(NetCDFWriter):
             fill_value=4294967295
         )
 
-    def write_record(self, surface_location_data):
+    def write_record(self, surface_location_data: SurfaceLocationData) -> None:
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1b_echo_sar_ku=None,

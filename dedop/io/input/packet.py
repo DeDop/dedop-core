@@ -1,8 +1,10 @@
 from ...proc.geo import lla2ecef
 from ...proc.functions import angle_between
+from ...conf import CharacterisationFile, ConstantsFile
 
 from collections import OrderedDict
 from enum import Enum
+from typing import Optional, Sequence, Dict, Any
 
 import numpy as np
 
@@ -639,7 +641,8 @@ class InstrumentSourcePacket:
         return self._counter
 
 
-    def __init__(self, cst, chd, seq_num=None, *dicts, **values):
+    def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
+                 seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
         self._data = OrderedDict()
         self._counter = seq_num
 
@@ -656,18 +659,18 @@ class InstrumentSourcePacket:
         self.cst = cst
         self.chd = chd
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         if not hasattr(self.__class__, key):
             raise KeyError("{} has no attribute '{}'".format(self, key))
         self._data[key] = value
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self._data[key]
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         del self._data[key]
 
-    def compute_location_sar_surf(self):
+    def compute_location_sar_surf(self) -> None:
         lla = (
             self.lat_sar_sat,
             self.lon_sar_sat,
@@ -690,7 +693,7 @@ class InstrumentSourcePacket:
         self.y_sar_surf = y
         self.z_sar_surf = z
 
-    def calculate_beam_angles_trend(self, prev_beam_angles_list_size, prev_beam_angles_trend):
+    def calculate_beam_angles_trend(self, prev_beam_angles_list_size: int, prev_beam_angles_trend: int) -> None:
         """
         computes the beam angles trend of the ISP
 
@@ -711,7 +714,7 @@ class InstrumentSourcePacket:
         else:
             self.beam_angles_trend = prev_beam_angles_trend
 
-    def compute_doppler_angle(self):
+    def compute_doppler_angle(self) -> None:
         """
         calculate the doppler angle
         """
@@ -735,5 +738,4 @@ class InstrumentSourcePacket:
         # vector perpendicular to plane nw
         m = np.cross(w, n.T)
         # angle between v and m
-        self.doppler_angle_sar_sat =\
-            angle_between(v, m)
+        self.doppler_angle_sar_sat = angle_between(v, m)

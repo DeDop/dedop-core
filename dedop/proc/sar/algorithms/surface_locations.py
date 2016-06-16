@@ -1,12 +1,16 @@
 import numpy as np
 
-
 from ...geo import lla2ecef, ecef2lla
 from ..base_algorithm import BaseAlgorithm
+from ..surface_location_data import SurfaceLocationData
 from ...functions import *
+from ....io.input import InstrumentSourcePacket
+from ....conf import CharacterisationFile, ConstantsFile
+
+from typing import Dict, Any, Sequence
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         self.first_surf = False
         self.new_surf = False
 
@@ -34,7 +38,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         super().__init__(chd, cst)
 
-    def get_surface(self):
+    def get_surface(self) -> Dict[str, Any]:
         return {
             'time_surf': self.time_surf,
             'x_surf': self.x_surf,
@@ -59,7 +63,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             'win_delay_surf': self.win_delay_surf
         }
 
-    def store_first_location(self, isps):
+    def store_first_location(self, isps: Sequence[InstrumentSourcePacket]) -> None:
         isp_record = isps[-1]
 
         self.time_surf = isp_record.time_sar_ku
@@ -96,7 +100,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
-    def __call__(self, locs, isps):
+    def __call__(self, locs: Sequence[SurfaceLocationData], isps: Sequence[InstrumentSourcePacket]) -> bool:
         if not locs:
             self.first_surf = True
             self.new_surf = True
@@ -107,7 +111,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             self.new_surf = self.find_new_location(locs, isps)
         return self.new_surf
 
-    def find_new_location(self, locs, isps):
+    def find_new_location(self, locs: Sequence[SurfaceLocationData], isps: Sequence[InstrumentSourcePacket]) -> bool:
         surface = locs[-1]
         isp_curr = isps[-1]
         isp_prev = isps[-2]

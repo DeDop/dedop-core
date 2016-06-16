@@ -4,12 +4,17 @@ import numpy as np
 from numpy.linalg import norm
 from math import acos
 
+from ..surface_location_data import SurfaceLocationData
+from ....io.input import InstrumentSourcePacket
+from typing import Sequence, Tuple
+
 class BeamAnglesAlgorithm(BaseAlgorithm):
     """
     Class for finding beam angles
     """
 
-    def __call__(self, surface_locations, isp_record, work_location):
+    def __call__(self, surface_locations: Sequence[SurfaceLocationData], isp_record: InstrumentSourcePacket,
+                 work_location: SurfaceLocationData):
         """
 
         """
@@ -37,7 +42,8 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
             elif prev_location_seen:
                 break
 
-    def compute_beam_angle(self, surface, isp_record):
+    def compute_beam_angle(self, surface: SurfaceLocationData,
+                           isp_record: InstrumentSourcePacket) -> Tuple[float, bool]:
         """
         computes the beam angle for the specified surface.
         """
@@ -64,4 +70,5 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
             location_seen = True
         else:
             location_seen = False
+
         return beam_angle, location_seen

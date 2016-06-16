@@ -2,10 +2,11 @@ from ..base_algorithm import BaseAlgorithm
 
 import numpy as np
 from numpy.fft import fft, fftshift
-from math import sqrt
+
+from ..surface_location_data import SurfaceLocationData
 
 class RangeCompressionAlgorithm(BaseAlgorithm):
-    def __call__(self, working_surface_location):
+    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
         # calc. size after zero padding factor applied
         padded_size = self.zp_fact_range * self.chd.n_samples_sar
         stack_size = working_surface_location.data_stack_size

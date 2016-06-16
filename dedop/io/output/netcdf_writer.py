@@ -2,7 +2,12 @@ import netCDF4 as nc
 from collections import OrderedDict
 from enum import Enum
 
-class NetCDFWriter:
+from typing import Sequence, Tuple, Any, Union, Dict
+from abc import ABCMeta
+
+Name = Union[str, Enum]
+
+class NetCDFWriter(metaclass=ABCMeta):
     """
     base class for writing output netCDF files
     """
@@ -15,7 +20,8 @@ class NetCDFWriter:
         this class is used by NetCDFWriters to create the
         variable instances
         """
-        def __init__(self, name, data_type, dimensions, long_name, fill_value=None, **attrs):
+        def __init__(self, name: str, data_type: type, dimensions: Sequence[int],
+                     long_name: str, fill_value: Any=None, **attrs: Any):
             """
             :param name: the short id of the variable
             :param data_type: the output data format
@@ -39,7 +45,7 @@ class NetCDFWriter:
             if fill_value is not None:
                 self.props["fill_value"] = fill_value
 
-        def set_property(self, name, value):
+        def set_property(self, name: str, value: Any) -> None:
             """
             adds or sets a property
 
@@ -48,7 +54,7 @@ class NetCDFWriter:
             """
             self.props[name] = value
 
-        def set_properties(self, **props):
+        def set_properties(self, **props: Any) -> None:
             """
             adds or sets multiple properties
 
@@ -56,7 +62,7 @@ class NetCDFWriter:
             """
             self.props.update(props)
 
-        def get_properties(self):
+        def get_properties(self) -> Dict[str, Any]:
             """
             gets the property keyword arguments needed by the
             createVariable method of a netCDF document
@@ -65,7 +71,7 @@ class NetCDFWriter:
             """
             return self.props.copy()
 
-        def get_attributes(self):
+        def get_attributes(self) -> Dict[str, Any]:
             """
             gets the extra metadata attributes to be set
             by the setncattrs method of a netCDF variable instance
@@ -74,7 +80,7 @@ class NetCDFWriter:
             """
             return self.attrs.copy()
 
-    def __init__(self, filename):
+    def __init__(self, filename: str):
         """
         initialize the NetCDFWriter instance
 
@@ -100,7 +106,7 @@ class NetCDFWriter:
         self.output_index = 0
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         called at the end of a with statement, regardless of
         an errors raised inside the block. ensures the file
@@ -113,7 +119,7 @@ class NetCDFWriter:
         """
         self.close()
 
-    def define_dimension(self, dimension_name, size):
+    def define_dimension(self, dimension_name: Name, size: int=None) -> None:
         """
         Add a new dimension to the dimension definitions
 
@@ -123,7 +129,8 @@ class NetCDFWriter:
         """
         self._dimensions[dimension_name] = size
 
-    def define_variable(self, variable_name, data_type, dimensions, *attr_pairs, **attrs):
+    def define_variable(self, variable_name: Name, data_type: type, dimensions: Sequence[int],
+                        *attr_pairs: Tuple[str, Any], **attrs: Any) -> None:
         """
         Add a new variable to the variable definitions
 
@@ -143,7 +150,7 @@ class NetCDFWriter:
         self._variables[variable_name].update(attrs)
 
 
-    def get_dimension_size(self, dimension_name):
+    def get_dimension_size(self, dimension_name: Name) -> int:
         """
         returns the size of the specified dimension
 
@@ -152,7 +159,7 @@ class NetCDFWriter:
         """
         return self._dimensions[dimension_name]
 
-    def get_variable_descriptor(self, variable_name):
+    def get_variable_descriptor(self, variable_name: Name) -> VariableDescriptor:
         """
         return the variable descriptor instance for
         the specified variable
@@ -182,7 +189,7 @@ class NetCDFWriter:
         # return the variable descriptor
         return desc
 
-    def create_all_dimensions(self, *only):
+    def create_all_dimensions(self, *only: Name) -> None:
         """
         creates all the dimensions specified in the class'
         '_dimensions' field, or only those specified in
@@ -203,7 +210,7 @@ class NetCDFWriter:
                 # set attribute
                 setattr(self, dim.name, dim)
 
-    def create_all_variables(self, *only):
+    def create_all_variables(self, *only: Name) -> None:
         """
         creates all the variables specified in the class'
         '_variables' field, or only those specified in the
@@ -224,7 +231,7 @@ class NetCDFWriter:
                 # set attribute
                 setattr(self, var.name, var)
 
-    def create_dimension(self, name, size=None):
+    def create_dimension(self, name: Name, size: int=None) -> nc.Dimension:
         """
         Add a new dimension to the netCDF file
 
@@ -243,7 +250,7 @@ class NetCDFWriter:
 
         return dim
 
-    def create_variable(self, name, variable_description):
+    def create_variable(self, name: Name, variable_description: VariableDescriptor) -> nc.Variable:
         """
         Adds a new variable to the netCDF file
 
@@ -270,13 +277,13 @@ class NetCDFWriter:
 
         return var
 
-    def close(self):
+    def close(self) -> None:
         """
         close the netCDF file
         """
         self._root.close()
 
-    def write_record(self, **record_values):
+    def write_record(self, **record_values: Any) -> None:
         """
         writes values to the output file
 
