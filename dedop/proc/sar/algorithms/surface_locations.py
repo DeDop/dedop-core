@@ -3,10 +3,10 @@ from typing import Dict, Any, Sequence
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ...functions import *
-from ...geo import lla2ecef, ecef2lla
-from ....conf import CharacterisationFile, ConstantsFile
-from ....io.input import InstrumentSourcePacket
+from dedop.proc.functions import *
+from dedop.proc.geo import lla2ecef, ecef2lla
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.data.input import InstrumentSourcePacket
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
     def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):

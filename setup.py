@@ -7,7 +7,7 @@ setup(
     license='GPL 3',
     author='DeDop Development Team',
     packages=['dedop.model',
-              'dedop.io',
+              'dedop.data',
               'dedop.proc',
               'dedop.conf',
               'dedop.util',

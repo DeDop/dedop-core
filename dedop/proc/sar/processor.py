@@ -2,9 +2,9 @@ from typing import Optional, Sequence, Dict, Any
 
 from dedop.model import SurfaceData
 from .algorithms import *
-from ...conf import CharacterisationFile, ConstantsFile
-from ...io.input import InputDataset, InstrumentSourcePacket
-from ...io.output import L1BSWriter, L1BWriter
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.data.input import InputDataset, InstrumentSourcePacket
+from dedop.data.output import L1BSWriter, L1BWriter
 
 
 class L1BProcessor:

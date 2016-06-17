@@ -6,7 +6,7 @@ from typing import Sequence, Tuple
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ....io.input import InstrumentSourcePacket
+from dedop.data.input import InstrumentSourcePacket
 
 class BeamAnglesAlgorithm(BaseAlgorithm):
     """

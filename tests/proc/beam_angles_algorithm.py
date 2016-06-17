@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.data.input.packet import InstrumentSourcePacket
 from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
 from tests.testing import TestDataLoader

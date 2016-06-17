@@ -1,7 +1,7 @@
 import unittest
 
 from dedop.conf import ConstantsFile, CharacterisationFile
-from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.data.input.packet import InstrumentSourcePacket
 from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
 from tests.testing import TestDataLoader

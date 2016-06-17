@@ -1,5 +1,5 @@
 from dedop.proc.sar.processor import L1BProcessor
-from dedop.io.input.l1a import L1ADataset
+from dedop.data.input.l1a import L1ADataset
 from dedop.conf import CharacterisationFile, ConstantsFile
 
 cst = ConstantsFile("test_data/common/cst.json")

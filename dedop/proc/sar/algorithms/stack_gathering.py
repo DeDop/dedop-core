@@ -2,8 +2,8 @@ import numpy as np
 
 from dedop.model import SurfaceType, SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ....conf import CharacterisationFile, ConstantsFile
-from ....io.input.packet import IspPid
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.data.input.packet import IspPid
 
 
 class StackGatheringAlgorithm(BaseAlgorithm):

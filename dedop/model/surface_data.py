@@ -4,7 +4,7 @@ from enum import Enum
 from collections import OrderedDict
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.io.input import InstrumentSourcePacket
+from dedop.data.input import InstrumentSourcePacket
 
 from typing import Any, Tuple, Sequence
 

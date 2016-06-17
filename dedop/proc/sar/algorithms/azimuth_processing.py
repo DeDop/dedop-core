@@ -4,8 +4,8 @@ from math import cos
 from enum import Enum
 
 from ..base_algorithm import BaseAlgorithm
-from ....conf import CharacterisationFile, ConstantsFile
-from ....io.input import InstrumentSourcePacket
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.data.input import InstrumentSourcePacket
 
 
 class AzimuthProcessingMethods(Enum):

@@ -3,8 +3,8 @@ from numpy.linalg import norm
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ....io.input import InstrumentSourcePacket
-from ....util.parameter import Parameter
+from dedop.data.input import InstrumentSourcePacket
+from dedop.util.parameter import Parameter
 
 
 @Parameter("doppler_correction_enabled", default_value=True)

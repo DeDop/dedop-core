@@ -5,7 +5,7 @@ from tests.testing import TestDataLoader
 
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
-from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.data.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
 
 

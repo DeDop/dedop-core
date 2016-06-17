@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.io.input.packet import InstrumentSourcePacket, IspPid
+from dedop.data.input.packet import InstrumentSourcePacket, IspPid
 from dedop.model import SurfaceData, SurfaceType
 from dedop.proc.sar.algorithms import StackGatheringAlgorithm
 from tests.testing import TestDataLoader
