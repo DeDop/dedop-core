@@ -1,9 +1,9 @@
 import numpy as np
 
-from dedop.model import SurfaceType, SurfaceData
-from ..base_algorithm import BaseAlgorithm
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.data.input.packet import IspPid
+from dedop.model import SurfaceType, SurfaceData
+from dedop.model import PacketPid
+from ..base_algorithm import BaseAlgorithm
 
 
 class StackGatheringAlgorithm(BaseAlgorithm):
@@ -130,7 +130,7 @@ class StackGatheringAlgorithm(BaseAlgorithm):
             self.look_index_surf[stack_index] = look_index_beam
             self.look_counter_surf[stack_index] = look_counter_beam
 
-            if not rmc_burst_in_stack and stack_burst.isp_pid == IspPid.isp_echo_rmc:
+            if not rmc_burst_in_stack and stack_burst.isp_pid == PacketPid.echo_rmc:
                 rmc_burst_in_stack = True
 
             burst_beam_angle = abs(beam_angle - self.cst.pi / 2.)

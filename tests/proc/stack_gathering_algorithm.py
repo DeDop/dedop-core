@@ -3,8 +3,8 @@ import unittest
 import numpy as np
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.data.input.packet import InstrumentSourcePacket, IspPid
 from dedop.model import SurfaceData, SurfaceType
+from dedop.model.l1a_processing_data import L1AProcessingData, PacketPid
 from dedop.proc.sar.algorithms import StackGatheringAlgorithm
 from tests.testing import TestDataLoader
 
@@ -52,8 +52,8 @@ class StackGatheringAlgorithmTests(unittest.TestCase):
             beams_focused = np.zeros(
                 (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
             )
-            pid = IspPid.isp_echo_sar if input_data['isp_pid'][stack_index] == 7 else IspPid.isp_echo_rmc
-            isp = InstrumentSourcePacket(
+            pid = PacketPid.echo_sar if input_data['isp_pid'][stack_index] == 7 else PacketPid.echo_rmc
+            packet = L1AProcessingData(
                 self.cst, self.chd, stack_index,
                 t0_sar=input_data["T0_sar"][stack_index],
                 doppler_angle_sar_sat=input_data["doppler_angle_sar_sat"][stack_index],
@@ -62,7 +62,7 @@ class StackGatheringAlgorithmTests(unittest.TestCase):
                 beams_focused=beams_focused,
                 isp_pid=pid
             )
-            isps.append(isp)
+            isps.append(packet)
 
         working_loc = SurfaceData(
             self.cst, self.chd,

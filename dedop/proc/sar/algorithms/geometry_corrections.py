@@ -1,9 +1,8 @@
 import numpy as np
 from numpy.linalg import norm
 
-from dedop.model import SurfaceData
+from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
-from dedop.data.input import InstrumentSourcePacket
 from dedop.util.parameter import Parameter
 
 
@@ -54,7 +53,7 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
             )
 
     def compute_doppler_correction(self, working_surface_location: SurfaceData,
-                                   stack_burst: InstrumentSourcePacket, beam_index: int, wv_length_ku: float) -> None:
+                                   stack_burst: L1AProcessingData, beam_index: int, wv_length_ku: float) -> None:
         if not self.doppler_correction_enabled:
             return
 
@@ -68,7 +67,7 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
             2 / self.cst.c * doppler_range / working_surface_location.t0_surf[beam_index]
 
     def compute_slant_range_correction(self, working_surface_location: SurfaceData,
-                                       stack_burst: InstrumentSourcePacket, beam_index: int) -> None:
+                                       stack_burst: L1AProcessingData, beam_index: int) -> None:
         isp_orbit_surf_ground_vector = np.matrix([
             [stack_burst.x_sar_sat - working_surface_location.x_surf],
             [stack_burst.y_sar_sat - working_surface_location.y_surf],
@@ -89,13 +88,13 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
             slant_range_correction_time / working_surface_location.t0_surf[beam_index]
 
     def compute_win_delay_misalignments_correction(self, working_surface_location: SurfaceData,
-                                                   stack_burst: InstrumentSourcePacket, beam_index: int,
+                                                   stack_burst: L1AProcessingData, beam_index: int,
                                                    win_delay_ref: float) -> None:
         self.win_delay_corrections[beam_index] =\
             -(win_delay_ref - stack_burst.win_delay_sar_ku) /\
             working_surface_location.t0_surf[beam_index]
 
-    def apply_corrections(self, working_surface_location: SurfaceData, stack_burst: InstrumentSourcePacket,
+    def apply_corrections(self, working_surface_location: SurfaceData, stack_burst: L1AProcessingData,
                           beam_index: int) -> None:
         shift = self.doppler_corrections[beam_index] +\
                 self.slant_range_corrections[beam_index] +\

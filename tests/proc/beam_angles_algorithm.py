@@ -3,8 +3,8 @@ import unittest
 import numpy as np
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.data.input.packet import InstrumentSourcePacket
 from dedop.model import SurfaceData
+from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
 from tests.testing import TestDataLoader
 
@@ -61,8 +61,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             )
             surfs.append(surf)
 
-        # create isp object
-        isp = InstrumentSourcePacket(
+        # create packet object
+        packet = L1AProcessingData(
             self.cst, self.chd,
             time_sar_ku=input_data["time_sar_ku"],
             x_sar_sat=input_data["x_sar_sat"],
@@ -76,7 +76,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         work_loc = input_data["working_surface_location_counter"]
 
         # execute beam angles algorithm
-        self.beam_angles_algorithm(surfs, isp, surfs[work_loc])
+        self.beam_angles_algorithm(surfs, packet, surfs[work_loc])
 
         # confirm correct number of surfaces seen
         self.assertEqual(
@@ -129,8 +129,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             )
             surfs.append(surf)
 
-        # create isp object
-        isp = InstrumentSourcePacket(
+        # create packet object
+        packet = L1AProcessingData(
             self.cst, self.chd,
             time_sar_ku=input_data["time_sar_ku"],
             x_sar_sat=input_data["x_sar_sat"],
@@ -144,7 +144,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         work_loc = input_data["working_surface_location_counter"]
 
         # execute beam angles algorithm
-        self.beam_angles_algorithm(surfs, isp, work_loc)
+        self.beam_angles_algorithm(surfs, packet, work_loc)
 
         # confirm correct number of surfaces seen
         self.assertEqual(

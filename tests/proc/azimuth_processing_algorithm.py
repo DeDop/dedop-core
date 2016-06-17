@@ -1,12 +1,12 @@
 import unittest
+
 import numpy as np
 
-from tests.testing import TestDataLoader
-
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
-from dedop.data.input.packet import InstrumentSourcePacket
-from dedop.conf import CharacterisationFile, ConstantsFile
+from tests.testing import TestDataLoader
 
 
 class AzimuthProcessingAlgorithmTests(unittest.TestCase):
@@ -54,8 +54,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         wfm_q = np.reshape(input_data["wfm_cor_sar_q"], waveform_shape)
         wv_len = input_data["wv_length_ku"]
 
-        # create input ISP
-        isp = InstrumentSourcePacket(
+        # create input packet
+        packet = L1AProcessingData(
             self.cst, self.chd,
             time_sar_ku=input_data["time_sar_ku"],
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
@@ -65,8 +65,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             beam_angles_list=input_data["beam_angles_list"],
             waveform_cor_sar=wfm_i+1j*wfm_q
         )
-        # compute beam angles trend for ISP
-        isp.calculate_beam_angles_trend(
+        # compute beam angles trend for packet
+        packet.calculate_beam_angles_trend(
             input_data["beam_angles_list_size_previous_burst"],
             input_data["beam_angles_trend_previous_burst"]
         )
@@ -76,7 +76,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             input_data["flag_azimuth_processing_method_cnf"]
         )
         # execute azimuth processing algorithm
-        self.azimuth_processing_algorithm(isp, wv_len, method=proc_method)
+        self.azimuth_processing_algorithm(packet, wv_len, method=proc_method)
 
         beams_focused = self.azimuth_processing_algorithm.beams_focused
 
@@ -135,8 +135,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         wfm_q = np.reshape(input_data["wfm_cor_sar_q"], waveform_shape)
         wv_len = input_data["wv_length_ku"]
 
-        # create input ISP
-        isp = InstrumentSourcePacket(
+        # create input packet
+        packet = L1AProcessingData(
             self.cst, self.chd,
             time_sar_ku=input_data["time_sar_ku"],
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
@@ -146,8 +146,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             beam_angles_list=input_data["beam_angles_list"],
             waveform_cor_sar=wfm_i + 1j * wfm_q
         )
-        # compute beam angles trend for ISP
-        isp.calculate_beam_angles_trend(
+        # compute beam angles trend for packet
+        packet.calculate_beam_angles_trend(
             input_data["beam_angles_list_size_previous_burst"],
             input_data["beam_angles_trend_previous_burst"]
         )
@@ -157,7 +157,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             input_data["flag_azimuth_processing_method_cnf"]
         )
         # execute azimuth processing algorithm
-        self.azimuth_processing_algorithm(isp, wv_len, method=proc_method)
+        self.azimuth_processing_algorithm(packet, wv_len, method=proc_method)
 
         beams_focused = self.azimuth_processing_algorithm.beams_focused
 

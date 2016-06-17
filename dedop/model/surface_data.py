@@ -4,7 +4,7 @@ from enum import Enum
 from collections import OrderedDict
 
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.data.input import InstrumentSourcePacket
+from .l1a_processing_data import L1AProcessingData
 
 from typing import Any, Tuple, Sequence
 
@@ -837,5 +837,5 @@ class SurfaceData:
                 beam_index - self.chd.n_ku_pulses_burst // 2
             )
 
-    def add_stack_burst(self, isp: InstrumentSourcePacket):
-        self.stack_all_bursts.append(isp)
+    def add_stack_burst(self, packet: L1AProcessingData):
+        self.stack_all_bursts.append(packet)
