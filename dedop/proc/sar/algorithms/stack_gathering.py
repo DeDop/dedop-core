@@ -6,7 +6,7 @@ from ....conf import CharacterisationFile, ConstantsFile
 from ....io.input.packet import IspPid
 
 
-class StackingAlgorithm(BaseAlgorithm):
+class StackGatheringAlgorithm(BaseAlgorithm):
 
     def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         super().__init__(chd, cst)
@@ -27,7 +27,7 @@ class StackingAlgorithm(BaseAlgorithm):
 
     def __call__(self, working_surface_location: SurfaceData) -> None:
         """
-        Call the stacking algorithm
+        Call the stack_gathering algorithm
 
         :param working_surface_location: The current surface location
         """

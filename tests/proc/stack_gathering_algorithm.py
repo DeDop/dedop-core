@@ -5,11 +5,11 @@ import numpy as np
 from dedop.conf import CharacterisationFile, ConstantsFile
 from dedop.io.input.packet import InstrumentSourcePacket, IspPid
 from dedop.model import SurfaceData, SurfaceType
-from dedop.proc.sar.algorithms import StackingAlgorithm
+from dedop.proc.sar.algorithms import StackGatheringAlgorithm
 from tests.testing import TestDataLoader
 
 
-class StackingAlgorithmTests(unittest.TestCase):
+class StackGatheringAlgorithmTests(unittest.TestCase):
     inputs_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                 "input/input.txt"
     expected_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
@@ -24,11 +24,11 @@ class StackingAlgorithmTests(unittest.TestCase):
             N_samples_sar_chd=input_data['n_samples_sar_chd'],
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
         )
-        self.stacking_algorithm = StackingAlgorithm(self.chd, self.cst)
+        self.stacking_algorithm = StackGatheringAlgorithm(self.chd, self.cst)
 
     def test_stacking_algorithm_01(self):
         """
-        stacking algorithm test 01
+        stack_gathering algorithm test 01
         --------------------------
         """
 

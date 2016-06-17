@@ -40,8 +40,8 @@ class L1BProcessor:
             BeamAnglesAlgorithm(self.chd, self.cst)
         self.azimuth_processing_algorithm =\
             AzimuthProcessingAlgorithm(self.chd, self.cst)
-        self.stacking_algorithm =\
-            StackingAlgorithm(self.chd, self.cst)
+        self.stack_gathering_algorithm =\
+            StackGatheringAlgorithm(self.chd, self.cst)
         self.geometry_corrections_algorithm =\
             GeometryCorrectionsAlgorithm(self.chd, self.cst)
         self.range_compression_algorithm =\
@@ -89,7 +89,7 @@ class L1BProcessor:
                         if not self.beam_angles_algorithm.work_location_seen:
                             break
 
-                stack = self.stacking(working_loc)
+                stack = self.stack_gathering(working_loc)
 
                 self.geometry_corrections(working_loc, stack)
                 self.range_compression(working_loc)
@@ -217,34 +217,34 @@ class L1BProcessor:
         working_surface_location.beams_range_compr_iq =\
             self.range_compression_algorithm.beam_range_compr_iq
 
-    def stacking(self, working_surface_location: SurfaceData) -> None:
+    def stack_gathering(self, working_surface_location: SurfaceData) -> None:
         """
-        call the stacking algorithm and store the results in the
+        call the stack_gathering algorithm and store the results in the
         working surface location object
 
         :param working_surface_location:
         :return:
         """
-        self.stacking_algorithm(working_surface_location)
+        self.stack_gathering_algorithm(working_surface_location)
 
         working_surface_location.stack_bursts =\
-            self.stacking_algorithm.stack_bursts
+            self.stack_gathering_algorithm.stack_bursts
         working_surface_location.beams_surf =\
-            self.stacking_algorithm.beams_surf
+            self.stack_gathering_algorithm.beams_surf
         working_surface_location.beam_angles_surf =\
-            self.stacking_algorithm.beam_angles_surf
+            self.stack_gathering_algorithm.beam_angles_surf
         working_surface_location.t0_surf =\
-            self.stacking_algorithm.t0_surf
+            self.stack_gathering_algorithm.t0_surf
         working_surface_location.doppler_angles_surf =\
-            self.stacking_algorithm.doppler_angles_surf
+            self.stack_gathering_algorithm.doppler_angles_surf
         working_surface_location.look_angles_surf =\
-            self.stacking_algorithm.look_angles_surf
+            self.stack_gathering_algorithm.look_angles_surf
         working_surface_location.pointing_angles_surf =\
-            self.stacking_algorithm.pointing_angles_surf
+            self.stack_gathering_algorithm.pointing_angles_surf
         working_surface_location.look_index_surf =\
-            self.stacking_algorithm.look_index_surf
+            self.stack_gathering_algorithm.look_index_surf
         working_surface_location.look_counter_surf =\
-            self.stacking_algorithm.look_counter_surf
+            self.stack_gathering_algorithm.look_counter_surf
 
     def stack_masking(self, working_surface_location: SurfaceData) -> None:
         """

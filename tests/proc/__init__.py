@@ -3,7 +3,7 @@ __author__ = 'DeDop Development Team'
 from .surface_location_algorithm import SurfaceLocationAlgorithmTests
 from .beam_angles_algorithm import BeamAnglesAlgorithmTests
 from .azimuth_processing_algorithm import AzimuthProcessingAlgorithmTests
-from .stacking_algorithm import StackingAlgorithmTests
+from .stack_gathering_algorithm import StackGatheringAlgorithmTests
 from .geometry_corrections_algorithm import GeometryCorrectionsAlgorithmTests
 from .range_compression_algorithm import RangeCompressionAlgorithmTests
 from .stack_masking_algorithm import StackMaskingAlgorithmTests
