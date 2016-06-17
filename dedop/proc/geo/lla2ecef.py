@@ -1,8 +1,7 @@
 from scipy import cos, sin, sqrt, radians
-import numpy as np
 from typing import Sequence, Tuple
 
-from ...conf import ConstantsFile
+from dedop.conf import ConstantsFile
 
 
 def lla2ecef(lla: Sequence[float], cst: ConstantsFile, lla_as_degrees: bool=False) -> Tuple[float, float, float]:

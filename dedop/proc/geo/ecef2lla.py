@@ -4,7 +4,7 @@ from typing import Sequence, Tuple
 
 
 from .geo_error import GeolocationError
-from ...conf import ConstantsFile
+from dedop.conf import ConstantsFile
 
 COORD_ITERS = 10
 GEODETIC_ERR = 1e-9
