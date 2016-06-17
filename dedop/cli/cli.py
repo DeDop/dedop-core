@@ -44,7 +44,7 @@ class Command(metaclass=ABCMeta):
     """
     Represents (sub-)command for DeDop's command-line interface.
     If a plugin wishes to extend DeDop's CLI, it may append a new call derived from ``Command`` to the list
-    ``REGISTRY``.
+    ``COMMAND_REGISTRY``.
     """
 
     #: Success value to be returned by :py:meth:`execute`. Its value is ``(0, None)``.
@@ -71,6 +71,7 @@ class Command(metaclass=ABCMeta):
         """
 
     @classmethod
+    @abstractmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
         """
         Configure *parser*, i.e. make any required ``parser.add_argument(*args, **kwargs)`` calls.
@@ -79,6 +80,7 @@ class Command(metaclass=ABCMeta):
         :param parser: The command parser to configure.
         """
 
+    @abstractmethod
     def execute(self, command_args: argparse.Namespace) -> Optional[Tuple[int, str]]:
         """
         Execute this command and return a tuple (*status*, *message*) where *status* is the CLI executable's
