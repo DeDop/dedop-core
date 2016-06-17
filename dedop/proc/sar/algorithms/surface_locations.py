@@ -37,7 +37,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         super().__init__(chd, cst)
 
-    def get_surface(self) -> Dict[str, Any]:
+    def get_surface(self) -> Dict[str, float]:
         return {
             'time_surf': self.time_surf,
             'x_surf': self.x_surf,
