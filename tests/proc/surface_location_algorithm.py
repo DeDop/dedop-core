@@ -1,10 +1,9 @@
 import unittest
 
-from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
 from dedop.conf import ConstantsFile, CharacterisationFile
-from dedop.io.input.packet import InstrumentSourcePacket
-
+from dedop.model import SurfaceData
+from dedop.model.l1a_processing_data import L1AProcessingData
+from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
 from tests.testing import TestDataLoader
 
 class SurfaceLocationAlgorithmTests(unittest.TestCase):
@@ -44,7 +43,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         surface location algorithm test 01
         ----------------------------------
 
-        loads an input ISP and passes it as an initial
+        loads an input packet and passes it as an initial
         item to the surface location algorithm.
 
         expected result is for the algorithm to create
@@ -54,19 +53,19 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         # load expected data
         expected_data = TestDataLoader(self.expected_01, delim=' ')
         # load input data
-        isp = TestDataLoader(self.input_01, delim=' ')
+        packet = TestDataLoader(self.input_01, delim=' ')
 
-        self.initialise_algorithm(isp)
+        self.initialise_algorithm(packet)
 
-        # create ISP object
+        # create packet object
         isps = [
-            InstrumentSourcePacket(
+            L1AProcessingData(
                 self.cst, self.chd,
-                time_sar_ku=isp["time_sar_ku"],
-                lat_sar_sat=isp["lat_sar_sat"],
-                lon_sar_sat=isp["lon_sar_sat"],
-                alt_sar_sat=isp["alt_sar_sat"],
-                win_delay_sar_ku=isp["win_delay_sar_ku"],
+                time_sar_ku=packet["time_sar_ku"],
+                lat_sar_sat=packet["lat_sar_sat"],
+                lon_sar_sat=packet["lon_sar_sat"],
+                alt_sar_sat=packet["alt_sar_sat"],
+                win_delay_sar_ku=packet["win_delay_sar_ku"],
                 x_sar_sat=0,
                 y_sar_sat=0,
                 z_sar_sat=0,
@@ -113,32 +112,32 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         inputs = TestDataLoader(self.input_02, delim=' ')
         self.initialise_algorithm(inputs)
 
-        # generate input ISP objects
+        # generate input packet objects
         isps = [
-            InstrumentSourcePacket(self.cst, self.chd, i,
-                                   time_sar_ku=time,
-                                   lat_sar_sat=inputs["lat_sar_sat"][i],
-                                   lon_sar_sat=inputs["lon_sar_sat"][i],
-                                   alt_sar_sat=inputs["alt_sar_sat"][i],
-                                   win_delay_sar_ku=inputs["win_delay_sar_ku"][i])\
-                for i, time in enumerate(inputs["time_sar_ku"])
-        ]
-        for isp in isps:
-            isp.compute_location_sar_surf()
+            L1AProcessingData(self.cst, self.chd, i,
+                              time_sar_ku=time,
+                              lat_sar_sat=inputs["lat_sar_sat"][i],
+                              lon_sar_sat=inputs["lon_sar_sat"][i],
+                              alt_sar_sat=inputs["alt_sar_sat"][i],
+                              win_delay_sar_ku=inputs["win_delay_sar_ku"][i]) \
+            for i, time in enumerate(inputs["time_sar_ku"])
+            ]
+        for packet in isps:
+            packet.compute_location_sar_surf()
 
         # create prior surface location object
-        surf = SurfaceLocationData(self.cst, self.chd,
-            time_surf=inputs["time_surf"],
-            x_surf=inputs["x_surf"],
-            y_surf=inputs["y_surf"],
-            z_surf=inputs["z_surf"],
-            x_sat=inputs["x_sat"],
-            y_sat=inputs["y_sat"],
-            z_sat=inputs["z_sat"],
-            x_vel_sat=inputs["x_vel_sat"],
-            y_vel_sat=inputs["y_vel_sat"],
-            z_vel_sat=inputs["z_vel_sat"]
-        )
+        surf = SurfaceData(self.cst, self.chd,
+                           time_surf=inputs["time_surf"],
+                           x_surf=inputs["x_surf"],
+                           y_surf=inputs["y_surf"],
+                           z_surf=inputs["z_surf"],
+                           x_sat=inputs["x_sat"],
+                           y_sat=inputs["y_sat"],
+                           z_sat=inputs["z_sat"],
+                           x_vel_sat=inputs["x_vel_sat"],
+                           y_vel_sat=inputs["y_vel_sat"],
+                           z_vel_sat=inputs["z_vel_sat"]
+                           )
         surf.compute_surf_sat_vector()
         surf.compute_angular_azimuth_beam_resolution(
             inputs["pri_sar_pre_dat"]
@@ -169,43 +168,43 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
 
         self.initialise_algorithm(inputs)
 
-        # create all input ISP objects
+        # create all input packet objects
         isps = [
-            InstrumentSourcePacket(self.cst, self.chd, i,
-                                   time_sar_ku=time,
-                                   lat_sar_sat=inputs["lat_sar_sat"][i],
-                                   lon_sar_sat=inputs["lon_sar_sat"][i],
-                                   alt_sar_sat=inputs["alt_sar_sat"][i],
-                                   win_delay_sar_ku=inputs["win_delay_sar_ku"][i],
-                                   x_sar_sat=0,
-                                   y_sar_sat=0,
-                                   z_sar_sat=0,
-                                   alt_rate_sat_sar=0,
-                                   roll_sar=0,
-                                   pitch_sar=0,
-                                   yaw_sar=0,
-                                   x_vel_sat_sar=0,
-                                   y_vel_sat_sar=0,
-                                   z_vel_sat_sar=0) \
+            L1AProcessingData(self.cst, self.chd, i,
+                              time_sar_ku=time,
+                              lat_sar_sat=inputs["lat_sar_sat"][i],
+                              lon_sar_sat=inputs["lon_sar_sat"][i],
+                              alt_sar_sat=inputs["alt_sar_sat"][i],
+                              win_delay_sar_ku=inputs["win_delay_sar_ku"][i],
+                              x_sar_sat=0,
+                              y_sar_sat=0,
+                              z_sar_sat=0,
+                              alt_rate_sat_sar=0,
+                              roll_sar=0,
+                              pitch_sar=0,
+                              yaw_sar=0,
+                              x_vel_sat_sar=0,
+                              y_vel_sat_sar=0,
+                              z_vel_sat_sar=0) \
             for i, time in enumerate(inputs["time_sar_ku"])
             ]
-        # calculate surface position for each ISP
-        for isp in isps:
-            isp.compute_location_sar_surf()
+        # calculate surface position for each packet
+        for packet in isps:
+            packet.compute_location_sar_surf()
 
         # create the prior surface location object
-        surf = SurfaceLocationData(self.cst, self.chd,
-                                   time_surf=inputs["time_surf"],
-                                   x_surf=inputs["x_surf"],
-                                   y_surf=inputs["y_surf"],
-                                   z_surf=inputs["z_surf"],
-                                   x_sat=inputs["x_sat"],
-                                   y_sat=inputs["y_sat"],
-                                   z_sat=inputs["z_sat"],
-                                   x_vel_sat=inputs["x_vel_sat"],
-                                   y_vel_sat=inputs["y_vel_sat"],
-                                   z_vel_sat=inputs["z_vel_sat"]
-                                   )
+        surf = SurfaceData(self.cst, self.chd,
+                           time_surf=inputs["time_surf"],
+                           x_surf=inputs["x_surf"],
+                           y_surf=inputs["y_surf"],
+                           z_surf=inputs["z_surf"],
+                           x_sat=inputs["x_sat"],
+                           y_sat=inputs["y_sat"],
+                           z_sat=inputs["z_sat"],
+                           x_vel_sat=inputs["x_vel_sat"],
+                           y_vel_sat=inputs["y_vel_sat"],
+                           z_vel_sat=inputs["z_vel_sat"]
+                           )
         # compute properties of the surface location
         surf.compute_surf_sat_vector()
         surf.compute_angular_azimuth_beam_resolution(

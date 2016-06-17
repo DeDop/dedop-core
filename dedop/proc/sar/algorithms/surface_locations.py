@@ -1,12 +1,14 @@
 import numpy as np
+from typing import Dict, Any, Sequence
 
-
-from ...geo import lla2ecef, ecef2lla
+from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
-from ...functions import *
+from dedop.proc.functions import *
+from dedop.proc.geo import lla2ecef, ecef2lla
+from dedop.conf import CharacterisationFile, ConstantsFile
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         self.first_surf = False
         self.new_surf = False
 
@@ -34,7 +36,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         super().__init__(chd, cst)
 
-    def get_surface(self):
+    def get_surface(self) -> Dict[str, float]:
         return {
             'time_surf': self.time_surf,
             'x_surf': self.x_surf,
@@ -59,7 +61,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             'win_delay_surf': self.win_delay_surf
         }
 
-    def store_first_location(self, isps):
+    def store_first_location(self, isps: Sequence[L1AProcessingData]) -> None:
         isp_record = isps[-1]
 
         self.time_surf = isp_record.time_sar_ku
@@ -96,7 +98,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
-    def __call__(self, locs, isps):
+    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
         if not locs:
             self.first_surf = True
             self.new_surf = True
@@ -107,7 +109,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             self.new_surf = self.find_new_location(locs, isps)
         return self.new_surf
 
-    def find_new_location(self, locs, isps):
+    def find_new_location(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
         surface = locs[-1]
         isp_curr = isps[-1]
         isp_prev = isps[-2]

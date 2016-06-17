@@ -1,12 +1,12 @@
 import unittest
+
 import numpy as np
 
-from tests.testing import TestDataLoader
-
-from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
-from dedop.io.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model import SurfaceData
+from dedop.model.l1a_processing_data import L1AProcessingData
+from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
+from tests.testing import TestDataLoader
 
 
 class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
@@ -97,7 +97,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
 
         stack_size = input_data["data_stack_size"]
         for stack_index in range(stack_size):
-            isp = InstrumentSourcePacket(
+            packet = L1AProcessingData(
                 self.cst, self.chd,
                 x_vel_sat_sar=input_data["x_vel_sat_sar"][stack_index],
                 y_vel_sat_sar=input_data["y_vel_sat_sar"][stack_index],
@@ -107,7 +107,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
                 z_sar_sat=input_data["z_sar_sat"][stack_index],
                 win_delay_sar_ku=input_data["win_delay_sar_ku"][stack_index]
             )
-            isps.append(isp)
+            isps.append(packet)
 
         # create working surface location
         beams_surf = np.reshape(
@@ -115,7 +115,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
             (stack_size, self.chd.n_samples_sar)
         )
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             stack_bursts=isps,
             data_stack_size=stack_size,

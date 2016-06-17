@@ -1,11 +1,11 @@
 import unittest
+
 import numpy as np
 
-from tests.testing import TestDataLoader
-
-from dedop.proc.sar.algorithms import RangeCompressionAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
 from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms import RangeCompressionAlgorithm
+from tests.testing import TestDataLoader
 
 
 class RangeCompressionAlgorithmTests(unittest.TestCase):
@@ -43,7 +43,7 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
             complex_beams_geo_corr,
             (stack_size, self.chd.n_samples_sar)
         )
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             data_stack_size=stack_size,
             beams_geo_corr=beams_geo_corr

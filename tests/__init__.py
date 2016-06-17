@@ -1,7 +1,7 @@
 from tests.conf import *
 from tests.cli import *
 from tests.gui import *
-from tests.io import *
+from tests.data import *
 from tests.proc import *
 from tests.util import *
 

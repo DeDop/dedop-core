@@ -11,7 +11,3 @@ __all__ = [
 from .chd import CharacterisationFile
 from .cnf import ConfigurationFile
 from .cst import ConstantsFile
-
-# chd = CharacterisationFile()
-# cnf = ConfigurationFile()
-# cst = ConstantsFile()

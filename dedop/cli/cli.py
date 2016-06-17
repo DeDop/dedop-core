@@ -37,7 +37,7 @@ Type "%s lic" for details.
 
 _LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
 
-_DOCS_URL = 'http://dedop.readthedocs.io/en/latest/'
+_DOCS_URL = 'http://dedop.readthedocs.data/en/latest/'
 
 
 class Command(metaclass=ABCMeta):

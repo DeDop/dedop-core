@@ -1,7 +1,8 @@
 import json
+from typing import Any
 
 class ConstantsFileReader:
-    def __init__(self, filename=None, **kwargs):
+    def __init__(self, filename: str=None, **kwargs: Any):
         if filename is not None:
             with open(filename) as input_file:
                 self._data = {
@@ -12,5 +13,5 @@ class ConstantsFileReader:
 
         self._data.update(kwargs)
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: str) -> Any:
         return self._data[name]

@@ -1,15 +1,15 @@
 import unittest
+
 import numpy as np
 
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model import SurfaceData, SurfaceType
+from dedop.model.l1a_processing_data import L1AProcessingData, PacketPid
+from dedop.proc.sar.algorithms import StackGatheringAlgorithm
 from tests.testing import TestDataLoader
 
-from dedop.proc.sar.algorithms import StackingAlgorithm
-from dedop.io.input.packet import InstrumentSourcePacket, IspPid
-from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.proc.sar.surface_location_data import SurfaceLocationData, SurfaceType
 
-
-class StackingAlgorithmTests(unittest.TestCase):
+class StackGatheringAlgorithmTests(unittest.TestCase):
     inputs_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
                 "input/input.txt"
     expected_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
@@ -24,11 +24,11 @@ class StackingAlgorithmTests(unittest.TestCase):
             N_samples_sar_chd=input_data['n_samples_sar_chd'],
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
         )
-        self.stacking_algorithm = StackingAlgorithm(self.chd, self.cst)
+        self.stacking_algorithm = StackGatheringAlgorithm(self.chd, self.cst)
 
     def test_stacking_algorithm_01(self):
         """
-        stacking algorithm test 01
+        stack_gathering algorithm test 01
         --------------------------
         """
 
@@ -52,8 +52,8 @@ class StackingAlgorithmTests(unittest.TestCase):
             beams_focused = np.zeros(
                 (self.chd.n_ku_pulses_burst, self.chd.n_samples_sar)
             )
-            pid = IspPid.isp_echo_sar if input_data['isp_pid'][stack_index] == 7 else IspPid.isp_echo_rmc
-            isp = InstrumentSourcePacket(
+            pid = PacketPid.echo_sar if input_data['isp_pid'][stack_index] == 7 else PacketPid.echo_rmc
+            packet = L1AProcessingData(
                 self.cst, self.chd, stack_index,
                 t0_sar=input_data["T0_sar"][stack_index],
                 doppler_angle_sar_sat=input_data["doppler_angle_sar_sat"][stack_index],
@@ -62,9 +62,9 @@ class StackingAlgorithmTests(unittest.TestCase):
                 beams_focused=beams_focused,
                 isp_pid=pid
             )
-            isps.append(isp)
+            isps.append(packet)
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             stack_all_bursts=isps
         )

@@ -1,5 +1,7 @@
 from .constants_reader import *
+from .cst import ConstantsFile
 
+from typing import Optional, Dict, Any
 
 class CharacterisationFile(ConstantsFileReader):
     """
@@ -137,7 +139,7 @@ class CharacterisationFile(ConstantsFileReader):
     def mean_sat_alt(self):
         return self["mean_sat_alt_chd"]
     
-    def __init__(self, cst, filename=None, **kwargs):
+    def __init__(self, cst: ConstantsFile, filename: str=None, **kwargs: Any):
         self._wv_length_ku = kwargs.pop(
             'wv_length_ku_chd', None
         )

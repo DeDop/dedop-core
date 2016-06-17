@@ -1,4 +1,6 @@
 from ...util.parameter import Parameter
+from ...conf import ConstantsFile, CharacterisationFile
+
 
 @Parameter('n_looks_stack', default_value=481)
 @Parameter('zp_fact_range', default_value=2)
@@ -11,7 +13,7 @@ class BaseAlgorithm:
     parameters which are shared between multiple
     algorithms.
     """
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         """
         Initialise the BaseAlgorithm instance
 
@@ -23,7 +25,7 @@ class BaseAlgorithm:
 
         self.collect_parameter_values()
 
-    def collect_parameter_values(self):
+    def collect_parameter_values(self) -> None:
         """
 
         :return:

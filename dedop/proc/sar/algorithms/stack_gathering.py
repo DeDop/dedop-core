@@ -1,12 +1,14 @@
 import numpy as np
+
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model import SurfaceType, SurfaceData
+from dedop.model import PacketPid
 from ..base_algorithm import BaseAlgorithm
 
-from ..surface_location_data import SurfaceType
-from ....io.input.packet import IspPid
 
-class StackingAlgorithm(BaseAlgorithm):
+class StackGatheringAlgorithm(BaseAlgorithm):
 
-    def __init__(self, chd, cst):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
         super().__init__(chd, cst)
 
         self.data_stack_size = 0
@@ -23,9 +25,9 @@ class StackingAlgorithm(BaseAlgorithm):
         self.look_index_surf = None
         self.look_counter_surf = None
 
-    def __call__(self, working_surface_location):
+    def __call__(self, working_surface_location: SurfaceData) -> None:
         """
-        Call the stacking algorithm
+        Call the stack_gathering algorithm
 
         :param working_surface_location: The current surface location
         """
@@ -128,7 +130,7 @@ class StackingAlgorithm(BaseAlgorithm):
             self.look_index_surf[stack_index] = look_index_beam
             self.look_counter_surf[stack_index] = look_counter_beam
 
-            if not rmc_burst_in_stack and stack_burst.isp_pid == IspPid.isp_echo_rmc:
+            if not rmc_burst_in_stack and stack_burst.isp_pid == PacketPid.echo_rmc:
                 rmc_burst_in_stack = True
 
             burst_beam_angle = abs(beam_angle - self.cst.pi / 2.)

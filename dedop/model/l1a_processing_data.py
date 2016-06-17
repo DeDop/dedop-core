@@ -1,34 +1,36 @@
-from ...proc.geo import lla2ecef
-from ...proc.functions import angle_between
+from dedop.proc.geo import lla2ecef
+from dedop.proc.functions import angle_between
+from dedop.conf import CharacterisationFile, ConstantsFile
 
 from collections import OrderedDict
 from enum import Enum
+from typing import Dict, Any
 
 import numpy as np
 
-class IspPid(Enum):
-    isp_null = 0
-    isp_cal1_instr = 1
-    isp_cal1_lrm = 2
-    isp_cal1_sar = 3
-    isp_cal1_rmc = 4
-    isp_cal2 = 5
-    isp_echo_lrm = 6
-    isp_echo_sar = 7
-    isp_echo_rmc = 8
-    isp_echo_cal = 9
+class PacketPid(Enum):
+    null = 0
+    cal1_instr = 1
+    cal1_lrm = 2
+    cal1_sar = 3
+    cal1_rmc = 4
+    cal2 = 5
+    echo_lrm = 6
+    echo_sar = 7
+    echo_rmc = 8
+    echo_cal = 9
 
-class InstrumentSourcePacket:
+class L1AProcessingData:
     """
-    The base InstrumentSourcePacket (ISP) class
+    The base L1AProcessingData (ISP) class
 
-    Each ISP contains the data from one position in the
+    Each packet contains the data from one position in the
     satellite's orbit
     """
     @property
     def isp_pid(self):
         """
-        the process id of the ISP
+        the process id of the packet
         """
         return self["isp_pid"]
 
@@ -44,7 +46,7 @@ class InstrumentSourcePacket:
     @property
     def time_sar_ku(self):
         """
-        The time_sar_ku property of the ISP
+        The time_sar_ku property of the packet
         """
         return self["time_sar_ku"]
 
@@ -59,7 +61,7 @@ class InstrumentSourcePacket:
     @property
     def days(self):
         """
-        The days property of the ISP
+        The days property of the packet
         """
         return self["days"]
 
@@ -74,7 +76,7 @@ class InstrumentSourcePacket:
     @property
     def seconds(self):
         """
-        The seconds property of the ISP
+        The seconds property of the packet
         """
         return self["seconds"]
 
@@ -89,7 +91,7 @@ class InstrumentSourcePacket:
     @property
     def seq_count_sar_ku_fbr(self):
         """
-        The seq_count_sar_ku_fbr property of the ISP
+        The seq_count_sar_ku_fbr property of the packet
         """
         return self["seq_count_sar_ku_fbr"]
 
@@ -104,7 +106,7 @@ class InstrumentSourcePacket:
     @property
     def inst_id_sar_isp(self):
         """
-        The inst_id_sar_isp property of the ISP
+        The inst_id_sar_isp property of the packet
         """
         return self["inst_id_sar_isp"]
 
@@ -119,7 +121,7 @@ class InstrumentSourcePacket:
     @property
     def pri_sar_pre_dat(self):
         """
-        The pri_sar_pre_dat property of the ISP
+        The pri_sar_pre_dat property of the packet
         """
         return self["pri_sar_pre_dat"]
 
@@ -134,7 +136,7 @@ class InstrumentSourcePacket:
     @property
     def ambiguity_order_sar(self):
         """
-        The ambiguity_order_sar property of the ISP
+        The ambiguity_order_sar property of the packet
         """
         return self["ambiguity_order_sar"]
 
@@ -149,7 +151,7 @@ class InstrumentSourcePacket:
     @property
     def burst_sar_ku(self):
         """
-        The burst_sar_ku property of the ISP
+        The burst_sar_ku property of the packet
         """
         return self["burst_sar_ku"]
 
@@ -164,7 +166,7 @@ class InstrumentSourcePacket:
     @property
     def lat_sar_sat(self):
         """
-        The lat_sar_sat property of the ISP
+        The lat_sar_sat property of the packet
         """
         return self["lat_sar_sat"]
 
@@ -179,7 +181,7 @@ class InstrumentSourcePacket:
     @property
     def lon_sar_sat(self):
         """
-        The lon_sar_sat property of the ISP
+        The lon_sar_sat property of the packet
         """
         return self["lon_sar_sat"]
 
@@ -194,7 +196,7 @@ class InstrumentSourcePacket:
     @property
     def alt_sar_sat(self):
         """
-        The alt_sar_sat property of the ISP
+        The alt_sar_sat property of the packet
         """
         return self["alt_sar_sat"]
 
@@ -224,7 +226,7 @@ class InstrumentSourcePacket:
     @property
     def alt_rate_sat_sar(self):
         """
-        The alt_rate_sar_sat property of the ISP
+        The alt_rate_sar_sat property of the packet
         """
         return self["alt_rate_sat_sar"]
 
@@ -239,7 +241,7 @@ class InstrumentSourcePacket:
     @property
     def x_vel_sat_sar(self):
         """
-        The x_vel_sat_sar property of the ISP
+        The x_vel_sat_sar property of the packet
         """
         return self["x_vel_sat_sar"]
 
@@ -254,7 +256,7 @@ class InstrumentSourcePacket:
     @property
     def y_vel_sat_sar(self):
         """
-        The y_vel_sat_sar property of the ISP
+        The y_vel_sat_sar property of the packet
         """
         return self["y_vel_sat_sar"]
 
@@ -269,7 +271,7 @@ class InstrumentSourcePacket:
     @property
     def z_vel_sat_sar(self):
         """
-        The z_vel_sat_sar property of the ISP
+        The z_vel_sat_sar property of the packet
         """
         return self["z_vel_sat_sar"]
 
@@ -299,7 +301,7 @@ class InstrumentSourcePacket:
     @property
     def roll_sar(self):
         """
-        The roll_sar property of the ISP
+        The roll_sar property of the packet
         """
         return self["roll_sar"]
 
@@ -314,7 +316,7 @@ class InstrumentSourcePacket:
     @property
     def pitch_sar(self):
         """
-        The pitch_sar property of the ISP
+        The pitch_sar property of the packet
         """
         return self["pitch_sar"]
 
@@ -329,7 +331,7 @@ class InstrumentSourcePacket:
     @property
     def yaw_sar(self):
         """
-        The yaw_sar property of the ISP
+        The yaw_sar property of the packet
         """
         return self["yaw_sar"]
 
@@ -359,7 +361,7 @@ class InstrumentSourcePacket:
     @property
     def h0_sar(self):
         """
-        The h0_sar property of the ISP
+        The h0_sar property of the packet
         """
         return self["h0_sar"]
 
@@ -374,7 +376,7 @@ class InstrumentSourcePacket:
     @property
     def t0_sar(self):
         """
-        The t0_sar property of the ISP
+        The t0_sar property of the packet
         """
         return self["t0_sar"]
 
@@ -389,7 +391,7 @@ class InstrumentSourcePacket:
     @property
     def cor2_sar(self):
         """
-        The cor2_sar property of the ISP
+        The cor2_sar property of the packet
         """
         return self["cor2_sar"]
 
@@ -404,7 +406,7 @@ class InstrumentSourcePacket:
     @property
     def win_delay_sar_ku(self):
         """
-        The win_delay_sar_ku property of the ISP
+        The win_delay_sar_ku property of the packet
         """
         return self["win_delay_sar_ku"]
 
@@ -546,7 +548,7 @@ class InstrumentSourcePacket:
     @property
     def seq_count_sar(self):
         """
-        The sequence number of the ISP
+        The sequence number of the packet
         """
         return self._seq_count_sar
 
@@ -568,7 +570,7 @@ class InstrumentSourcePacket:
     @property
     def beam_angles_trend(self):
         """
-        the trend direction of the ISP's beam angles
+        the trend direction of the packet's beam angles
         """
         return self["beam_angles_trend"]
 
@@ -627,7 +629,7 @@ class InstrumentSourcePacket:
 
     @property
     def burst_processed(self):
-        """varaible for tracking whether burst processing has been performed"""
+        """variable for tracking whether burst processing has been performed"""
         return self._burst_processed
 
     @burst_processed.setter
@@ -639,7 +641,8 @@ class InstrumentSourcePacket:
         return self._counter
 
 
-    def __init__(self, cst, chd, seq_num=None, *dicts, **values):
+    def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
+                 seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
         self._data = OrderedDict()
         self._counter = seq_num
 
@@ -647,7 +650,7 @@ class InstrumentSourcePacket:
         self._beam_angles_trend = None
         self._burst_processed = False
 
-        self.isp_pid = IspPid.isp_null
+        self.isp_pid = PacketPid.null
 
         for values_group in dicts:
             self._data.update(values_group)
@@ -656,18 +659,18 @@ class InstrumentSourcePacket:
         self.cst = cst
         self.chd = chd
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         if not hasattr(self.__class__, key):
             raise KeyError("{} has no attribute '{}'".format(self, key))
         self._data[key] = value
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self._data[key]
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         del self._data[key]
 
-    def compute_location_sar_surf(self):
+    def compute_location_sar_surf(self) -> None:
         lla = (
             self.lat_sar_sat,
             self.lon_sar_sat,
@@ -690,12 +693,12 @@ class InstrumentSourcePacket:
         self.y_sar_surf = y
         self.z_sar_surf = z
 
-    def calculate_beam_angles_trend(self, prev_beam_angles_list_size, prev_beam_angles_trend):
+    def calculate_beam_angles_trend(self, prev_beam_angles_list_size: int, prev_beam_angles_trend: int) -> None:
         """
-        computes the beam angles trend of the ISP
+        computes the beam angles trend of the packet
 
-        :param prev_beam_angles_list_size: the size of the beam angles list of the previous ISP
-        :param prev_beam_angles_trend: the trend of the beam angles of the previous ISP
+        :param prev_beam_angles_list_size: the size of the beam angles list of the previous packet
+        :param prev_beam_angles_trend: the trend of the beam angles of the previous packet
         """
 
         beam_angles_list_size = len(self.beam_angles_list)
@@ -711,7 +714,7 @@ class InstrumentSourcePacket:
         else:
             self.beam_angles_trend = prev_beam_angles_trend
 
-    def compute_doppler_angle(self):
+    def compute_doppler_angle(self) -> None:
         """
         calculate the doppler angle
         """
@@ -735,5 +738,4 @@ class InstrumentSourcePacket:
         # vector perpendicular to plane nw
         m = np.cross(w, n.T)
         # angle between v and m
-        self.doppler_angle_sar_sat =\
-            angle_between(v, m)
+        self.doppler_angle_sar_sat = angle_between(v, m)

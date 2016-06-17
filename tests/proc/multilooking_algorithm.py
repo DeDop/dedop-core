@@ -1,11 +1,12 @@
-from dedop.proc.sar.algorithms import MultilookingAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
-from dedop.conf import CharacterisationFile, ConstantsFile
+import unittest
 
+import numpy as np
+
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms import MultilookingAlgorithm
 from tests.testing import TestDataLoader
 
-import unittest
-import numpy as np
 
 class MultilookingAlgorithmTests(unittest.TestCase):
     inputs_01 = "test_data/proc/multilooking_algorithm/" \
@@ -80,7 +81,7 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             (data_stack_size, n_samples_max)
         )
 
-        working_location = SurfaceLocationData(
+        working_location = SurfaceData(
             self.cst, self.chd,
             data_stack_size=data_stack_size,
             beam_angles_surf=input_data['beam_angles_surf'],
