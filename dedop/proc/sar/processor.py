@@ -1,11 +1,10 @@
-from .surface_location_data import SurfaceLocationData
-from .algorithms import *
+from typing import Optional, Sequence, Dict, Any
 
+from dedop.model import SurfaceData
+from .algorithms import *
 from ...conf import CharacterisationFile, ConstantsFile
 from ...io.input import InputDataset, InstrumentSourcePacket
 from ...io.output import L1BSWriter, L1BWriter
-
-from typing import Optional, Sequence, Dict, Any
 
 
 class L1BProcessor:
@@ -116,7 +115,7 @@ class L1BProcessor:
             if not self.surf_locs:
                 running = False
 
-    def surface_locations(self, isp: InstrumentSourcePacket) -> Optional[SurfaceLocationData]:
+    def surface_locations(self, isp: InstrumentSourcePacket) -> Optional[SurfaceData]:
         """
         call the surface locations algortihm and return the new location
         (if one is found)
@@ -131,8 +130,8 @@ class L1BProcessor:
             return self.new_surface(loc)
         return None
 
-    def beam_angles(self, surfaces: Sequence[SurfaceLocationData], isp: InstrumentSourcePacket,
-                    working_surface_location: SurfaceLocationData) -> None:
+    def beam_angles(self, surfaces: Sequence[SurfaceData], isp: InstrumentSourcePacket,
+                    working_surface_location: SurfaceData) -> None:
         """
         call the beam angles algorithm and store the results
 
@@ -183,7 +182,7 @@ class L1BProcessor:
         self.azimuth_processing_algorithm(isp, self.chd.wv_length_ku)
         isp.beams_focused = self.azimuth_processing_algorithm.beams_focused
 
-    def geometry_corrections(self, working_surface_location: SurfaceLocationData, stack) -> None:
+    def geometry_corrections(self, working_surface_location: SurfaceData, stack) -> None:
         """
         call the geometry correction algorithm and store the results
 
@@ -204,7 +203,7 @@ class L1BProcessor:
         working_surface_location.beams_geo_corr = \
             self.geometry_corrections_algorithm.beams_geo_corr
 
-    def range_compression(self, working_surface_location: SurfaceLocationData) -> None:
+    def range_compression(self, working_surface_location: SurfaceData) -> None:
         """
         call the range compression algorithm and store the results
 
@@ -218,7 +217,7 @@ class L1BProcessor:
         working_surface_location.beams_range_compr_iq =\
             self.range_compression_algorithm.beam_range_compr_iq
 
-    def stacking(self, working_surface_location: SurfaceLocationData) -> None:
+    def stacking(self, working_surface_location: SurfaceData) -> None:
         """
         call the stacking algorithm and store the results in the
         working surface location object
@@ -247,7 +246,7 @@ class L1BProcessor:
         working_surface_location.look_counter_surf =\
             self.stacking_algorithm.look_counter_surf
 
-    def stack_masking(self, working_surface_location: SurfaceLocationData) -> None:
+    def stack_masking(self, working_surface_location: SurfaceData) -> None:
         """
         call the stack masking algorithm and store the results
 
@@ -262,7 +261,7 @@ class L1BProcessor:
         working_surface_location.stack_mask_vector =\
             self.stack_masking_algorithm.stack_mask_vector
 
-    def multilooking(self, working_surface_location: SurfaceLocationData) -> None:
+    def multilooking(self, working_surface_location: SurfaceData) -> None:
         """
         call the multilooking algorithm and store the results in the
         surface location object
@@ -273,7 +272,7 @@ class L1BProcessor:
         # TODO: store results
         self.multilooking_algorithm(working_surface_location)
 
-    def sigma_zero_scaling(self, working_surface_location: SurfaceLocationData) -> None:
+    def sigma_zero_scaling(self, working_surface_location: SurfaceData) -> None:
         """
         call the sigma0 scaling algorithm and store the results in the
         surface location object
@@ -286,7 +285,7 @@ class L1BProcessor:
             working_surface_location, self.chd.wv_length_ku, self.chd.chirp_slope_ku
         )
 
-    def new_surface(self, loc_data: Dict[str, Any]) -> SurfaceLocationData:
+    def new_surface(self, loc_data: Dict[str, Any]) -> SurfaceData:
         """
         create a new surface location object from the provided data,
         and add it to the list of surface locations
@@ -299,7 +298,7 @@ class L1BProcessor:
         else:
             index = self.surf_locs[-1].surface_counter + 1
 
-        surf = SurfaceLocationData(
+        surf = SurfaceData(
             self.cst, self.chd, index, **loc_data
         )
         self.surf_locs.append(surf)

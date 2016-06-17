@@ -4,7 +4,7 @@ from ...conf import CharacterisationFile, ConstantsFile
 
 from collections import OrderedDict
 from enum import Enum
-from typing import Optional, Sequence, Dict, Any
+from typing import Dict, Any
 
 import numpy as np
 

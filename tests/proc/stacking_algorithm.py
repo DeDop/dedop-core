@@ -1,12 +1,12 @@
 import unittest
+
 import numpy as np
 
-from tests.testing import TestDataLoader
-
-from dedop.proc.sar.algorithms import StackingAlgorithm
-from dedop.io.input.packet import InstrumentSourcePacket, IspPid
 from dedop.conf import CharacterisationFile, ConstantsFile
-from dedop.proc.sar.surface_location_data import SurfaceLocationData, SurfaceType
+from dedop.io.input.packet import InstrumentSourcePacket, IspPid
+from dedop.model import SurfaceData, SurfaceType
+from dedop.proc.sar.algorithms import StackingAlgorithm
+from tests.testing import TestDataLoader
 
 
 class StackingAlgorithmTests(unittest.TestCase):
@@ -64,7 +64,7 @@ class StackingAlgorithmTests(unittest.TestCase):
             )
             isps.append(isp)
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             stack_all_bursts=isps
         )

@@ -1,15 +1,16 @@
+import numpy as np
+from typing import Optional, Tuple
+
+from dedop.model import SurfaceType, SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ..surface_location_data import SurfaceType, SurfaceLocationData
 from ....util.parameter import Parameter
 
-from typing import Optional, Tuple
-import numpy as np
 
 @Parameter("rmc_margin", default_value=6)
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=0)
 class StackMaskingAlgorithm(BaseAlgorithm):
 
-    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
+    def __call__(self, working_surface_location: SurfaceData) -> None:
         rmc_mask = self.compute_rmc_mask(working_surface_location)
         geom_mask = self.compute_geometry_mask(working_surface_location)
         ambig_mask = self.compute_ambiguity_mask(working_surface_location)
@@ -20,7 +21,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         self.beams_masked = self.apply_mask(working_surface_location, stack_mask)
         self.stack_mask_vector = stack_mask_vector
 
-    def compute_rmc_mask(self, working_surface_location: SurfaceLocationData) -> Optional[np.ndarray]:
+    def compute_rmc_mask(self, working_surface_location: SurfaceData) -> Optional[np.ndarray]:
         """
         Computes the RMC mask, if there is an RMC burst in the stack
         """
@@ -45,7 +46,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         return None
 
 
-    def compute_geometry_mask(self, working_surface_location: SurfaceLocationData) -> np.ndarray:
+    def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         geom_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
         )
@@ -69,7 +70,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
         return geom_mask
 
-    def compute_ambiguity_mask(self, working_surface_location: SurfaceLocationData) -> np.ndarray:
+    def compute_ambiguity_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         ambi_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
         )
@@ -118,7 +119,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
         return stack_mask, stack_mask_vector
 
-    def apply_mask(self, working_surface_location: SurfaceLocationData, stack_mask: np.ndarray) -> np.ndarray:
+    def apply_mask(self, working_surface_location: SurfaceData, stack_mask: np.ndarray) -> np.ndarray:
         output = working_surface_location.beams_range_compr *\
                  stack_mask[:working_surface_location.data_stack_size, :]
 

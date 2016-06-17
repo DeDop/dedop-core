@@ -1,15 +1,14 @@
-from ..base_algorithm import BaseAlgorithm
-from ....util.parameter import Parameter
+from math import sqrt, log10
 
 import numpy as np
 from numpy.linalg import norm
-from math import sqrt, log10
 
-from ..surface_location_data import SurfaceLocationData
+from dedop.model import SurfaceData
+from ..base_algorithm import BaseAlgorithm
 
 
 class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
-    def __call__(self, working_surface_location: SurfaceLocationData, wavelength_ku: float,
+    def __call__(self, working_surface_location: SurfaceData, wavelength_ku: float,
                  chirp_slope_ku: float) -> float:
         """
         calculates the sigma0 scaling factor

@@ -1,10 +1,10 @@
 import unittest
+
 import numpy as np
 
-from dedop.proc.sar.algorithms import StackMaskingAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData, SurfaceType
 from dedop.conf import CharacterisationFile, ConstantsFile
-
+from dedop.model import SurfaceData, SurfaceType
+from dedop.proc.sar.algorithms import StackMaskingAlgorithm
 from tests.testing import TestDataLoader
 
 
@@ -77,7 +77,7 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
             (stack_size, self.chd.n_samples_sar * zp_fact_range)
         )
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             cst=self.cst, chd=self.chd,
             data_stack_size=stack_size,
             surface_type=SurfaceType(input_data["surface_type"]),

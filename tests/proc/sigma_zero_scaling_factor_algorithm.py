@@ -1,11 +1,13 @@
-from tests.testing import TestDataLoader
-from dedop.proc.sar.algorithms import Sigma0ScalingFactorAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
-from dedop.io.input.packet import InstrumentSourcePacket
-from dedop.conf import ConstantsFile, CharacterisationFile
-
 import unittest
+
 import numpy as np
+
+from dedop.conf import ConstantsFile, CharacterisationFile
+from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms import Sigma0ScalingFactorAlgorithm
+from tests.testing import TestDataLoader
+
 
 class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
     inputs_01 = 'test_data/proc/sigma0_scaling_factor_algorithm/' \
@@ -57,7 +59,7 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
             )
             isps.append(isp)
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             data_stack_size=data_stack_size,
             range_sat_surf=input_data['range_sat_surf'],

@@ -1,11 +1,11 @@
-from ..base_algorithm import BaseAlgorithm
-from ....util.parameter import Parameter
-
 import numpy as np
 from scipy.optimize import curve_fit
 
-from ..surface_location_data import SurfaceLocationData
+from dedop.model import SurfaceData
+from ..base_algorithm import BaseAlgorithm
 from ....conf import CharacterisationFile, ConstantsFile
+from ....util.parameter import Parameter
+
 
 def gauss(x, a, b, c):
     return a * np.exp(-(x - b) ** 2 / (c ** 2))
@@ -41,7 +41,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.n_beams_start_stop = 0
         self.n_beams_multilooking = 0
 
-    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
+    def __call__(self, working_surface_location: SurfaceData) -> None:
         """
 
         :param working_surface_location:
@@ -57,7 +57,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
         self.compute_multilooking(working_surface_location)
 
-    def compute_stack_characterization_params(self, working_surface_location: SurfaceLocationData) -> None:
+    def compute_stack_characterization_params(self, working_surface_location: SurfaceData) -> None:
         """
 
         :param working_surface_location:
@@ -139,7 +139,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.stack_skewness /= n_samples_fitting
         self.stack_kurtosis = self.stack_kurtosis / n_samples_fitting - 3
 
-    def compute_multilooking(self, working_surface_location: SurfaceLocationData) -> None:
+    def compute_multilooking(self, working_surface_location: SurfaceData) -> None:
         """
 
         :param working_surface_location:

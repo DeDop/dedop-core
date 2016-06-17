@@ -3,12 +3,12 @@ from numpy.linalg import norm
 from enum import Enum
 from collections import OrderedDict
 
-from ...conf import CharacterisationFile, ConstantsFile
-from ...io.input import InstrumentSourcePacket
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.io.input import InstrumentSourcePacket
 
 from typing import Optional, Sequence, Dict, Any
 
-class SurfaceLocationData:
+class SurfaceData:
     """
     Class for storing data relating to a surface location
     """

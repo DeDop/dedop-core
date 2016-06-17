@@ -1,11 +1,10 @@
-import numpy as np
 from enum import Enum
 
+import numpy as np
+
+from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
-
 from ...conf import CharacterisationFile
-from ...proc.sar.surface_location_data import SurfaceLocationData
-
 
 
 class L1BDimensions(Enum):
@@ -700,7 +699,7 @@ class L1BWriter(NetCDFWriter):
             fill_value=4294967295
         )
 
-    def write_record(self, surface_location_data: SurfaceLocationData) -> None:
+    def write_record(self, surface_location_data: SurfaceData) -> None:
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1b_echo_sar_ku=None,

@@ -1,12 +1,11 @@
-from ..base_algorithm import BaseAlgorithm
-
 import numpy as np
 from numpy.fft import fft, fftshift
 
-from ..surface_location_data import SurfaceLocationData
+from dedop.model import SurfaceData
+from ..base_algorithm import BaseAlgorithm
 
 class RangeCompressionAlgorithm(BaseAlgorithm):
-    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
+    def __call__(self, working_surface_location: SurfaceData) -> None:
         # calc. size after zero padding factor applied
         padded_size = self.zp_fact_range * self.chd.n_samples_sar
         stack_size = working_surface_location.data_stack_size

@@ -1,9 +1,10 @@
 import numpy as np
-from ..base_algorithm import BaseAlgorithm
 
-from ..surface_location_data import SurfaceType, SurfaceLocationData
-from ....io.input.packet import IspPid
+from dedop.model import SurfaceType, SurfaceData
+from ..base_algorithm import BaseAlgorithm
 from ....conf import CharacterisationFile, ConstantsFile
+from ....io.input.packet import IspPid
+
 
 class StackingAlgorithm(BaseAlgorithm):
 
@@ -24,7 +25,7 @@ class StackingAlgorithm(BaseAlgorithm):
         self.look_index_surf = None
         self.look_counter_surf = None
 
-    def __call__(self, working_surface_location: SurfaceLocationData) -> None:
+    def __call__(self, working_surface_location: SurfaceData) -> None:
         """
         Call the stacking algorithm
 

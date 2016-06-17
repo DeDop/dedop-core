@@ -1,12 +1,13 @@
 import unittest
+
 import numpy as np
 
+from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
 from tests.testing import TestDataLoader
 
-from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
-from dedop.io.input.packet import InstrumentSourcePacket
-from dedop.conf import CharacterisationFile, ConstantsFile
 
 class BeamAnglesAlgorithmTests(unittest.TestCase):
     input_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
@@ -51,7 +52,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         surfs = []
 
         for i, surf_num in enumerate(input_data["surface_counter"]):
-            surf = SurfaceLocationData(
+            surf = SurfaceData(
                 self.cst, self.chd, surf_num,
                 time_surf=input_data["time_surf"][i],
                 x_surf=input_data["x_surf"][i],
@@ -119,7 +120,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         surfs = []
 
         for i, surf_num in enumerate(input_data["surface_counter"]):
-            surf = SurfaceLocationData(
+            surf = SurfaceData(
                 self.cst, self.chd, surf_num,
                 time_surf=input_data["time_surf"][i],
                 x_surf=input_data["x_surf"][i],

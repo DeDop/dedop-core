@@ -1,12 +1,12 @@
 import unittest
+
 import numpy as np
 
-from tests.testing import TestDataLoader
-
-from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
-from dedop.io.input.packet import InstrumentSourcePacket
 from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.io.input.packet import InstrumentSourcePacket
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
+from tests.testing import TestDataLoader
 
 
 class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
@@ -115,7 +115,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
             (stack_size, self.chd.n_samples_sar)
         )
 
-        working_loc = SurfaceLocationData(
+        working_loc = SurfaceData(
             self.cst, self.chd,
             stack_bursts=isps,
             data_stack_size=stack_size,

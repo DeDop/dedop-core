@@ -1,10 +1,9 @@
 import unittest
 
-from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
-from dedop.proc.sar.surface_location_data import SurfaceLocationData
 from dedop.conf import ConstantsFile, CharacterisationFile
 from dedop.io.input.packet import InstrumentSourcePacket
-
+from dedop.model import SurfaceData
+from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
 from tests.testing import TestDataLoader
 
 class SurfaceLocationAlgorithmTests(unittest.TestCase):
@@ -127,18 +126,18 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
             isp.compute_location_sar_surf()
 
         # create prior surface location object
-        surf = SurfaceLocationData(self.cst, self.chd,
-            time_surf=inputs["time_surf"],
-            x_surf=inputs["x_surf"],
-            y_surf=inputs["y_surf"],
-            z_surf=inputs["z_surf"],
-            x_sat=inputs["x_sat"],
-            y_sat=inputs["y_sat"],
-            z_sat=inputs["z_sat"],
-            x_vel_sat=inputs["x_vel_sat"],
-            y_vel_sat=inputs["y_vel_sat"],
-            z_vel_sat=inputs["z_vel_sat"]
-        )
+        surf = SurfaceData(self.cst, self.chd,
+                           time_surf=inputs["time_surf"],
+                           x_surf=inputs["x_surf"],
+                           y_surf=inputs["y_surf"],
+                           z_surf=inputs["z_surf"],
+                           x_sat=inputs["x_sat"],
+                           y_sat=inputs["y_sat"],
+                           z_sat=inputs["z_sat"],
+                           x_vel_sat=inputs["x_vel_sat"],
+                           y_vel_sat=inputs["y_vel_sat"],
+                           z_vel_sat=inputs["z_vel_sat"]
+                           )
         surf.compute_surf_sat_vector()
         surf.compute_angular_azimuth_beam_resolution(
             inputs["pri_sar_pre_dat"]
@@ -194,18 +193,18 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
             isp.compute_location_sar_surf()
 
         # create the prior surface location object
-        surf = SurfaceLocationData(self.cst, self.chd,
-                                   time_surf=inputs["time_surf"],
-                                   x_surf=inputs["x_surf"],
-                                   y_surf=inputs["y_surf"],
-                                   z_surf=inputs["z_surf"],
-                                   x_sat=inputs["x_sat"],
-                                   y_sat=inputs["y_sat"],
-                                   z_sat=inputs["z_sat"],
-                                   x_vel_sat=inputs["x_vel_sat"],
-                                   y_vel_sat=inputs["y_vel_sat"],
-                                   z_vel_sat=inputs["z_vel_sat"]
-                                   )
+        surf = SurfaceData(self.cst, self.chd,
+                           time_surf=inputs["time_surf"],
+                           x_surf=inputs["x_surf"],
+                           y_surf=inputs["y_surf"],
+                           z_surf=inputs["z_surf"],
+                           x_sat=inputs["x_sat"],
+                           y_sat=inputs["y_sat"],
+                           z_sat=inputs["z_sat"],
+                           x_vel_sat=inputs["x_vel_sat"],
+                           y_vel_sat=inputs["y_vel_sat"],
+                           z_vel_sat=inputs["z_vel_sat"]
+                           )
         # compute properties of the surface location
         surf.compute_surf_sat_vector()
         surf.compute_angular_azimuth_beam_resolution(
