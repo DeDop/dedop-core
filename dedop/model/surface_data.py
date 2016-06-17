@@ -9,6 +9,12 @@ from dedop.io.input import InstrumentSourcePacket
 from typing import Any, Tuple, Sequence
 
 
+class SurfaceType(Enum):
+    surface_null = 0
+    surface_raw = 1
+    surface_rmc = 2
+
+
 class SurfaceData:
     """
     Class for storing data relating to a surface location
@@ -823,7 +829,7 @@ class SurfaceData:
 
         if beam_angle_trend == 1:
             self.stack_all_beams_indices_abs.append(
-                beam_index + self.chd.n_ku_pulses_burst -\
+                beam_index + self.chd.n_ku_pulses_burst -
                 beam_angles_list_size - self.chd.n_ku_pulses_burst // 2
             )
         else:
@@ -833,9 +839,3 @@ class SurfaceData:
 
     def add_stack_burst(self, isp: InstrumentSourcePacket):
         self.stack_all_bursts.append(isp)
-
-
-class SurfaceType(Enum):
-    surface_null = 0
-    surface_raw = 1
-    surface_rmc = 2
