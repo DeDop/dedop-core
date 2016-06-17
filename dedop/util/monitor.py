@@ -195,6 +195,7 @@ class ConsoleMonitor(Monitor):
         self._total_work = None
         self._cancelled = False
         self._old_ctrl_c_handler = False
+        self._last_percentage = None
 
     def start(self, label: str, total_work: float = None):
         if not label:
@@ -210,16 +211,19 @@ class ConsoleMonitor(Monitor):
         percentage = None
         if work is not None:
             self._worked += work
-            percentage = 100. * self._worked / self._total_work
-        if msg is not None and percentage is not None:
-            line = '%s: %.0f%%: %s' % (self._label, percentage, msg)
-        elif percentage is not None:
-            line = '%s: %.0f%%' % (self._label, percentage)
-        elif msg:
-            line = '%s: %s' % (self._label, msg)
-        else:
-            line = '%s: progress' % self._label
-        self.write_line(line)
+            percentage = int(100. * self._worked / self._total_work + 0.5)
+        # only display progress on integer percentage change
+        if percentage != self._last_percentage:
+            if msg is not None and percentage is not None:
+                line = '%s: %d%%: %s' % (self._label, percentage, msg)
+            elif percentage is not None:
+                line = '%s: %d%%' % (self._label, percentage)
+            elif msg:
+                line = '%s: %s' % (self._label, msg)
+            else:
+                line = '%s: progress' % self._label
+            self.write_line(line)
+            self._last_percentage = percentage
 
     def done(self):
         line = '%s: done' % self._label
@@ -236,6 +240,6 @@ class ConsoleMonitor(Monitor):
     def is_cancelled(self) -> bool:
         return self._cancelled
 
+    # noinspection PyUnusedLocal,PyShadowingNames
     def _on_ctrl_c(self, signal, frame):
-        print('You pressed Ctrl+C!')
         self.cancel()
