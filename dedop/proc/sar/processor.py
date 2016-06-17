@@ -7,6 +7,7 @@ from ...io.output import L1BSWriter, L1BWriter
 
 from typing import Optional, Sequence, Dict, Any
 
+
 class L1BProcessor:
     """
     class for the L1B Processing chain
@@ -32,7 +33,7 @@ class L1BProcessor:
         self.l1bs_file = l1bs_output
         self.surf_locs = []
         self.source_isps = []
-        self.min_surfs = 64 + 16 # 16 elem. margin
+        self.min_surfs = 64 + 16  # 16 elem. margin
 
         self.surface_locations_algorithm =\
             SurfaceLocationAlgorithm(self.chd, self.cst)
@@ -114,7 +115,6 @@ class L1BProcessor:
 
             if not self.surf_locs:
                 running = False
-
 
     def surface_locations(self, isp: InstrumentSourcePacket) -> Optional[SurfaceLocationData]:
         """
