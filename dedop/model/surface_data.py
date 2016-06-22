@@ -762,6 +762,94 @@ class SurfaceData:
     def range_sat_surf(self) -> float:
         del self['range_sat_surf']
 
+    @property
+    def closest_burst_index(self) -> int:
+        """index of the burst closest to the surface position"""
+        return self['closest_burst_index']
+
+    @closest_burst_index.setter
+    def closest_burst_index(self, value: int) -> None:
+        self['closest_burst_index'] = value
+
+    @closest_burst_index.deleter
+    def closest_burst_index(self) -> None:
+        del self['closest_burst_index']
+
+    @property
+    def closest_burst(self) -> L1AProcessingData:
+        """the closest bursts to the surface position"""
+        return self.stack_bursts[self.closest_burst_index]
+
+    @property
+    def sigma0_scaling_factor(self) -> float:
+        """the sigma-nought scaling factor"""
+        return self["sigma0_scaling_factor"]
+
+    @sigma0_scaling_factor.setter
+    def sigma0_scaling_factor(self, value: float) -> None:
+        self["sigma0_scaling_factor"] = value
+
+    @sigma0_scaling_factor.deleter
+    def sigma0_scaling_factor(self) -> None:
+        del self["sigma0_scaling_factor"]
+
+    @property
+    def stack_std(self) -> float:
+        """the standard deviation of the gaussian fit for the stack"""
+        return self["stack_std"]
+
+    @stack_std.setter
+    def stack_std(self, value: float) -> None:
+        self["stack_std"] = value
+
+    @stack_std.deleter
+    def stack_std(self) -> None:
+        del self["stack_std"]
+
+    @property
+    def stack_skewness(self) -> float:
+        """the skewness of the gaussian fit for the stack"""
+        return self["stack_skewness"]
+
+    @stack_skewness.setter
+    def stack_skewness(self, value: float) -> None:
+        self["stack_skewness"] = value
+
+    @stack_skewness.deleter
+    def stack_skewness(self) -> None:
+        del self["stack_skewness"]
+
+    @property
+    def stack_kurtosis(self) -> float:
+        """the kurtosis of the fit for the stack"""
+        return self["stack_kurtosis"]
+
+    @stack_kurtosis.setter
+    def stack_kurtosis(self, value):
+        self["stack_kurtosis"] = value
+
+    @stack_kurtosis.deleter
+    def stack_kurtosis(self):
+        del self["stack_kurtosis"]
+
+    @property
+    def waveform_multilooked(self) -> np.ndarray:
+        """the final waveform after multilooking"""
+        return self["waveform_multilooked"]
+
+    @waveform_multilooked.setter
+    def waveform_multilooked(self, value: np.ndarray) -> None:
+        self["waveform_multilooked"] = value
+
+    @waveform_multilooked.deleter
+    def waveform_multilooked(self) -> None:
+        del self["waveform_multilooked"]
+
+    @property
+    def gps_time_surf(self) -> float:
+        return self.time_surf + 20 * 365 * 86400 - 19
+
+
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: int=None,
                  *dicts: dict, **values: Any):
         """

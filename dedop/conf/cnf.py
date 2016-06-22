@@ -4,11 +4,7 @@ class ConfigurationFile(ConstantsFileReader):
     """
     class for loading the Configuration File
     """
-
-    _filename = "cnf.json"
-
     # Processing and Testing
-
 
     @property
     def pu_seed(self):
@@ -251,10 +247,3 @@ class ConfigurationFile(ConstantsFileReader):
     def epoch_seed(self):
         """Epoch initial seed (without zero padding)"""
         return self["epoch_seed_cnf"]
-
-
-
-    def __init__(self, filename=None):
-        if filename is None:
-            filename = self._filename
-        super().__init__(filename)
