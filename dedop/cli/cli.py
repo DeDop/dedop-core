@@ -14,6 +14,7 @@ import sys
 from abc import ABCMeta, abstractmethod
 from typing import Tuple, Optional
 
+from dedop.cli.dummy_processor import Processor
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
@@ -71,7 +72,6 @@ class Command(metaclass=ABCMeta):
         """
 
     @classmethod
-    @abstractmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
         """
         Configure *parser*, i.e. make any required ``parser.add_argument(*args, **kwargs)`` calls.
@@ -79,6 +79,7 @@ class Command(metaclass=ABCMeta):
 
         :param parser: The command parser to configure.
         """
+        pass
 
     @abstractmethod
     def execute(self, command_args: argparse.Namespace) -> Optional[Tuple[int, str]]:
@@ -113,28 +114,24 @@ class RunCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser):
-        parser.add_argument('--name', '-n', metavar='NAME', nargs=1,
+        parser.add_argument('--name', '-n', metavar='NAME', nargs=1, default='noname',
                             help='Give the processor run a name.')
         parser.add_argument('--config', '-c', metavar='CONFIG', nargs=1, default='default',
                             help='Use the given configuration.')
         parser.add_argument('--monitor', '-m', action='store_true',
                             help='Display progress information while processing.')
+        parser.add_argument('--skip-l1bs', '-s', action='store_true',
+                            help='Do not output L1B-S files.')
         parser.add_argument('l1a_sources', metavar='L1A_SOURCE', nargs='+',
                             help="L1A input files or directories")
 
     def execute(self, command_args):
-        config = command_args.config
-        name = command_args.name
-        monitor = command_args.monitor
-        l1a_sources = command_args.l1a_sources
-
-        if monitor:
-            monitor = ConsoleMonitor()
-        else:
-            monitor = Monitor.NULL
-
-        # todo (nf, 20160616) - implement me
-        return self.STATUS_OK
+        processor = Processor(command_args.name,
+                              command_args.config,
+                              command_args.skip_l1bs)
+        status = processor.process_sources(ConsoleMonitor() if command_args.monitor else Monitor.NULL,
+                                           *command_args.l1a_sources)
+        return status
 
 
 class ConfigCommand(Command):
