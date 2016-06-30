@@ -247,3 +247,23 @@ class ConfigurationFile(ConstantsFileReader):
     def epoch_seed(self):
         """Epoch initial seed (without zero padding)"""
         return self["epoch_seed_cnf"]
+
+    @property
+    def min_lat(self) -> float:
+        """minimum latitude of bursts"""
+        return self._data.get("min_lat_cnf")
+
+    @property
+    def max_lat(self) -> float:
+        """maximum latitude of bursts"""
+        return self._data.get("max_lat_cnf")
+
+    @property
+    def min_lon(self) -> float:
+        """minimum longitude of bursts"""
+        return self._data.get("min_lon_cnf")
+
+    @property
+    def max_lon(self) -> float:
+        """maximum longitude of bursts"""
+        return self._data.get("max_lon_cnf")
