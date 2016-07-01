@@ -4,11 +4,7 @@ class ConfigurationFile(ConstantsFileReader):
     """
     class for loading the Configuration File
     """
-
-    _filename = "cnf.json"
-
     # Processing and Testing
-
 
     @property
     def pu_seed(self):
@@ -252,9 +248,22 @@ class ConfigurationFile(ConstantsFileReader):
         """Epoch initial seed (without zero padding)"""
         return self["epoch_seed_cnf"]
 
+    @property
+    def min_lat(self) -> float:
+        """minimum latitude of bursts"""
+        return self._data.get("min_lat_cnf")
 
+    @property
+    def max_lat(self) -> float:
+        """maximum latitude of bursts"""
+        return self._data.get("max_lat_cnf")
 
-    def __init__(self, filename=None):
-        if filename is None:
-            filename = self._filename
-        super().__init__(filename)
+    @property
+    def min_lon(self) -> float:
+        """minimum longitude of bursts"""
+        return self._data.get("min_lon_cnf")
+
+    @property
+    def max_lon(self) -> float:
+        """maximum longitude of bursts"""
+        return self._data.get("max_lon_cnf")

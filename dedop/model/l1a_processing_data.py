@@ -640,6 +640,98 @@ class L1AProcessingData:
     def counter(self):
         return self._counter
 
+    @property
+    def isp_coarse_time(self):
+        return self["isp_coarse_time"]
+
+    @property
+    def isp_fine_time(self):
+        return self["isp_fine_time"]
+
+    @property
+    def sral_fine_time(self):
+        return self["sral_fine_time"]
+
+    @property
+    def flag_time_status(self):
+        return self["flag_time_status"]
+    
+    @property
+    def nav_bul_status(self):
+        return self["nav_bul_status"]
+    
+    @property
+    def nav_bul_source(self):
+        return self["nav_bul_source"]
+    
+    @property
+    def source_seq_count(self):
+        return self["source_seq_count"]
+    
+    @property
+    def oper_instr(self):
+        return self["oper_instr"]
+    
+    @property
+    def SAR_mode(self):
+        return self["SAR_mode"]
+    
+    @property
+    def cl_gain(self):
+        return self["cl_gain"]
+    
+    @property
+    def acq_stat(self):
+        return self["acq_stat"]
+    
+    @property
+    def dem_eeprom(self):
+        return self["dem_eeprom"]
+    
+    @property
+    def loss_track(self):
+        return self["loss_track"]
+    
+    @property
+    def h0_nav_dem(self):
+        return self["h0_nav_dem"]
+    
+    @property
+    def h0_applied(self):
+        return self["h0_applied"]
+    
+    @property
+    def cor2_nav_dem(self):
+        return self["cor2_nav_dem"]
+    
+    @property
+    def cor2_applied(self):
+        return self["cor2_applied"]
+    
+    @property
+    def dh0(self):
+        return self["dh0"]
+    
+    @property
+    def agccode_ku(self):
+        return self["agccode_ku"]
+    
+    @property
+    def range_ku(self):
+        return self["range_ku"]
+    
+    @property
+    def int_path_cor_ku(self):
+        return self["int_path_cor_ku"]
+    
+    @property
+    def agc_ku(self):
+        return self["agc_ku"]
+    
+    @property
+    def sig0_cal_ku(self):
+        return self["sig0_cal_ku"]
+
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):

@@ -246,6 +246,9 @@ class L1BProcessor:
         working_surface_location.look_counter_surf =\
             self.stack_gathering_algorithm.look_counter_surf
 
+        working_surface_location.closest_burst_index =\
+            self.stack_gathering_algorithm.closest_burst_index
+
     def stack_masking(self, working_surface_location: SurfaceData) -> None:
         """
         call the stack masking algorithm and store the results
@@ -263,18 +266,28 @@ class L1BProcessor:
         call the multilooking algorithm and store the results in the
         surface location object
         """
-        # TODO: store results
         self.multilooking_algorithm(working_surface_location)
+
+        working_surface_location.stack_std =\
+            self.multilooking_algorithm.stack_std
+        working_surface_location.stack_skewness =\
+            self.multilooking_algorithm.stack_skewness
+        working_surface_location.stack_kurtosis =\
+            self.multilooking_algorithm.stack_kurtosis
+
+        working_surface_location.waveform_multilooked =\
+            self.multilooking_algorithm.waveform_multilooked
 
     def sigma_zero_scaling(self, working_surface_location: SurfaceData) -> None:
         """
         call the sigma0 scaling algorithm and store the results in the
         surface location object
         """
-        # TODO: store results
         self.sigma_zero_algorithm(
             working_surface_location, self.chd.wv_length_ku, self.chd.chirp_slope_ku
         )
+        working_surface_location.sigma0_scaling_factor =\
+            self.sigma_zero_algorithm.sigma0_scaling_factor
 
     def new_surface(self, loc_data: Dict[str, Any]) -> SurfaceData:
         """

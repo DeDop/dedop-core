@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import curve_fit
+from typing import List
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
@@ -8,13 +9,23 @@ from ....util.parameter import Parameter
 
 
 def gauss(x, a, b, c):
+    """
+    describes a gaussian curve at positions in 'x',
+    according to the parameters a, b, c.
+    """
     return a * np.exp(-(x - b) ** 2 / (c ** 2))
 
 
-def gauss_fit(x, y):
-    fit_params, _ = curve_fit(
-        gauss, x, y
-    )
+def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
+    """attempt to fit a gaussian curve to the data descibed
+    by x & y. Returns the fitting parameters"""
+
+    try:
+        fit_params, _ = curve_fit(
+            gauss, x, y
+        )
+    except RuntimeError:
+        return [1, 1, 1]
 
     return fit_params
 
