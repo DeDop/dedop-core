@@ -21,7 +21,6 @@ from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
 _DEFAULT_CONFIG_NAME = 'default'
-
 _DEFAULT_WORKSPACE_NAME = 'default'
 
 _STATUS_NO_WORKSPACE = 10, 'no current workspace, use option -w to name a WORKSPACE'
@@ -32,6 +31,8 @@ _STATUS_NO_MATCHING_INPUTS = 40, 'no matching inputs found'
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
 
+_LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
+_USER_MANUAL_URL = 'http://dedop.readthedocs.data/en/latest/'
 _COPYRIGHT_INFO = """
 %s - The ESA DeDop CLI Tool, Copyright (C) 2016 by European Space Agency (ESA)
 
@@ -47,11 +48,7 @@ FOR A PARTICULAR PURPOSE.
 Type "%s lic" for details.
 """ % (CLI_NAME, CLI_NAME)
 
-_LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
-
-_DOCS_URL = 'http://dedop.readthedocs.data/en/latest/'
-
-_WORKSPACE_MANAGER = WorkspaceManager()
+_WORKSPACE_MANAGER = None
 
 
 def _input(prompt, default=None):
@@ -159,6 +156,56 @@ class Command(metaclass=ABCMeta):
         return ConsoleMonitor(stay_in_line=True, progress_bar_size=32)
 
 
+class RunProcessorCommand(Command):
+    CMD_NAME = 'run'
+
+    @classmethod
+    def name(cls):
+        return cls.CMD_NAME
+
+    @classmethod
+    def parser_kwargs(cls):
+        help_line = 'Run the DeDop processor (DDP).'
+        return dict(help=help_line, description=help_line)
+
+    @classmethod
+    def configure_parser(cls, parser: argparse.ArgumentParser):
+        parser.add_argument('-s', '--skip-l1bs', action='store_true',
+                            help='Skip generation of L1B-S files.')
+        parser.add_argument('-q', '--quiet', action='store_true',
+                            help='Suppress output of progress information.')
+        parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
+                            help='Use WORKSPACE, defaults to current workspace.')
+        parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
+                            help='Use CONFIG in workspace, defaults to current configuration.')
+        parser.add_argument('-i', '--inputs', metavar='L1A_FILE', nargs='*',
+                            help="L1A input files. Defaults to all L1A files in workspace.")
+        parser.add_argument('-o', '--output', dest='output_dir', metavar='DIR',
+                            help="Alternative output directory.")
+
+    def execute(self, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        if not workspace_name:
+            workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+        if not config_name:
+            config_name = ManageConfigsCommand.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
+        inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
+        if not inputs:
+            code, msg = _STATUS_NO_INPUTS
+            return code, msg % workspace_name
+        monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
+        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
+            workspace_name, config_name)
+        processor = Processor(config_name=config_name,
+                              chd_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD'),
+                              cnf_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF'),
+                              cst_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST'),
+                              skip_l1bs=command_args.skip_l1bs,
+                              output_dir=output_dir)
+        status = processor.process_sources(monitor, *inputs)
+        return status
+
+
 class ManageWorkspacesCommand(Command):
     @classmethod
     def name(cls):
@@ -179,30 +226,30 @@ class ManageWorkspacesCommand(Command):
         parser_add.add_argument(**workspace_name_attributes)
         parser_add.set_defaults(ws_command=cls.execute_add)
 
-        parser_rm = subparsers.add_parser('remove', aliases=['rm'], help='Remove workspace')
-        parser_rm.add_argument(nargs='?', **workspace_name_attributes)
-        parser_rm.set_defaults(ws_command=cls.execute_remove)
+        parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove workspace')
+        parser_remove.add_argument(nargs='?', **workspace_name_attributes)
+        parser_remove.set_defaults(ws_command=cls.execute_remove)
 
-        parser_cp = subparsers.add_parser('copy', aliases=['cp'], help='Copy workspace')
-        parser_cp.add_argument(nargs='?', **workspace_name_attributes)
-        parser_cp.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new workspace')
-        parser_cp.set_defaults(ws_command=cls.execute_copy)
+        parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy workspace')
+        parser_copy.add_argument(nargs='?', **workspace_name_attributes)
+        parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new workspace')
+        parser_copy.set_defaults(ws_command=cls.execute_copy)
 
-        parser_rn = subparsers.add_parser('rename', aliases=['rn'], help='Rename workspace')
-        parser_rn.add_argument(nargs='?', **workspace_name_attributes)
-        parser_rn.add_argument('new_name', metavar='NEW_NAME', help='New name of the workspace')
-        parser_rn.set_defaults(ws_command=cls.execute_rename)
+        parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename workspace')
+        parser_rename.add_argument(nargs='?', **workspace_name_attributes)
+        parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the workspace')
+        parser_rename.set_defaults(ws_command=cls.execute_rename)
 
         parser_info = subparsers.add_parser('info', aliases=['i'], help='Show workspace')
         parser_info.add_argument(nargs='?', **workspace_name_attributes)
         parser_info.set_defaults(ws_command=cls.execute_info)
 
-        parser_cur = subparsers.add_parser('current', aliases=['cur'], help='Current workspace')
-        parser_cur.add_argument(nargs='?', **workspace_name_attributes)
-        parser_cur.set_defaults(ws_command=cls.execute_current)
+        parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current workspace')
+        parser_current.add_argument(nargs='?', **workspace_name_attributes)
+        parser_current.set_defaults(ws_command=cls.execute_current)
 
-        parser_ls = subparsers.add_parser('list', aliases=['ls'], help='List workspaces')
-        parser_ls.set_defaults(ws_command=cls.execute_list)
+        parser_list = subparsers.add_parser('list', aliases=['ls'], help='List workspaces')
+        parser_list.set_defaults(ws_command=cls.execute_list)
 
     def execute(self, command_args):
         return command_args.ws_command(command_args)
@@ -238,7 +285,7 @@ class ManageWorkspacesCommand(Command):
         new_name = command_args.new_name
         if not new_name:
             new_name = workspace_name + '_copy'
-        # TODO (forman, 20180702): implement 'mw copy' command, use shutils
+        # TODO (forman, 20180702): implement 'mw copy' command
         # while os.path.exists(..., new_name) ...
         #
         # Implementation here...
@@ -277,7 +324,10 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def execute_info(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
-        # TODO (forman, 20180702): implement 'ws inf' command
+        # TODO (forman, 20180702): implement 'mw info' command
+        #
+        # Implementation here...
+        #
         print('TODO: show workspace %s' % workspace_name)
         return cls.STATUS_OK
 
@@ -402,7 +452,10 @@ class ManageConfigsCommand(Command):
         if not new_name:
             new_name = workspace_name + '_copy'
         # while os.path.exists(..., new_name) ...
-        # TODO (forman, 20180702): implement 'cf cp' command
+        # TODO (forman, 20180702): implement 'mc copy' command
+        #
+        # Implementation here...
+        #
         print('TODO: copy configuration "%s" to "%s"' % (workspace_name, new_name))
         return cls.STATUS_OK
 
@@ -414,7 +467,10 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
-        # TODO (forman, 20180702): implement 'cf rn' command
+        # TODO (forman, 20180702): implement 'mc rename' command
+        #
+        # Implementation here...
+        #
         print('TODO: rename configuration "%s" to "%s"' % (workspace_name, new_name))
         return cls.STATUS_OK
 
@@ -461,7 +517,10 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        # TODO (forman, 20180702): implement 'cf inf' command
+        # TODO (forman, 20180702): implement 'mc info' command
+        #
+        # Implementation here...
+        #
         print('TODO: show configuration %s' % config_name)
         return cls.STATUS_OK
 
@@ -627,8 +686,8 @@ class ManageInputsCommand(Command):
         return cls.STATUS_OK
 
 
-class RunCommand(Command):
-    CMD_NAME = 'run'
+class ManageOutputsCommand(Command):
+    CMD_NAME = 'output'
 
     @classmethod
     def name(cls):
@@ -636,112 +695,88 @@ class RunCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Run the DeDop processor with given configuration.'
-        return dict(help=help_line, description=help_line)
+        help_line = 'Manage L1B outputs.'
+        return dict(aliases=['mo'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        parser.add_argument('-s', '--skip-l1bs', action='store_true',
-                            help='Skip generation of L1B-S files.')
-        parser.add_argument('-q', '--quiet', action='store_true',
-                            help='Suppress output of progress information.')
-        parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
-                            help='Use WORKSPACE, defaults to current workspace.')
-        parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
-                            help='Use CONFIG in workspace, defaults to current configuration.')
-        parser.add_argument('-i', '--inputs', metavar='L1A_FILE', nargs='*',
-                            help="L1A input files. Defaults to all L1A files in workspace.")
-        parser.add_argument('-o', '--output', dest='output_dir', metavar='DIR',
-                            help="Alternative output directory.")
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
+                                         help="Name of the workspace.")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+
+        config_name_attributes = dict(dest='config_name', metavar='CONFIG',
+                                      help="Name of the configuration.")
+        parser.add_argument('-c', '--config', **config_name_attributes)
+
+        subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
+
+        parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
+        parser_clean.set_defaults(mo_command=cls.execute_clean)
+
+        parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
+        parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
+        parser_compare.set_defaults(mo_command=cls.execute_compare)
+
+        parser_analyse = subparsers.add_parser('analyse', aliases=['an'], help='Analyse output')
+        parser_analyse.set_defaults(mo_command=cls.execute_analyse)
+
+        parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
+        parser_list.set_defaults(mo_command=cls.execute_list)
 
     def execute(self, command_args):
+        return command_args.mo_command(command_args)
+
+    @classmethod
+    def execute_clean(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
-        if not config_name:
-            config_name = ManageConfigsCommand.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
-        inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
-        if not inputs:
-            code, msg = _STATUS_NO_INPUTS
-            return code, msg % workspace_name
-        monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
-        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
-            workspace_name, config_name)
-        processor = Processor(config_name=config_name,
-                              chd_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD'),
-                              cnf_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF'),
-                              cst_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST'),
-                              skip_l1bs=command_args.skip_l1bs,
-                              output_dir=output_dir)
-        status = processor.process_sources(monitor, *inputs)
-        return status
-
-
-# TODO (forman, 20160616): implement 'plot' command
-class PlotCommand(Command):
-    @classmethod
-    def name(cls):
-        return 'plot'
+        # TODO (forman, 20160704): implement "mo clean" command
+        #
+        # Implementation here...
+        #
+        print('TODO: clean "%s"', config_name)
+        return cls.STATUS_OK
 
     @classmethod
-    def parser_kwargs(cls):
-        help_line = 'Provide plotting for processing result analysis.'
-        return dict(help=help_line, description=help_line)
-
-    @classmethod
-    def configure_parser(cls, parser):
-        parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
-                            help='Use WORKSPACE, defaults to current workspace.')
-        parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
-                            help='Use CONFIG in workspace, defaults to current configuration.')
-
-    def execute(self, command_args):
-        return self.STATUS_OK
-
-
-# TODO (forman, 20160616): implement 'cmp' command
-class CompareCommand(Command):
-    @classmethod
-    def name(cls):
-        return 'cmp'
-
-    @classmethod
-    def parser_kwargs(cls):
-        help_line = 'Compare results of two processor runs.'
-        return dict(help=help_line, description=help_line)
-
-    @classmethod
-    def configure_parser(cls, parser):
-        parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
-                            help='Use WORKSPACE, defaults to current workspace.')
-        parser.add_argument('config_name_1', metavar='CONFIG-1', nargs='?',
-                            help='First configuration, defaults to current configuration')
-        parser.add_argument('config_name_2', metavar='CONFIG-2',
-                            help='Second configuration')
-
-    def execute(self, command_args):
-        workspace_name = _get_workspace_name(command_args)
-        if not workspace_name:
-            return _STATUS_NO_WORKSPACE
-        config_name_1 = command_args.config_name_1
+    def execute_compare(cls, command_args):
+        workspace_name, config_name_1 = _get_workspace_and_config_name(command_args)
         if not config_name_1:
             config_name_1 = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
             if not config_name_1:
                 return _STATUS_NO_CONFIG
-        config_name_2 = command_args.config_name_2
+        config_name_2 = command_args.other_config_name
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_1):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_1)
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_2):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_2)
+        # TODO (forman, 20160704): implement "mo compare" command
         #
-        # Implement comparison here...
+        # Implementation here...
         #
-        print('TODO: comparing "%s" and "%s"...' % (config_name_1, config_name_2))
+        print('TODO: comparing output of "%s" and "%s"', (config_name_1, config_name_2))
+        return cls.STATUS_OK
 
-        return self.STATUS_OK
+    @classmethod
+    def execute_analyse(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        # TODO (forman, 20160704): implement "mo analyse" command
+        #
+        # Implementation here...
+        #
+        print('TODO: analysing output of "%s"', config_name)
+        return cls.STATUS_OK
+
+    @classmethod
+    def execute_list(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        # TODO (forman, 20160704): implement "mo list" command
+        #
+        # Implementation here...
+        #
+        print('TODO: listing output of "%s"', config_name)
+        return cls.STATUS_OK
 
 
-class CopyrightCommand(Command):
+class ShowCopyrightCommand(Command):
     @classmethod
     def name(cls):
         return 'cr'
@@ -756,7 +791,7 @@ class CopyrightCommand(Command):
         return self.STATUS_OK
 
 
-class LicenseCommand(Command):
+class ShowLicenseCommand(Command):
     @classmethod
     def name(cls):
         return 'lic'
@@ -772,34 +807,33 @@ class LicenseCommand(Command):
             print(content)
 
 
-class DocCommand(Command):
+class ShowManualCommand(Command):
     @classmethod
     def name(cls):
-        return 'doc'
+        return 'man'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Display documentation in a browser window.'
+        help_line = 'Open DeDop user manual in browser window.'
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
         import webbrowser
-        webbrowser.open_new_tab(_DOCS_URL)
+        webbrowser.open_new_tab(_USER_MANUAL_URL)
         return self.STATUS_OK
 
 
 #: List of sub-commands supported by the CLI. Entries are classes derived from :py:class:`Command` class.
 #: DeDop plugins may extend this list by their commands during plugin initialisation.
 COMMAND_REGISTRY = [
+    RunProcessorCommand,
     ManageWorkspacesCommand,
     ManageConfigsCommand,
     ManageInputsCommand,
-    RunCommand,
-    PlotCommand,
-    CompareCommand,
-    CopyrightCommand,
-    LicenseCommand,
-    DocCommand,
+    ManageOutputsCommand,
+    ShowManualCommand,
+    ShowCopyrightCommand,
+    ShowLicenseCommand,
 ]
 
 
