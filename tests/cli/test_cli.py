@@ -1,52 +1,31 @@
 import os.path
-import sys
-from contextlib import contextmanager
-from io import StringIO
+from unittest import TestCase
 
 from dedop import cli
-from tests.cli.test_workspace import WorkspaceTest
+from dedop.util.fetchstd import fetch_std_streams
+from tests.cli.test_workspace import WorkspaceTestBase
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
 WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'test_cli')
 
 
-@contextmanager
-def fetch_std_streams():
-    sys.stdout.flush()
-    sys.stderr.flush()
-
-    old_stdout = sys.stdout
-    old_stderr = sys.stderr
-
-    sys.stdout = StringIO()
-    sys.stderr = StringIO()
-
-    try:
-        yield sys.stdout, sys.stderr
-    finally:
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        sys.stdout = old_stdout
-        sys.stderr = old_stderr
-
-
-class CliTest(WorkspaceTest):
-
-    def _test_main(self, args, expected_exit_code=0, expected_stdout='', expected_stderr=''):
+class CliTest(WorkspaceTestBase, TestCase):
+    def _test_main(self, args, expected_exit_code=0, expected_stdout=None, expected_stderr=None):
         with fetch_std_streams() as (stdout, stderr):
             exit_code = cli.main(args=args, workspace_manager=self.manager)
             self.assertEqual(exit_code, expected_exit_code)
+        self._test_iobuf('stdout', stdout, expected_stdout)
+        self._test_iobuf('stderr', stderr, expected_stderr)
 
-        if expected_stdout:
-            self.assertIn(expected_stdout, stdout.getvalue(), msg='actual stdout was:\n[%s]\n' % stdout.getvalue())
-        else:
-            self.assertEqual(stdout.getvalue(), '')
-
-        if expected_stderr:
-            self.assertIn(expected_stderr, stderr.getvalue(), msg='actual stderr was:\n[%s]\n' % stdout.getvalue())
-        else:
-            self.assertEqual(stderr.getvalue(), '')
+    def _test_iobuf(self, name, iobuf, expected_text):
+        message = 'actual %s was:\n%s\n%s\n%s\n' % (name, 120 * '-', iobuf.getvalue(), 120 * '-')
+        if expected_text == '':
+            self.assertEqual(iobuf.getvalue(), '', msg=message)
+        elif isinstance(expected_text, str):
+            self.assertIn(expected_text, iobuf.getvalue(), msg=message)
+        elif expected_text:
+            for expected_stdout_part in expected_text:
+                self.assertIn(expected_stdout_part, iobuf.getvalue(), msg=message)
 
     def test_option_help(self):
         self._test_main(['--help'], expected_stdout='usage: dedop [-h]')
@@ -70,9 +49,26 @@ class CliTest(WorkspaceTest):
     def test_command_run_option_help(self):
         self._test_main(['run', '-h'], expected_stdout='usage:')
 
+    def test_command_run(self):
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+        self._test_main(['mc', 'add', 'test-a'],
+                        expected_stdout=['created configuration "test-a"',
+                                         'current configuration is "test-a"'])
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout='added 2 inputs')
+        self._test_main(['run'],
+                        expected_stdout='Running DDP')
+
     def test_command_run_current(self):
-        inputs = os.path.join(os.path.dirname(__file__), '*.nc')
-        self._test_main(['mw', 'new', 'tests'], expected_stdout='created workspace "tests"')
-        self._test_main(['mc', 'new', 'test-a'], expected_stdout='created configuration "test-a"')
-        self._test_main(['mi', 'add', inputs], expected_stdout='added 2 inputs')
-        self._test_main(['run'], expected_stdout='Running DDP')
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout=['created workspace "default"',
+                                         'current workspace is "default"',
+                                         'added 2 inputs'])
+        self._test_main(['run'],
+                        expected_stdout=['created configuration "default"',
+                                         'current configuration is "default"',
+                                         'Running DDP'])

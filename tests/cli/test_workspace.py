@@ -7,7 +7,8 @@ TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
 WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'workspaces')
 
 
-class WorkspaceTest(TestCase):
+# noinspection PyPep8Naming,PyUnresolvedReferences,PyAttributeOutsideInit
+class WorkspaceTestBase:
     def setUp(self):
         self.manager = WorkspaceManager(workspaces_dir=WORKSPACES_DIR)
         self.manager.delete_all_workspaces()
@@ -24,11 +25,8 @@ class WorkspaceTest(TestCase):
     def assertWorkspaceFileExists(self, *path, expected=True):
         self.assertEqual(os.path.exists(os.path.join(WORKSPACES_DIR, *path)), expected)
 
-    def test_that_true_is_true(self):
-        self.assertTrue(True)
 
-
-class WorkspaceManagerTest(WorkspaceTest):
+class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
     def test_create_workspace(self):
         self.manager.create_workspace('test')
         self.assertIsWorkspaceDir('test')
