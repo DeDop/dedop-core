@@ -10,8 +10,7 @@ setup(
               'dedop.proc',
               'dedop.conf',
               'dedop.util',
-              'dedop.cli',
-              'dedop.gui'],
+              'dedop.cli'],
     entry_points={
         'console_scripts': [
             'dedop = dedop.cli:main'
