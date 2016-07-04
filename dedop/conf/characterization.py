@@ -1,5 +1,5 @@
 from .constants_reader import *
-from .cst import ConstantsFile
+from .constants import ConstantsFile
 
 from typing import Any
 

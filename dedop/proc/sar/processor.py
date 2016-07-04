@@ -1,10 +1,11 @@
 from typing import Optional, Sequence, Dict, Any, List
 
 from .algorithms import *
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile, WorkspaceConfig
 from dedop.model import SurfaceData, L1AProcessingData
 from dedop.data.input import InputDataset
 from dedop.data.output import L1BSWriter, L1BWriter
+from dedop.util.monitor import Monitor
 
 
 class L1BProcessor:
@@ -28,18 +29,21 @@ class L1BProcessor:
         """
         return self._packets
 
-    def __init__(self, l1a_input: InputDataset, chd_file: CharacterisationFile, cst_file: ConstantsFile,
-                 l1b_output: Optional[L1BWriter], l1bs_output: L1BSWriter=None):
+    def __init__(self, name: str, configuration: WorkspaceConfig):
         """
         initialise the processor
         """
         # store conf objects
-        self.cst = cst_file
-        self.chd = chd_file
+        self.cst = ConstantsFile(configuration.cst_file)
+        self.chd = CharacterisationFile(self.cst, configuration.chd_file)
+        self.cnf = ConfigurationFile(configuration.cnf_file)
+
         # store file objects
-        self.l1a_file = l1a_input
-        self.l1b_file = l1b_output
-        self.l1bs_file = l1bs_output
+        self.l1b_file = L1BWriter(filename=configuration.l1b_output, chd=self.chd, cnf=self.cnf)
+        if configuration.l1bs_output is not None:
+            self.l1bs_file = L1BSWriter(filename=configuration.l1bs_output, chd=self.chd)  # , cnf=self.cnf)
+        else:
+            self.l1bs_file = None
         # init. surface & packets arrays
         self._surfaces = []
         self._packets = []
@@ -69,10 +73,12 @@ class L1BProcessor:
         self.sigma_zero_algorithm =\
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
-    def process(self) -> None:
+    def process(self, l1a_file: InputDataset, monitor: Monitor=None) -> None:
         """
         runs the L1B Processing Chain
         """
+        self.l1a_file = l1a_file
+
         running = True
         surface_processing = False
 
