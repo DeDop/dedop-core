@@ -32,7 +32,7 @@ _STATUS_NO_MATCHING_INPUTS = 40, 'no matching inputs found'
 CLI_NAME = 'dedop'
 
 _LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
-_USER_MANUAL_URL = 'http://dedop.readthedocs.data/en/latest/'
+_USER_MANUAL_URL = 'http://dedop.readthedocs.io/en/latest/'
 _COPYRIGHT_INFO = """
 %s - The ESA DeDop CLI Tool, Copyright (C) 2016 by European Space Agency (ESA)
 
@@ -68,7 +68,7 @@ def _get_workspace_and_config_name(command_args):
     if not workspace_name:
         workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
     config_name = command_args.config_name
-    if not config_name:
+    if workspace_name and not config_name:
         config_name = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
     return workspace_name, config_name
 
@@ -196,13 +196,21 @@ class RunProcessorCommand(Command):
         monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
         output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
             workspace_name, config_name)
+        chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
+        cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
+        cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+        skip_l1bs = command_args.skip_l1bs
+
+        # TODO (forman, 20160616): use real DDP here
+        # -------------------------------------------------------
         processor = Processor(config_name=config_name,
-                              chd_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD'),
-                              cnf_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF'),
-                              cst_file=_WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST'),
-                              skip_l1bs=command_args.skip_l1bs,
+                              chd_file=chd_file,
+                              cnf_file=cnf_file,
+                              cst_file=cst_file,
+                              skip_l1bs=skip_l1bs,
                               output_dir=output_dir)
         status = processor.process_sources(monitor, *inputs)
+        # -------------------------------------------------------
         return status
 
 
@@ -733,7 +741,7 @@ class ManageOutputsCommand(Command):
         #
         # Implementation here...
         #
-        print('TODO: clean "%s"', config_name)
+        print('TODO: clean "%s"' % config_name)
         return cls.STATUS_OK
 
     @classmethod
@@ -752,7 +760,7 @@ class ManageOutputsCommand(Command):
         #
         # Implementation here...
         #
-        print('TODO: comparing output of "%s" and "%s"', (config_name_1, config_name_2))
+        print('TODO: comparing output of "%s" and "%s"' % (config_name_1, config_name_2))
         return cls.STATUS_OK
 
     @classmethod
@@ -762,7 +770,7 @@ class ManageOutputsCommand(Command):
         #
         # Implementation here...
         #
-        print('TODO: analysing output of "%s"', config_name)
+        print('TODO: analysing output of "%s"' % config_name)
         return cls.STATUS_OK
 
     @classmethod
@@ -772,7 +780,7 @@ class ManageOutputsCommand(Command):
         #
         # Implementation here...
         #
-        print('TODO: listing output of "%s"', config_name)
+        print('TODO: listing output of "%s"' % config_name)
         return cls.STATUS_OK
 
 

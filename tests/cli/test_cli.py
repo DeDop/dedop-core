@@ -62,6 +62,13 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['run'],
                         expected_stdout='Running DDP')
 
+    def test_command_run_no_inputs(self):
+        self._test_main(['run'],
+                        expected_exit_code=30,
+                        expected_stdout=['created workspace "default"',
+                                         'created configuration "default" in workspace "default"'],
+                        expected_stderr=['workspace "default" doesn\'t have any inputs yet'])
+
     def test_command_run_current(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
         self._test_main(['mi', 'add', input_files],

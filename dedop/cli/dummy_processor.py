@@ -4,8 +4,6 @@ import time
 from dedop.util.monitor import Monitor
 
 
-# TODO (forman, 20160616) - implement the true processor interface
-
 class Processor:
     def __init__(self, config_name=None, chd_file=None, cnf_file=None, cst_file=None, skip_l1bs=False, output_dir=None):
         self.config_name = config_name
@@ -25,7 +23,7 @@ class Processor:
         return None
 
     # noinspection PyMethodMayBeStatic
-    def _process_source(self, monitor: Monitor, l1a_file:str) -> int:
+    def _process_source(self, monitor: Monitor, l1a_file: str) -> int:
         # to simulate an error
         if l1a_file == 'e':
             return 1, 'I/O Error: Failed to open L1A file %s' % l1a_file
@@ -33,7 +31,7 @@ class Processor:
         total_work = num_recs
         if not self.skip_l1bs:
             total_work += 1
-        total_work += 2
+        total_work += 1
         with monitor.starting('Processing L1A ' + l1a_file, total_work):
             for rec in range(num_recs):
                 if monitor.is_cancelled():
