@@ -5,7 +5,8 @@ from dedop.conf import CharacterisationFile, ConstantsFile
 from tests.testing import TestDataLoader
 
 class TestCHD(unittest.TestCase):
-    _folder = os.path.join("test_data", "conf", "test_chd")
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "conf", "test_chd")
 
     _expected_file = os.path.join(
         _folder, "expected.txt"
@@ -14,7 +15,7 @@ class TestCHD(unittest.TestCase):
         _folder, "chd.json"
     )
     _constants = os.path.join(
-        _folder, "cst.json"
+        _root, "test_data", "common", "cst.json"
     )
 
     def setUp(self):
