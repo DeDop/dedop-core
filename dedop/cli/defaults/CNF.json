@@ -1,2 +1,225 @@
 {
+	"flag_uso_correction_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+	},
+	"flag_cal1_corrections_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the CAL1 corrections: Deactivated (false); Activated (true)"
+	},
+	"flag_cal1_source_cnf": {
+		"value": 1,
+		"units": "flag",
+		"description": "Flag that indicates the CAL1 corrections source: CAL1 L1B (0); CAL1 on-ground (1)"
+	},
+	"flag_cal1_power_cnf": {
+		"value": 0,
+		"units": "flag",
+		"description": "Flag that indicates the CAL1 power type: CAL1 L1B total power (0); CAL1 L1B max power (1)"
+	},
+	"flag_cal2_correction_cnf": {
+		"value": false,
+		"units": "flag",
+		"description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
+	},
+	"flag_azimuth_weighting_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the azimuth weighting: Deactivated (false); Activated (true)"
+	},
+	"flag_postphase_azimuth_processing_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the post-phase azimuth corrections: Deactivated (false); Activated (true)"
+	},
+	"flag_azimuth_processing_method_cnf": {
+		"value": 0,
+		"units": "flag",
+		"description": "Flag that indicates the azimuth processing method: Surface dependant (0); Approximate (1); Exact (2)"
+	},
+	"flag_doppler_range_correction_cnf": {
+		"value": false,
+		"units": "flag",
+		"description": "Flag that activates the Doppler range correction in the geometry corrections: Deactivated (false); Activated (true)"
+	},
+	"flag_slant_range_correction_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the slant range correction in the geometry corrections: Deactivated (false); Activated (true)"
+	},
+	"flag_window_delay_alignment_method_cnf": {
+		"value": 0,
+		"units": "flag",
+		"description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
+	},
+	"flag_remove_doppler_ambiguities_cnf": {
+		"value": false,
+		"units": "flag",
+		"description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
+	},
+	"flag_antenna_weighting_cnf": {
+		"value": false,
+		"units": "flag",
+		"description": "Flag that activates the antenna weighting: Deactivated (false); Activated (true)"
+	},
+	"flag_surface_weighting_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that activates the surface weighting: Deactivated (false); Activated (true)"
+	},
+	"flag_avoid_zeros_in_multilooking_cnf": {
+		"value": true,
+		"units": "flag",
+		"description": "Flag that indicates if the samples set to zero in the beams will be avoided when averaging in multi-looking: No (false); Yes (true)"
+	},
+	"flag_l1bs_file_cnf": {
+		"value": false,
+		"units": "flag",
+		"description": "Flag that activates the writing of the L1B-S file: Deactivated (false); Activated (true)"
+	},
+
+
+	"sigma_alt_surf_th_cnf": {
+		"value": 4.5,
+		"units": "m",
+		"description": "Threshold that determines whether a surface has low or high variability"
+	},
+	"zp_fact_range_cnf": {
+		"value": 128,
+		"units": null,
+		"description": "Zero padding factor used during range compression"
+	},
+	"N_beams_sub_stack_cnf": {
+		"value": 480,
+		"units": null,
+		"description": "Number of beams per sub-stack"
+	},
+	"N_looks_stack_cnf": {
+		"value": 0,
+		"units": null,
+		"description": "Number of looks in 1 stack"
+	},
+	"decimation_fact_range_l1bs_cnf": {
+		"value": 0,
+		"units": null,
+		"description": "Decimation factor in range dimension applied in the waveforms in the L1B-S product"
+	},
+
+
+	"left_avoided_samples_cal2_cnf": {
+		"value": 24,
+		"units": null,
+		"description": "Number of CAL2 samples to be avoided at the left spectrum edge for the normalisation"
+	},
+	"right_avoided_samples_cal2_cnf": {
+		"value": 26,
+		"units": null,
+		"description": "Number of CAL2 samples to be avoided at the right spectrum edge for the normalisation"
+	},
+
+
+	"zero_pad_fact_cal1_cnf": {
+		"value": 256,
+		"units": null,
+		"description": "Zero Padding Factor"
+	},
+	"num_lobes_int_cal1_cnf": {
+		"value": 2,
+		"units": null,
+		"description": "Number of secondary lobes to interpolate at each side in addition to the main lobe [0,4]"
+	},
+	"k_fact_int_cal1_cnf": {
+		"value": 64,
+		"units": null,
+		"description": "Interpolation samples ratio"
+	},
+	"zero_freq_sample_number_lrm_cnf": {
+		"value": 128,
+		"units": null,
+		"description": "Sample number of the ZERO frequency position in LRM mode"
+	},
+	"zero_freq_sample_number_sar_cnf": {
+		"value": 128,
+		"units": null,
+		"description": "Sample number of the ZERO frequency position in SAR mode"
+	},
+	"width_avg_cal1_pulse_cnf": {
+		"value": 0,
+		"units": "s",
+		"description": "Width of the Running Window Averaging in CAL1 Pulse mode"
+	},
+	"step_avg_cal1_pulse_cnf": {
+		"value": 0,
+		"units": "s",
+		"description": "Time elapsed between two consecutive output records in CAL1 Pulse mode"
+	},
+	"num_samp_out_wfm_cnf": {
+		"value": 0,
+		"units": null,
+		"description": "Number of PTR waveform samples shown in CAL1 L1B output file"
+	},
+
+
+	"min_num_contributing_looks_cnf": {
+		"value": 486,
+		"units": null,
+		"description": "Minimum number of contributing looks in the L1B record in order to fit the waveform of that record"
+	},
+	"n_samples_fitting_raw_cnf": {
+		"value": 256,
+		"units": null,
+		"description": "Number of samples (without zero padding) of the RAW L1B waveform to fit"
+	},
+	"n_samples_fitting_rmc_cnf": {
+		"value": 120,
+		"units": null,
+		"description": "Number of samples (without zero padding) of the RMC L1B waveform to fit"
+	},
+	"thermal_noise_flag_cnf": {
+		"value": 1,
+		"units": "flag",
+		"description": "Estimate thermal noise (1) ; Set thermal noise to 0 (0)"
+	},
+	"thermal_noise_first_range_bin_cnf": {
+		"value": 9.5,
+		"units": null,
+		"description": "First range bin (from 0, without zero padding) of the thermal noise estimation window"
+	},
+	"thermal_noise_width_cnf": {
+		"value": 10,
+		"units": "range bins",
+		"description": "Width of the thermal noise estimation window (without zero padding)"
+	},
+	"parameter_fitting_flag_cnf": {
+		"value": 0,
+		"units": "flag",
+		"description": "Fit sigma_z parameter (0) ; fit roughness parameter (1)"
+	},
+	"epoch_seed_cnf": {
+		"value": 50,
+		"units": "range bins",
+		"description": "Epoch initial seed (without zero padding)"
+	},
+	"pu_seed_cnf": {
+		"value": 1,
+		"units": "power bins",
+		"description": "Pu initial seed"
+	},
+	"sigma_z_seed_cnf": {
+		"value": 0.025,
+		"units": "m",
+		"description": "Sigma_z initial seed"
+	},
+	"roughness_seed_cnf": {
+		"value": 0.01,
+		"units": null,
+		"description": "Roughness initial seed"
+	},
+	"max_fitting_iterations_cnf": {
+		"value": 100,
+		"units": null,
+		"description": "Maximum number of iterations allowed in the fitting routine"
+	}
 }

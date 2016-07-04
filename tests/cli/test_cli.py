@@ -1,9 +1,13 @@
+import os.path
 import sys
 from contextlib import contextmanager
 from io import StringIO
-from unittest import TestCase
 
 from dedop import cli
+from tests.cli.test_workspace import WorkspaceTest
+
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
+WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'test_cli')
 
 
 @contextmanager
@@ -27,42 +31,48 @@ def fetch_std_streams():
         sys.stderr = old_stderr
 
 
-class CliMainTest(TestCase):
-    def test_noargs(self):
-        with self.assertRaises(SystemExit):
-            cli.main()
+class CliTest(WorkspaceTest):
 
-    def test_command_run_help(self):
-        with self.assertRaises(SystemExit):
-            cli.main(args=['run', '-h'])
+    def _test_main(self, args, expected_exit_code=0, expected_stdout='', expected_stderr=''):
+        with fetch_std_streams() as (stdout, stderr):
+            exit_code = cli.main(args=args, workspace_manager=self.manager)
+            self.assertEqual(exit_code, expected_exit_code)
 
-        with self.assertRaises(SystemExit):
-            cli.main(args=['run', '-help'])
+        if expected_stdout:
+            self.assertIn(expected_stdout, stdout.getvalue(), msg='actual stdout was:\n[%s]\n' % stdout.getvalue())
+        else:
+            self.assertEqual(stdout.getvalue(), '')
 
-    def test_invalid_command(self):
-        with self.assertRaises(SystemExit):
-            cli.main(['pipo'])
+        if expected_stderr:
+            self.assertIn(expected_stderr, stderr.getvalue(), msg='actual stderr was:\n[%s]\n' % stdout.getvalue())
+        else:
+            self.assertEqual(stderr.getvalue(), '')
 
     def test_option_help(self):
-        with self.assertRaises(SystemExit):
-            cli.main(args=['--h'])
-        with self.assertRaises(SystemExit):
-            cli.main(args=['--help'])
+        self._test_main(['--help'], expected_stdout='usage: dedop [-h]')
+        self._test_main(['-h'], expected_stdout='usage: dedop [-h]')
 
     def test_option_version(self):
-        with self.assertRaises(SystemExit):
-            cli.main(args=['--version'])
+        self._test_main(['--version'], expected_stdout='dedop 0.1.0')
 
-    def test_command_license(self):
-        with fetch_std_streams() as (sout, serr):
-            status = cli.main(args=['license'])
-            self.assertEqual(status, 0)
-        self.assertIn('GNU GENERAL PUBLIC LICENSE', sout.getvalue())
-        self.assertEqual(serr.getvalue(), '')
+    def test_command_none(self):
+        self._test_main([], expected_stdout='usage: dedop [-h]')
+
+    def test_command_invalid(self):
+        self._test_main(['pipo'], expected_exit_code=2, expected_stderr="invalid choice: 'pipo'")
+
+    def test_command_license_command(self):
+        self._test_main(['lic'], expected_stdout='GNU GENERAL PUBLIC LICENSE')
 
     def test_command_copyright(self):
-        with fetch_std_streams() as (sout, serr):
-            status = cli.main(args=['copyright'])
-            self.assertEqual(status, 0)
-        self.assertIn('European Space Agency', sout.getvalue())
-        self.assertEqual(serr.getvalue(), '')
+        self._test_main(['cr'], expected_stdout='European Space Agency')
+
+    def test_command_run_option_help(self):
+        self._test_main(['run', '-h'], expected_stdout='usage:')
+
+    def test_command_run_current(self):
+        inputs = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'new', 'tests'], expected_stdout='created workspace "tests"')
+        self._test_main(['mc', 'new', 'test-a'], expected_stdout='created configuration "test-a"')
+        self._test_main(['mi', 'add', inputs], expected_stdout='added 2 inputs')
+        self._test_main(['run'], expected_stdout='Running DDP')

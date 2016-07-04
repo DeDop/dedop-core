@@ -1,53 +1,53 @@
+import os.path
 from unittest import TestCase
 
-from dedop.cli.workspace import MemoryWorkspaceManager, Workspace
+from dedop.cli.workspace import WorkspaceManager
+
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
+WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'workspaces')
 
 
 class WorkspaceTest(TestCase):
+    def setUp(self):
+        self.manager = WorkspaceManager(workspaces_dir=WORKSPACES_DIR)
+        self.manager.delete_all_workspaces()
+
+    def tearDown(self):
+        self.manager.delete_all_workspaces()
+
+    def assertIsWorkspaceDir(self, *path, expected=True):
+        self.assertEqual(os.path.isdir(os.path.join(WORKSPACES_DIR, *path)), expected)
+
+    def assertIsWorkspaceFile(self, *path, expected=True):
+        self.assertEqual(os.path.isfile(os.path.join(WORKSPACES_DIR, *path)), expected)
+
+    def assertWorkspaceFileExists(self, *path, expected=True):
+        self.assertEqual(os.path.exists(os.path.join(WORKSPACES_DIR, *path)), expected)
+
+    def test_that_true_is_true(self):
+        self.assertTrue(True)
+
+
+class WorkspaceManagerTest(WorkspaceTest):
     def test_create_workspace(self):
-        manager = MemoryWorkspaceManager()
-        workspace = Workspace.create_workspace('test', manager=manager)
-        self.assertIsNotNone(workspace)
-        self.assertEqual(workspace.name, 'test')
-        self.assertEqual(workspace.config_names, [])
-        workspace.create_config('sido')
-        workspace.create_config('udo')
-        workspace.create_config('adi')
-        workspace.create_config('bibo')
-        self.assertEqual(workspace.config_names, ['adi', 'bibo', 'sido', 'udo'])
+        self.manager.create_workspace('test')
+        self.assertIsWorkspaceDir('test')
 
-    def test_current_workspace(self):
-        manager = MemoryWorkspaceManager()
-        Workspace.create_workspace('test', manager=manager)
-        workspace = Workspace.get_current_workspace(manager=manager)
-        self.assertIsNone(workspace)
+    def test_get_workspace_names(self):
+        self.assertEqual(self.manager.get_workspace_names(), [])
+        self.manager.create_workspace('ernie')
+        self.manager.create_workspace('bert')
+        self.manager.create_workspace('oscar')
+        self.manager.create_workspace('bibo')
+        self.assertEqual(self.manager.get_workspace_names(), ['bert', 'bibo', 'ernie', 'oscar'])
 
-        manager.set_current_workspace_name('test')
-        workspace = Workspace.get_current_workspace(manager=manager)
-        self.assertIsNotNone(workspace)
-        self.assertEqual(workspace.name, 'test')
+    def test_workspace_exists(self):
+        self.manager.create_workspace('ernie')
+        self.assertTrue(self.manager.workspace_exists('ernie'))
+        self.assertFalse(self.manager.workspace_exists('bibo'))
 
-    def test_current_config(self):
-        manager = MemoryWorkspaceManager()
-        Workspace.create_workspace('test', manager=manager)
-        manager.set_current_workspace_name('test')
-        workspace = Workspace.get_current_workspace(manager=manager)
-        manager.set_current_config_name('test', 'bibo')
-
-        config = workspace.current_config
-        self.assertIsNotNone(config)
-        self.assertEqual(config.name, 'bibo')
-
-
-class ConfigTest(TestCase):
-    def test_config_files(self):
-        manager = MemoryWorkspaceManager()
-        workspace = Workspace.create_workspace('testws', manager=manager)
-        config = workspace.create_config('testconf')
-        self.assertIsNotNone(config)
-        self.assertEqual(config.name, 'testconf')
-        self.assertEqual(config.chd_file, 'CHD.json')
-        self.assertEqual(config.cnf_file, 'CNF.json')
-        self.assertEqual(config.cst_file, 'CST.json')
-
-
+    def test_delete_workspace(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        self.manager.delete_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=False)
