@@ -20,7 +20,7 @@ setup(
                       'netCDF4 >= 1.1',
                       'scipy',
                       'typing'],
-    extras_require={'dedop.gui': ['PyQt5 >= 5.5', 'matplotlib >= 1.4']},
+    extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',
