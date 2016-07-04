@@ -61,3 +61,5 @@ target/
 
 data/
 *.nc
+
+_test.prefs
