@@ -14,8 +14,7 @@ setup(
               'dedop.gui'],
     entry_points={
         'console_scripts': [
-            'dedop = dedop.cli:main',
-            'dedop-gui = dedop.gui.main:main',
+            'dedop = dedop.cli:main'
         ]
     },
     install_requires=['numpy >= 1.9',
