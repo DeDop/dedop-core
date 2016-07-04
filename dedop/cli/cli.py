@@ -15,7 +15,8 @@ from abc import ABCMeta, abstractmethod
 
 from typing import Tuple, Optional
 
-from dedop.cli.dummy_processor import Processor
+# from dedop.cli.dummy_processor import Processor
+from dedop.proc import L1BProcessor
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
@@ -201,17 +202,17 @@ class RunProcessorCommand(Command):
         cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
         skip_l1bs = command_args.skip_l1bs
 
-        # TODO (forman, 20160616): use real DDP here
         # -------------------------------------------------------
-        processor = Processor(config_name=config_name,
-                              chd_file=chd_file,
-                              cnf_file=cnf_file,
-                              cst_file=cst_file,
-                              skip_l1bs=skip_l1bs,
-                              output_dir=output_dir)
-        status = processor.process_sources(monitor, *inputs)
+        processor = L1BProcessor(config_name,
+                                 chd_file=chd_file,
+                                 cnf_file=cnf_file,
+                                 cst_file=cst_file,
+                                 skip_l1bs=skip_l1bs,
+                                 out_path=output_dir)
+        for input_file in inputs:
+            processor.process(input_file, monitor=monitor)
         # -------------------------------------------------------
-        return status
+        return self.STATUS_OK
 
 
 class ManageWorkspacesCommand(Command):

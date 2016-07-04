@@ -1,9 +1,10 @@
 from typing import Optional, Sequence, Dict, Any, List
+import os
 
 from .algorithms import *
-from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile, WorkspaceConfig
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData, L1AProcessingData
-from dedop.data.input import InputDataset
+from dedop.data.input.l1a import L1ADataset
 from dedop.data.output import L1BSWriter, L1BWriter
 from dedop.util.monitor import Monitor
 
@@ -29,19 +30,22 @@ class L1BProcessor:
         """
         return self._packets
 
-    def __init__(self, name: str, configuration: WorkspaceConfig):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool=True):
         """
         initialise the processor
         """
         # store conf objects
-        self.cst = ConstantsFile(configuration.cst_file)
-        self.chd = CharacterisationFile(self.cst, configuration.chd_file)
-        self.cnf = ConfigurationFile(configuration.cnf_file)
+        self.cst = ConstantsFile(cst_file)
+        self.chd = CharacterisationFile(self.cst, chd_file)
+        self.cnf = ConfigurationFile(cnf_file)
 
         # store file objects
-        self.l1b_file = L1BWriter(filename=configuration.l1b_output, chd=self.chd, cnf=self.cnf)
-        if configuration.l1bs_output is not None:
-            self.l1bs_file = L1BSWriter(filename=configuration.l1bs_output, chd=self.chd)  # , cnf=self.cnf)
+        l1b_output = os.path.join(out_path, "{}_l1b.nc".format(name))
+        l1bs_output = os.path.join(out_path, "{}_l1bs.nc".format(name))
+
+        self.l1b_file = L1BWriter(filename=l1b_output, chd=self.chd, cnf=self.cnf)
+        if not skip_l1bs:
+            self.l1bs_file = L1BSWriter(filename=l1bs_output, chd=self.chd)  # , cnf=self.cnf)
         else:
             self.l1bs_file = None
         # init. surface & packets arrays
@@ -73,11 +77,12 @@ class L1BProcessor:
         self.sigma_zero_algorithm =\
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
-    def process(self, l1a_file: InputDataset, monitor: Monitor=None) -> None:
+    def process(self, l1a_file: str, monitor: Monitor=Monitor.NULL) -> None:
         """
         runs the L1B Processing Chain
         """
-        self.l1a_file = l1a_file
+        self.l1a_file = L1ADataset(l1a_file, chd=self.chd, cst=self.cst, cnf=self.cnf)
+        monitor.start("Processing Input File", self.l1a_file.max_index)
 
         running = True
         surface_processing = False
@@ -85,10 +90,16 @@ class L1BProcessor:
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
 
+        self.l1b_file.open()
+        if self.l1bs_file is not None:
+            self.l1bs_file.open()
+
         while running:
             input_packet = next(self.l1a_file)
 
             if input_packet is not None:
+                monitor.progress(1)
+
                 new_surface = self.surface_locations(input_packet)
 
                 if new_surface is None:
@@ -129,6 +140,11 @@ class L1BProcessor:
 
             if not self.surf_locs:
                 running = False
+
+        self.l1b_file.close()
+        if self.l1bs_file is not None:
+            self.l1bs_file.close()
+        monitor.done()
 
     def clear_old_records(self, current_surface: SurfaceData) -> None:
         """

@@ -29,10 +29,11 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
             pri_sar_pre_dat =\
                 working_surface_location.stack_bursts[beam_index].pri_sar_pre_dat
 
-            azimuth_distance =\
-                (1 + range_sat_surf) / self.cst.earth_radius *\
-                wavelength_ku * range_sat_surf / pri_sar_pre_dat /\
-                (2 * vel_sat_sar_norm * self.chd.n_ku_pulses_burst)
+            with np.errstate(divide='ignore'):
+                azimuth_distance =\
+                    (1 + range_sat_surf) / self.cst.earth_radius *\
+                    wavelength_ku * range_sat_surf / pri_sar_pre_dat /\
+                    (2 * vel_sat_sar_norm * self.chd.n_ku_pulses_burst)
             range_distance = 2 * sqrt(
                 self.cst.c * range_sat_surf /
                 (self.chd.pulse_length * chirp_slope_ku) *
