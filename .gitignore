@@ -59,7 +59,6 @@ target/
 # PyCharm
 .idea
 
-data/
 *.nc
 
 _test.prefs
