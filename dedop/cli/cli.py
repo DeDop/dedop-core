@@ -306,11 +306,11 @@ class ManageWorkspacesCommand(Command):
         if not workspace_name:
             return 1, 'no current workspace'
         new_name = command_args.new_name
-        # TODO (forman, 20180702): implement 'mw rename' command
-        #
-        # Implementation here...
-        #
-        print('TODO: rename workspace "%s" to "%s"' % (workspace_name, new_name))
+        try:
+            _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
+            print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
