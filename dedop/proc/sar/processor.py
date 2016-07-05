@@ -82,7 +82,7 @@ class L1BProcessor:
         runs the L1B Processing Chain
         """
         self.l1a_file = L1ADataset(l1a_file, chd=self.chd, cst=self.cst, cnf=self.cnf)
-        monitor.start("Processing Input File", self.l1a_file.max_index)
+        monitor.start("Processing Input File", self.l1a_file.max_index + self.min_surfs)
 
         running = True
         surface_processing = False
@@ -95,10 +95,11 @@ class L1BProcessor:
             self.l1bs_file.open()
 
         while running:
+            monitor.progress(1)
+
             input_packet = next(self.l1a_file)
 
             if input_packet is not None:
-                monitor.progress(1)
 
                 new_surface = self.surface_locations(input_packet)
 
@@ -139,6 +140,9 @@ class L1BProcessor:
 
 
             if not self.surf_locs:
+                running = False
+
+            if monitor.is_cancelled():
                 running = False
 
         self.l1b_file.close()
