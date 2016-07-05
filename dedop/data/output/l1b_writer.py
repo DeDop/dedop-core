@@ -708,20 +708,10 @@ class L1BWriter(NetCDFWriter):
 
         closest_burst = surface_location_data.closest_burst
 
-        time_interval = surface_location_data.time_surf - surface_location_data.prev_tai
-        utc_secs = surface_location_data.prev_utc_secs + time_interval
-
-        if utc_secs > surface_location_data.curr_day_length:
-            utc_secs -= surface_location_data.curr_day_length
-            utc_days = surface_location_data.prev_utc_days + 1
-        else:
-            utc_days = surface_location_data.prev_utc_days
-
-
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
-            UTC_day_l1b_echo_sar_ku=utc_days,
-            UTC_sec_l1b_echo_sar_ku=utc_secs,
+            UTC_day_l1b_echo_sar_ku=None,
+            UTC_sec_l1b_echo_sar_ku=None,
             GPS_time_l1b_echo_sar_ku=surface_location_data.gps_time_surf,
             isp_coarse_time_l1b_echo_sar_ku=closest_burst.isp_coarse_time,
             isp_fine_time_l1b_echo_sar_ku=closest_burst.isp_fine_time,
