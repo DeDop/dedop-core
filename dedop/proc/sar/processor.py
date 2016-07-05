@@ -45,7 +45,7 @@ class L1BProcessor:
 
         self.l1b_file = L1BWriter(filename=l1b_output, chd=self.chd, cnf=self.cnf)
         if not skip_l1bs:
-            self.l1bs_file = L1BSWriter(filename=l1bs_output, chd=self.chd)  # , cnf=self.cnf)
+            self.l1bs_file = L1BSWriter(filename=l1bs_output, chd=self.chd, cnf=self.cnf)
         else:
             self.l1bs_file = None
         # init. surface & packets arrays
