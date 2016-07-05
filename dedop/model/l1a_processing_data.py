@@ -732,6 +732,10 @@ class L1AProcessingData:
     def sig0_cal_ku(self):
         return self["sig0_cal_ku"]
 
+    @property
+    def leap_secs_since_2000(self):
+        return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
+
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):

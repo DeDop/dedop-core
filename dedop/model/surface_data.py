@@ -850,6 +850,23 @@ class SurfaceData:
         return self.time_surf + 20 * 365 * 86400 - 19
 
 
+    @property
+    def prev_tai(self):
+        return self["prev_tai"]
+
+    @property
+    def prev_utc_days(self):
+        return self["prev_utc_days"]
+
+    @property
+    def prev_utc_secs(self):
+        return self["prev_utc_secs"]
+
+    @property
+    def curr_day_length(self):
+        return self["curr_day_length"]
+
+
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: int=None,
                  *dicts: dict, **values: Any):
         """
