@@ -86,3 +86,21 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
                                    'workspace "ernie" does not exist',
                                    self.manager.copy_workspace,
                                    'ernie', 'bert')
+
+    def test_rename_workspace(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir1')
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir2')
+        self.manager.rename_workspace('ernie', 'bert')
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertIsWorkspaceDir('bert', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir1', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir2', expected=True)
+
+    def test_rename_non_existent_workspace(self):
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertRaisedException(WorkspaceError,
+                                   'workspace "ernie" does not exist',
+                                   self.manager.rename_workspace,
+                                   'ernie', 'ernie2')
