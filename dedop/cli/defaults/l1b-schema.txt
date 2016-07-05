@@ -1,0 +1,1427 @@
+
+File "L1B.nc"
+File type: Hierarchical Data Format, version 5
+
+netcdf file:/C:/Users/Norman/EOData/DeDop/S3/L1B.nc {
+  dimensions:
+    echo_sample_ind = 128;
+    max_multi_stack_ind = 300;
+    time_l1b_echo_lrm = UNLIMITED;   // (0 currently)
+    time_l1b_echo_sar_ku = 1021;
+    time_l1b_echo_plrm = 982;
+  variables:
+    byte echo_sample_ind(echo_sample_ind=128);
+      :long_name = "number of samples in I2+Q2, I and Q echoes";
+      :units = "count";
+      :comment = "Set to be compliant with the CF-1.6 convention";
+
+    short max_multi_stack_ind(max_multi_stack_ind=300);
+      :long_name = "maximum number of multilook beams per stack";
+      :units = "count";
+      :comment = "Set to be compliant with the CF-1.6 convention";
+
+    double time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "UTC : l1b_echo_lrm mode";
+      :standard_name = "time";
+      :calendar = "gregorian";
+      :units = "seconds since 2000-01-01 00:00:00.0";
+      :_ChunkSizes = 1; // int
+
+    short UTC_day_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "day UTC : l1b_echo_lrm mode";
+      :units = "days since 2000-01-01 00:00:00.0";
+      :_FillValue = 32767S; // short
+      :_ChunkSizes = 1; // int
+
+    double UTC_sec_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "seconds in the day UTC : l1b_echo_lrm mode";
+      :units = "seconds in the day";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double GPS_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "GPS time : l1b_echo_lrm mode";
+      :calendar = "gregorian";
+      :units = "seconds since 1980-01-06 00:00:00.0";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    int isp_coarse_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "ISP coarse time : l1b_echo_lrm mode";
+      :units = "second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    int isp_fine_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "ISP fine time : l1b_echo_lrm mode";
+      :units = "2^-24 second";
+      :_FillValue = 2147483647; // int
+      :_ChunkSizes = 1; // int
+
+    int sral_fine_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :_FillValue = -1U; // int
+      :long_name = "ISP SRAL fine datation : l1b_echo_lrm mode";
+      :units = "137.5*10^-9 second";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    int lat_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "latitude : l1b_echo_lrm mode";
+      :standard_name = "latitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_north";
+      :_FillValue = 2147483647; // int
+      :_ChunkSizes = 1; // int
+
+    int lon_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "longitude : l1b_echo_lrm mode";
+      :standard_name = "longitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_east";
+      :_FillValue = 2147483647; // int
+      :_ChunkSizes = 1; // int
+
+    int alt_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "altitude of satellite : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    short orb_alt_rate_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "orbital altitude rate : l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_time_status_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "time status flag : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time is synchronized or not with GPS time";
+      :flag_meanings = "synchronization no_synchronization";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_time_corr_val_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "time correlation validity flag : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B, 2B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time correlation information is valid provided by OBSW, valid provided by Ground Segment or invalid";
+      :flag_meanings = "valid_obsw valid_ground_segment invalid";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_man_pres_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "manoeuvre presence flag: l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_manoeuvre ongoing_manoeuvre";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_man_thrust_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "manoeuvre thrust flag: l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_thrust ongoing_thrust";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_man_plane_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "manoeuvre plane flag: l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "in_plane out_of_plane";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte flag_gnss_status_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "validity flag for the navigation message from the gnss receiver: l1b_echo_lrm mode";
+      :comment = "indicating if the navigation message from the GNSS receiver is valid or not valid/available";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "valid invalid_unavailable";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    double x_pos_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite altitude - x component : l1b_echo_lrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double y_pos_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite altitude - y component : l1b_echo_lrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double z_pos_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite altitude - z component : l1b_echo_lrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double x_vel_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite velocity - x component : l1b_echo_lrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double y_vel_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite velocity - y component : l1b_echo_lrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    double z_vel_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "satellite velocity - z component : l1b_echo_lrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+      :_ChunkSizes = 1; // int
+
+    byte nav_bul_status_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "navigation bulletin status : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "ok ko";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte nav_bul_source_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "navigation bulletin source identifier : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "gps doris";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int nav_bul_coarse_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "navigation bulletin coarse time : l1b_echo_lrm mode";
+      :units = "second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    int nav_bul_fine_time_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "navigation bulletin fine time : l1b_echo_lrm mode";
+      :units = "2^-24 second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    short seq_count_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "sequence count : l1b_echo_lrm mode";
+      :unit = "count";
+      :_FillValue = -1US; // short
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    byte isp_time_status_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "ISP time status : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "SRAL_OBT_extrapolated SRAL_OBT_updated_with_SMU_OBT";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte oper_instr_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "operating instrument : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "A B";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :comment = "Instrument A stands for SRAL Nominal and instrument B stands for SRAL Redundant";
+      :_ChunkSizes = 1; // int
+
+    byte mode_id_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "LRM mode identifier : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "closed_loop open_loop";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte cl_gain_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "tracking configuration - closed loop gain : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = " Nominal_value Nominal_value_with_back-off ";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte acq_stat_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "tracking configuration - acquisition status : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_acquisition acquisition";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte dem_eeprom_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "tracking configuration - DEM EEPROM read access : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte weighting_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "altimeter configuration - weighting function : l1b_echo_lrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte loss_track_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "loss of track criterion : l1b_echo_lrm mode";
+      :_FillValue = 127B; // byte
+      :flag_values = 0B, 1B; // byte
+      :flag_meanings = "normal loss_of_track";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int h0_nav_dem_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "altitude command H0 computed with nav / DEM : l1b_echo_lrm mode";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    int h0_applied_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "applied altitude command H0 : l1b_echo_lrm mode";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1; // int
+
+    short cor2_nav_dem_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "altitude command COR2 computed with nav / DEM : l1b_echo_lrm mode";
+      :units = "3.125/1024 10-9 s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    short cor2_applied_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "applied altitude command COR2 : l1b_echo_lrm mode";
+      :units = "3.125/1024*10^-9 s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int dh0_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = " distance error computed on the echo of the cycle (N-2) in open loop mode (current cyc";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte agccode_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "AGCCODE for ku band : l1b_echo_lrm mode";
+      :units = "dB";
+      :_FillValue = 127B; // byte
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte agccode_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "AGCCODE for c band : l1b_echo_lrm mode";
+      :units = "dB";
+      :_FillValue = 127B; // byte
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    byte surf_type_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "altimeter surface type : l1b_echo_lrm mode ";
+      :flag_values = 0B, 1B, 2B, 3B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "open_ocean_or_semi-enclosed_seas enclosed_seas_or_lakes continental_ice land";
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int range_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "corrected range for ku band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int range_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "corrected range for c band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int uso_cor_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "USO frequency drift correction : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int int_path_cor_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "internal path correction for ku band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int int_path_cor_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "internal path correction for c band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int dop_cor_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "doppler correction for ku band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int dop_cor_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "doppler correction for c band : l1b_echo_lrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int range_rate_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "range rate : l1b_echo_lrm mode";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int agc_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "corrected AGC for ku band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :comment = " AGC corrected for instrumental errors ";
+      :_ChunkSizes = 1; // int
+
+    int agc_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "corrected AGC for c band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :comment = " AGC corrected for instrumental errors ";
+      :_ChunkSizes = 1; // int
+
+    int scale_factor_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "scaling factor for sigma0 evaluation for ku band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "scaling factor corrected for AGC instrumental errors and internal calibration";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int scale_factor_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "scaling factor for sigma0 evaluation for c band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "scaling factor corrected for AGC instrumental errors and internal calibration";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int agc_cor_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "correction for instrumental errors on AGC for ku band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int agc_cor_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "correction for instrumental errors on AGC for c band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int sig0_cal_ku_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "internal calibration correction on Sigma0 for ku band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int sig0_cal_c_l1b_echo_lrm(time_l1b_echo_lrm=0);
+      :long_name = "internal calibration correction on Sigma0 for c band: l1b_echo_lrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_lrm lat_l1b_echo_lrm";
+      :_ChunkSizes = 1; // int
+
+    int i2q2_meas_ku_l1b_echo_lrm(time_l1b_echo_lrm=0, echo_sample_ind=128);
+      :long_name = "I2+Q2 measurement for ku band : l1b_echo_lrm mode";
+      :unit = "count";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :_FillValue = -1U; // int
+      :comment = "the echo is corrected for the GPRW effect";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1, 128; // int
+
+    int i2q2_meas_c_l1b_echo_lrm(time_l1b_echo_lrm=0, echo_sample_ind=128);
+      :long_name = "I2+Q2 measurement for c band : l1b_echo_lrm mode";
+      :unit = "count";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :_FillValue = -1U; // int
+      :comment = "the echo is corrected for the GPRW effect";
+      :_Unsigned = "true";
+      :_ChunkSizes = 1, 128; // int
+
+    double time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "UTC : l1b_echo_sar_ku mode";
+      :standard_name = "time";
+      :calendar = "gregorian";
+      :units = "seconds since 2000-01-01 00:00:00.0";
+
+    short UTC_day_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "day UTC : l1b_echo_sar_ku mode";
+      :units = "days since 2000-01-01 00:00:00.0";
+      :_FillValue = 32767S; // short
+
+    double UTC_sec_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "seconds in the day UTC : l1b_echo_sar_ku mode";
+      :units = "seconds in the day";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double GPS_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :units = "seconds since 1980-01-06 00:00:00.0";
+      :_FillValue = 1.8446744073709552E19; // double
+      :long_name = "GPS time : l1b_echo_sar_ku mode";
+      :calendar = "gregorian";
+
+    int isp_coarse_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "ISP coarse time : l1b_echo_sar_ku mode";
+      :units = "second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int isp_fine_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "ISP fine time : l1b_echo_sar_ku mode";
+      :units = "2^-24 second";
+      :_FillValue = 2147483647; // int
+
+    int sral_fine_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "ISP SRAL fine datation : l1b_echo_sar_ku mode";
+      :units = "137.5*10^-9 second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int lat_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "latitude : l1b_echo_sar_ku mode";
+      :standard_name = "latitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_north";
+      :_FillValue = 2147483647; // int
+
+    int lon_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "longitude : l1b_echo_sar_ku mode";
+      :standard_name = "longitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_east";
+      :_FillValue = 2147483647; // int
+
+    int alt_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "altitude of satellite : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    short orb_alt_rate_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "orbital altitude rate : l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_time_status_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "time status flag : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time is synchronized or not with GPS time";
+      :flag_meanings = "synchronization no_synchronization";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_time_corr_val_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "time correlation validity flag : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B, 2B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time correlation information is valid provided by OBSW, valid provided by Ground Segment or invalid";
+      :flag_meanings = "valid_obsw valid_ground_segment invalid";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_man_pres_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "manoeuvre presence flag: l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_manoeuvre ongoing_manoeuvre";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_man_thrust_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "manoeuvre thrust flag: l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_thrust ongoing_thrust";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_man_plane_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "manoeuvre plane flag: l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "in_plane out_of_plane";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte flag_gnss_status_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "validity flag for the navigation message from the gnss receiver: l1b_echo_sar_ku mode";
+      :comment = "indicating if the navigation message from the GNSS receiver is valid or not valid/available";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "valid invalid_unavailable";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    double x_pos_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite altitude - x component : l1b_echo_sar_ku mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double y_pos_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite altitude - y component : l1b_echo_sar_ku mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double z_pos_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite altitude - z component : l1b_echo_sar_ku mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double x_vel_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite velocity - x component : l1b_echo_sar_ku mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double y_vel_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite velocity - y component : l1b_echo_sar_ku mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double z_vel_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "satellite velocity - z component : l1b_echo_sar_ku mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    byte nav_bul_status_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "navigation bulletin status : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "ok ko";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte nav_bul_source_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "navigation bulletin source identifier : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "gps doris";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int nav_bul_coarse_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "navigation bulletin coarse time : l1b_echo_sar_ku mode";
+      :units = "second";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int nav_bul_fine_time_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "navigation bulletin fine time : l1b_echo_sar_ku mode";
+      :units = "2^-24 second";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    short seq_count_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "sequence count : l1b_echo_sar_ku mode";
+      :unit = "count";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = -1US; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :_Unsigned = "true";
+
+    byte isp_time_status_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "ISP time status : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "SRAL_OBT_extrapolated SRAL_OBT_updated_with_SMU_OBT";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte oper_instr_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "operating instrument : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "Instrument A stands for SRAL Nominal and instrument B stands for SRAL Redundant";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "A B";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte SAR_mode_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = " SAR mode identifier : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B, 2B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "closed_loop open_loop open_loop_fixed_gain";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte cl_gain_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "tracking configuration - closed loop gain : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = " Nominal_value Nominal_value_with_back-off ";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte acq_stat_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "tracking configuration - acquisition status : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_acquisition acquisition";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte dem_eeprom_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "tracking configuration - DEM EEPROM read access : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte weighting_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "altimeter configuration - weighting function : l1b_echo_sar_ku mode";
+      :flag_values = 0B, 1B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte loss_track_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "loss of track criterion : l1b_echo_sar_ku mode";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :flag_values = 0B, 1B; // byte
+      :flag_meanings = "normal loss_of_track";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int h0_nav_dem_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "altitude command H0 computed with nav / DEM : l1b_echo_sar_ku mode";
+      :units = "3.125/64*10^-9 s";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :_Unsigned = "true";
+
+    int h0_applied_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :long_name = "applied altitude command H0 : l1b_echo_sar_ku mode";
+      :units = "3.125/64*10^-9 s";
+      :_Unsigned = "true";
+
+    short cor2_nav_dem_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "altitude command COR2 computed with nav / DEM : l1b_echo_sar_ku mode";
+      :units = "3.125/1024 10-9 s";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    short cor2_applied_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "applied altitude command COR2 : l1b_echo_sar_ku mode";
+      :units = "3.125/1024*10^-9 s";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int dh0_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = " distance error computed on the echo of the cycle (N-2) in open loop mode (current cyc";
+      :units = "3.125/64*10^-9 s";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte agccode_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "AGCCODE for ku band : l1b_echo_sar_ku mode";
+      :units = "dB";
+      :comment = "value the closest in time to the reference measurement";
+      :_FillValue = 127B; // byte
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    byte surf_type_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "altimeter surface type : l1b_echo_sar_ku mode ";
+      :flag_values = 0B, 1B, 2B, 3B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "value the closest in time to the reference measurement";
+      :flag_meanings = "open_ocean_or_semi-enclosed_seas enclosed_seas_or_lakes continental_ice land";
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int range_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "corrected range for ku band : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :comment = "reference range corrected for USO frequency drift and internal path correction";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int uso_cor_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "USO frequency drift correction : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :comment = "value the closest in time to the reference measurement ";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int int_path_cor_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "internal path correction for ku band : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :comment = "value the closest in time to the reference measurement ";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int range_rate_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "range rate : l1b_echo_sar_ku mode";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :comment = "value the closest in time to the reference measurement ";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int agc_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "corrected AGC for ku band: l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = " AGC corrected for instrumental errors - value the closest in time to the reference measurement ";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int scale_factor_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "scaling factor for sigma0 evaluation for ku band: l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "scaling factor corrected for AGC instrumental errors and internal calibration";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int agc_cor_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "correction for instrumental errors on AGC for ku band: l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "value the closest in time to the reference measurement ";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int sig0_cal_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "internal calibration correction on Sigma0 for ku band: l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    short nb_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "number of waveforms summed in stack : l1b_echo_sar_ku mode";
+      :units = "count";
+      :_FillValue = -1US; // short
+      :_Unsigned = "true";
+
+    int max_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "maximum power of stack : l1b_echo_sar_ku mode";
+      :units = "FFT power unit";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :_Unsigned = "true";
+
+    int stdev_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "standard deviation of stack : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "rad";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :_Unsigned = "true";
+
+    int skew_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "skewness of stack : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "count";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    int kurt_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "kurtosis of stack : l1b_echo_sar_ku mode";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "count";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    short beam_ang_stack_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021, max_multi_stack_ind=300);
+      :long_name = "doppler beam angles in stack: l1b_echo_sar_ku mode";
+      :comment = "the useful values of the table are the first n_useful values where n_useful is the number of waveforms summed in stack";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 1.57; // double
+      :units = "rad";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+
+    short beam_form_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021);
+      :long_name = "flag on beam formation quality in stack : l1b_echo_sar_ku mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "percent";
+      :_FillValue = -1US; // short
+      :coordinates = "lon_l1b_echo_sar_ku lat_l1b_echo_sar_ku";
+      :_Unsigned = "true";
+
+    int i2q2_meas_ku_l1b_echo_sar_ku(time_l1b_echo_sar_ku=1021, echo_sample_ind=128);
+      :long_name = "multilooked I2+Q2 measurement for ku band : l1b_echo_sar_ku mode";
+      :unit = "count";
+      :comment = "the echo is corrected for Doppler range effect, phase/power burst calibration and GPRW effect; the echo is scaled using the corrected AGC (agc_ku_l1b_echo_sar_ku)";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    double time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "UTC : l1b_echo_plrm mode";
+      :standard_name = "time";
+      :calendar = "gregorian";
+      :units = "seconds since 2000-01-01 00:00:00.0";
+
+    short UTC_day_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "day UTC : l1b_echo_plrm mode";
+      :units = "days since 2000-01-01 00:00:00.0";
+      :_FillValue = 32767S; // short
+
+    double UTC_sec_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "seconds in the day UTC : l1b_echo_plrm mode";
+      :units = "seconds in the day";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double GPS_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "GPS time : l1b_echo_plrm mode";
+      :calendar = "gregorian";
+      :units = "seconds since 1980-01-06 00:00:00.0";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    int isp_coarse_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "ISP coarse time : l1b_echo_plrm mode";
+      :units = "second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int isp_fine_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "ISP fine time : l1b_echo_plrm mode";
+      :units = "2^-24 second";
+      :_FillValue = 2147483647; // int
+
+    int sral_fine_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "ISP SRAL fine datation : l1b_echo_plrm mode";
+      :units = "137.5*10^-9 second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int lat_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "latitude : l1b_echo_plrm mode";
+      :standard_name = "latitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_north";
+      :_FillValue = 2147483647; // int
+
+    int lon_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "longitude : l1b_echo_plrm mode";
+      :standard_name = "longitude";
+      :scale_factor = 1.0E-6; // double
+      :add_offset = 0.0; // double
+      :units = "degrees_east";
+      :_FillValue = 2147483647; // int
+
+    int alt_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "altitude of satellite : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    short orb_alt_rate_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "orbital altitude rate : l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte flag_time_status_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "time status flag : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time is synchronized or not with GPS time";
+      :flag_meanings = "synchronization no_synchronization";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte flag_time_corr_val_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "time correlation validity flag : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B, 2B; // byte
+      :_FillValue = 127B; // byte
+      :comment = "flag indicating if the time correlation information is valid provided by OBSW, valid provided by Ground Segment or invalid";
+      :flag_meanings = "valid_obsw valid_ground_segment invalid";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte flag_man_pres_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_manoeuvre ongoing_manoeuvre";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :long_name = "manoeuvre presence flag: l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+
+    byte flag_man_thrust_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "manoeuvre thrust flag: l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_thrust ongoing_thrust";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte flag_man_plane_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "manoeuvre plane flag: l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "in_plane out_of_plane";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte flag_gnss_status_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "validity flag for the navigation message from the gnss receiver: l1b_echo_plrm mode";
+      :comment = "indicating if the navigation message from the GNSS receiver is valid or not valid/available";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "valid invalid_unavailable";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    double x_pos_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite altitude - x component : l1b_echo_plrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double y_pos_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite altitude - y component : l1b_echo_plrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double z_pos_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite altitude - z component : l1b_echo_plrm mode";
+      :units = "m";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double x_vel_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite velocity - x component : l1b_echo_plrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double y_vel_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite velocity - y component : l1b_echo_plrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    double z_vel_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "satellite velocity - z component : l1b_echo_plrm mode";
+      :units = "m/s";
+      :_FillValue = 1.8446744073709552E19; // double
+
+    byte nav_bul_status_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "navigation bulletin status : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "ok ko";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte nav_bul_source_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "navigation bulletin source identifier : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "gps doris";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int nav_bul_coarse_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "navigation bulletin coarse time : l1b_echo_plrm mode";
+      :units = "second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int nav_bul_fine_time_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "navigation bulletin fine time : l1b_echo_plrm mode";
+      :units = "2^-24 second";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    short seq_count_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "sequence count : l1b_echo_plrm mode";
+      :unit = "count";
+      :_FillValue = -1US; // short
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :_Unsigned = "true";
+
+    byte isp_time_status_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "ISP time status : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "SRAL_OBT_extrapolated SRAL_OBT_updated_with_SMU_OBT";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte oper_instr_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "operating instrument : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "A B";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :comment = "Instrument A stands for SRAL Nominal and instrument B stands for SRAL Redundant";
+
+    byte SAR_mode_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = " SAR mode identifier : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B, 2B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "closed_loop open_loop open_loop_fixed_gain";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte cl_gain_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "tracking configuration - closed loop gain : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = " Nominal_value Nominal_value_with_back-off";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte acq_stat_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "tracking configuration - acquisition status : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "no_acquisition acquisition";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte dem_eeprom_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "tracking configuration - DEM EEPROM read access : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte weighting_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :_FillValue = 127B; // byte
+      :flag_meanings = "enabled disabled ";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :long_name = "altimeter configuration - weighting function : l1b_echo_plrm mode";
+      :flag_values = 0B, 1B; // byte
+
+    byte loss_track_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "loss of track criterion : l1b_echo_plrm mode";
+      :_FillValue = 127B; // byte
+      :flag_values = 0B, 1B; // byte
+      :flag_meanings = "normal loss_of_track";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int h0_nav_dem_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "altitude command H0 computed with nav / DEM : l1b_echo_plrm mode";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :_Unsigned = "true";
+
+    int h0_applied_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "applied altitude command H0 : l1b_echo_plrm mode";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = -1U; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :_Unsigned = "true";
+
+    short cor2_nav_dem_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "altitude command COR2 computed with nav / DEM : l1b_echo_plrm mode";
+      :units = "3.125/1024 10-9 s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    short cor2_applied_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "applied altitude command COR2 : l1b_echo_plrm mode";
+      :units = "3.125/1024*10^-9 s";
+      :_FillValue = 32767S; // short
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int dh0_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = " distance error computed on the echo of the cycle (N-2) in open loop mode (current cyc";
+      :units = "3.125/64*10^-9 s";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte agccode_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "AGCCODE for ku band : l1b_echo_plrm mode";
+      :units = "dB";
+      :_FillValue = 127B; // byte
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte agccode_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "AGCCODE for c band : l1b_echo_plrm mode";
+      :units = "dB";
+      :_FillValue = 127B; // byte
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    byte surf_type_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "altimeter surface type : l1b_echo_plrm mode ";
+      :flag_values = 0B, 1B, 2B, 3B; // byte
+      :_FillValue = 127B; // byte
+      :flag_meanings = "open_ocean_or_semi-enclosed_seas enclosed_seas_or_lakes continental_ice land";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int range_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "corrected range for ku band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :comment = "tracker range corrected for USO frequency drift, internal path and Doppler corrections";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int range_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "corrected range for c band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 700000.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :comment = "tracker range corrected for USO frequency drift, internal path and Doppler corrections";
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int uso_cor_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "USO frequency drift correction : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int int_path_cor_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "internal path correction for ku band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int int_path_cor_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "internal path correction for c band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int dop_cor_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "doppler correction for ku band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int dop_cor_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "doppler correction for c band : l1b_echo_plrm mode";
+      :scale_factor = 1.0E-4; // double
+      :add_offset = 0.0; // double
+      :units = "m";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int range_rate_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "range rate : l1b_echo_plrm mode";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :units = "m/s";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int agc_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "corrected AGC for ku band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "AGC corrected for instrumental errors";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int agc_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "corrected AGC for c band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "AGC corrected for instrumental errors";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int scale_factor_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "scaling factor for sigma0 evaluation for ku band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "scaling factor corrected for AGC instrumental errors and internal calibration";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int scale_factor_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "scaling factor for sigma0 evaluation for c band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :comment = "scaling factor corrected for AGC instrumental errors and internal calibration";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int agc_cor_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "correction for instrumental errors on AGC for ku band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int agc_cor_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+      :long_name = "correction for instrumental errors on AGC for c band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+
+    int sig0_cal_ku_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "internal calibration correction on Sigma0 for ku band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int sig0_cal_c_l1b_echo_plrm(time_l1b_echo_plrm=982);
+      :long_name = "internal calibration correction on Sigma0 for c band: l1b_echo_plrm mode";
+      :scale_factor = 0.01; // double
+      :add_offset = 0.0; // double
+      :units = "dB";
+      :_FillValue = 2147483647; // int
+      :coordinates = "lon_l1b_echo_plrm lat_l1b_echo_plrm";
+
+    int i2q2_meas_ku_l1b_echo_plrm(time_l1b_echo_plrm=982, echo_sample_ind=128);
+      :long_name = "I2+Q2 measurement for ku band : l1b_echo_plrm mode";
+      :unit = "count";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :comment = "the echo is the so-called ku-band averaged echo, corrected for the GPRW effect";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+    int i2q2_meas_c_l1b_echo_plrm(time_l1b_echo_plrm=982, echo_sample_ind=128);
+      :long_name = "I2+Q2 measurement for c band : l1b_echo_plrm mode";
+      :unit = "count";
+      :scale_factor = 0.001; // double
+      :add_offset = 0.0; // double
+      :comment = "the echo is the so-called c-band averaged echo, corrected for the GPRW effect";
+      :_FillValue = -1U; // int
+      :_Unsigned = "true";
+
+  // global attributes:
+  :Conventions = "CF-1.6";
+  :title = "IPF SRAL Level 1 Measurement";
+  :mission_name = "Sentinel 3A";
+  :altimeter_sensor_name = "SRAL";
+  :gnss_sensor_name = "GNSS";
+  :doris_sensor_name = "DORIS";
+  :netcdf_version = "4.2 of Jul  5 2012 17:07:43 $";
+  :product_name = "S3A_SR_1_SRA____20130415T054207_20130415T054257_20160426T132200_0050_006_219______LN3_O_ST_456.SEN3";
+  :institution = "LN3";
+  :source = "IPF-SR-1 06.00.00";
+  :history = "";
+  :references = "S3IPF PDS 003 - i2r1 - Product Data Format Specification - SRAL-MWR";
+  :contact = "EOHElp@esa.int";
+  :creation_time = "2016-04-26T13:22:02Z";
+  :acq_station_name = "KIRUNA";
+  :first_meas_time = "2013-04-15T05:42:07.196557Z";
+  :last_meas_time = "2013-04-15T05:42:57.206901Z";
+  :xref_altimeter_level0 = "S3A_SR_0_SRA____20130415T054207_20130415T054257_20130123T160000_______________________________.SEN3";
+  :xref_navatt_level0 = "S3A_TM_0_NAT____20130415T054207_20130415T054257_20130123T160000_______________________________.SEN3";
+  :xref_altimeter_orbit = "S3A_SR___MDO_AX_20000101T000000_20991231T235959_20130123T160000_______________________________.SEN3";
+  :xref_doris_uso = "S3A_SR_1_USO_AX_20000101T000000_20991231T235959_20130101T000000_______________________D_AL____.SEN3";
+  :xref_altimeter_ltm_lrm_cal1 = "S3A_SR_1_CA1LAX_20000101T000000_20991231T235959_20130123T160000___________________LN3_________.SEN3";
+  :xref_altimeter_ltm_sar_cal1 = "S3A_SR_1_CA1SAX_20000101T000000_20991231T235959_20151027T100000___________________LN3_________.SEN3";
+  :xref_altimeter_ltm_ku_cal2 = "S3A_SR_1_CA2KAX_20000101T000000_20991231T235959_20151027T100000___________________LN3_________.SEN3";
+  :xref_altimeter_ltm_c_cal2 = "S3A_SR_1_CA2CAX_20000101T000000_20991231T235959_20151027T100000___________________LN3_________.SEN3";
+  :xref_altimeter_characterisation = "S3A_SR___CHDRAX_20000101T000000_20991231T235959_20151214T120000___________________MPC_O_AL_001.SEN3";
+  :semi_major_ellipsoid_axis = 6378137.0; // double
+  :ellipsoid_flattening = 0.00335281066474748; // double
+}
+
