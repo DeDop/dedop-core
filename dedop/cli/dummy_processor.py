@@ -2,9 +2,10 @@ import os.path
 import time
 
 from dedop.util.monitor import Monitor
+from dedop.model.processor import BaseProcessor
 
 
-class Processor:
+class Processor(BaseProcessor):
     def __init__(self, config_name=None, chd_file=None, cnf_file=None, cst_file=None, skip_l1bs=False, output_dir=None):
         self.config_name = config_name
         self.chd_file = chd_file
@@ -13,13 +14,12 @@ class Processor:
         self.skip_l1bs = skip_l1bs
         self.output_dir = output_dir
 
-    def process_sources(self, monitor: Monitor, *l1a_files) -> int:
+    def process(self, l1a_file:str, monitor:Monitor=Monitor.NULL) -> int:
         os.makedirs(self.output_dir, exist_ok=True)
-        with monitor.starting('Running DDP', len(l1a_files)):
-            for l1a_file in l1a_files:
-                status = self._process_source(monitor.child(1), l1a_file)
-                if status:
-                    return status
+        with monitor.starting('Running DDP'):
+            status = self._process_source(monitor.child(1), l1a_file)
+            if status:
+                return status
         return None
 
     # noinspection PyMethodMayBeStatic

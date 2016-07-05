@@ -4,17 +4,16 @@ import os
 from .algorithms import *
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData, L1AProcessingData
+from dedop.model.processor import BaseProcessor
 from dedop.data.input.l1a import L1ADataset
 from dedop.data.output import L1BSWriter, L1BWriter
 from dedop.util.monitor import Monitor
 
 
-class L1BProcessor:
+class L1BProcessor(BaseProcessor):
     """
     class for the L1B Processing chain
     """
-    _chd_file = "common/chd.json"
-    _cst_file = "common/cst.json"
 
     @property
     def surf_locs(self) -> List[SurfaceData]:
@@ -77,7 +76,7 @@ class L1BProcessor:
         self.sigma_zero_algorithm =\
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
-    def process(self, l1a_file: str, monitor: Monitor=Monitor.NULL) -> None:
+    def process(self, l1a_file: str, monitor: Monitor=Monitor.NULL) -> int:
         """
         runs the L1B Processing Chain
         """
@@ -86,6 +85,7 @@ class L1BProcessor:
 
         running = True
         surface_processing = False
+        status = -1
 
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
@@ -141,6 +141,7 @@ class L1BProcessor:
 
             if not self.surf_locs:
                 running = False
+                status = None
 
             if monitor.is_cancelled():
                 running = False
@@ -149,6 +150,8 @@ class L1BProcessor:
         if self.l1bs_file is not None:
             self.l1bs_file.close()
         monitor.done()
+
+        return status
 
     def clear_old_records(self, current_surface: SurfaceData) -> None:
         """
