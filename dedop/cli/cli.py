@@ -194,7 +194,6 @@ class RunProcessorCommand(Command):
         if not inputs:
             code, msg = _STATUS_NO_INPUTS
             return code, msg % workspace_name
-        monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
         output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
             workspace_name, config_name)
         chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
@@ -210,7 +209,9 @@ class RunProcessorCommand(Command):
                                  skip_l1bs=skip_l1bs,
                                  out_path=output_dir)
         for input_file in inputs:
+            monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
             processor.process(input_file, monitor=monitor)
+
         # -------------------------------------------------------
         return self.STATUS_OK
 

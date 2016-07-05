@@ -7,11 +7,11 @@ class ProcessorExceptionTest(TestCase):
     def test_message_must_be_given(self):
         with self.assertRaises(ValueError) as e:
             ProcessorException(None)
-        self.assertEqual(str(e), 'message must be given')
+        self.assertEqual(str(e.exception), 'message must be given')
 
         with self.assertRaises(ValueError) as e:
             ProcessorException('')
-        self.assertEqual(str(e), 'message must be given')
+        self.assertEqual(str(e.exception), 'message must be given')
 
     def test_str(self):
         e = ProcessorException('bad L1A')
