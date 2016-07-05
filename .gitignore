@@ -61,4 +61,4 @@ target/
 
 *.nc
 
-_test.prefs
+dedop-config.py

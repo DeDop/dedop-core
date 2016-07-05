@@ -20,6 +20,7 @@ from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
+from dedop.util.config import get_config_value
 
 _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
@@ -905,14 +906,17 @@ def main(args=None, workspace_manager=None, processor_factory=None):
     :return: An integer exit code where zero means success
     """
 
-    global _WORKSPACE_MANAGER
-    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager()
+    if args is None:
+        args = sys.argv[1:]
+
+    if not processor_factory:
+        processor_factory = get_config_value('processor_factory')
 
     global _PROCESSOR_FACTORY
     _PROCESSOR_FACTORY = processor_factory if processor_factory else new_l1b_processor
 
-    if args is None:
-        args = sys.argv[1:]
+    global _WORKSPACE_MANAGER
+    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager()
 
     parser = NoExitArgumentParser(prog=CLI_NAME,
                                   description='ESA DeDop command-line interface, version %s' % __version__)
