@@ -293,12 +293,11 @@ class ManageWorkspacesCommand(Command):
         new_name = command_args.new_name
         if not new_name:
             new_name = workspace_name + '_copy'
-        # TODO (forman, 20180702): implement 'mw copy' command
-        # while os.path.exists(..., new_name) ...
-        #
-        # Implementation here...
-        #
-        print('TODO: copy workspace "%s" to "%s"' % (workspace_name, new_name))
+        try:
+            _WORKSPACE_MANAGER.copy_workspace(workspace_name, new_name)
+            print('workspace "%s" has been copied as "%s"' % (workspace_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
