@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from dedop.gui.preferences import Preferences
+from dedop.util.preferences import Preferences
 
 TEST_PREFS = '_test.prefs'
 
