@@ -150,6 +150,43 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
+    def print_workspace_info(self, workspace_name: str):
+        """
+        :param workspace_name: workspace name to be queried
+        :raise: WorkspaceError
+        """
+        self._assert_workspace_exists(workspace_name)
+        dir_path = self._get_workspace_path(workspace_name)
+        print('Available workspace:')
+        for ws in self.get_workspace_names():
+            if ws == workspace_name:
+                print('  ' + ws + '*')
+            else:
+                print('  ' + ws)
+        print('')
+        print('Available configurations:')
+        self._assert_config_exists(workspace_name)
+        for cf in self.get_config_names(workspace_name):
+            if cf == self.get_current_config_name(workspace_name):
+                print('  ' + cf + '*')
+            else:
+                print('  ' + cf)
+        print('')
+        print('Available input files:')
+        for file in os.listdir(os.path.join(dir_path, 'inputs')):
+            file_path = os.path.join(dir_path, 'inputs', file)
+            print('  %s\t%s MB' % (file, os.path.getsize(file_path) >> 20))
+        print('')
+        print('Available output files:')
+        for file in os.listdir(os.path.join(dir_path, 'output')):
+            config_path = os.path.join(dir_path, 'output', file)
+            print('with %s configuration' % file)
+            print('===========================')
+            for dataset_file in os.listdir(config_path):
+                dataset_path = os.path.join(config_path, dataset_file)
+                print('  %s\t\t%s MB' % (dataset_file, os.path.getsize(dataset_path) >> 20))
+            print('')
+
     def get_workspace_names(self) -> List[str]:
         workspaces_dir = self._workspaces_dir
         if os.path.exists(workspaces_dir):
@@ -267,6 +304,10 @@ class WorkspaceManager:
     def _assert_workspace_exists(self, workspace_name):
         if not os.path.exists(self._get_workspace_path(workspace_name)):
             raise WorkspaceError('workspace "%s" does not exist' % workspace_name)
+
+    def _assert_config_exists(self, workspace_name):
+        if not os.listdir(self._get_workspace_path(workspace_name)):
+            raise WorkspaceError('configurations for workspace "%s" does not exist' % workspace_name)
 
     def get_output_dir(self, workspace_name, config_name):
         return self._get_workspace_path(workspace_name, 'output', config_name)

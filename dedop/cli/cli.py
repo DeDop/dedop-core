@@ -331,11 +331,7 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def execute_info(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
-        # TODO (forman, 20180702): implement 'mw info' command
-        #
-        # Implementation here...
-        #
-        print('TODO: show workspace %s' % workspace_name)
+        _WORKSPACE_MANAGER.print_workspace_info(workspace_name)
         return cls.STATUS_OK
 
     # noinspection PyUnusedLocal
