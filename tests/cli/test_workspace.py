@@ -1,7 +1,7 @@
 import os.path
 from unittest import TestCase
 
-from dedop.cli.workspace import WorkspaceManager
+from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
 WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'workspaces')
@@ -24,6 +24,18 @@ class WorkspaceTestBase:
 
     def assertWorkspaceFileExists(self, *path, expected=True):
         self.assertEqual(os.path.exists(os.path.join(WORKSPACES_DIR, *path)), expected)
+
+    def assertRaisedException(self, expected_exception, expected_message, func, *args):
+        try:
+            func(*args)
+        except expected_exception as e:
+            self.assertEqual(e.message, expected_message)
+            return
+        self.fail("Exception expected but none thrown.")
+
+    @staticmethod
+    def createWorkspaceSubDir(*path):
+        os.mkdir(os.path.join(WORKSPACES_DIR, *path))
 
 
 class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
@@ -49,3 +61,46 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
         self.assertIsWorkspaceDir('ernie', expected=True)
         self.manager.delete_workspace('ernie')
         self.assertIsWorkspaceDir('ernie', expected=False)
+
+    def test_delete_non_existent_workspace(self):
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertRaisedException(WorkspaceError,
+                                   'workspace "ernie" does not exist',
+                                   self.manager.delete_workspace,
+                                   'ernie')
+
+    def test_copy_workspace(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir1')
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir2')
+        self.manager.copy_workspace('ernie', 'bert')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        self.assertIsWorkspaceDir('bert', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir1', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir2', expected=True)
+
+    def test_copy_non_existent_workspace(self):
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertRaisedException(WorkspaceError,
+                                   'workspace "ernie" does not exist',
+                                   self.manager.copy_workspace,
+                                   'ernie', 'bert')
+
+    def test_rename_workspace(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir1')
+        WorkspaceTestBase.createWorkspaceSubDir('ernie', 'sub_dir2')
+        self.manager.rename_workspace('ernie', 'bert')
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertIsWorkspaceDir('bert', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir1', expected=True)
+        self.assertIsWorkspaceDir('bert', 'sub_dir2', expected=True)
+
+    def test_rename_non_existent_workspace(self):
+        self.assertIsWorkspaceDir('ernie', expected=False)
+        self.assertRaisedException(WorkspaceError,
+                                   'workspace "ernie" does not exist',
+                                   self.manager.rename_workspace,
+                                   'ernie', 'ernie2')

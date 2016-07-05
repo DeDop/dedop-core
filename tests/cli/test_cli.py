@@ -62,6 +62,23 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['run'],
                         expected_stdout='Running DDP')
 
+    def test_command_mw(self):
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+        self._test_main(['mw', 'cp', 'tests'],
+                        expected_stdout=['workspace "tests" has been copied as "tests_copy"'])
+
+        self._test_main(['mw', 'cp', 'tests', 'tests2'],
+                        expected_stdout=['workspace "tests" has been copied as "tests2"'])
+
+        self._test_main(['mw', 'rn', 'tests2', 'tests3'],
+                        expected_stdout=['workspace "tests2" has been renamed to "tests3'])
+
+        self._test_main(['mw', 'rn'],
+                        expected_exit_code=2,
+                        expected_stderr='error: the following arguments are required: NEW_NAME')
+
     def test_command_run_no_inputs(self):
         self._test_main(['run'],
                         expected_exit_code=30,

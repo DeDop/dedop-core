@@ -1,7 +1,9 @@
 import csv
-import numpy as np
 from ast import literal_eval
 from collections import OrderedDict
+
+import numpy as np
+
 
 class TestDataLoader:
     _default_delim = '\t'
@@ -32,6 +34,7 @@ class TestDataLoader:
 
     def __getitem__(self, index):
         return self._values[index]
+
 
 class MockObject(OrderedDict):
     @classmethod

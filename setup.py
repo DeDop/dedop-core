@@ -10,19 +10,17 @@ setup(
               'dedop.proc',
               'dedop.conf',
               'dedop.util',
-              'dedop.cli',
-              'dedop.gui'],
+              'dedop.cli'],
     entry_points={
         'console_scripts': [
-            'dedop = dedop.cli:main',
-            'dedop-gui = dedop.gui.main:main',
+            'dedop = dedop.cli:main'
         ]
     },
     install_requires=['numpy >= 1.9',
                       'netCDF4 >= 1.1',
                       'scipy',
                       'typing'],
-    extras_require={'dedop.gui': ['PyQt5 >= 5.5', 'matplotlib >= 1.4']},
+    extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',

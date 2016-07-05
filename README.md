@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/DeDop/dedop.svg?branch=master)](https://travis-ci.org/DeDop/dedop)
+[![Documentation Status](https://readthedocs.org/projects/dedop/badge/?version=latest)](http://dedop.readthedocs.io/en/latest/?badge=latest)
+[![GPLv3](https://www.gnu.org/graphics/gplv3-88x31.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 # DeDop³
 
 A User Configurable Tool for Processing Delay Doppler Altimeter Data.
