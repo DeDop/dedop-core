@@ -5,9 +5,10 @@ Processor configuration management.
 __author__ = 'DeDop Development Team'
 
 __all__ = [
-    'chd', 'cst', 'cnf'
+    'characterization.py', 'constants.py', 'configuration.py'
 ]
 
-from .chd import CharacterisationFile
-from .cnf import ConfigurationFile
-from .cst import ConstantsFile
+from .characterization import CharacterisationFile
+from .configuration import ConfigurationFile
+from .constants import ConstantsFile
+from .workspace import WorkspaceConfig

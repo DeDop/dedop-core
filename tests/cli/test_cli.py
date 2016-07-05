@@ -2,6 +2,7 @@ import os.path
 from unittest import TestCase
 
 from dedop import cli
+from dedop.model.processor import BaseProcessor, DummyProcessor
 from dedop.util.fetchstd import fetch_std_streams
 from tests.cli.test_workspace import WorkspaceTestBase
 
@@ -9,10 +10,30 @@ TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
 WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'test_cli')
 
 
+def processor_factory(name=None,
+                      chd_file=None,
+                      cnf_file=None,
+                      cst_file=None,
+                      skip_l1bs=False,
+                      output_dir=None) -> BaseProcessor:
+    """
+    Create a new dummy processor instance.
+
+    :param name: the processor "run" name
+    :param cnf_file: configuration definition file
+    :param cst_file: constants definition file
+    :param chd_file: characterisation definition file
+    :param skip_l1bs: whether to skip L1B-S output
+    :param output_dir: the output directory for L1B, L1B-S, and log-files, etc.
+    :return: an object of type :py_class:`BaseProcessor`
+    """
+    return DummyProcessor(name, cnf_file, cst_file, chd_file, output_dir, skip_l1bs)
+
+
 class CliTest(WorkspaceTestBase, TestCase):
     def _test_main(self, args, expected_exit_code=0, expected_stdout=None, expected_stderr=None):
         with fetch_std_streams() as (stdout, stderr):
-            exit_code = cli.main(args=args, workspace_manager=self.manager)
+            exit_code = cli.main(args=args, workspace_manager=self.manager, processor_factory=processor_factory)
             self.assertEqual(exit_code, expected_exit_code)
         self._test_iobuf('stdout', stdout, expected_stdout)
         self._test_iobuf('stderr', stderr, expected_stderr)
@@ -46,22 +67,6 @@ class CliTest(WorkspaceTestBase, TestCase):
     def test_command_copyright(self):
         self._test_main(['cr'], expected_stdout='European Space Agency')
 
-    def test_command_run_option_help(self):
-        self._test_main(['run', '-h'], expected_stdout='usage:')
-
-    def test_command_run(self):
-        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
-        self._test_main(['mw', 'add', 'tests'],
-                        expected_stdout=['created workspace "tests"',
-                                         'current workspace is "tests"'])
-        self._test_main(['mc', 'add', 'test-a'],
-                        expected_stdout=['created configuration "test-a"',
-                                         'current configuration is "test-a"'])
-        self._test_main(['mi', 'add', input_files],
-                        expected_stdout='added 2 inputs')
-        self._test_main(['run'],
-                        expected_stdout='Running DDP')
-
     def test_command_mw(self):
         self._test_main(['mw', 'add', 'tests'],
                         expected_stdout=['created workspace "tests"',
@@ -79,6 +84,22 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+    def test_command_run_option_help(self):
+        self._test_main(['run', '-h'], expected_stdout='usage:')
+
+    def test_command_run(self):
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+        self._test_main(['mc', 'add', 'test-a'],
+                        expected_stdout=['created configuration "test-a"',
+                                         'current configuration is "test-a"'])
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout='added 2 inputs')
+        self._test_main(['run'],
+                        expected_stdout='processing "test-a"')
+
     def test_command_run_no_inputs(self):
         self._test_main(['run'],
                         expected_exit_code=30,
@@ -95,4 +116,4 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['run'],
                         expected_stdout=['created configuration "default"',
                                          'current configuration is "default"',
-                                         'Running DDP'])
+                                         'processing "default"'])
