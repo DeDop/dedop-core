@@ -597,10 +597,19 @@ class L1BSWriter(NetCDFWriter):
 
         closest_burst = surface_location_data.closest_burst
 
+        time_interval = surface_location_data.time_surf - surface_location_data.prev_tai
+        utc_secs = surface_location_data.prev_utc_secs + time_interval
+
+        if utc_secs > surface_location_data.curr_day_length:
+            utc_secs -= surface_location_data.curr_day_length
+            utc_days = surface_location_data.prev_utc_days + 1
+        else:
+            utc_days = surface_location_data.prev_utc_days
+
         super().write_record(
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
-            UTC_day_l1bs_echo_sar_ku=None,
-            UTC_sec_l1bs_echo_sar_ku=None,
+            UTC_day_l1bs_echo_sar_ku=utc_days,
+            UTC_sec_l1bs_echo_sar_ku=utc_secs,
             lat_l1bs_echo_sar_ku=surface_location_data.lat_surf,
             lon_l1bs_echo_sar_ku=surface_location_data.lon_surf,
             surf_type_l1bs_echo_sar_ku=surface_location_data.surface_type.value,

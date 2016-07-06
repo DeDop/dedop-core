@@ -33,6 +33,10 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.pitch_sat = 0
         self.yaw_sat = 0
         self.win_delay_surf = 0
+        self.prev_tai = 0
+        self.prev_utc_days = 0
+        self.prev_utc_secs = 0
+        self.curr_day_length = 0
 
         super().__init__(chd, cst)
 
