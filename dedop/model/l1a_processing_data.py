@@ -736,6 +736,11 @@ class L1AProcessingData:
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
 
+    @property
+    def gprw_meas_ku(self) -> np.ndarray:
+        """CAL2 correction data"""
+        return self["gprw_meas_ku_l1a_echo_sar_ku"]
+
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
