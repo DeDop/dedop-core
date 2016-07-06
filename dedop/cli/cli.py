@@ -15,7 +15,7 @@ from abc import ABCMeta, abstractmethod
 
 from typing import Tuple, Optional
 # from dedop.cli.dummy_processor import Processor
-from dedop.proc import L1BProcessor
+from dedop.proc.sar import L1BProcessor
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
