@@ -115,7 +115,6 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'L1A_01.nc	0 MB',
                                          'L1A_02.nc	0 MB',
                                          'Available output files:',
-                                         'with config1 configuration',
                                          'L1BS__01_config1.nc		0 MB',
                                          'L1BS__02_config1.nc		0 MB',
                                          'L1B__01_config1.nc		0 MB',

@@ -157,6 +157,7 @@ class WorkspaceManager:
         """
         self._assert_workspace_exists(workspace_name)
         dir_path = self._get_workspace_path(workspace_name)
+        config_name = self.get_current_config_name(workspace_name)
         print('Available workspace:')
         for ws in self.get_workspace_names():
             if ws == workspace_name:
@@ -165,29 +166,27 @@ class WorkspaceManager:
                 print('  ' + ws)
         print('')
         print('Available configurations:')
-        if os.listdir(self._get_workspace_path(workspace_name)):
+        if self.get_config_names(workspace_name):
             for cf in self.get_config_names(workspace_name):
-                if cf == self.get_current_config_name(workspace_name):
+                if cf == config_name:
                     print('  ' + cf + '*')
                 else:
                     print('  ' + cf)
-            print('')
+        print('')
         print('Available input files:')
         if os.path.isdir(os.path.join(dir_path, 'inputs')):
             for file in os.listdir(os.path.join(dir_path, 'inputs')):
                 file_path = os.path.join(dir_path, 'inputs', file)
-                print('  %s\t%s MB' % (file, os.path.getsize(file_path) >> 20))
-            print('')
+                print('  %s\t%s MB' % (file_path, os.path.getsize(file_path) >> 20))
+        print('')
         print('Available output files:')
-        if os.path.isdir(os.path.join(dir_path, 'output')):
-            for file in os.listdir(os.path.join(dir_path, 'output')):
-                config_path = os.path.join(dir_path, 'output', file)
-                print('with %s configuration' % file)
-                print('===========================')
-                for dataset_file in os.listdir(config_path):
-                    dataset_path = os.path.join(config_path, dataset_file)
-                    print('  %s\t\t%s MB' % (dataset_file, os.path.getsize(dataset_path) >> 20))
-                print('')
+        if self.get_current_config_name(workspace_name):
+            output_dir = self.get_output_dir(workspace_name, config_name)
+            if os.path.isdir(output_dir):
+                for dataset_file in os.listdir(output_dir):
+                    dataset_path = os.path.join(output_dir, dataset_file)
+                    print('  %s\t\t%s MB' % (dataset_path, os.path.getsize(dataset_path) >> 20))
+        print('')
 
     def get_workspace_names(self) -> List[str]:
         workspaces_dir = self._workspaces_dir
@@ -378,4 +377,4 @@ class WorkspaceManager:
                 'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
 
     def get_output_dir(self, workspace_name, config_name):
-        return self._get_workspace_path(workspace_name, 'output', config_name)
+        return self._get_workspace_path(workspace_name, 'configs', config_name, 'outputs')
