@@ -234,9 +234,17 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
         self.manager.remove_outputs('ernie', 'laugh', ['output1.nc'],
                                     ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
 
+    def test_add_inputs(self):
+        self.manager.create_workspace('ernie')
+        input_path = os.path.join(WORKSPACES_DIR, 'ernie', 'test-input.nc')
+        self.createWorkspaceFile('ernie', 'test-input.nc')
+
+        self.manager.add_inputs('ernie', [input_path], ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
+
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'test-input.nc', expected=True)
+
     def test_list_input_files(self):
         self.manager.create_workspace('ernie')
-        self.manager.create_config('ernie', 'laugh')
         input_dir = os.path.join(WORKSPACES_DIR, 'ernie', 'inputs')
         self.createWorkspaceSubDir(input_dir)
         self.createWorkspaceFile(input_dir, 'input1.nc')
@@ -251,3 +259,27 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
         self.assertTrue('input1.nc' in input_files)
         self.assertTrue('input2.nc' in input_files)
         self.assertTrue('input3.nc' in input_files)
+
+    def test_remove_input_files(self):
+        self.manager.create_workspace('ernie')
+        input_dir = os.path.join(WORKSPACES_DIR, 'ernie', 'inputs')
+        self.createWorkspaceSubDir(input_dir)
+        self.createWorkspaceFile(input_dir, 'input1.nc')
+        self.createWorkspaceFile(input_dir, 'input2.nc')
+        self.createWorkspaceFile(input_dir, 'input3.nc')
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input1.nc', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input2.nc', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input3.nc', expected=True)
+
+        self.manager.remove_inputs('ernie', ['input1.nc'], ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
+
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input1.nc', expected=False)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input2.nc', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input3.nc', expected=True)
+
+        self.manager.remove_inputs('ernie', ['input2.nc', 'input3.nc'],
+                                   ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
+
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input1.nc', expected=False)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input2.nc', expected=False)
+        self.assertIsWorkspaceFile('ernie', 'inputs', 'input3.nc', expected=False)
