@@ -79,6 +79,51 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+        self._test_main(['mw', 'info', 'tests'],
+                        expected_stdout=['workspace "tests2" has been renamed to "tests3'])
+
+    def test_command_mw_info_minimal(self):
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+
+        self._test_main(['mw', 'info', 'tests'],
+                        expected_stdout=['Available workspace:',
+                                         'tests*',
+                                         'Available input files:',
+                                         'Available output files:'])
+
+    def test_command_mw_info_all(self):
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+
+        self._test_main(['mc', 'add', 'config1'],
+                        expected_stdout=['created configuration "config1" in workspace "tests"',
+                                         'current configuration is "config1"'])
+
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout='added 2 inputs')
+
+        self._test_main(['run'],
+                        expected_stdout='Running DDP')
+
+        self._test_main(['mw', 'info', 'tests'],
+                        expected_stdout=['Available workspace:',
+                                         'tests*',
+                                         'Available configurations:',
+                                         'config1*',
+                                         'Available input files:',
+                                         'L1A_01.nc	0 MB',
+                                         'L1A_02.nc	0 MB',
+                                         'Available output files:',
+                                         'with config1 configuration',
+                                         'L1BS__01_config1.nc		0 MB',
+                                         'L1BS__02_config1.nc		0 MB',
+                                         'L1B__01_config1.nc		0 MB',
+                                         'L1B__02_config1.nc		0 MB'])
+
     def test_command_run_no_inputs(self):
         self._test_main(['run'],
                         expected_exit_code=30,
