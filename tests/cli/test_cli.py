@@ -136,6 +136,13 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['mc', 'cp', 'config1', 'config9'],
                         expected_stdout=['config "config1" has been copied as "config9"'])
 
+        self._test_main(['mc', 'rn', 'config9', 'config10'],
+                        expected_stdout=['config "config9" has been renamed to "config10"'])
+
+        self._test_main(['mc', 'rn'],
+                        expected_exit_code=2,
+                        expected_stderr='error: the following arguments are required: NEW_NAME')
+
     def test_command_run_no_inputs(self):
         self._test_main(['run'],
                         expected_exit_code=30,

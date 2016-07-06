@@ -247,6 +247,23 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
+    def rename_config(self, workspace_name: str, config_name: str, new_config_name: str):
+        """
+        :param workspace_name: the workspace name where the config is to be renamed
+        :param config_name: the name of the configuration to be renamed
+        :param new_config_name: the name of the new configuration
+        :raise: WorkspaceError
+        """
+        self._assert_workspace_exists(workspace_name)
+        self._assert_config_exists(workspace_name, config_name)
+        dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
+        dir_path_new = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
+        if os.path.exists(dir_path):
+            try:
+                shutil.move(dir_path, dir_path_new)
+            except (IOError, OSError) as e:
+                raise WorkspaceError(str(e))
+
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self._get_config_path(workspace_name, config_name, config_file_key + '.json')
 

@@ -402,7 +402,7 @@ class ManageConfigsCommand(Command):
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
         parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename configuration')
-        parser_rename.add_argument(nargs='?', **workspace_name_attributes)
+        parser_rename.add_argument(nargs='?', **config_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
@@ -469,11 +469,11 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
-        # TODO (forman, 20180702): implement 'mc rename' command
-        #
-        # Implementation here...
-        #
-        print('TODO: rename configuration "%s" to "%s"' % (workspace_name, new_name))
+        try:
+            _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
+            print('config "%s" has been renamed to "%s"' % (config_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod

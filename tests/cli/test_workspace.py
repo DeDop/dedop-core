@@ -130,13 +130,50 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
         self.manager.create_workspace('ernie')
         self.manager.create_config('ernie', 'laugh')
         self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CHD.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CNF.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CST.json', expected=True)
+
         self.manager.copy_config('ernie', 'laugh', 'play')
+
         self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
         self.assertIsWorkspaceDir('ernie', 'configs', 'play', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CHD.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CNF.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CST.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CHD.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CNF.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CST.json', expected=True)
 
     def test_copy_non_existent_config(self):
         self.manager.create_workspace('ernie')
         self.assertRaisedException(WorkspaceError,
                                    'configuration "laugh" inside workspace "ernie" does not exist',
                                    self.manager.copy_config,
+                                   'ernie', 'laugh', 'play')
+
+    def test_rename_config(self):
+        self.manager.create_workspace('ernie')
+        self.manager.create_config('ernie', 'laugh')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CHD.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CNF.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CST.json', expected=True)
+
+        self.manager.rename_config('ernie', 'laugh', 'play')
+
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=False)
+        self.assertIsWorkspaceDir('ernie', 'configs', 'play', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CHD.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CNF.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'play', 'CST.json', expected=True)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CHD.json', expected=False)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CNF.json', expected=False)
+        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'CST.json', expected=False)
+
+    def test_rename_non_existent_config(self):
+        self.manager.create_workspace('ernie')
+        self.assertRaisedException(WorkspaceError,
+                                   'configuration "laugh" inside workspace "ernie" does not exist',
+                                   self.manager.rename_config,
                                    'ernie', 'laugh', 'play')
