@@ -310,6 +310,9 @@ class ManageWorkspacesCommand(Command):
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
             print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
+            if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
+                cls.set_current_workspace(new_name)
+
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK

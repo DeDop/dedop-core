@@ -72,6 +72,10 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['mw', 'cp', 'tests', 'tests2'],
                         expected_stdout=['workspace "tests" has been copied as "tests2"'])
 
+        self._test_main(['mw', 'rn', 'tests9'],
+                        expected_stdout=['workspace "tests" has been renamed to "tests9',
+                                         'current workspace is "tests9"'])
+
         self._test_main(['mw', 'rn', 'tests2', 'tests3'],
                         expected_stdout=['workspace "tests2" has been renamed to "tests3'])
 
