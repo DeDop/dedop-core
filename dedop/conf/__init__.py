@@ -11,4 +11,3 @@ __all__ = [
 from .characterization import CharacterisationFile
 from .configuration import ConfigurationFile
 from .constants import ConstantsFile
-from .workspace import WorkspaceConfig
