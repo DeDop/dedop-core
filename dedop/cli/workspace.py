@@ -326,18 +326,7 @@ class WorkspaceManager:
         """
         inputs_dir = self._get_workspace_path(workspace_name, 'inputs')
         if os.path.exists(inputs_dir):
-            fn_list = [fn for fn in os.listdir(inputs_dir) if
-                       fn.endswith('.nc') and os.path.isfile(os.path.join(inputs_dir, fn))]
-            if isinstance(pattern, str):
-                fn_list = [fn for fn in fn_list if fnmatch.fnmatch(fn, pattern)]
-            elif pattern:
-                new_fn_list = []
-                for fn in fn_list:
-                    for p in pattern:
-                        if fnmatch.fnmatch(fn, p):
-                            new_fn_list.append(fn)
-                fn_list = new_fn_list
-            return sorted(fn_list)
+            return self.get_nc_filename_list(inputs_dir, pattern)
         return []
 
     def get_input_paths(self, workspace_name: str):
@@ -349,6 +338,50 @@ class WorkspaceManager:
 
     def _get_config_path(self, workspace_name, config_name, *paths):
         return self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
+
+    def remove_outputs(self, workspace_name, config_name, output_names, monitor):
+        """
+        :param workspace_name: the workspace name in which the output files are located
+        :param config_name: the config name with which the output files were created
+        :param output_names: the name of the output files to be removed
+        :param monitor: to monitor the progress
+        """
+        output_dir = self.get_output_dir(workspace_name, config_name)
+        output_paths = [os.path.join(output_dir, output_name) for output_name in output_names]
+        with monitor.starting('removing outputs', len(output_paths)):
+            for output_path in output_paths:
+                if os.path.exists(output_path):
+                    try:
+                        os.remove(output_path)
+                    except (IOError, OSError) as e:
+                        raise WorkspaceError(str(e))
+                monitor.progress(1)
+
+    def get_output_names(self, workspace_name: str, config_name: str, pattern=None):
+        """
+        :param workspace_name: workspace name in which the output files are to be listed
+        :param config_name: config name with which the output files were created
+        :param pattern: a regex to identify the output files to be listed
+        """
+        outputs_dir = self.get_output_dir(workspace_name, config_name)
+        if os.path.exists(outputs_dir):
+            return self.get_nc_filename_list(outputs_dir, pattern)
+        return []
+
+    @staticmethod
+    def get_nc_filename_list(outputs_dir, pattern):
+        fn_list = [fn for fn in os.listdir(outputs_dir) if
+                   fn.endswith('.nc') and os.path.isfile(os.path.join(outputs_dir, fn))]
+        if isinstance(pattern, str):
+            fn_list = [fn for fn in fn_list if fnmatch.fnmatch(fn, pattern)]
+        elif pattern:
+            new_fn_list = []
+            for fn in fn_list:
+                for p in pattern:
+                    if fnmatch.fnmatch(fn, p):
+                        new_fn_list.append(fn)
+            fn_list = new_fn_list
+        return sorted(fn_list)
 
     @classmethod
     def _copy_resource(cls, package, file_name, dir_path):

@@ -142,6 +142,86 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+    def test_command_mo(self):
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+
+        self._test_main(['mc', 'add', 'config1'],
+                        expected_stdout=['created configuration "config1"',
+                                         'current configuration is "config1"'])
+
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout='added 2 inputs')
+
+        self._test_main(['run'],
+                        expected_stdout=['Running DDP'])
+
+        self._test_main(['mo', 'list'],
+                        expected_stdout=['4 outputs created with config "config1" in workspace "tests":',
+                                         '1: L1BS__01_config1.nc',
+                                         '2: L1BS__02_config1.nc',
+                                         '3: L1B__01_config1.nc',
+                                         '4: L1B__02_config1.nc'])
+
+        self._test_main(['mo', 'cl', 'tests', 'config1', 'L1BS__01_config1.nc'],
+                        expected_stdout=['removing outputs: done',
+                                         'one output removed'])
+
+        self._test_main(['mo', 'list'],
+                        expected_stdout=['3 outputs created with config "config1" in workspace "tests":',
+                                         '1: L1BS__02_config1.nc',
+                                         '2: L1B__01_config1.nc',
+                                         '3: L1B__02_config1.nc'])
+
+        self._test_main(['mo', 'cl'],
+                        expected_stdout=['removing outputs: done',
+                                         'removed 3 outputs'])
+
+        self._test_main(['mo', 'list'],
+                        expected_stdout=['no outputs created with config "config1" in workspace "tests"'])
+
+    def test_command_mi(self):
+        input_files = os.path.join(os.path.dirname(__file__), '*.nc')
+        self._test_main(['mw', 'add', 'tests'],
+                        expected_stdout=['created workspace "tests"',
+                                         'current workspace is "tests"'])
+
+        self._test_main(['mc', 'add', 'config1'],
+                        expected_stdout=['created configuration "config1"',
+                                         'current configuration is "config1"'])
+
+        self._test_main(['mi', 'add', input_files],
+                        expected_stdout='added 2 inputs')
+
+        self._test_main(['mi', 'list'],
+                        expected_stdout=['2 inputs in workspace "tests":',
+                                         '1: L1A_01.nc',
+                                         '2: L1A_02.nc'])
+
+        self._test_main(['mi', 'rm'],
+                        expected_stdout=['removing inputs: done',
+                                         'removed 2 inputs'])
+
+        self._test_main(['mi', 'list'],
+                        expected_stdout=['no inputs in workspace "tests"'])
+
+        self._test_main(['mi', 'add', input_files])
+
+        self._test_main(['mi', 'list'],
+                        expected_stdout=['2 inputs in workspace "tests":',
+                                         '1: L1A_01.nc',
+                                         '2: L1A_02.nc'])
+
+        self._test_main(['mi', 'rm', 'tests', 'L1A_01.nc'],
+                        expected_stdout=['removing inputs: done',
+                                         'one input removed'])
+
+        self._test_main(['mi', 'list'],
+                        expected_stdout=['1 input in workspace "tests":',
+                                         '1: L1A_02.nc'])
+
     def test_command_run_no_inputs(self):
         self._test_main(['run'],
                         expected_exit_code=30,

@@ -27,6 +27,7 @@ _STATUS_NO_WORKSPACE = 10, 'no current workspace, use option -w to name a WORKSP
 _STATUS_NO_CONFIG = 20, 'no current configuration, use "dedop config cur CONFIG"'
 _STATUS_NO_INPUTS = 30, 'workspace "%s" doesn\'t have any inputs yet, use "dedop input add *.nc" to add some'
 _STATUS_NO_MATCHING_INPUTS = 40, 'no matching inputs found'
+_STATUS_NO_MATCHING_OUTPUTS = 40, 'no matching outputs found'
 
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
@@ -713,6 +714,12 @@ class ManageOutputsCommand(Command):
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
+        parser_clean.add_argument(nargs='?', **workspace_name_attributes)
+        parser_clean.add_argument(nargs='?', **config_name_attributes)
+        parser_clean.add_argument('outputs', metavar='L1B_FILE', nargs='*',
+                                  help="L1B output file to be removed from workspace.")
+        parser_clean.add_argument('-q', '--quiet', action='store_true',
+                                  help='Suppress output of progress information.')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
 
         parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
@@ -723,6 +730,8 @@ class ManageOutputsCommand(Command):
         parser_analyse.set_defaults(mo_command=cls.execute_analyse)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
+        parser_list.add_argument('pattern', metavar='WC', nargs='?',
+                                 help="Wildcard pattern.")
         parser_list.set_defaults(mo_command=cls.execute_list)
 
     def execute(self, command_args):
@@ -731,11 +740,28 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_clean(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        # TODO (forman, 20160704): implement "mo clean" command
-        #
-        # Implementation here...
-        #
-        print('TODO: clean "%s"' % config_name)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
+        output_names = command_args.outputs
+        if not output_names:
+            output_names = '*.nc'
+        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name, pattern=output_names)
+        if not output_names:
+            return _STATUS_NO_MATCHING_OUTPUTS
+        monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
+        try:
+            _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name, output_names, monitor)
+            output_count = len(output_names)
+            if output_count == 0:
+                print('no outputs removed')
+            elif output_count == 1:
+                print('one output removed')
+            else:
+                print('removed %s outputs' % output_count)
+        except WorkspaceError as e:
+            return 30, str(e)
         return cls.STATUS_OK
 
     @classmethod
@@ -770,11 +796,22 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_list(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        # TODO (forman, 20160704): implement "mo list" command
-        #
-        # Implementation here...
-        #
-        print('TODO: listing output of "%s"' % config_name)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
+        pattern = command_args.pattern
+        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name, pattern=pattern)
+        num_outputs = len(output_names)
+        if num_outputs == 0:
+            print('no outputs created with config "%s" in workspace "%s"' % (config_name, workspace_name))
+        elif num_outputs == 1:
+            print('1 output created with config "%s" in workspace "%s":' % (config_name, workspace_name))
+        else:
+            print('%d outputs created with config "%s" in workspace "%s":' % (num_outputs, config_name, workspace_name))
+        for i in range(num_outputs):
+            output_name = output_names[i]
+            print('%3d: %s' % (i + 1, output_name))
         return cls.STATUS_OK
 
 
