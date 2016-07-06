@@ -20,7 +20,7 @@ from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
-from dedop.util.config import get_config_value
+from dedop.util.config import get_config_value, get_config_path
 
 _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
@@ -915,8 +915,10 @@ def main(args=None, workspace_manager=None, processor_factory=None):
     global _PROCESSOR_FACTORY
     _PROCESSOR_FACTORY = processor_factory if processor_factory else new_l1b_processor
 
+    workspaces_dir = get_config_path('workspaces_dir')
+
     global _WORKSPACE_MANAGER
-    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager()
+    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager(workspaces_dir=workspaces_dir)
 
     parser = NoExitArgumentParser(prog=CLI_NAME,
                                   description='ESA DeDop command-line interface, version %s' % __version__)
