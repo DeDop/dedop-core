@@ -38,15 +38,10 @@ class L1BProcessor(BaseProcessor):
         self.chd = CharacterisationFile(self.cst, chd_file)
         self.cnf = ConfigurationFile(cnf_file)
 
-        # store file objects
-        l1b_output = os.path.join(out_path, "{}_l1b.nc".format(name))
-        l1bs_output = os.path.join(out_path, "{}_l1bs.nc".format(name))
+        self.skip_l1bs = skip_l1bs
+        self.out_path = out_path
+        self.name = name
 
-        self.l1b_file = L1BWriter(filename=l1b_output, chd=self.chd, cnf=self.cnf)
-        if not skip_l1bs:
-            self.l1bs_file = L1BSWriter(filename=l1bs_output, chd=self.chd, cnf=self.cnf)
-        else:
-            self.l1bs_file = None
         # init. surface & packets arrays
         self._surfaces = []
         self._packets = []
@@ -89,6 +84,26 @@ class L1BProcessor(BaseProcessor):
 
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
+
+        # find base name of input file
+        l1a_base, _ = os.path.splitext(os.path.basename(l1a_file))
+        if l1a_base.startswith('L1A'):
+            l1a_base = l1a_base[len('L1A'):]
+
+        # create l1b-s output path
+        l1bs_name = 'L1BS_%s_%s.nc' % (l1a_base, self.name)
+        l1bs_path = os.path.join(self.out_path, l1bs_name)
+
+        # create l1b output path
+        l1b_name = 'L1B_%s_%s.nc' % (l1a_base, self.name)
+        l1b_path = os.path.join(self.out_path, l1b_name)
+
+        # create output file objects
+        self.l1b_file = L1BWriter(filename=l1b_path, chd=self.chd, cnf=self.cnf)
+        if not self.skip_l1bs:
+            self.l1bs_file = L1BSWriter(filename=l1bs_path, chd=self.chd, cnf=self.cnf)
+        else:
+            self.l1bs_file = None
 
         self.l1b_file.open()
         if self.l1bs_file is not None:
