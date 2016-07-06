@@ -28,7 +28,8 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
             pi_cst=input_data['pi_cst'],
             semi_major_axis_cst=input_data['semi_major_axis_cst'],
             flat_coeff_cst=input_data['flat_coeff_cst'],
-            semi_minor_axis_cst=input_data['semi_minor_axis_cst']
+            semi_minor_axis_cst=input_data['semi_minor_axis_cst'],
+            sec_in_day_cst=60*60*24
         )
         self.chd = CharacterisationFile(
             self.cst,
@@ -75,7 +76,9 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                 yaw_sar=0,
                 x_vel_sat_sar=0,
                 y_vel_sat_sar=0,
-                z_vel_sat_sar=0
+                z_vel_sat_sar=0,
+                days=packet["time_sar_ku"] // self.cst.sec_in_day,
+                seconds=packet["time_sar_ku"] % self.cst.sec_in_day
             )
         ]
 
@@ -185,7 +188,9 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                               yaw_sar=0,
                               x_vel_sat_sar=0,
                               y_vel_sat_sar=0,
-                              z_vel_sat_sar=0) \
+                              z_vel_sat_sar=0,
+                              days=inputs["time_sar_ku"] // self.cst.sec_in_day,
+                              seconds=inputs["time_sar_ku"] % self.cst.sec_in_day) \
             for i, time in enumerate(inputs["time_sar_ku"])
             ]
         # calculate surface position for each packet

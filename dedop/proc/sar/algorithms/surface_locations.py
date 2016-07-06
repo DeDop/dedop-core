@@ -33,6 +33,10 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.pitch_sat = 0
         self.yaw_sat = 0
         self.win_delay_surf = 0
+        self.prev_tai = 0
+        self.prev_utc_days = 0
+        self.prev_utc_secs = 0
+        self.curr_day_length = 0
 
         super().__init__(chd, cst)
 
@@ -59,6 +63,10 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             'pitch_sat': self.pitch_sat,
             'yaw_sat': self.yaw_sat,
             'win_delay_surf': self.win_delay_surf,
+            'prev_tai': self.prev_tai,
+            'prev_utc_days': self.prev_utc_days,
+            'prev_utc_secs': self.prev_utc_secs,
+            'curr_day_length': self.curr_day_length
         }
 
     def store_first_location(self, isps: Sequence[L1AProcessingData]) -> None:
@@ -191,5 +199,11 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
                      alpha * (isp_curr.yaw_sar - isp_prev.yaw_sar)
 
         self.win_delay_surf = (self.alt_sat - self.alt_surf) * 2. / self.cst.c
+
+        self.prev_tai = isp_prev.time_sar_ku
+        self.prev_utc_days = isp_prev.days
+        self.prev_utc_secs = isp_prev.seconds
+        self.curr_day_length = self.cst.sec_in_day +\
+            (isp_curr.leap_secs_since_2000 - isp_prev.leap_secs_since_2000)
 
         return True
