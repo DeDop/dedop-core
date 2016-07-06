@@ -37,6 +37,10 @@ class WorkspaceTestBase:
     def createWorkspaceSubDir(*path):
         os.mkdir(os.path.join(WORKSPACES_DIR, *path))
 
+    @staticmethod
+    def createWorkspaceFile(*path):
+        open(os.path.join(WORKSPACES_DIR, *path), 'a')
+
 
 class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
     def test_create_workspace(self):
