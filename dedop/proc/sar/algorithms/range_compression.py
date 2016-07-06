@@ -20,19 +20,16 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
             dtype=np.complex128
         )
 
-        for beam_index in range(stack_size):
+        # for beam_index in range(stack_size):
 
-            # calc. FFT with zero-padding & orthogonal scaling
-            beam_fft = fft(
-                working_surface_location.beams_geo_corr[beam_index, :],
-                n=padded_size, norm="ortho"
-            )
-            # apply shift
-            beam_shift = fftshift(beam_fft)
+        # calc. FFT with zero-padding & orthogonal scaling
+        beams_fft = fft(
+            working_surface_location.beams_geo_corr,
+            n=padded_size, norm="ortho", axis=1
+        )
+        # apply shift
+        self.beam_range_compr_iq[:, :] = fftshift(beams_fft, axes=1)
 
-            # store complex result
-            self.beam_range_compr_iq[beam_index, :] = beam_shift
-
-            # compute square modulus
-            self.beam_range_compr[beam_index, :] =\
-                np.abs(beam_shift) ** 2
+        # compute square modulus
+        self.beam_range_compr[:, :] =\
+            np.abs(self.beam_range_compr_iq) ** 2
