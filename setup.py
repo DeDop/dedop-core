@@ -15,12 +15,12 @@ setup(
         'console_scripts': [
             'dedop = dedop.cli:main'
         ]
-    },
-    install_requires=['numpy >= 1.9',
-                      'netCDF4 >= 1.1',
-                      'scipy',
-                      'typing'],
-    extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
+    } # ,
+    #install_requires=['numpy >= 1.9',
+    #                  'netCDF4 >= 1.1',
+    #                  'scipy',
+    #                  'typing'],
+    #extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',
