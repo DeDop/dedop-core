@@ -264,6 +264,13 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
+    def print_config_info(self, workspace_name: str, config_name: str):
+        """
+        :param workspace_name: workspace name
+        :param config_name: config name to be queried
+        """
+        # TODO Find out what information to be displayed
+
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self._get_config_path(workspace_name, config_name, config_file_key + '.json')
 
@@ -283,6 +290,11 @@ class WorkspaceManager:
         _writeline(self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
+        """
+        :param workspace_name: workspace name to add the input
+        :param input_paths: path to the input files to be added
+        :param monitor: to monitor the progress
+        """
         inputs_dir = self._ensure_dir_exists(self._get_workspace_path(workspace_name, 'inputs'))
         with monitor.starting('adding inputs', len(input_paths)):
             for input_path in input_paths:
@@ -293,6 +305,11 @@ class WorkspaceManager:
                 monitor.progress(1)
 
     def remove_inputs(self, workspace_name, input_names, monitor):
+        """
+        :param workspace_name: workspace name in which the inputs are to be removed
+        :param input_names: name of input files to be removed
+        :param monitor: to monitor the progress
+        """
         input_paths = [self._get_workspace_path(workspace_name, 'inputs', input_name) for input_name in input_names]
         with monitor.starting('removing inputs', len(input_paths)):
             for input_path in input_paths:
@@ -304,6 +321,10 @@ class WorkspaceManager:
                 monitor.progress(1)
 
     def get_input_names(self, workspace_name: str, pattern=None):
+        """
+        :param workspace_name: workspace name in which the input files are to be queried
+        :param pattern: a regex to identify the input files to be listed
+        """
         inputs_dir = self._get_workspace_path(workspace_name, 'inputs')
         if os.path.exists(inputs_dir):
             fn_list = [fn for fn in os.listdir(inputs_dir) if
