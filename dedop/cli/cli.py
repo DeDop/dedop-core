@@ -397,7 +397,7 @@ class ManageConfigsCommand(Command):
         parser_edit.set_defaults(cf_command=cls.execute_edit)
 
         parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy configuration')
-        parser_copy.add_argument(nargs='?', **workspace_name_attributes)
+        parser_copy.add_argument(nargs='?', **config_name_attributes)
         parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new configuration')
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
@@ -453,13 +453,12 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
         if not new_name:
-            new_name = workspace_name + '_copy'
-        # while os.path.exists(..., new_name) ...
-        # TODO (forman, 20180702): implement 'mc copy' command
-        #
-        # Implementation here...
-        #
-        print('TODO: copy configuration "%s" to "%s"' % (workspace_name, new_name))
+            new_name = config_name + '_copy'
+        try:
+            _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
+            print('config "%s" has been copied as "%s"' % (config_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod

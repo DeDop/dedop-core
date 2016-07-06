@@ -104,3 +104,39 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
                                    'workspace "ernie" does not exist',
                                    self.manager.rename_workspace,
                                    'ernie', 'ernie2')
+
+    def test_create_config(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', expected=True)
+        self.manager.create_config('ernie', 'laugh')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+
+    def test_delete_config(self):
+        self.manager.create_workspace('ernie')
+        self.manager.create_config('ernie', 'laugh')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+        self.manager.delete_config('ernie', 'laugh')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=False)
+
+    def test_delete_non_existent_config(self):
+        self.manager.create_workspace('ernie')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=False)
+        self.assertRaisedException(WorkspaceError,
+                                   'configuration "laugh" inside workspace "ernie" does not exist',
+                                   self.manager.delete_config,
+                                   'ernie', 'laugh')
+
+    def test_copy_config(self):
+        self.manager.create_workspace('ernie')
+        self.manager.create_config('ernie', 'laugh')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+        self.manager.copy_config('ernie', 'laugh', 'play')
+        self.assertIsWorkspaceDir('ernie', 'configs', 'laugh', expected=True)
+        self.assertIsWorkspaceDir('ernie', 'configs', 'play', expected=True)
+
+    def test_copy_non_existent_config(self):
+        self.manager.create_workspace('ernie')
+        self.assertRaisedException(WorkspaceError,
+                                   'configuration "laugh" inside workspace "ernie" does not exist',
+                                   self.manager.copy_config,
+                                   'ernie', 'laugh', 'play')

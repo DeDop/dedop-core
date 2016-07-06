@@ -146,7 +146,7 @@ class WorkspaceManager:
         if os.path.exists(dir_path):
             try:
                 shutil.move(os.path.join(dir_path, workspace_name),
-                                os.path.join(dir_path, new_workspace_name))
+                            os.path.join(dir_path, new_workspace_name))
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
@@ -201,6 +201,10 @@ class WorkspaceManager:
         return os.path.isdir(config_dir) and os.listdir(config_dir)
 
     def create_config(self, workspace_name: str, config_name: str):
+        """
+        :param workspace_name: the workspace name where the config is to be created
+        :param config_name: the name of the configuration to be added
+        """
         self._assert_workspace_exists(workspace_name)
         if self.config_exists(workspace_name, config_name):
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
@@ -212,11 +216,34 @@ class WorkspaceManager:
         self._copy_resource(package, 'CST.json', dir_path)
 
     def delete_config(self, workspace_name: str, config_name: str):
+        """
+        :param workspace_name: the workspace name where the config is to be removed
+        :param config_name: the name of the configuration to be removed
+        :return:
+        """
         self._assert_workspace_exists(workspace_name)
+        self._assert_config_exists(workspace_name, config_name)
         dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
         if os.path.exists(dir_path):
             try:
                 shutil.rmtree(dir_path)
+            except (IOError, OSError) as e:
+                raise WorkspaceError(str(e))
+
+    def copy_config(self, workspace_name: str, config_name: str, new_config_name: str):
+        """
+        :param workspace_name: the workspace name where the config is to be copied
+        :param config_name: the name of the configuration to be copied
+        :param new_config_name: the name of the new configuration
+        :raise: WorkspaceError
+        """
+        self._assert_workspace_exists(workspace_name)
+        self._assert_config_exists(workspace_name, config_name)
+        dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
+        dir_path_new = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
+        if os.path.exists(dir_path):
+            try:
+                shutil.copytree(dir_path, dir_path_new)
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
@@ -307,10 +334,10 @@ class WorkspaceManager:
         if not os.path.exists(self._get_workspace_path(workspace_name)):
             raise WorkspaceError('workspace "%s" does not exist' % workspace_name)
 
-    def _assert_config_exists(self, workspace_name):
-        if not os.listdir(self._get_workspace_path(workspace_name)):
-            raise WorkspaceError('configurations for workspace "%s" does not exist' % workspace_name)
+    def _assert_config_exists(self, workspace_name, config_name):
+        if not os.path.exists(self._get_workspace_path(workspace_name, 'configs', config_name)):
+            raise WorkspaceError(
+                'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
 
     def get_output_dir(self, workspace_name, config_name):
         return self._get_workspace_path(workspace_name, 'output', config_name)
-
