@@ -126,10 +126,26 @@ class WorkspaceManager:
         """
         self._assert_workspace_exists(workspace_name)
         dir_path = self._get_workspace_path('')
-        print(dir_path)
         if os.path.exists(dir_path):
             try:
                 shutil.copytree(os.path.join(dir_path, workspace_name),
+                                os.path.join(dir_path, new_workspace_name))
+            except (IOError, OSError) as e:
+                raise WorkspaceError(str(e))
+
+    def rename_workspace(self, workspace_name: str, new_workspace_name: str):
+        """
+        :param workspace_name: workspace name to be renamed
+        :param new_workspace_name: new workspace name
+        :raise: WorkspaceError
+        """
+        self._assert_workspace_exists(workspace_name)
+        if not new_workspace_name:
+            raise WorkspaceError("missing the new workspace name")
+        dir_path = self._get_workspace_path('')
+        if os.path.exists(dir_path):
+            try:
+                shutil.move(os.path.join(dir_path, workspace_name),
                                 os.path.join(dir_path, new_workspace_name))
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))

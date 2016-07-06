@@ -1,18 +1,19 @@
 from typing import Optional, Sequence, Dict, Any, List
+import os
 
 from .algorithms import *
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData, L1AProcessingData
-from dedop.data.input import InputDataset
+from dedop.model.processor import BaseProcessor
+from dedop.data.input.l1a import L1ADataset
 from dedop.data.output import L1BSWriter, L1BWriter
+from dedop.util.monitor import Monitor
 
 
-class L1BProcessor:
+class L1BProcessor(BaseProcessor):
     """
     class for the L1B Processing chain
     """
-    _chd_file = "common/chd.json"
-    _cst_file = "common/cst.json"
 
     @property
     def surf_locs(self) -> List[SurfaceData]:
@@ -28,18 +29,24 @@ class L1BProcessor:
         """
         return self._packets
 
-    def __init__(self, l1a_input: InputDataset, chd_file: CharacterisationFile, cst_file: ConstantsFile,
-                 l1b_output: Optional[L1BWriter], l1bs_output: L1BSWriter=None):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool=True):
         """
         initialise the processor
         """
         # store conf objects
-        self.cst = cst_file
-        self.chd = chd_file
+        self.cst = ConstantsFile(cst_file)
+        self.chd = CharacterisationFile(self.cst, chd_file)
+        self.cnf = ConfigurationFile(cnf_file)
+
         # store file objects
-        self.l1a_file = l1a_input
-        self.l1b_file = l1b_output
-        self.l1bs_file = l1bs_output
+        l1b_output = os.path.join(out_path, "{}_l1b.nc".format(name))
+        l1bs_output = os.path.join(out_path, "{}_l1bs.nc".format(name))
+
+        self.l1b_file = L1BWriter(filename=l1b_output, chd=self.chd, cnf=self.cnf)
+        if not skip_l1bs:
+            self.l1bs_file = L1BSWriter(filename=l1bs_output, chd=self.chd, cnf=self.cnf)
+        else:
+            self.l1bs_file = None
         # init. surface & packets arrays
         self._surfaces = []
         self._packets = []
@@ -69,20 +76,31 @@ class L1BProcessor:
         self.sigma_zero_algorithm =\
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
-    def process(self) -> None:
+    def process(self, l1a_file: str, monitor: Monitor=Monitor.NULL) -> int:
         """
         runs the L1B Processing Chain
         """
+        self.l1a_file = L1ADataset(l1a_file, chd=self.chd, cst=self.cst, cnf=self.cnf)
+        monitor.start("Processing Input File", self.l1a_file.max_index + self.min_surfs)
+
         running = True
         surface_processing = False
+        status = -1
 
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
 
+        self.l1b_file.open()
+        if self.l1bs_file is not None:
+            self.l1bs_file.open()
+
         while running:
+            monitor.progress(1)
+
             input_packet = next(self.l1a_file)
 
             if input_packet is not None:
+
                 new_surface = self.surface_locations(input_packet)
 
                 if new_surface is None:
@@ -123,6 +141,17 @@ class L1BProcessor:
 
             if not self.surf_locs:
                 running = False
+                status = None
+
+            if monitor.is_cancelled():
+                running = False
+
+        self.l1b_file.close()
+        if self.l1bs_file is not None:
+            self.l1bs_file.close()
+        monitor.done()
+
+        return status
 
     def clear_old_records(self, current_surface: SurfaceData) -> None:
         """

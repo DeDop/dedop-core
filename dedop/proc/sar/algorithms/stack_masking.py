@@ -34,13 +34,13 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
         if working_surface_location.surface_type == SurfaceType.surface_rmc:
             rmc_beam_mask = np.zeros(
-                (self.chd.n_samples_sar * self.zp_fact_range)
+                (self.chd.n_samples_sar * self.zp_fact_range), dtype=np.int8
             )
 
             start = i_sample_start * self.zp_fact_range
             end = (i_sample_start + self.chd.n_samples_sar // 2
                    - self.rmc_margin) * self.zp_fact_range
-            rmc_beam_mask[start:end] = 1.
+            rmc_beam_mask[int(start):int(end)] = 1
 
             return rmc_beam_mask
         return None
@@ -48,7 +48,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
     def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         geom_mask = np.zeros(
-            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
+            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
+            dtype=np.int8
         )
 
         for beam_index in range(working_surface_location.data_stack_size):
@@ -66,16 +67,17 @@ class StackMaskingAlgorithm(BaseAlgorithm):
                 start = 0
                 end = (self.chd.n_samples_sar - abs(shift_coarse)) * self.zp_fact_range
             if start < end:
-                geom_mask[beam_index, start:end] = 1.
+                geom_mask[beam_index, int(start):int(end)] = 1
 
         return geom_mask
 
     def compute_ambiguity_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         ambi_mask = np.zeros(
-            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range)
+            (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
+            dtype=np.int8
         )
         ## TODO: to be defined
-        ambi_mask[:, :] = 1.
+        ambi_mask[:, :] = 1
 
         return ambi_mask
 

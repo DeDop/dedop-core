@@ -14,11 +14,13 @@ import sys
 from abc import ABCMeta, abstractmethod
 
 from typing import Tuple, Optional
-
-from dedop.cli.dummy_processor import Processor
+# from dedop.cli.dummy_processor import Processor
+from dedop.proc.sar import L1BProcessor
+from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
+from dedop.util.config import get_config_value
 
 _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
@@ -49,6 +51,27 @@ Type "%s lic" for details.
 """ % (CLI_NAME, CLI_NAME)
 
 _WORKSPACE_MANAGER = None
+_PROCESSOR_FACTORY = None
+
+
+def new_l1b_processor(name: str,
+                      cnf_file: str = None,
+                      cst_file: str = None,
+                      chd_file: str = None,
+                      output_dir: str = '.',
+                      skip_l1bs: bool = True) -> BaseProcessor:
+    """
+    Create a new L1B processor instance.
+
+    :param name: the processor "run" name
+    :param cnf_file: configuration definition file
+    :param cst_file: constants definition file
+    :param chd_file: characterisation definition file
+    :param output_dir: the output directory for L1B, L1B-S, and log-files, etc.
+    :param skip_l1bs: whether to skip L1B-S output
+    :return: an object of type :py_class:`BaseProcessor`
+    """
+    return L1BProcessor(name, cnf_file, cst_file, chd_file, output_dir, skip_l1bs)
 
 
 def _input(prompt, default=None):
@@ -193,7 +216,6 @@ class RunProcessorCommand(Command):
         if not inputs:
             code, msg = _STATUS_NO_INPUTS
             return code, msg % workspace_name
-        monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
         output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
             workspace_name, config_name)
         chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
@@ -201,17 +223,21 @@ class RunProcessorCommand(Command):
         cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
         skip_l1bs = command_args.skip_l1bs
 
-        # TODO (forman, 20160616): use real DDP here
-        # -------------------------------------------------------
-        processor = Processor(config_name=config_name,
-                              chd_file=chd_file,
-                              cnf_file=cnf_file,
-                              cst_file=cst_file,
-                              skip_l1bs=skip_l1bs,
-                              output_dir=output_dir)
-        status = processor.process_sources(monitor, *inputs)
-        # -------------------------------------------------------
-        return status
+        # noinspection PyCallingNonCallable
+        processor = _PROCESSOR_FACTORY(config_name,
+                                       chd_file=chd_file,
+                                       cnf_file=cnf_file,
+                                       cst_file=cst_file,
+                                       output_dir=output_dir,
+                                       skip_l1bs=skip_l1bs)
+        for input_file in inputs:
+            monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
+            try:
+                processor.process(input_file, monitor=monitor)
+            except ProcessorException as e:
+                return 60, str(e)
+
+        return self.STATUS_OK
 
 
 class ManageWorkspacesCommand(Command):
@@ -306,11 +332,11 @@ class ManageWorkspacesCommand(Command):
         if not workspace_name:
             return 1, 'no current workspace'
         new_name = command_args.new_name
-        # TODO (forman, 20180702): implement 'mw rename' command
-        #
-        # Implementation here...
-        #
-        print('TODO: rename workspace "%s" to "%s"' % (workspace_name, new_name))
+        try:
+            _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
+            print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -869,20 +895,28 @@ class NoExitArgumentParser(argparse.ArgumentParser):
         raise ExitException(status, message)
 
 
-def main(args=None, workspace_manager=None):
+def main(args=None, workspace_manager=None, processor_factory=None):
     """
     The entry point function of the DeDop command-line interface.
 
     :param args: list of command-line arguments of type ``str``.
     :param workspace_manager: optional :py:class:`WorkspaceManager` object.
+    :param processor_factory: optional function used to create the processor instance. Must have the
+        same signature as _py:func:`new_l1b_processor`.
     :return: An integer exit code where zero means success
     """
 
-    global _WORKSPACE_MANAGER
-    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager()
-
     if args is None:
         args = sys.argv[1:]
+
+    if not processor_factory:
+        processor_factory = get_config_value('processor_factory')
+
+    global _PROCESSOR_FACTORY
+    _PROCESSOR_FACTORY = processor_factory if processor_factory else new_l1b_processor
+
+    global _WORKSPACE_MANAGER
+    _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager()
 
     parser = NoExitArgumentParser(prog=CLI_NAME,
                                   description='ESA DeDop command-line interface, version %s' % __version__)

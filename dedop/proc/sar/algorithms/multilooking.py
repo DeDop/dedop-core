@@ -86,7 +86,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         min_beam_angle_complementary_index =\
             np.argmin(beam_angles_complementary)
 
-        beam_length = (self.chd.n_samples_sar / 2) * self.zp_fact_range
+        beam_length = (self.chd.n_samples_sar // 2) * self.zp_fact_range
         for beam_index in range(working_surface_location.data_stack_size):
             beam_power[beam_index] =\
                 np.sum(
