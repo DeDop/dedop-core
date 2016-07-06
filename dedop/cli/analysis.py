@@ -1,17 +1,18 @@
 import sys
 
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 import numpy as np
-from ipywidgets import interact
+from ipywidgets import interact, fixed
 from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, num2date
 
 
 # Resources:
+# * http://matplotlib.org/api/pyplot_api.html
 # * http://matplotlib.org/users/image_tutorial.html
 # * http://matplotlib.org/basemap/users/examples.html
 # * http://ipywidgets.readthedocs.io/en/latest/
+
 
 
 class L1bAnalysis:
@@ -82,7 +83,9 @@ class L1bAnalysis:
         else:
             plt.savefig("plot_locs.png")
 
-    def plot_meas_im(self, vmin=1200, vmax=7000000):
+    def plot_meas_im(self, vmin=None, vmax=None):
+        vmin = vmin if vmin else self.meas_range[0]
+        vmax = vmax if vmax else self.meas_range[1]
         plt.figure(figsize=(10, 10))
         plt.imshow(self.meas, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax)
         plt.xlabel('echo_sample_ind')
@@ -94,13 +97,22 @@ class L1bAnalysis:
         else:
             plt.savefig("plot_meas_im.png")
 
-    def plot_meas_hist(self, bins=64, vmin=1200, vmax=7000000):
+    def plot_meas_hist(self, vmin=None, vmax=None, bins=128, log=False):
+        vmin = vmin if vmin else self.meas_range[0]
+        vmax = vmax if vmax else self.meas_range[1]
+
         # mu, sigma = 100, 15
         # x = mu + sigma * np.random.randn(10000)
 
         # the histogram of the data
         plt.figure(figsize=(12, 6))
-        n, bins, patches = plt.hist(self.meas, bins=bins, range=(vmin, vmax), facecolor='green', alpha=0.75, normed=True)
+        n, bins, patches = plt.hist(self.meas.flatten(),
+                                    range=(vmin, vmax),
+                                    bins=bins,
+                                    log=log,
+                                    facecolor='green',
+                                    alpha=1,
+                                    normed=True)
 
         # add a 'best fit' line
         # y = mlab.normpdf(bins, mu, sigma)
@@ -108,32 +120,37 @@ class L1bAnalysis:
 
         plt.xlabel('i2q2_meas_ku')
         plt.ylabel('probability')
-        #plt.title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')
+        # plt.title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')
         plt.title('Histogram of i2q2_meas_ku')
-        #plt.axis([40, 160, 0, 0.03])
+        # plt.axis([40, 160, 0, 0.03])
         plt.grid(True)
         if self.interactive:
             plt.show()
         else:
-            plt.savefig("plot_meas_hs.png")
+            plt.savefig("plot_meas_hist.png")
 
-    def plot_meas(self, time_index=None):
-        if time_index is None and self.interactive:
-            interact(self._plot_meas, time_index=(0, self.num_times - 1))
+    def plot_meas(self, ind=None, ref_ind=None):
+        if ind is None and self.interactive:
+            interact(self._plot_meas, ind=(0, self.num_times - 1), ref_ind=fixed(ref_ind))
         else:
-            self._plot_meas(time_index if time_index else 0)
+            self._plot_meas(ind=ind if ind else 0, ref_ind=ref_ind)
 
-    def _plot_meas(self, time_index):
+    def _plot_meas(self, ind: int, ref_ind=None):
         plt.figure(figsize=(12, 6))
-        plt.plot(self.echo_sample_ind, self.meas[time_index])
+        plt.plot(self.echo_sample_ind, self.meas[ind], 'b-')
         plt.xlabel('echo_sample_ind')
         plt.ylabel('i2q2_meas_ku')
-        plt.title('i2q2_meas_ku #%s' % time_index)
+        plt.title('i2q2_meas_ku #%s' % ind)
         plt.grid(True)
+
+        if ref_ind is not None:
+            plt.plot(self.echo_sample_ind, self.meas[ref_ind], 'r-', label='ref')
+            plt.legend(['#%s' % ind, '#%s' % ref_ind])
+
         if self.interactive:
             plt.show()
         else:
-            plt.savefig("plot_meas_t%06d.png" % time_index)
+            plt.savefig("plot_meas_t%06d.png" % ind)
 
 
 def main(args=None):
@@ -143,10 +160,10 @@ def main(args=None):
     an = L1bAnalysis(args[0], interactive=False)
     an.plot_locs()
     an.plot_meas_im()
-    an.plot_meas(time_index=0)
-    an.plot_meas(time_index=1)
-    an.plot_meas(time_index=2)
-    an.plot_meas_hist()
+    an.plot_meas(ind=0)
+    an.plot_meas(ind=2)
+    an.plot_meas(ind=101, ref_ind=100)
+    an.plot_meas_hist(vmax=1e7)
 
 
 if __name__ == '__main__':
