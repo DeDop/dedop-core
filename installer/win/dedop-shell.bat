@@ -1,12 +1,12 @@
 @echo off
 
-set DEDOP_HOME=%~dpnx0\..
+set DEDOP_HOME=%~dp0\..
 
 echo.
 @echo Welcome to the DeDop command-line interface. Type "dedop -h" to get help.
 echo.
 
-PATH=%DEDOP_HOME%\Scripts;%PATH%
+call "%DEDOP_HOME%\python\Scripts\activate.bat" "%DEDOP_HOME%\python"
 
 prompt $G$S
 

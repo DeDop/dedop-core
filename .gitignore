@@ -62,4 +62,6 @@ target/
 *.nc
 
 dedop-config.py
+dedop-installer.exe
+installer/win/python
 *-checkpoint.ipynb

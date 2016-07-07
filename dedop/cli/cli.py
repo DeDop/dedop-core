@@ -116,6 +116,16 @@ def _open_file(chd_file):
         subprocess.call(['open', chd_file], shell=True)
 
 
+def _dir_size(dir_path):
+    total = 0
+    for entry in os.scandir(dir_path):
+        if entry.is_file():
+            total += entry.stat().st_size
+        elif entry.is_dir():
+            total += _dir_size(entry.path)
+    return total
+
+
 class Command(metaclass=ABCMeta):
     """
     Represents (sub-)command for DeDop's command-line interface.
@@ -521,7 +531,7 @@ class ManageConfigsCommand(Command):
             _open_file(chd_file)
             _open_file(cnf_file)
             _open_file(cst_file)
-        except WorkspaceError as error:
+        except (WorkspaceError, IOError, OSError) as error:
             return 1, str(error)
         return cls.STATUS_OK
 
@@ -728,7 +738,7 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Manage L1B outputs.'
+        help_line = 'Manage L1B and analysis outputs.'
         return dict(aliases=['mo'], help=help_line, description=help_line)
 
     @classmethod
@@ -745,6 +755,9 @@ class ManageOutputsCommand(Command):
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
+
+        parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
+        parser_clean.set_defaults(mo_command=cls.execute_open)
 
         parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
         parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
@@ -767,6 +780,16 @@ class ManageOutputsCommand(Command):
         # Implementation here...
         #
         print('TODO: clean "%s"' % config_name)
+        return cls.STATUS_OK
+
+    @classmethod
+    def execute_open(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        try:
+            output_dir = _WORKSPACE_MANAGER.get_output_dir(workspace_name, config_name)
+            _open_file(output_dir)
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -809,14 +832,59 @@ class ManageOutputsCommand(Command):
         return cls.STATUS_OK
 
 
-class ShowCopyrightCommand(Command):
+class ShowStatusCommand(Command):
     @classmethod
     def name(cls):
-        return 'cr'
+        return 'status'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Print copyright information.'
+        help_line = 'Print DeDop status information.'
+        return dict(aliases=['st'], help=help_line, description=help_line)
+
+    def execute(self, command_args):
+        workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
+        if os.path.exists(workspaces_dir):
+            workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
+            if workspace_names:
+                workspace_names = ', '.join(workspace_names)
+            else:
+                workspace_names = '(not set)'
+            cur_workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
+            if cur_workspace_name:
+                cur_config_name = _WORKSPACE_MANAGER.get_current_config_name(cur_workspace_name)
+                if not cur_config_name:
+                    cur_config_name = '(not set)'
+            else:
+                cur_workspace_name = '(not set)'
+            try:
+                workspaces_size = '%s bytes' % _dir_size(workspaces_dir)
+            except (WorkspaceError, IOError, OSError) as error:
+                workspaces_size = '(error: %s)' % str(error)
+        else:
+            workspace_names = '(not set)'
+            workspaces_dir = '(not yet created)'
+            workspaces_size = '(not yet created)'
+            cur_workspace_name = '(not set)'
+            cur_config_name = '(not set)'
+
+        print('workspaces location:     %s' % workspaces_dir)
+        print('workspaces total size:   %s' % workspaces_size)
+        print('workspace names:         %s' % workspace_names)
+        print('current workspace:       %s' % cur_workspace_name)
+        print('current configuration:   %s' % cur_config_name)
+
+        return self.STATUS_OK
+
+
+class ShowCopyrightCommand(Command):
+    @classmethod
+    def name(cls):
+        return 'copyright'
+
+    @classmethod
+    def parser_kwargs(cls):
+        help_line = 'Print DeDop copyright information.'
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
@@ -827,11 +895,11 @@ class ShowCopyrightCommand(Command):
 class ShowLicenseCommand(Command):
     @classmethod
     def name(cls):
-        return 'lic'
+        return 'licence'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Print license information.'
+        help_line = 'Print DeDop license information.'
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
@@ -864,6 +932,7 @@ COMMAND_REGISTRY = [
     ManageConfigsCommand,
     ManageInputsCommand,
     ManageOutputsCommand,
+    ShowStatusCommand,
     ShowManualCommand,
     ShowCopyrightCommand,
     ShowLicenseCommand,

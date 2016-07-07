@@ -1,12 +1,33 @@
-set THIS_DIR=%~dpnx0
+@echo off
+
+set THIS_DIR=%~dp0
 set THIS_PYTHON=%THIS_DIR%\python
 
-conda create -y -p %THIS_PYTHON% python=3
-activate %THIS_PYTHON%
-conda install -y -c IOOS basemap numpy scipy matplotlib jupyter netCDF4
+@echo ========================================================
+@echo Installing Python...
+@echo ========================================================
+call conda create -y -p %THIS_PYTHON% python=3
+call activate %THIS_PYTHON%
 
+@echo ========================================================
+@echo Installing dependencies...
+@echo ========================================================
+call conda install -y numpy scipy netCDF4
+call conda install -y -c IOOS basemap matplotlib jupyter
+
+@echo ========================================================
+@echo Installing DeDop...
+@echo ========================================================
 cd %THIS_DIR%\..\..
-python setup.py install
+call python setup.py clean --all
+call python setup.py install
 
+@echo ========================================================
+@echo Building installer...
+@echo ========================================================
 cd %THIS_DIR%
-makensis dedop-installer.nsi
+call makensis dedop-installer.nsi
+
+@echo ========================================================
+@echo Done!
+@echo ========================================================
