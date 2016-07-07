@@ -231,6 +231,8 @@ class ManageWorkspacesCommand(Command):
 
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
 
+        parser.set_defaults(ws_parser=parser)
+
         parser_add = subparsers.add_parser('add', help='Add new workspace')
         parser_add.add_argument(**workspace_name_attributes)
         parser_add.set_defaults(ws_command=cls.execute_add)
@@ -261,7 +263,10 @@ class ManageWorkspacesCommand(Command):
         parser_list.set_defaults(ws_command=cls.execute_list)
 
     def execute(self, command_args):
-        return command_args.ws_command(command_args)
+        if hasattr(command_args, 'ws_command') and command_args.ws_command:
+            return command_args.ws_command(command_args)
+        else:
+            command_args.ws_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -387,6 +392,8 @@ class ManageConfigsCommand(Command):
 
         config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the configuration")
 
+        parser.set_defaults(cf_parser=parser)
+
         subparsers = parser.add_subparsers(help='DeDop configuration sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new configuration')
@@ -423,7 +430,10 @@ class ManageConfigsCommand(Command):
         parser_list.set_defaults(cf_command=cls.execute_list)
 
     def execute(self, command_args):
-        return command_args.cf_command(command_args)
+        if hasattr(command_args, 'cf_command') and command_args.cf_command:
+            return command_args.cf_command(command_args)
+        else:
+            command_args.cf_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -600,12 +610,13 @@ class ManageInputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+        cls.setup_default_parser_argument(parser)
+        parser.set_defaults(mi_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1A inputs sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new inputs')
+        cls.setup_default_parser_argument(parser_add)
         parser_add.add_argument('-q', '--quiet', action='store_true',
                                 help='Suppress output of progress information.')
         parser_add.add_argument('inputs', metavar='L1A_FILE', nargs='+',
@@ -613,6 +624,7 @@ class ManageInputsCommand(Command):
         parser_add.set_defaults(mi_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove inputs')
+        cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument('-q', '--quiet', action='store_true',
                                    help='Suppress output of progress information.')
         parser_remove.add_argument('inputs', metavar='L1A_FILE', nargs='*',
@@ -620,12 +632,21 @@ class ManageInputsCommand(Command):
         parser_remove.set_defaults(mi_command=cls.execute_remove)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List inputs')
+        cls.setup_default_parser_argument(parser_list)
         parser_list.add_argument('pattern', metavar='WC', nargs='?',
                                  help="Wildcard pattern.")
         parser_list.set_defaults(mi_command=cls.execute_list)
 
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+
     def execute(self, command_args):
-        return command_args.mi_command(command_args)
+        if hasattr(command_args, 'mi_command') and command_args.mi_command:
+            return command_args.mi_command(command_args)
+        else:
+            command_args.mi_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -713,21 +734,13 @@ class ManageOutputsCommand(Command):
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
         # TODO (hans-permana, 20160707): make the general arguments visible in sub-command
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
-                                         help="Name of the workspace.")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
-
-        config_name_attributes = dict(dest='config_name', metavar='CONFIG',
-                                      help="Name of the configuration.")
-        parser.add_argument('-c', '--config', **config_name_attributes)
-
+        cls.setup_default_parser_argument(parser)
         parser.set_defaults(mo_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
-        parser_clean.add_argument(nargs='?', **workspace_name_attributes)
-        parser_clean.add_argument(nargs='?', **config_name_attributes)
+        cls.setup_default_parser_argument(parser_clean)
         parser_clean.add_argument('outputs', metavar='L1B_FILE', nargs='*',
                                   help="L1B output file to be removed from workspace.")
         parser_clean.add_argument('-q', '--quiet', action='store_true',
@@ -735,16 +748,29 @@ class ManageOutputsCommand(Command):
         parser_clean.set_defaults(mo_command=cls.execute_clean)
 
         parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
+        cls.setup_default_parser_argument(parser_compare)
         parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
         parser_analyse = subparsers.add_parser('analyse', aliases=['an'], help='Analyse output')
+        cls.setup_default_parser_argument(parser_analyse)
         parser_analyse.set_defaults(mo_command=cls.execute_analyse)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
+        cls.setup_default_parser_argument(parser_list)
         parser_list.add_argument('pattern', metavar='WC', nargs='?',
                                  help="Wildcard pattern.")
         parser_list.set_defaults(mo_command=cls.execute_list)
+
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
+                                         help="Name of the workspace.")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+        config_name_attributes = dict(dest='config_name', metavar='CONFIG',
+                                      help="Name of the configuration.")
+        parser.add_argument('-c', '--config', **config_name_attributes)
+        return config_name_attributes, workspace_name_attributes
 
     def execute(self, command_args):
         if hasattr(command_args, 'mo_command') and command_args.mo_command:

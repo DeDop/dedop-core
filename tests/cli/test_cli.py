@@ -67,17 +67,17 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['created workspace "tests"',
                                          'current workspace is "tests"'])
         self._test_main(['mw', 'cp', 'tests'],
-                        expected_stdout=['workspace "tests" has been copied as "tests_copy"'])
+                        expected_stdout=['copied workspace "tests" to "tests_copy"'])
 
         self._test_main(['mw', 'cp', 'tests', 'tests2'],
-                        expected_stdout=['workspace "tests" has been copied as "tests2"'])
+                        expected_stdout=['copied workspace "tests" to "tests2"'])
 
         self._test_main(['mw', 'rn', 'tests9'],
-                        expected_stdout=['workspace "tests" has been renamed to "tests9',
+                        expected_stdout=['renamed workspace "tests" to "tests9"',
                                          'current workspace is "tests9"'])
 
         self._test_main(['mw', 'rn', 'tests2', 'tests3'],
-                        expected_stdout=['workspace "tests2" has been renamed to "tests3'])
+                        expected_stdout=['renamed workspace "tests2" to "tests3"'])
 
         self._test_main(['mw', 'rn'],
                         expected_exit_code=2,
@@ -134,17 +134,17 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current configuration is "config1"'])
 
         self._test_main(['mc', 'cp'],
-                        expected_stdout=['config "config1" has been copied as "config1_copy"'])
+                        expected_stdout=['copied configuration "config1" to "config1_copy"'])
 
         self._test_main(['mc', 'cp', 'config1', 'config9'],
-                        expected_stdout=['config "config1" has been copied as "config9"'])
+                        expected_stdout=['copied configuration "config1" to "config9"'])
 
         self._test_main(['mc', 'rn', 'config2'],
-                        expected_stdout=['config "config1" has been renamed to "config2"',
+                        expected_stdout=['renamed configuration "config1" to "config2"',
                                          'current configuration is "config2'])
 
         self._test_main(['mc', 'rn', 'config9', 'config10'],
-                        expected_stdout=['config "config9" has been renamed to "config10"'])
+                        expected_stdout=['renamed configuration "config9" to "config10"'])
 
         self._test_main(['mc', 'rn'],
                         expected_exit_code=2,
@@ -173,7 +173,7 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          '3: L1B__01_config1.nc',
                                          '4: L1B__02_config1.nc'])
 
-        self._test_main(['mo', 'cl', 'tests', 'config1', 'L1BS__01_config1.nc'],
+        self._test_main(['mo', 'cl', '-w', 'tests', '-c', 'config1', 'L1BS__01_config1.nc'],
                         expected_stdout=['removing outputs: done',
                                          'one output removed'])
 
