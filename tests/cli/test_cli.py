@@ -200,6 +200,10 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['created configuration "config1"',
                                          'current configuration is "config1"'])
 
+        self._test_main(['mi', 'add', ''],
+                        expected_exit_code=40,
+                        expected_stderr='no matching inputs found')
+
         self._test_main(['mi', 'add', input_files],
                         expected_stdout='added 2 inputs')
 
@@ -207,6 +211,10 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['2 inputs in workspace "tests":',
                                          '1: L1A_01.nc',
                                          '2: L1A_02.nc'])
+
+        self._test_main(['mi', 'rm', 'non-existent-file'],
+                        expected_exit_code=40,
+                        expected_stderr='no matching inputs found')
 
         self._test_main(['mi', 'rm'],
                         expected_stdout=['removing inputs: done',
