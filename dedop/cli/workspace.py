@@ -77,6 +77,10 @@ class WorkspaceManager:
     def __init__(self, workspaces_dir=None):
         self._workspaces_dir = workspaces_dir if workspaces_dir else DEFAULT_WORKSPACES_DIR
 
+    @property
+    def workspaces_dir(self):
+        return self._workspaces_dir
+
     def delete_all_workspaces(self) -> str:
         if os.path.isdir(self._workspaces_dir):
             try:
