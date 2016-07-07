@@ -139,6 +139,10 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['mc', 'cp', 'config1', 'config9'],
                         expected_stdout=['config "config1" has been copied as "config9"'])
 
+        self._test_main(['mc', 'rn', 'config2'],
+                        expected_stdout=['config "config1" has been renamed to "config2"',
+                                         'current configuration is "config2'])
+
         self._test_main(['mc', 'rn', 'config9', 'config10'],
                         expected_stdout=['config "config9" has been renamed to "config10"'])
 

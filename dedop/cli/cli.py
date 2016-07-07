@@ -312,7 +312,6 @@ class ManageWorkspacesCommand(Command):
             print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
             if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
                 cls.set_current_workspace(new_name)
-
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -476,6 +475,8 @@ class ManageConfigsCommand(Command):
         try:
             _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
             print('config "%s" has been renamed to "%s"' % (config_name, new_name))
+            if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
+                cls.set_current_config(workspace_name, new_name)
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
