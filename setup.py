@@ -1,4 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
+print('packages to be installed:', packages)
 
 setup(
     name="dedop",
@@ -6,21 +9,19 @@ setup(
     description='Delay Doppler (Altimeter) Processor',
     license='GPL 3',
     author='DeDop Development Team',
-    packages=['dedop.model',
-              'dedop.proc',
-              'dedop.conf',
-              'dedop.util',
-              'dedop.cli'],
+    packages=packages,
     entry_points={
         'console_scripts': [
             'dedop = dedop.cli:main'
         ]
-    } # ,
-    #install_requires=['numpy >= 1.9',
+    }
+    # Requirements are not given here as we use a Conda environment
+    # ,
+    # install_requires=['numpy >= 1.9',
     #                  'netCDF4 >= 1.1',
     #                  'scipy',
     #                  'typing'],
-    #extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
+    # extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',

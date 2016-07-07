@@ -13,8 +13,8 @@
 !define HELPURL "http://dedop.readthedocs.io/en/latest" # "Support Information" link
 !define UPDATEURL "https://github.com/DeDop/dedop" # "Product Updates" link
 !define ABOUTURL "http://www.dedop.org/" # "Publisher" link
-# This is the size (in kB) of all the files copied into "Program Files"
-!define INSTALLSIZE 850000
+# This is the size (in kB) of all the files copied into $INSTDIR
+!define INSTALLSIZE 855000
  
 #InstallDir "$PROGRAMFILES64\${COMPANYNAME}\${APPNAME}"
 InstallDir "$PROFILE\${APPNAME}"
