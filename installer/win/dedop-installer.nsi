@@ -49,8 +49,11 @@ section "install"
 	setOutPath $INSTDIR\python
 	file /r python\*.*
 
-	setOutPath $INSTDIR
+	setOutPath $INSTDIR\bin
 	file "dedop.ico"
+	file "dedop-shell.bat"
+
+	setOutPath $INSTDIR
 	file "license.rtf"
 
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
@@ -59,7 +62,7 @@ section "install"
 	# Start Menu
 	#createDirectory "$SMPROGRAMS\${COMPANYNAME}"
 	#createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\app.exe" "" "$INSTDIR\logo.ico"
-	createShortCut $INSTDIR\dedop $INSTDIR\python\Scripts\dedop.exe "" $INSTDIR\dedop.ico
+	createShortCut "$INSTDIR\DeDop Shell.lnk" "$INSTDIR\bin\dedop-shell.bat" "" "$INSTDIR\bin\dedop.ico"
  
 	# Registry information for add/remove programs
 	#WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayName" "${COMPANYNAME} - ${APPNAME} - ${DESCRIPTION}"
@@ -94,10 +97,10 @@ functionEnd
  
 section "uninstall"
  
-	delete $INSTDIR\dedop.lnk
-	delete $INSTDIR\dedop.rtf
-	delete $INSTDIR\dedop.ico
+	rmDir /r $INSTDIR\bin
 	rmDir /r $INSTDIR\python
+	delete "$INSTDIR\DeDop Shell.lnk"
+	delete "$INSTDIR\license.rtf"
 
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 	#rmDir "$SMPROGRAMS\${COMPANYNAME}"
