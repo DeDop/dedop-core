@@ -746,6 +746,9 @@ class ManageOutputsCommand(Command):
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
 
+        parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
+        parser_clean.set_defaults(mo_command=cls.execute_open)
+
         parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
         parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
@@ -767,6 +770,16 @@ class ManageOutputsCommand(Command):
         # Implementation here...
         #
         print('TODO: clean "%s"' % config_name)
+        return cls.STATUS_OK
+
+    @classmethod
+    def execute_open(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        try:
+            output_dir = _WORKSPACE_MANAGER.get_output_dir(workspace_name, config_name)
+            _open_file(output_dir)
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
