@@ -6,6 +6,19 @@ _LOCAL_CONFIG_FILE = './dedop-config.py'
 _CONFIG = None
 
 
+def get_config_path(name: str, default=None):
+    """
+    Get the ``str`` value of the configuration parameter *name* which is expected to be a path.
+    Any tilde character '~' in the value will be expanded to the current user's home directory.
+
+    :param name: The name of the configuration parameter.
+    :param default: The default value, if *name* is not defined.
+    :return: The value
+    """
+    value = get_config_value(name, default=default)
+    return os.path.expanduser(str(value)) if value is not None else None
+
+
 def get_config_value(name: str, default=None):
     """
     Get the value of the configuration parameter *name*.

@@ -2,7 +2,7 @@ import os.path
 from io import StringIO
 from unittest import TestCase
 
-from dedop.util.config import get_config_value, get_config, read_python_config
+from dedop.util.config import get_config_value, get_config_path, get_config, read_python_config
 
 
 class PythonConfigTest(TestCase):
@@ -17,6 +17,12 @@ class PythonConfigTest(TestCase):
 
         value = get_config_value('_im_not_in_', 'Yes!')
         self.assertEqual(value, 'Yes!')
+
+    def test_get_config_path(self):
+        value = get_config_path('_im_not_in_', '~/dedop-workspaces')
+        self.assertIsNotNone(value)
+        self.assertTrue(value.endswith('dedop-workspaces'))
+        self.assertNotIn('~', value)
 
     def test_get_config(self):
         config = get_config()
