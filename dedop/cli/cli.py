@@ -116,6 +116,16 @@ def _open_file(chd_file):
         subprocess.call(['open', chd_file], shell=True)
 
 
+def _dir_size(dir_path):
+    total = 0
+    for entry in os.scandir(dir_path):
+        if entry.is_file():
+            total += entry.stat().st_size
+        elif entry.is_dir():
+            total += _dir_size(entry.path)
+    return total
+
+
 class Command(metaclass=ABCMeta):
     """
     Represents (sub-)command for DeDop's command-line interface.
@@ -521,7 +531,7 @@ class ManageConfigsCommand(Command):
             _open_file(chd_file)
             _open_file(cnf_file)
             _open_file(cst_file)
-        except WorkspaceError as error:
+        except (WorkspaceError, IOError, OSError) as error:
             return 1, str(error)
         return cls.STATUS_OK
 
@@ -728,7 +738,7 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Manage L1B outputs.'
+        help_line = 'Manage L1B and analysis outputs.'
         return dict(aliases=['mo'], help=help_line, description=help_line)
 
     @classmethod
@@ -822,14 +832,59 @@ class ManageOutputsCommand(Command):
         return cls.STATUS_OK
 
 
-class ShowCopyrightCommand(Command):
+class ShowStatusCommand(Command):
     @classmethod
     def name(cls):
-        return 'cr'
+        return 'status'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Print copyright information.'
+        help_line = 'Print DeDop status information.'
+        return dict(aliases=['st'], help=help_line, description=help_line)
+
+    def execute(self, command_args):
+        workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
+        if os.path.exists(workspaces_dir):
+            workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
+            if workspace_names:
+                workspace_names = ', '.join(workspace_names)
+            else:
+                workspace_names = '(not set)'
+            cur_workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
+            if cur_workspace_name:
+                cur_config_name = _WORKSPACE_MANAGER.get_current_config_name(cur_workspace_name)
+                if not cur_config_name:
+                    cur_config_name = '(not set)'
+            else:
+                cur_workspace_name = '(not set)'
+            try:
+                workspaces_size = '%s bytes' % _dir_size(workspaces_dir)
+            except (WorkspaceError, IOError, OSError) as error:
+                workspaces_size = '(error: %s)' % str(error)
+        else:
+            workspace_names = '(not set)'
+            workspaces_dir = '(not yet created)'
+            workspaces_size = '(not yet created)'
+            cur_workspace_name = '(not set)'
+            cur_config_name = '(not set)'
+
+        print('workspaces location:     %s' % workspaces_dir)
+        print('workspaces total size:   %s' % workspaces_size)
+        print('workspace names:         %s' % workspace_names)
+        print('current workspace:       %s' % cur_workspace_name)
+        print('current configuration:   %s' % cur_config_name)
+
+        return self.STATUS_OK
+
+
+class ShowCopyrightCommand(Command):
+    @classmethod
+    def name(cls):
+        return 'copyright'
+
+    @classmethod
+    def parser_kwargs(cls):
+        help_line = 'Print DeDop copyright information.'
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
@@ -840,11 +895,11 @@ class ShowCopyrightCommand(Command):
 class ShowLicenseCommand(Command):
     @classmethod
     def name(cls):
-        return 'lic'
+        return 'licence'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Print license information.'
+        help_line = 'Print DeDop license information.'
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
@@ -877,6 +932,7 @@ COMMAND_REGISTRY = [
     ManageConfigsCommand,
     ManageInputsCommand,
     ManageOutputsCommand,
+    ShowStatusCommand,
     ShowManualCommand,
     ShowCopyrightCommand,
     ShowLicenseCommand,
