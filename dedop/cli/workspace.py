@@ -155,6 +155,8 @@ class WorkspaceManager:
         :param workspace_name: workspace name to be queried
         :raise: WorkspaceError
         """
+        # TODO (hans-permana, 20160707) - change the design to make the info display independent
+        # of the output (no prints)
         self._assert_workspace_exists(workspace_name)
         dir_path = self._get_workspace_path(workspace_name)
         config_name = self.get_current_config_name(workspace_name)
@@ -259,7 +261,7 @@ class WorkspaceManager:
         dir_path_new = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
         if os.path.exists(dir_path):
             try:
-                shutil.move(dir_path, dir_path_new)
+                os.rename(dir_path, dir_path_new)
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
@@ -268,7 +270,7 @@ class WorkspaceManager:
         :param workspace_name: workspace name
         :param config_name: config name to be queried
         """
-        # TODO Find out what information to be displayed
+        # TODO (hans-permana, 20160707) Find out what information to be displayed
 
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self._get_config_path(workspace_name, config_name, config_file_key + '.json')

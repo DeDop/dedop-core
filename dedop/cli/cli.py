@@ -292,11 +292,12 @@ class ManageWorkspacesCommand(Command):
         if not workspace_name:
             return 1, 'no current workspace'
         new_name = command_args.new_name
+        # TODO (hans-permana, 20160707): ensure the new ws name is unique
         if not new_name:
             new_name = workspace_name + '_copy'
         try:
             _WORKSPACE_MANAGER.copy_workspace(workspace_name, new_name)
-            print('workspace "%s" has been copied as "%s"' % (workspace_name, new_name))
+            print('copied workspace "%s" to "%s"' % (workspace_name, new_name))
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -307,9 +308,10 @@ class ManageWorkspacesCommand(Command):
         if not workspace_name:
             return 1, 'no current workspace'
         new_name = command_args.new_name
+        # TODO (hans-permana, 20160707): ensure the new ws name is unique
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
-            print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
+            print('renamed workspace "%s" to "%s"' % (workspace_name, new_name))
             if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
                 cls.set_current_workspace(new_name)
         except WorkspaceError as error:
@@ -455,11 +457,12 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
+        # TODO (hans-permana, 20160707): ensure the new config name is unique
         if not new_name:
             new_name = config_name + '_copy'
         try:
             _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
-            print('config "%s" has been copied as "%s"' % (config_name, new_name))
+            print('copied configuration "%s" to "%s"' % (config_name, new_name))
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -472,9 +475,10 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
+        # TODO (hans-permana, 20160707): ensure the new config name is unique
         try:
             _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
-            print('config "%s" has been renamed to "%s"' % (config_name, new_name))
+            print('renamed configuration "%s" to "%s"' % (config_name, new_name))
             if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
                 cls.set_current_config(workspace_name, new_name)
         except WorkspaceError as error:
@@ -660,6 +664,7 @@ class ManageInputsCommand(Command):
         if not input_names:
             return _STATUS_NO_MATCHING_INPUTS
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
+        # TODO (hans-permana, 20160707): ask the user to confirm the deletion
         try:
             _WORKSPACE_MANAGER.remove_inputs(workspace_name, input_names, monitor)
             input_count = len(input_names)
@@ -707,6 +712,7 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
+        # TODO (hans-permana, 20160707): make the general arguments visible in sub-command
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
                                          help="Name of the workspace.")
         parser.add_argument('-w', '--workspace', **workspace_name_attributes)
@@ -714,6 +720,8 @@ class ManageOutputsCommand(Command):
         config_name_attributes = dict(dest='config_name', metavar='CONFIG',
                                       help="Name of the configuration.")
         parser.add_argument('-c', '--config', **config_name_attributes)
+
+        parser.set_defaults(mo_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
@@ -739,10 +747,15 @@ class ManageOutputsCommand(Command):
         parser_list.set_defaults(mo_command=cls.execute_list)
 
     def execute(self, command_args):
-        return command_args.mo_command(command_args)
+        if hasattr(command_args, 'mo_command') and command_args.mo_command:
+            return command_args.mo_command(command_args)
+        else:
+            command_args.mo_parser.print_help()
 
     @classmethod
     def execute_clean(cls, command_args):
+        # TODO (hans-permana, 20160707): modify the behaviour to clean everything in the output dir
+        # TODO (hans-permana, 20160707): ask the user to confirm the deletion
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
             return _STATUS_NO_WORKSPACE
