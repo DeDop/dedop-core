@@ -20,6 +20,8 @@ from dedop.cli.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
+_DEFAULT_SUFFIX = '_1'
+
 _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
 
@@ -297,9 +299,9 @@ class ManageWorkspacesCommand(Command):
         if not workspace_name:
             return 1, 'no current workspace'
         new_name = command_args.new_name
-        # TODO (hans-permana, 20160707): ensure the new ws name is unique
         if not new_name:
-            new_name = workspace_name + '_copy'
+            new_name = workspace_name + _DEFAULT_SUFFIX
+        new_name = cls.ensure_unique_name(new_name)
         try:
             _WORKSPACE_MANAGER.copy_workspace(workspace_name, new_name)
             print('copied workspace "%s" to "%s"' % (workspace_name, new_name))
@@ -312,8 +314,7 @@ class ManageWorkspacesCommand(Command):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
             return 1, 'no current workspace'
-        new_name = command_args.new_name
-        # TODO (hans-permana, 20160707): ensure the new ws name is unique
+        new_name = cls.ensure_unique_name(command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
             print('renamed workspace "%s" to "%s"' % (workspace_name, new_name))
@@ -373,6 +374,16 @@ class ManageWorkspacesCommand(Command):
     def set_current_workspace(cls, workspace_name):
         _WORKSPACE_MANAGER.set_current_workspace_name(workspace_name)
         print('current workspace is "%s"' % workspace_name)
+
+    @classmethod
+    def ensure_unique_name(cls, new_name):
+        index = 2
+        valid_new_name = new_name
+        while valid_new_name in _WORKSPACE_MANAGER.get_workspace_names():
+            print('workspace "%s" already exists' % valid_new_name)
+            valid_new_name = '%s_%d' % (new_name, index)
+            index += 1
+        return valid_new_name
 
 
 class ManageConfigsCommand(Command):

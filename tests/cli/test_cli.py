@@ -67,14 +67,23 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['created workspace "tests"',
                                          'current workspace is "tests"'])
         self._test_main(['mw', 'cp', 'tests'],
-                        expected_stdout=['copied workspace "tests" to "tests_copy"'])
+                        expected_stdout=['copied workspace "tests" to "tests_1"'])
 
         self._test_main(['mw', 'cp', 'tests', 'tests2'],
                         expected_stdout=['copied workspace "tests" to "tests2"'])
 
+        self._test_main(['mw', 'cp', 'tests', 'tests2'],
+                        expected_stdout=['workspace "tests2" already exists',
+                                         'copied workspace "tests" to "tests2_2"'])
+
         self._test_main(['mw', 'rn', 'tests9'],
                         expected_stdout=['renamed workspace "tests" to "tests9"',
                                          'current workspace is "tests9"'])
+
+        self._test_main(['mw', 'rn', 'tests9'],
+                        expected_stdout=['workspace "tests9" already exists',
+                                         'renamed workspace "tests9" to "tests9_2"',
+                                         'current workspace is "tests9_2"'])
 
         self._test_main(['mw', 'rn', 'tests2', 'tests3'],
                         expected_stdout=['renamed workspace "tests2" to "tests3"'])
