@@ -705,18 +705,19 @@ class ManageInputsCommand(Command):
         if not input_names:
             return _STATUS_NO_MATCHING_INPUTS
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
-        # TODO (hans-permana, 20160707): ask the user to confirm the deletion
-        try:
-            _WORKSPACE_MANAGER.remove_inputs(workspace_name, input_names, monitor)
-            input_count = len(input_names)
-            if input_count == 0:
-                print('no inputs removed')
-            elif input_count == 1:
-                print('one input removed')
-            else:
-                print('removed %s inputs' % input_count)
-        except WorkspaceError as e:
-            return 30, str(e)
+        answer = 'yes' if command_args.quiet else _input('delete inputs "%s"? [yes]' % input_names, 'yes').lower()
+        if answer.lower() == 'yes':
+            try:
+                _WORKSPACE_MANAGER.remove_inputs(workspace_name, input_names, monitor)
+                input_count = len(input_names)
+                if input_count == 0:
+                    print('no inputs removed')
+                elif input_count == 1:
+                    print('one input removed')
+                else:
+                    print('removed %s inputs' % input_count)
+            except WorkspaceError as e:
+                return 30, str(e)
         return cls.STATUS_OK
 
     @classmethod
@@ -801,7 +802,6 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_clean(cls, command_args):
         # TODO (hans-permana, 20160707): modify the behaviour to clean everything in the output dir
-        # TODO (hans-permana, 20160707): ask the user to confirm the deletion
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
             return _STATUS_NO_WORKSPACE
@@ -814,17 +814,19 @@ class ManageOutputsCommand(Command):
         if not output_names:
             return _STATUS_NO_MATCHING_OUTPUTS
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
-        try:
-            _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name, output_names, monitor)
-            output_count = len(output_names)
-            if output_count == 0:
-                print('no outputs removed')
-            elif output_count == 1:
-                print('one output removed')
-            else:
-                print('removed %s outputs' % output_count)
-        except WorkspaceError as e:
-            return 30, str(e)
+        answer = 'yes' if command_args.quiet else _input('delete outputs "%s"? [yes]' % output_names, 'yes')
+        if answer.lower() == 'yes':
+            try:
+                _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name, output_names, monitor)
+                output_count = len(output_names)
+                if output_count == 0:
+                    print('no outputs removed')
+                elif output_count == 1:
+                    print('one output removed')
+                else:
+                    print('removed %s outputs' % output_count)
+            except WorkspaceError as e:
+                return 30, str(e)
         return cls.STATUS_OK
 
     @classmethod
