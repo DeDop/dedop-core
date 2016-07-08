@@ -4,6 +4,7 @@ import pkgutil
 import shutil
 
 from typing import List
+from dedop.cli.workspace_info import WorkspaceInfo
 
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
@@ -150,45 +151,16 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
-    def print_workspace_info(self, workspace_name: str):
+    def get_workspace_info(self, workspace_name: str):
         """
         :param workspace_name: workspace name to be queried
         :raise: WorkspaceError
         """
-        # TODO (hans-permana, 20160707) - change the design to make the info display independent
-        # of the output (no prints)
         self._assert_workspace_exists(workspace_name)
         dir_path = self._get_workspace_path(workspace_name)
         config_name = self.get_current_config_name(workspace_name)
-        print('Available workspace:')
-        for ws in self.get_workspace_names():
-            if ws == workspace_name:
-                print('  ' + ws + '*')
-            else:
-                print('  ' + ws)
-        print('')
-        print('Available configurations:')
-        if self.get_config_names(workspace_name):
-            for cf in self.get_config_names(workspace_name):
-                if cf == config_name:
-                    print('  ' + cf + '*')
-                else:
-                    print('  ' + cf)
-        print('')
-        print('Available input files:')
-        if os.path.isdir(os.path.join(dir_path, 'inputs')):
-            for file in os.listdir(os.path.join(dir_path, 'inputs')):
-                file_path = os.path.join(dir_path, 'inputs', file)
-                print('  %s\t%s MB' % (file_path, os.path.getsize(file_path) >> 20))
-        print('')
-        print('Available output files:')
-        if self.get_current_config_name(workspace_name):
-            output_dir = self.get_output_dir(workspace_name, config_name)
-            if os.path.isdir(output_dir):
-                for dataset_file in os.listdir(output_dir):
-                    dataset_path = os.path.join(output_dir, dataset_file)
-                    print('  %s\t\t%s MB' % (dataset_path, os.path.getsize(dataset_path) >> 20))
-        print('')
+        return WorkspaceInfo(dir_path, workspace_name, self.get_workspace_names(), config_name,
+                             self.get_config_names(workspace_name))
 
     def get_workspace_names(self) -> List[str]:
         workspaces_dir = self._workspaces_dir

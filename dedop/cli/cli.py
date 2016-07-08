@@ -17,6 +17,7 @@ from typing import Tuple, Optional
 
 from dedop.cli.dummy_processor import Processor
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
+from dedop.cli.workspace_info import WorkspaceInfo
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
@@ -342,7 +343,8 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def execute_info(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
-        _WORKSPACE_MANAGER.print_workspace_info(workspace_name)
+        workspace_info = _WORKSPACE_MANAGER.get_workspace_info(workspace_name)
+        print(workspace_info.get_workspace_info_string())
         return cls.STATUS_OK
 
     # noinspection PyUnusedLocal
