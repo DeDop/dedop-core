@@ -478,9 +478,9 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
-        # TODO (hans-permana, 20160707): ensure the new config name is unique
         if not new_name:
             new_name = config_name + '_copy'
+        new_name = cls.ensure_unique_name(workspace_name, new_name)
         try:
             _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
             print('copied configuration "%s" to "%s"' % (config_name, new_name))
@@ -495,8 +495,7 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        new_name = command_args.new_name
-        # TODO (hans-permana, 20160707): ensure the new config name is unique
+        new_name = cls.ensure_unique_name(workspace_name, command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
             print('renamed configuration "%s" to "%s"' % (config_name, new_name))
@@ -605,6 +604,16 @@ class ManageConfigsCommand(Command):
         """
         _WORKSPACE_MANAGER.set_current_config_name(workspace_name, config_name)
         print('current configuration is "%s"' % config_name)
+
+    @classmethod
+    def ensure_unique_name(cls, workspace_name, new_name):
+        index = 2
+        valid_new_name = new_name
+        while valid_new_name in _WORKSPACE_MANAGER.get_config_names(workspace_name):
+            print('configuration "%s" already exists' % valid_new_name)
+            valid_new_name = '%s_%d' % (new_name, index)
+            index += 1
+        return valid_new_name
 
 
 class ManageInputsCommand(Command):

@@ -148,12 +148,20 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['mc', 'cp', 'config1', 'config9'],
                         expected_stdout=['copied configuration "config1" to "config9"'])
 
+        self._test_main(['mc', 'cp', 'config1', 'config9'],
+                        expected_stdout=['configuration "config9" already exists',
+                                         'copied configuration "config1" to "config9_2"'])
+
         self._test_main(['mc', 'rn', 'config2'],
                         expected_stdout=['renamed configuration "config1" to "config2"',
                                          'current configuration is "config2'])
 
         self._test_main(['mc', 'rn', 'config9', 'config10'],
                         expected_stdout=['renamed configuration "config9" to "config10"'])
+
+        self._test_main(['mc', 'rn', 'config10', 'config2'],
+                        expected_stdout=['configuration "config2" already exists',
+                                         'renamed configuration "config10" to "config2_2"'])
 
         self._test_main(['mc', 'rn'],
                         expected_exit_code=2,
