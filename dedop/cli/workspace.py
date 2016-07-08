@@ -341,23 +341,22 @@ class WorkspaceManager:
     def _get_config_path(self, workspace_name, config_name, *paths):
         return self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
 
-    def remove_outputs(self, workspace_name, config_name, output_names, monitor):
+    def remove_outputs(self, workspace_name, config_name):
         """
         :param workspace_name: the workspace name in which the output files are located
         :param config_name: the config name with which the output files were created
-        :param output_names: the name of the output files to be removed
-        :param monitor: to monitor the progress
         """
         output_dir = self.get_output_dir(workspace_name, config_name)
+        if not os.path.exists(output_dir):
+            raise WorkspaceError('output directory does not exist')
+        output_names = os.listdir(output_dir)
         output_paths = [os.path.join(output_dir, output_name) for output_name in output_names]
-        with monitor.starting('removing outputs', len(output_paths)):
-            for output_path in output_paths:
-                if os.path.exists(output_path):
-                    try:
-                        os.remove(output_path)
-                    except (IOError, OSError) as e:
-                        raise WorkspaceError(str(e))
-                monitor.progress(1)
+        for output_path in output_paths:
+            if os.path.exists(output_path):
+                try:
+                    os.remove(output_path)
+                except (IOError, OSError) as e:
+                    raise WorkspaceError(str(e))
 
     def get_output_names(self, workspace_name: str, config_name: str, pattern=None):
         """

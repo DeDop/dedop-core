@@ -762,8 +762,6 @@ class ManageOutputsCommand(Command):
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
         cls.setup_default_parser_argument(parser_clean)
-        parser_clean.add_argument('outputs', metavar='L1B_FILE', nargs='*',
-                                  help="L1B output file to be removed from workspace.")
         parser_clean.add_argument('-q', '--quiet', action='store_true',
                                   help='Suppress output of progress information.')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
@@ -801,23 +799,18 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def execute_clean(cls, command_args):
-        # TODO (hans-permana, 20160707): modify the behaviour to clean everything in the output dir
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        output_names = command_args.outputs
-        if not output_names:
-            output_names = '*.nc'
-        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name, pattern=output_names)
+        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name)
         if not output_names:
             return _STATUS_NO_MATCHING_OUTPUTS
-        monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
-        answer = 'yes' if command_args.quiet else _input('delete outputs "%s"? [yes]' % output_names, 'yes')
+        answer = 'yes' if command_args.quiet else _input('clean outputs directory? [yes]', 'yes')
         if answer.lower() == 'yes':
             try:
-                _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name, output_names, monitor)
+                _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name)
                 output_count = len(output_names)
                 if output_count == 0:
                     print('no outputs removed')

@@ -213,26 +213,24 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
         self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output2.nc', expected=True)
         self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output3.nc', expected=True)
 
-        self.manager.remove_outputs('ernie', 'laugh', ['output1.nc'],
-                                    ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
-
-        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output1.nc', expected=False)
-        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output2.nc', expected=True)
-        self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output3.nc', expected=True)
-
-        self.manager.remove_outputs('ernie', 'laugh', ['output2.nc', 'output3.nc'],
-                                    ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
+        self.manager.remove_outputs('ernie', 'laugh')
 
         self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output1.nc', expected=False)
         self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output2.nc', expected=False)
         self.assertIsWorkspaceFile('ernie', 'configs', 'laugh', 'outputs', 'output3.nc', expected=False)
 
     def test_remove_non_existent_outputs(self):
-        # no error thrown even when files do not exist
+        # no error thrown when files do not exist inside outputs dir
         self.manager.create_workspace('ernie')
         self.manager.create_config('ernie', 'laugh')
-        self.manager.remove_outputs('ernie', 'laugh', ['output1.nc'],
-                                    ConsoleMonitor(stay_in_line=True, progress_bar_size=32))
+
+        self.assertRaisedException(WorkspaceError,
+                                   'output directory does not exist',
+                                   self.manager.remove_outputs,
+                                   'ernie', 'laugh')
+
+        self.createWorkspaceSubDir(WORKSPACES_DIR, 'ernie', 'configs', 'laugh', 'outputs')
+        self.manager.remove_outputs('ernie', 'laugh')
 
     def test_add_inputs(self):
         self.manager.create_workspace('ernie')

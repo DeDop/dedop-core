@@ -190,17 +190,8 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          '3: L1B__01_config1.nc',
                                          '4: L1B__02_config1.nc'])
 
-        self._test_main(['mo', 'cl', '-q', '-w', 'tests', '-c', 'config1', 'L1BS__01_config1.nc'],
-                        expected_stdout=['one output removed'])
-
-        self._test_main(['mo', 'list'],
-                        expected_stdout=['3 outputs created with config "config1" in workspace "tests":',
-                                         '1: L1BS__02_config1.nc',
-                                         '2: L1B__01_config1.nc',
-                                         '3: L1B__02_config1.nc'])
-
         self._test_main(['mo', 'cl', '-q'],
-                        expected_stdout=['removed 3 outputs'])
+                        expected_stdout=['removed 4 outputs'])
 
         self._test_main(['mo', 'list'],
                         expected_stdout=['no outputs created with config "config1" in workspace "tests"'])
