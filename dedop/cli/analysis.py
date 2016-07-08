@@ -1,8 +1,10 @@
 import sys
 
+import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
-from ipywidgets import interact, fixed
+from IPython.display import display
+from ipywidgets import interact, interactive, fixed
 from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, num2date
 
@@ -24,6 +26,20 @@ class L1bAnalysis:
 
         ds = Dataset(file)
         self.ds = ds
+
+        self.dims = {}
+        for name, dim in ds.dimensions.items():
+            self.dims[name] = dim.size
+
+        self.vars = {}
+        for v in ds.variables:
+            dims = tuple(ds[v].dimensions)
+            if dims in self.vars:
+                self.vars[dims].add(v)
+            else:
+                self.vars[dims] = {v}
+
+        self.attribs = {name: self.ds.getncattr(name) for name in self.ds.ncattrs()}
 
         self.lat = ds['lat_l1b_echo_sar_ku'][:]
         self.lon = ds['lon_l1b_echo_sar_ku'][:] - 180.0
@@ -53,10 +69,6 @@ class L1bAnalysis:
 
     def close(self):
         self.ds.close()
-
-    @property
-    def attribs(self):
-        return {name: self.ds.getncattr(name) for name in self.ds.ncattrs()}
 
     def plot_locs(self, scales=None):
         lat_0 = self.lat.mean()
@@ -152,6 +164,65 @@ class L1bAnalysis:
         else:
             plt.savefig("plot_meas_t%06d.png" % ind)
 
+    def plot_2d_vars(self, x_name=None, y_name=None):
+        if not x_name or not y_name:
+            if self.interactive:
+                widget_dim_options = list(self.dims.keys())
+                widget_dim_value = widget_dim_options[0]
+                widget_dim = widgets.Dropdown(options=widget_dim_options, value=widget_dim_value, description='Dim:')
+                widget_x_options = ['index'] + list(self.vars[(widget_dim_value,)])
+                widget_x_value = widget_x_options[0]
+                widget_x = widgets.Dropdown(options=widget_x_options, value=widget_x_value, description='X:')
+                widget_y_options = list(self.vars[(widget_dim_value,)])
+                widget_y_value = widget_y_options[0]
+                widget_y = widgets.Dropdown(options=widget_y_options, value=widget_y_value, description='Y:')
+                display(widget_dim)
+
+                def on_widget_dim_change(change):
+                    nonlocal widget_x, widget_y
+                    widget_y.options = sorted(list(self.vars[(widget_dim.value,)]))
+                    widget_x.options = ['index'] + widget_y.options
+                    widget_y.value = widget_y.options[0]
+                    widget_x.value = widget_x.options[0]
+
+                def on_widget_x_change(change):
+                    display()
+
+                def on_widget_y_change(change):
+                    display()
+
+                widget_dim.observe(on_widget_dim_change, names='value')
+                widget_x.observe(on_widget_x_change, names='value')
+                widget_y.observe(on_widget_y_change, names='value')
+                interact(self._plot_2d_vars, x_name=widget_x, y_name=widget_y)
+            else:
+                raise ValueError('x_name and y_name must be given')
+        else:
+            self._plot_2d_vars(x_name, y_name)
+
+    def _plot_2d_vars(self, x_name, y_name):
+        y_var = self.ds[y_name]
+        y_units = y_var.units if hasattr(y_var, 'units') else '?'
+        y_data = y_var[:]
+        if x_name == 'index':
+            x_units = '-'
+            x_data = np.arange(0, len(y_data))
+        else:
+            x_var = self.ds[x_name]
+            x_units = x_var.units if hasattr(x_var, 'units') else '?'
+            x_data = x_var[:]
+
+        plt.figure(figsize=(12, 6))
+        plt.plot(x_data, y_data, 'b-')
+        plt.xlabel('%s (%s)' % (x_name, x_units))
+        plt.ylabel('%s (%s)' % (y_name, y_units))
+        #ax.set_title('%s over %s' % (x_name, y_name))
+        plt.grid(True)
+        if self.interactive:
+            plt.show()
+        else:
+            plt.savefig('%s_over_%s.png' % (x_name, y_name))
+
 
 def main(args=None):
     if args is None:
@@ -164,6 +235,10 @@ def main(args=None):
     an.plot_meas(ind=2)
     an.plot_meas(ind=101, ref_ind=100)
     an.plot_meas_hist(vmax=1e7)
+    an.plot_2d_vars('index', 'surf_type_l1b_echo_sar_ku')
+    an.plot_2d_vars('lon_l1b_echo_sar_ku', 'lat_l1b_echo_sar_ku')
+
+    # an.plot_meas(an.ds[''])
 
 
 if __name__ == '__main__':
