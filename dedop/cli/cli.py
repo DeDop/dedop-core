@@ -895,7 +895,7 @@ class ShowCopyrightCommand(Command):
 class ShowLicenseCommand(Command):
     @classmethod
     def name(cls):
-        return 'licence'
+        return 'license'
 
     @classmethod
     def parser_kwargs(cls):
