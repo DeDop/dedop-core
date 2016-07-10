@@ -4,7 +4,7 @@ import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import display
-from ipywidgets import interact, interactive, fixed
+from ipywidgets import interact, fixed
 from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, num2date
 
@@ -27,19 +27,19 @@ class L1bAnalysis:
         ds = Dataset(file)
         self.ds = ds
 
-        self.dims = {}
+        self.dim_name_to_size = {}
         for name, dim in ds.dimensions.items():
-            self.dims[name] = dim.size
+            self.dim_name_to_size[name] = dim.size
 
-        self.vars = {}
+        self.dim_names_to_var_names = {}
         for v in ds.variables:
             dims = tuple(ds[v].dimensions)
-            if dims in self.vars:
-                self.vars[dims].add(v)
+            if dims in self.dim_names_to_var_names:
+                self.dim_names_to_var_names[dims].add(v)
             else:
-                self.vars[dims] = {v}
+                self.dim_names_to_var_names[dims] = {v}
 
-        self.attribs = {name: self.ds.getncattr(name) for name in self.ds.ncattrs()}
+        self.attributes = {name: self.ds.getncattr(name) for name in self.ds.ncattrs()}
 
         self.lat = ds['lat_l1b_echo_sar_ku'][:]
         self.lon = ds['lon_l1b_echo_sar_ku'][:] - 180.0
@@ -164,43 +164,78 @@ class L1bAnalysis:
         else:
             plt.savefig("plot_meas_t%06d.png" % ind)
 
-    def plot_2d_vars(self, x_name=None, y_name=None):
+    # TODO - remove
+    def plot_1d_vars(self, x_name=None, y_name=None, sel_dim=False):
         if not x_name or not y_name:
             if self.interactive:
-                widget_dim_options = list(self.dims.keys())
-                widget_dim_value = widget_dim_options[0]
-                widget_dim = widgets.Dropdown(options=widget_dim_options, value=widget_dim_value, description='Dim:')
-                widget_x_options = ['index'] + list(self.vars[(widget_dim_value,)])
-                widget_x_value = widget_x_options[0]
-                widget_x = widgets.Dropdown(options=widget_x_options, value=widget_x_value, description='X:')
-                widget_y_options = list(self.vars[(widget_dim_value,)])
-                widget_y_value = widget_y_options[0]
-                widget_y = widgets.Dropdown(options=widget_y_options, value=widget_y_value, description='Y:')
-                display(widget_dim)
+                valid_dim_names = set()
+                valid_var_names = []
+                for dim_names, var_names in self.dim_names_to_var_names.items():
+                    if len(dim_names) == 1 and len(var_names) > 1:
+                        dim_name = dim_names[0]
+                        if self.dim_name_to_size[dim_name] > 0:
+                            valid_dim_names.add(dim_name)
+                            valid_var_names.extend(var_names)
+                valid_dim_names = sorted(valid_dim_names)
+                valid_var_names = sorted(valid_var_names)
+                if sel_dim:
+                    widget_dim_options = valid_dim_names
+                    widget_dim_value = widget_dim_options[0]
 
-                def on_widget_dim_change(change):
-                    nonlocal widget_x, widget_y
-                    widget_y.options = sorted(list(self.vars[(widget_dim.value,)]))
-                    widget_x.options = ['index'] + widget_y.options
-                    widget_y.value = widget_y.options[0]
-                    widget_x.value = widget_x.options[0]
+                    widget_y_options = sorted(list(self.dim_names_to_var_names[(widget_dim_value,)]))
+                    widget_y_value = widget_y_options[0]
 
-                def on_widget_x_change(change):
-                    display()
+                    widget_x_options = ['index'] + widget_y_options
+                    widget_x_value = widget_x_options[0]
 
-                def on_widget_y_change(change):
-                    display()
+                    widget_dim = widgets.Dropdown(options=widget_dim_options, value=widget_dim_value,
+                                                  description='Dim:')
+                    widget_x = widgets.Dropdown(options=widget_x_options, value=widget_x_value, description='X:')
+                    widget_y = widgets.Dropdown(options=widget_y_options, value=widget_y_value, description='Y:')
 
-                widget_dim.observe(on_widget_dim_change, names='value')
-                widget_x.observe(on_widget_x_change, names='value')
-                widget_y.observe(on_widget_y_change, names='value')
-                interact(self._plot_2d_vars, x_name=widget_x, y_name=widget_y)
+                    display(widget_dim)
+
+                    def on_widget_dim_change(change):
+                        nonlocal widget_x, widget_y
+                        widget_y.options = sorted(list(self.dim_names_to_var_names[(widget_dim.value,)]))
+                        widget_x.options = ['index'] + widget_y.options
+                        widget_y.value = widget_y.options[0]
+                        widget_x.value = widget_x.options[0]
+
+                    def on_widget_x_change(change):
+                        display()
+
+                    def on_widget_y_change(change):
+                        display()
+
+                    widget_dim.observe(on_widget_dim_change, names='value')
+                    widget_x.observe(on_widget_x_change, names='value')
+                    widget_y.observe(on_widget_y_change, names='value')
+                    interact(self._plot_1d_vars, x_name=widget_x, y_name=widget_y)
+                else:
+                    widget_x_options = ['index'] + valid_var_names
+                    widget_y_options = valid_var_names
+                    widget_x = widgets.Dropdown(options=widget_x_options, value=widget_x_options[0], description='X:')
+                    widget_y = widgets.Dropdown(options=widget_y_options, value=widget_y_options[0], description='Y:')
+
+                    def on_widget_x_change(change):
+                        x_name = widget_x.value
+                        if x_name == 'index':
+                            widget_y.options = valid_var_names
+                        else:
+                            widget_y.options = sorted(self.dim_names_to_var_names[self.ds[x_name].dimensions])
+                        widget_y.value = widget_y.options[0]
+
+                    widget_x.observe(on_widget_x_change, names='value')
+                    interact(self._plot_1d_vars, x_name=widget_x, y_name=widget_y)
+
             else:
                 raise ValueError('x_name and y_name must be given')
         else:
-            self._plot_2d_vars(x_name, y_name)
+            self._plot_1d_vars(x_name, y_name)
 
-    def _plot_2d_vars(self, x_name, y_name):
+    # TODO - remove
+    def _plot_1d_vars(self, x_name, y_name):
         y_var = self.ds[y_name]
         y_units = y_var.units if hasattr(y_var, 'units') else '?'
         y_data = y_var[:]
@@ -216,7 +251,102 @@ class L1bAnalysis:
         plt.plot(x_data, y_data, 'b-')
         plt.xlabel('%s (%s)' % (x_name, x_units))
         plt.ylabel('%s (%s)' % (y_name, y_units))
-        #ax.set_title('%s over %s' % (x_name, y_name))
+        # ax.set_title('%s over %s' % (x_name, y_name))
+        plt.grid(True)
+        if self.interactive:
+            plt.show()
+        else:
+            plt.savefig('%s_over_%s.png' % (x_name, y_name))
+
+    def plot_im(self, name=None, vmin=None, vmax=None):
+        if name is None:
+            if self.interactive:
+                name_options = list()
+                for dim_names, var_names in self.dim_names_to_var_names.items():
+                    no_zero_dim = all([self.dim_name_to_size[dim] > 0 for dim in dim_names])
+                    if no_zero_dim and len(dim_names) == 2:
+                        name_options.extend(var_names)
+                name_options = sorted(name_options)
+                # TODO (forman, 20160709): add sliders for vmin, vmax
+                interact(self._plot_im, name=name_options, vmin=fixed(vmax), vmax=fixed(vmax))
+            else:
+                raise ValueError('name must be given')
+        else:
+            self._plot_im(name=name, vmin=vmin, vmax=vmax)
+
+    def _plot_im(self, name, vmin=None, vmax=None):
+        if name not in self.ds.variables:
+            print('Error: "%s" is not a variable' % name)
+            return
+        var = self.ds[name]
+        if len(var.shape) != 2:
+            print('Error: "%s" is not 2-dimensional' % name)
+            return
+        var_data = var[:]
+
+        vmin = vmin if vmin else var_data.min()
+        vmax = vmax if vmax else var_data.max()
+        plt.figure(figsize=(10, 10))
+        plt.imshow(self.meas, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax)
+        # TODO (forman, 20160709): show labels in units of dimension variables
+        plt.xlabel('%s (index)' % var.dimensions[1])
+        plt.ylabel('%s (index)' % var.dimensions[0])
+        plt.title('%s (%s)' % (name, var.units if hasattr(var, 'units') else '?'))
+        plt.colorbar(orientation='vertical')
+        if self.interactive:
+            plt.show()
+        else:
+            plt.savefig('%s.png' % name)
+
+    # TODO (forman, 20160709): replace ind, ref_ind by values in the 3rd-dimension's units
+    def plot_2d3d_vars(self, x_name=None, y_name=None, ind=None, ref_ind=None):
+        if not x_name or not y_name:
+            if self.interactive:
+                valid_dim_names = sorted([name for name, size in self.dim_name_to_size.items() if size > 0])
+
+                widget_x_options = []
+                widget_y_options = []
+                for dim_names, var_names in self.dim_names_to_var_names.items():
+                    if len(dim_names) == 1 and dim_names[0] in valid_dim_names:
+                        widget_x_options.extend(var_names)
+                    if len(dim_names) in {1, 2} and all([name in valid_dim_names for name in dim_names]):
+                        widget_y_options.extend(var_names)
+
+                widget_x_options = ['index'] + sorted(widget_x_options)
+                widget_y_options = sorted(widget_y_options)
+
+                widget_x = widgets.Dropdown(options=widget_x_options, value=widget_x_options[0], description='X:')
+                widget_y = widgets.Dropdown(options=widget_y_options, value=widget_y_options[0], description='Y:')
+                widget_z = widgets.IntSlider(value=0, min=0, max=100, step=1, description='Z:')
+
+                def on_y_value_change(change):
+                    print(change['new'])
+
+                widget_y.observe(on_y_value_change, names='value')
+
+                interact(self._plot_2d3d_vars, x_name=widget_x_options, y_name=widget_y_options, ref_ind=fixed(ref_ind))
+            else:
+                raise ValueError('x_name and y_name must be given')
+        else:
+            self._plot_2d3d_vars(x_name, y_name, ind, ref_ind)
+
+    def _plot_2d3d_vars(self, x_name, y_name, ind, ref_ind):
+        y_var = self.ds[y_name]
+        y_units = y_var.units if hasattr(y_var, 'units') else '?'
+        y_data = y_var[:]
+        if x_name == 'index':
+            x_units = '-'
+            x_data = np.arange(0, len(y_data))
+        else:
+            x_var = self.ds[x_name]
+            x_units = x_var.units if hasattr(x_var, 'units') else '?'
+            x_data = x_var[:]
+
+        plt.figure(figsize=(12, 6))
+        plt.plot(x_data, y_data, 'b-')
+        plt.xlabel('%s (%s)' % (x_name, x_units))
+        plt.ylabel('%s (%s)' % (y_name, y_units))
+        # ax.set_title('%s over %s' % (x_name, y_name))
         plt.grid(True)
         if self.interactive:
             plt.show()
@@ -235,8 +365,8 @@ def main(args=None):
     an.plot_meas(ind=2)
     an.plot_meas(ind=101, ref_ind=100)
     an.plot_meas_hist(vmax=1e7)
-    an.plot_2d_vars('index', 'surf_type_l1b_echo_sar_ku')
-    an.plot_2d_vars('lon_l1b_echo_sar_ku', 'lat_l1b_echo_sar_ku')
+    an.plot_1d_vars('index', 'surf_type_l1b_echo_sar_ku')
+    an.plot_1d_vars('lon_l1b_echo_sar_ku', 'lat_l1b_echo_sar_ku')
 
     # an.plot_meas(an.ds[''])
 
