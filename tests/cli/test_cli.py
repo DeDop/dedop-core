@@ -122,7 +122,7 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout='added 2 inputs')
 
         self._test_main(['run'],
-                        expected_stdout='Running DDP')
+                        expected_stdout='processing "config1": writing L1B')
 
         self._test_main(['mw', 'info', 'tests'],
                         expected_stdout=['Available workspace:',
@@ -186,7 +186,7 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout='added 2 inputs')
 
         self._test_main(['run'],
-                        expected_stdout=['Running DDP'])
+                        expected_stdout=['processing "config1": writing L1B'])
 
         self._test_main(['mo', 'list'],
                         expected_stdout=['4 outputs created with config "config1" in workspace "tests":',
