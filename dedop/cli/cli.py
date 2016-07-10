@@ -381,7 +381,8 @@ class ManageWorkspacesCommand(Command):
     def ensure_unique_name(cls, new_name):
         index = 2
         valid_new_name = new_name
-        while valid_new_name in _WORKSPACE_MANAGER.get_workspace_names():
+        workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
+        while valid_new_name in workspace_names:
             print('workspace "%s" already exists' % valid_new_name)
             valid_new_name = '%s_%d' % (new_name, index)
             index += 1
@@ -611,7 +612,8 @@ class ManageConfigsCommand(Command):
     def ensure_unique_name(cls, workspace_name, new_name):
         index = 2
         valid_new_name = new_name
-        while valid_new_name in _WORKSPACE_MANAGER.get_config_names(workspace_name):
+        config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
+        while valid_new_name in config_names:
             print('configuration "%s" already exists' % valid_new_name)
             valid_new_name = '%s_%d' % (new_name, index)
             index += 1
