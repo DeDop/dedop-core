@@ -307,43 +307,52 @@ class L1bAnalysis:
             plt.savefig('%s_over_%s.png' % (x_name, y_name))
 
     def plot_2d_var(self, z=None, zmin=None, zmax=None, xind=None, yind=None):
-        if not z:
-            if self.interactive:
-                valid_var_names = list()
-                for dim_names, var_names in self.dim_names_to_var_names.items():
-                    no_zero_dim = all([self.dim_name_to_size[dim] > 0 for dim in dim_names])
-                    if no_zero_dim and len(dim_names) == 2:
-                        valid_var_names.extend(var_names)
-                valid_var_names = sorted(valid_var_names)
-                value = z if z and z in valid_var_names else valid_var_names[0]
-                widget_var = widgets.Dropdown(options=valid_var_names, value=value, description='Var:')
+        if self.interactive:
+            has_xind = xind is not None
+            has_yind = yind is not None
+            if not z or not has_xind or not has_yind:
                 if xind is None:
                     widget_xind = widgets.IntSlider(min=0, max=10, step=1, description='X:')
                 else:
                     widget_xind = fixed(xind)
+
                 if yind is None:
                     widget_yind = widgets.IntSlider(min=0, max=10, step=1, description='Y:')
                 else:
                     widget_yind = fixed(yind)
 
-                def on_widget_var_change(change):
-                    variable = self.ds[widget_var.value]
-                    if xind is None:
-                        widget_xind.max = variable.shape[1] - 1
-                    if yind is None:
-                        widget_yind.max = variable.shape[0] - 1
+                if not z:
+                    valid_var_names = list()
+                    for dim_names, var_names in self.dim_names_to_var_names.items():
+                        no_zero_dim = all([self.dim_name_to_size[dim] > 0 for dim in dim_names])
+                        if no_zero_dim and len(dim_names) == 2:
+                            valid_var_names.extend(var_names)
+                    valid_var_names = sorted(valid_var_names)
+                    value = z if z and z in valid_var_names else valid_var_names[0]
+                    widget_var = widgets.Dropdown(options=valid_var_names, value=value, description='Var:')
 
-                widget_var.observe(on_widget_var_change, names='value')
+                    def on_widget_var_change(change):
+                        variable = self.ds[widget_var.value]
+                        if xind is None:
+                            widget_xind.max = variable.shape[1] - 1
+                        if yind is None:
+                            widget_yind.max = variable.shape[0] - 1
+
+                    widget_var.observe(on_widget_var_change, names='value')
+                else:
+                    widget_var = fixed(z)
 
                 # TODO (forman, 20160709): add sliders for zmin, zmax
-                interact(self._plot_2d_var, z_name=widget_var, xind=widget_xind, yind=widget_yind,
+                interact(self._plot_2d_var, z_name=widget_var,
+                         xind=widget_xind, yind=widget_yind,
                          zmin=fixed(zmax), zmax=fixed(zmax))
-            else:
-                raise ValueError('name must be given')
         else:
+            if not z_name:
+                raise ValueError('z_name must be given')
             self._plot_2d_var(z, zmin=zmin, zmax=zmin, xind=xind, yind=yind)
 
     def _plot_2d_var(self, z_name, zmin=None, zmax=None, xind=None, yind=None):
+        assert z_name
         if z_name not in self.ds.variables:
             print('Error: "%s" is not a variable' % z_name)
             return
@@ -351,6 +360,7 @@ class L1bAnalysis:
         if len(z_var.shape) != 2:
             print('Error: "%s" is not 2-dimensional' % z_name)
             return
+
         var_data = z_var[:]
 
         zmin = zmin if zmin else var_data.min()
@@ -365,28 +375,41 @@ class L1bAnalysis:
         has_xind = xind is not None
         has_yind = yind is not None
         if has_xind and has_yind:
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')
-        elif has_xind:
-            fig, (ax1, ax3) = plt.subplots(2, sharex='col')
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row', figsize=(12, 6))
         elif has_yind:
-            fig, (ax3, ax4) = plt.subplots(1, 2, sharey='row')
+            fig, (ax1, ax3) = plt.subplots(2, sharex='col', figsize=(12, 6))
+        elif has_xind:
+            fig, (ax3, ax4) = plt.subplots(1, 2, sharey='row', figsize=(12, 6))
         else:
-            fig, ax3 = plt.subplots(1)
+            fig, ax3 = plt.subplots(1, figsize=(12, 6))
+
         if ax1:
-            z_data = z_var[:, xind]
-            ax1.plot(np.arange(0, len(z_data)), z_data.flatten())
-            ax1.grid(True)
-            ax1.set_xlabel(x_title)
-            ax1.set_ylabel(z_title)
-        if ax4:
             z_data = z_var[yind]
-            ax4.plot(np.arange(0, len(z_data)), z_data)
+            ax1.plot(np.arange(0, len(z_data)), z_data)
+            ax1.grid(True)
+            ax1.set_ylabel(z_title)
+
+        if ax4:
+            z_data = z_var[:, xind]
+            ax4.plot(z_data, np.arange(0, len(z_data)))
             ax4.grid(True)
             ax4.set_xlabel(z_title)
-            ax4.set_ylabel(y_title)
-        ax3.set_title(z_title)
+
+        if ax2:
+            # ax2.cla()
+            # fig.axes.remove(ax2)
+            ax2.remove()
+
         im = ax3.imshow(self.meas, interpolation='nearest', aspect='auto', vmin=zmin, vmax=zmax)
-        fig.colorbar(im, orientation='vertical')
+        if has_xind:
+            ax3.axvline(x=xind)
+        if has_yind:
+            ax3.axhline(y=yind)
+        ax3.set_xlabel(x_title)
+        ax3.set_ylabel(y_title)
+        if not ax1 and not ax4:
+            ax3.set_title(z_title)
+            fig.colorbar(im, orientation='vertical')
 
         if self.interactive:
             plt.show()
