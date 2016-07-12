@@ -70,8 +70,8 @@ def read_python_config(file):
 
     fp = open(file, 'r') if isinstance(file, str) else file
     try:
-        code = fp.read()
         config = {}
+        code = compile(fp.read(), file if isinstance(file, str) else '<NO FILE>', 'exec')
         exec(code, None, config)
         return config
     finally:
