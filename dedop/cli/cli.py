@@ -18,9 +18,12 @@ from typing import Tuple, Optional
 from dedop.proc.sar import L1BProcessor
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
+from dedop.cli.workspace_info import WorkspaceInfo
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 from dedop.util.config import get_config_value, get_config_path
+
+_DEFAULT_SUFFIX = '_1'
 
 _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
@@ -29,6 +32,7 @@ _STATUS_NO_WORKSPACE = 10, 'no current workspace, use option -w to name a WORKSP
 _STATUS_NO_CONFIG = 20, 'no current configuration, use "dedop config cur CONFIG"'
 _STATUS_NO_INPUTS = 30, 'workspace "%s" doesn\'t have any inputs yet, use "dedop input add *.nc" to add some'
 _STATUS_NO_MATCHING_INPUTS = 40, 'no matching inputs found'
+_STATUS_NO_MATCHING_OUTPUTS = 40, 'no matching outputs found'
 
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
@@ -266,6 +270,8 @@ class ManageWorkspacesCommand(Command):
 
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
 
+        parser.set_defaults(ws_parser=parser)
+
         parser_add = subparsers.add_parser('add', help='Add new workspace')
         parser_add.add_argument(**workspace_name_attributes)
         parser_add.set_defaults(ws_command=cls.execute_add)
@@ -296,7 +302,10 @@ class ManageWorkspacesCommand(Command):
         parser_list.set_defaults(ws_command=cls.execute_list)
 
     def execute(self, command_args):
-        return command_args.ws_command(command_args)
+        if hasattr(command_args, 'ws_command') and command_args.ws_command:
+            return command_args.ws_command(command_args)
+        else:
+            command_args.ws_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -328,10 +337,11 @@ class ManageWorkspacesCommand(Command):
             return 1, 'no current workspace'
         new_name = command_args.new_name
         if not new_name:
-            new_name = workspace_name + '_copy'
+            new_name = workspace_name + _DEFAULT_SUFFIX
+        new_name = cls.ensure_unique_name(new_name)
         try:
             _WORKSPACE_MANAGER.copy_workspace(workspace_name, new_name)
-            print('workspace "%s" has been copied as "%s"' % (workspace_name, new_name))
+            print('copied workspace "%s" to "%s"' % (workspace_name, new_name))
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -341,10 +351,12 @@ class ManageWorkspacesCommand(Command):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
             return 1, 'no current workspace'
-        new_name = command_args.new_name
+        new_name = cls.ensure_unique_name(command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
-            print('workspace "%s" has been renamed to "%s"' % (workspace_name, new_name))
+            print('renamed workspace "%s" to "%s"' % (workspace_name, new_name))
+            if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
+                cls.set_current_workspace(new_name)
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -367,11 +379,8 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def execute_info(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
-        # TODO (forman, 20180702): implement 'mw info' command
-        #
-        # Implementation here...
-        #
-        print('TODO: show workspace %s' % workspace_name)
+        workspace_info = _WORKSPACE_MANAGER.get_workspace_info(workspace_name)
+        print(workspace_info.get_workspace_info_string())
         return cls.STATUS_OK
 
     # noinspection PyUnusedLocal
@@ -404,6 +413,17 @@ class ManageWorkspacesCommand(Command):
         _WORKSPACE_MANAGER.set_current_workspace_name(workspace_name)
         print('current workspace is "%s"' % workspace_name)
 
+    @classmethod
+    def ensure_unique_name(cls, new_name):
+        index = 2
+        valid_new_name = new_name
+        workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
+        while valid_new_name in workspace_names:
+            print('workspace "%s" already exists' % valid_new_name)
+            valid_new_name = '%s_%d' % (new_name, index)
+            index += 1
+        return valid_new_name
+
 
 class ManageConfigsCommand(Command):
     @classmethod
@@ -422,6 +442,8 @@ class ManageConfigsCommand(Command):
 
         config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the configuration")
 
+        parser.set_defaults(cf_parser=parser)
+
         subparsers = parser.add_subparsers(help='DeDop configuration sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new configuration')
@@ -437,12 +459,12 @@ class ManageConfigsCommand(Command):
         parser_edit.set_defaults(cf_command=cls.execute_edit)
 
         parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy configuration')
-        parser_copy.add_argument(nargs='?', **workspace_name_attributes)
+        parser_copy.add_argument(nargs='?', **config_name_attributes)
         parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new configuration')
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
         parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename configuration')
-        parser_rename.add_argument(nargs='?', **workspace_name_attributes)
+        parser_rename.add_argument(nargs='?', **config_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
@@ -458,7 +480,10 @@ class ManageConfigsCommand(Command):
         parser_list.set_defaults(cf_command=cls.execute_list)
 
     def execute(self, command_args):
-        return command_args.cf_command(command_args)
+        if hasattr(command_args, 'cf_command') and command_args.cf_command:
+            return command_args.cf_command(command_args)
+        else:
+            command_args.cf_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -493,13 +518,13 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_CONFIG
         new_name = command_args.new_name
         if not new_name:
-            new_name = workspace_name + '_copy'
-        # while os.path.exists(..., new_name) ...
-        # TODO (forman, 20180702): implement 'mc copy' command
-        #
-        # Implementation here...
-        #
-        print('TODO: copy configuration "%s" to "%s"' % (workspace_name, new_name))
+            new_name = config_name + '_copy'
+        new_name = cls.ensure_unique_name(workspace_name, new_name)
+        try:
+            _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
+            print('copied configuration "%s" to "%s"' % (config_name, new_name))
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -509,12 +534,14 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        new_name = command_args.new_name
-        # TODO (forman, 20180702): implement 'mc rename' command
-        #
-        # Implementation here...
-        #
-        print('TODO: rename configuration "%s" to "%s"' % (workspace_name, new_name))
+        new_name = cls.ensure_unique_name(workspace_name, command_args.new_name)
+        try:
+            _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
+            print('renamed configuration "%s" to "%s"' % (config_name, new_name))
+            if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
+                cls.set_current_config(workspace_name, new_name)
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -617,6 +644,17 @@ class ManageConfigsCommand(Command):
         _WORKSPACE_MANAGER.set_current_config_name(workspace_name, config_name)
         print('current configuration is "%s"' % config_name)
 
+    @classmethod
+    def ensure_unique_name(cls, workspace_name, new_name):
+        index = 2
+        valid_new_name = new_name
+        config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
+        while valid_new_name in config_names:
+            print('configuration "%s" already exists' % valid_new_name)
+            valid_new_name = '%s_%d' % (new_name, index)
+            index += 1
+        return valid_new_name
+
 
 class ManageInputsCommand(Command):
     CMD_NAME = 'input'
@@ -632,12 +670,13 @@ class ManageInputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+        cls.setup_default_parser_argument(parser)
+        parser.set_defaults(mi_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1A inputs sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new inputs')
+        cls.setup_default_parser_argument(parser_add)
         parser_add.add_argument('-q', '--quiet', action='store_true',
                                 help='Suppress output of progress information.')
         parser_add.add_argument('inputs', metavar='L1A_FILE', nargs='+',
@@ -645,6 +684,7 @@ class ManageInputsCommand(Command):
         parser_add.set_defaults(mi_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove inputs')
+        cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument('-q', '--quiet', action='store_true',
                                    help='Suppress output of progress information.')
         parser_remove.add_argument('inputs', metavar='L1A_FILE', nargs='*',
@@ -652,12 +692,21 @@ class ManageInputsCommand(Command):
         parser_remove.set_defaults(mi_command=cls.execute_remove)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List inputs')
+        cls.setup_default_parser_argument(parser_list)
         parser_list.add_argument('pattern', metavar='WC', nargs='?',
                                  help="Wildcard pattern.")
         parser_list.set_defaults(mi_command=cls.execute_list)
 
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+
     def execute(self, command_args):
-        return command_args.mi_command(command_args)
+        if hasattr(command_args, 'mi_command') and command_args.mi_command:
+            return command_args.mi_command(command_args)
+        else:
+            command_args.mi_parser.print_help()
 
     @classmethod
     def execute_add(cls, command_args):
@@ -696,17 +745,19 @@ class ManageInputsCommand(Command):
         if not input_names:
             return _STATUS_NO_MATCHING_INPUTS
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
-        try:
-            _WORKSPACE_MANAGER.remove_inputs(workspace_name, input_names, monitor)
-            input_count = len(input_names)
-            if input_count == 0:
-                print('no inputs removed')
-            elif input_count == 1:
-                print('one input removed')
-            else:
-                print('removed %s inputs' % input_count)
-        except WorkspaceError as e:
-            return 30, str(e)
+        answer = 'yes' if command_args.quiet else _input('delete inputs "%s"? [yes]' % input_names, 'yes').lower()
+        if answer.lower() == 'yes':
+            try:
+                _WORKSPACE_MANAGER.remove_inputs(workspace_name, input_names, monitor)
+                input_count = len(input_names)
+                if input_count == 0:
+                    print('no inputs removed')
+                elif input_count == 1:
+                    print('one input removed')
+                else:
+                    print('removed %s inputs' % input_count)
+            except WorkspaceError as e:
+                return 30, str(e)
         return cls.STATUS_OK
 
     @classmethod
@@ -743,43 +794,75 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
-                                         help="Name of the workspace.")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
-
-        config_name_attributes = dict(dest='config_name', metavar='CONFIG',
-                                      help="Name of the configuration.")
-        parser.add_argument('-c', '--config', **config_name_attributes)
+        # TODO (hans-permana, 20160707): make the general arguments visible in sub-command
+        cls.setup_default_parser_argument(parser)
+        parser.set_defaults(mo_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
+        cls.setup_default_parser_argument(parser_clean)
+        parser_clean.add_argument('-q', '--quiet', action='store_true',
+                                  help='Suppress output of progress information.')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
 
         parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
         parser_clean.set_defaults(mo_command=cls.execute_open)
 
         parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
+        cls.setup_default_parser_argument(parser_compare)
         parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
         parser_analyse = subparsers.add_parser('analyse', aliases=['an'], help='Analyse output')
+        cls.setup_default_parser_argument(parser_analyse)
         parser_analyse.set_defaults(mo_command=cls.execute_analyse)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
+        cls.setup_default_parser_argument(parser_list)
+        parser_list.add_argument('pattern', metavar='WC', nargs='?',
+                                 help="Wildcard pattern.")
         parser_list.set_defaults(mo_command=cls.execute_list)
 
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
+                                         help="Name of the workspace.")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
+        config_name_attributes = dict(dest='config_name', metavar='CONFIG',
+                                      help="Name of the configuration.")
+        parser.add_argument('-c', '--config', **config_name_attributes)
+        return config_name_attributes, workspace_name_attributes
+
     def execute(self, command_args):
-        return command_args.mo_command(command_args)
+        if hasattr(command_args, 'mo_command') and command_args.mo_command:
+            return command_args.mo_command(command_args)
+        else:
+            command_args.mo_parser.print_help()
 
     @classmethod
     def execute_clean(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        # TODO (forman, 20160704): implement "mo clean" command
-        #
-        # Implementation here...
-        #
-        print('TODO: clean "%s"' % config_name)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
+        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name)
+        if not output_names:
+            return _STATUS_NO_MATCHING_OUTPUTS
+        answer = 'yes' if command_args.quiet else _input('clean outputs directory? [yes]', 'yes')
+        if answer.lower() == 'yes':
+            try:
+                _WORKSPACE_MANAGER.remove_outputs(workspace_name, config_name)
+                output_count = len(output_names)
+                if output_count == 0:
+                    print('no outputs removed')
+                elif output_count == 1:
+                    print('one output removed')
+                else:
+                    print('removed %s outputs' % output_count)
+            except WorkspaceError as e:
+                return 30, str(e)
         return cls.STATUS_OK
 
     @classmethod
@@ -824,11 +907,22 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_list(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        # TODO (forman, 20160704): implement "mo list" command
-        #
-        # Implementation here...
-        #
-        print('TODO: listing output of "%s"' % config_name)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
+        pattern = command_args.pattern
+        output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name, pattern=pattern)
+        num_outputs = len(output_names)
+        if num_outputs == 0:
+            print('no outputs created with config "%s" in workspace "%s"' % (config_name, workspace_name))
+        elif num_outputs == 1:
+            print('1 output created with config "%s" in workspace "%s":' % (config_name, workspace_name))
+        else:
+            print('%d outputs created with config "%s" in workspace "%s":' % (num_outputs, config_name, workspace_name))
+        for i in range(num_outputs):
+            output_name = output_names[i]
+            print('%3d: %s' % (i + 1, output_name))
         return cls.STATUS_OK
 
 
