@@ -80,7 +80,8 @@ class L1bAnalysis:
         m = Basemap(projection='tmerc', lat_0=lat_0, lon_0=lon_0, width=10000, height=10000)
         x, y = m(self.lon, self.lat)
         size = max(x.max() - x.min(), y.max() - y.min())
-        fig, axes = plt.subplots(nrows=1, ncols=len(scales), figsize=(20, 20))
+        num_ax = len(scales)
+        fig, axes = plt.subplots(nrows=1, ncols=num_ax, figsize=(12, 12 / num_ax))
         for axis, scale in zip(axes, scales):
             width = scale * size
             height = scale * size
@@ -347,7 +348,7 @@ class L1bAnalysis:
                          xind=widget_xind, yind=widget_yind,
                          zmin=fixed(zmax), zmax=fixed(zmax))
         else:
-            if not z_name:
+            if not z:
                 raise ValueError('z_name must be given')
             self._plot_2d_var(z, zmin=zmin, zmax=zmin, xind=xind, yind=yind)
 
