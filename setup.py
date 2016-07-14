@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 
 packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
-print('packages to be installed:', packages)
 
 setup(
     name="dedop",
@@ -10,6 +9,9 @@ setup(
     license='GPL 3',
     author='DeDop Development Team',
     packages=packages,
+    package_data={
+        'dedop.cli.defaults': ['*.json', '*.txt'],
+    },
     entry_points={
         'console_scripts': [
             'dedop = dedop.cli:main'
