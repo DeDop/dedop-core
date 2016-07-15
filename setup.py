@@ -1,10 +1,12 @@
 from setuptools import setup, find_packages
 
+from dedop.version import __version__
+
 packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
 
 setup(
     name="dedop",
-    version="0.1.0",
+    version=__version__,
     description='Delay Doppler (Altimeter) Processor',
     license='GPL 3',
     author='DeDop Development Team',
