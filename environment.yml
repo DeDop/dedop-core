@@ -1,13 +1,13 @@
 name: dedop
 dependencies:
-- basemap=1.0.8.dev0=np110py35_1
+#- basemap=1.0.8.dev0=np110py35_1
 - curl=7.45.0=0
 - cycler=0.10.0=py35_0
 - decorator=4.0.10=py35_0
 - entrypoints=0.2.2=py35_0
 - fontconfig=2.11.1=6
 - freetype=2.5.5=1
-- geos=3.4.2=4
+#- geos=3.4.2=4
 - hdf5=1.8.15.1=2
 - ipykernel=4.3.1=py35_0
 - ipython=5.0.0=py35_0
@@ -44,7 +44,7 @@ dependencies:
 - pyparsing=2.1.4=py35_0
 - pyproj=1.9.5.1=py35_0
 - pyqt=4.11.4=py35_3
-- pyshp=1.2.3=py35_0
+#- pyshp=1.2.3=py35_0
 - python=3.5.2=0
 - python-dateutil=2.5.3=py35_0
 - pytz=2016.4=py35_0
