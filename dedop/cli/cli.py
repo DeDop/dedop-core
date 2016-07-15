@@ -14,11 +14,9 @@ import sys
 from abc import ABCMeta, abstractmethod
 
 from typing import Tuple, Optional
-# from dedop.cli.dummy_processor import Processor
 from dedop.proc.sar import L1BProcessor
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.cli.workspace import WorkspaceManager, WorkspaceError
-from dedop.cli.workspace_info import WorkspaceInfo
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 from dedop.util.config import get_config_value, get_config_path

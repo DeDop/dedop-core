@@ -5,8 +5,11 @@ import os
 
 from typing import Sequence, Tuple, Any, Union, Dict
 from abc import ABCMeta, abstractmethod
+from ...version import __version__
+
 
 Name = Union[str, Enum]
+
 
 class NetCDFWriter(metaclass=ABCMeta):
     """
@@ -100,6 +103,15 @@ class NetCDFWriter(metaclass=ABCMeta):
         self.dimensions = {}
         self.variables = {}
         self.output_index = 0
+
+        # TODO (forman, 20160715): add standard metadata attributes here
+        # see http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#_attributes
+        # some of these attributes may be user-defined and put in a configuration file (CNF?):
+        # e.g. 'title', 'institution', 'source', 'references', and 'comment'.
+
+        # added by forman 20160715
+        self._root.software_name = 'dedop'
+        self._root.software_version = __version__
 
     def __enter__(self):
         """
