@@ -277,7 +277,7 @@ class L1bAnalysis:
                         widget_y.value = widget_y.options[0]
 
                     widget_x.observe(on_widget_x_change, names='value')
-                    interact(self._plot_1d_vars, x=widget_x, y=widget_y)
+                    interact(self._plot_1d_vars, x_name=widget_x, y_name=widget_y)
 
             else:
                 raise ValueError('x_name and y_name must be given')
@@ -428,13 +428,16 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    an = L1bAnalysis(args[0], interactive=False)
+    file = args[0]
+
+    an = L1bAnalysis(file, interactive=False)
     an.plot_2d_var(z='i2q2_meas_ku_l1b_echo_sar_ku')
     an.plot_2d_var(z='i2q2_meas_ku_l1b_echo_sar_ku', xind=100)
     an.plot_2d_var(z='i2q2_meas_ku_l1b_echo_sar_ku', yind=100)
     an.plot_2d_var(z='i2q2_meas_ku_l1b_echo_sar_ku', xind=100, yind=100)
     an.plot_1d_vars(x='index', y='surf_type_l1b_echo_sar_ku')
     an.plot_1d_vars(x='lon_l1b_echo_sar_ku', y='lat_l1b_echo_sar_ku')
+    an.plot_im('i2q2_meas_ku_l1b_echo_sar_ku')
     an.plot_locs()
     an.plot_meas_im()
     an.plot_meas(ind=0)
