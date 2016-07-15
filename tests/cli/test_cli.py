@@ -62,7 +62,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['pipo'], expected_exit_code=2, expected_stderr="invalid choice: 'pipo'")
 
     def test_command_license_command(self):
-        self._test_main(['licence'], expected_stdout='GNU GENERAL PUBLIC LICENSE')
+        self._test_main(['license'], expected_stdout='GNU GENERAL PUBLIC LICENSE')
 
     def test_command_copyright(self):
         self._test_main(['copyright'], expected_stdout='European Space Agency')

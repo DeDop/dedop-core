@@ -1083,7 +1083,7 @@ def main(args=None, workspace_manager=None, processor_factory=None):
 
     parser = NoExitArgumentParser(prog=CLI_NAME,
                                   description='ESA DeDop command-line interface, version %s' % __version__)
-    parser.add_argument('--version', action='version', version='%s %s' % (CLI_NAME, __version__))
+    parser.add_argument('--version', action='version', version=__version__)
     parser.add_argument('-e', '--errors', dest='print_stack_trace', action='store_true',
                         help='on error, print full Python stack trace')
     subparsers = parser.add_subparsers(
