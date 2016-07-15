@@ -6,7 +6,7 @@
 !define DESCRIPTION "A Tool for Processing Delay Doppler Altimeter Data."
 # These three must be integers
 !define VERSIONMAJOR 0
-!define VERSIONMINOR 1
+!define VERSIONMINOR 5
 !define VERSIONBUILD 0
 # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
 # It is possible to use "mailto:" links in here to open the email client
@@ -55,6 +55,7 @@ section "install"
 
 	setOutPath $INSTDIR
 	file "license.rtf"
+	file "version.txt"
 
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"

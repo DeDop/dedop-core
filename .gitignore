@@ -65,3 +65,4 @@ target/
 dedop-config.py
 dedop-installer.exe
 /installer/*/python
+/installer/win/version.txt
