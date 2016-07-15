@@ -53,7 +53,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['-h'], expected_stdout='usage: dedop [-h]')
 
     def test_option_version(self):
-        self._test_main(['--version'], expected_stdout='dedop 0.1.0')
+        self._test_main(['--version'], expected_stdout='0.5.0-rc0+1')
 
     def test_command_none(self):
         self._test_main([], expected_stdout='usage: dedop [-h]')
@@ -62,7 +62,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['pipo'], expected_exit_code=2, expected_stderr="invalid choice: 'pipo'")
 
     def test_command_license_command(self):
-        self._test_main(['licence'], expected_stdout='GNU GENERAL PUBLIC LICENSE')
+        self._test_main(['license'], expected_stdout='GNU GENERAL PUBLIC LICENSE')
 
     def test_command_copyright(self):
         self._test_main(['copyright'], expected_stdout='European Space Agency')
