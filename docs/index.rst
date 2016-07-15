@@ -18,6 +18,7 @@ Contents:
    :maxdepth: 2
 
    introduction
+   manual
    api_reference
 
 
