@@ -29,15 +29,15 @@ Editing the processor configuration::
     created configuration "default" in workspace "default"
     current configuration is "default"
 
-The `dedop config edit` command should open three processor configuration files in your default text editor.
+The ``dedop config edit`` command should open three processor configuration files in your default text editor.
 Their format is JSON. You may change settings now and save them.
 
 Finally run the processor::
 
     $ dedop run
 
-If the command succeeds, the L1B output files can be found in `~/.dedop/workspaces/default/configs/default/outputs`
-where `~` points to the current user's home directory.
+If the command succeeds, the L1B output files can be found in ``~/.dedop/workspaces/default/configs/default/outputs``
+where ``~`` points to the current user's home directory.
 
 Workspace Management
 ====================
