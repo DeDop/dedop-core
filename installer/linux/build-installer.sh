@@ -32,6 +32,13 @@ echo ========================================================
 sed -i "1c#!/usr/bin/env python" ${THIS_PYTHON}/bin/dedop
 
 DEDOP_VERSION=$(${THIS_PYTHON}/bin/python ${THIS_PYTHON}/bin/dedop --version)
+KERNEL=$(uname -s)
+case ${KERNEL} in
+    Linux)  ARCH=linux ;;
+    Darwin) ARCH=macos ;;
+    *)      ARCH=other ;;
+esac
+
 echo ========================================================
 echo "Building installer for version ${DEDOP_VERSION}"
 echo ========================================================
@@ -45,7 +52,7 @@ mkdir ${DISTRIBUTION}
     ln -s ../../../LICENSE .
     echo "${DEDOP_VERSION}" > VERSION
 )
-zip -rv ${DISTRIBUTION}.zip ${DISTRIBUTION}
+zip -rv ${DISTRIBUTION}-${ARCH}.zip ${DISTRIBUTION}
 
 echo ========================================================
 echo Done!
