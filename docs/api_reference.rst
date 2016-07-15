@@ -1,6 +1,6 @@
-======================
-|DeDop3| API Reference
-======================
+=============
+API Reference
+=============
 
 Input / Output
 ==============
@@ -47,4 +47,4 @@ Utilities
 
 
 
-.. |DeDop3| replace:: DeDop\ :sup:`3`
+
