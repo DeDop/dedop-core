@@ -5,7 +5,7 @@ Installation
 From Binaries
 =============
 
-DeDop is distributed as pre-compiled binaries which can be retrieved from the `here <ftp://isardsat-ACA@ftp.isardsat.co.uk/tool>`_.
+DeDop is distributed as pre-compiled binaries which can be retrieved from `here <ftp://isardsat-ACA@ftp.isardsat.co.uk/tool>`_.
 For the windows Windows platforms there is a dedicated installer executable. For Mac OS and Unixes a ZIP file is provided.
 All platform distributions have a bundled Python interpreter, that's also the reason why they are quite large in size
 (roughly 300 megabytes).
@@ -26,11 +26,11 @@ After installing Miniconda open a terminal window and create an isolated Python 
     source activate.sh dedop
 
 
-Then install DeDop library requirements::
+Then install the DeDop library requirements::
 
     conda install numpy scipy netCDF4
 
-If you like to perfoam analysis tasks with DeDop, then also install::
+If you like to perform analysis tasks with DeDop, then also install::
 
     conda install -c IOOS basemap matplotlib jupyter
 
@@ -38,7 +38,7 @@ Then checkout the DeDop source code from GitHub::
 
     git clone https://github.com/DeDop/dedop.git
 
-Step into the newly created directory and install dedop in the Python environment `dedop`::
+Step into the newly created source directory and install DeDop in the Python environment `dedop`::
 
     cd dedop
     python setup.py develop
@@ -46,8 +46,4 @@ Step into the newly created directory and install dedop in the Python environmen
 After installing from source, you should be able to run the DeDop Shell, try::
 
     dedop --help
-
-
-
-
 

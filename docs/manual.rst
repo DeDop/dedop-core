@@ -15,7 +15,7 @@ You can get help on sub-commands as well::
 
     $ dedop run -h
 
-Adding L1A source products::
+Adding L1A input file(s)::
 
     $ dedop input add EOData/L1A.nc
     created workspace "default"
