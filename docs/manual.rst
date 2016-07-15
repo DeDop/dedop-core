@@ -37,7 +37,7 @@ Finally run the processor::
     $ dedop run
 
 If the command succeeds, the L1B output files can be found in `~/.dedop/workspaces/default/configs/default/outputs`
-where ``~`` points to the current user's home directory.
+where `~` points to the current user's home directory.
 
 Workspace Management
 ====================
