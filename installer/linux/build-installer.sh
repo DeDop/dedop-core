@@ -1,9 +1,13 @@
 #!/bin/bash
 
+DEDOP_VERSION="0.1.0"
+
 THIS_DIR=$(dirname "$0")
 THIS_PYTHON=${THIS_DIR}/python
 
 rm -rf ${THIS_PYTHON}
+rm -rf ${DISTRIBUTION}
+rm -f ${DISTRIBUTION}.zip
 
 echo ========================================================
 echo Installing Python...
@@ -26,14 +30,21 @@ echo ========================================================
 )
 # see
 # https://github.com/pypa/setuptools/issues/272
-# '--executable' does njot work for generated 'console_scripts'
+# '--executable' doesn't work for generated 'console_scripts'
 sed -i "1c#!/usr/bin/env python" ${THIS_PYTHON}/bin/dedop
 
 echo ========================================================
 echo Building installer...
 echo ========================================================
-# TODO
-#makensis dedop-installer.nsi
+
+DISTRIBUTION="dedop-${DEDOP_VERSION}"
+mkdir ${DISTRIBUTION}
+(
+    cd ${DISTRIBUTION}
+    ln -s ../python .
+    ln -s ../dedop-shell.sh .
+)
+zip -rv ${DISTRIBUTION}.zip ${DISTRIBUTION}
 
 echo ========================================================
 echo Done!
