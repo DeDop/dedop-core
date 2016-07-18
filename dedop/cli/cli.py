@@ -949,6 +949,7 @@ class ShowStatusCommand(Command):
                     cur_config_name = '(not set)'
             else:
                 cur_workspace_name = '(not set)'
+                cur_config_name = '(not set)'
             try:
                 workspaces_size = '%s bytes' % _dir_size(workspaces_dir)
             except (WorkspaceError, IOError, OSError) as error:
@@ -1082,7 +1083,7 @@ def main(args=None, workspace_manager=None, processor_factory=None):
     _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager(workspaces_dir=workspaces_dir)
 
     parser = NoExitArgumentParser(prog=CLI_NAME,
-                                  description='ESA DeDop command-line interface, version %s' % __version__)
+                                  description='ESA DeDop Shell, version %s' % __version__)
     parser.add_argument('--version', action='version', version=__version__)
     parser.add_argument('-e', '--errors', dest='print_stack_trace', action='store_true',
                         help='on error, print full Python stack trace')

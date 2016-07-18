@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DEDOP_VERSION="0.1.0"
-
 THIS_DIR=$(dirname "$0")
 THIS_PYTHON=${THIS_DIR}/python
 
@@ -33,8 +31,16 @@ echo ========================================================
 # '--executable' doesn't work for generated 'console_scripts'
 sed -i "1c#!/usr/bin/env python" ${THIS_PYTHON}/bin/dedop
 
+DEDOP_VERSION=$(${THIS_PYTHON}/bin/python ${THIS_PYTHON}/bin/dedop --version)
+KERNEL=$(uname -s)
+case ${KERNEL} in
+    Linux)  ARCH=linux ;;
+    Darwin) ARCH=macos ;;
+    *)      ARCH=other ;;
+esac
+
 echo ========================================================
-echo Building installer...
+echo "Building installer for version ${DEDOP_VERSION}"
 echo ========================================================
 
 DISTRIBUTION="dedop-${DEDOP_VERSION}"
@@ -43,8 +49,10 @@ mkdir ${DISTRIBUTION}
     cd ${DISTRIBUTION}
     ln -s ../python .
     ln -s ../dedop-shell.sh .
+    ln -s ../../../LICENSE .
+    echo "${DEDOP_VERSION}" > VERSION
 )
-zip -rv ${DISTRIBUTION}.zip ${DISTRIBUTION}
+zip -rv ${DISTRIBUTION}-${ARCH}.zip ${DISTRIBUTION}
 
 echo ========================================================
 echo Done!

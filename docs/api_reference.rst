@@ -2,6 +2,10 @@
 API Reference
 =============
 
+.. warning::  This chapter it generated from Python source code and not yet very useful. Also, the API described
+              here is not yet stable.
+
+
 Input / Output
 ==============
 

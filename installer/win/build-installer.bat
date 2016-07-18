@@ -22,6 +22,9 @@ cd %THIS_DIR%\..\..
 call python setup.py clean --all
 call python setup.py install
 
+call dedop --version > installer\win\version.txt
+SET /p DEDOP_VERSION=<installer\win\version.txt
+
 @echo ========================================================
 @echo Building installer...
 @echo ========================================================

@@ -1,3 +1,3 @@
 # see http://semver.org/
-__version__ = '0.5.0-rc0+1'
+__version__ = '0.5.0-rc0+2'
 

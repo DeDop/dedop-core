@@ -3,7 +3,7 @@
 set DEDOP_HOME=%~dp0\..
 
 echo.
-@echo Welcome to the DeDop command-line interface. Type "dedop -h" to get help.
+@echo Welcome to the DeDop Shell. Type "dedop -h" to get help.
 echo.
 
 call "%DEDOP_HOME%\python\Scripts\activate.bat" "%DEDOP_HOME%\python"
