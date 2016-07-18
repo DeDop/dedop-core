@@ -9,11 +9,13 @@ API Reference
 Input / Output
 ==============
 
-.. automodule:: dedop.io.input
+.. automodule:: dedop.data.input
    :members:
 
+.. automodule:: dedop.data.input.l1a
+   :members:
 
-.. automodule:: dedop.io.output
+.. automodule:: dedop.data.output
    :members:
 
 
