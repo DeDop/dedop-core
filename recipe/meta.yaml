@@ -1,0 +1,61 @@
+package:
+  name: dedop
+  version: "0.5.0"
+
+source:
+  # git_rev: v0.5.0-rc0+1
+  git_url: https://github.com/DeDop/dedop.git
+
+build:
+  # noarch_python: True
+  # preserve_egg_dir: True
+  entry_points:
+    # Put any entry points (scripts to be generated automatically) here.
+    - dedop = dedop.cli.cli:main
+
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  number: 0
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - pytest
+    - pytest-cov
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - matplotlib
+    - netcdf4
+
+test:
+  # Python imports
+  imports:
+    - dedop
+    - dedop.cli.cli
+    - dedop.cli.analysis
+
+  commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+    - dedop --help
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  requires:
+    # Put any additional test requirements here.
+    - pytest
+    - pytest-cov
+
+about:
+  home: https://github.com/DeDop/dedop
+  license: GPL-3
+  summary: "DeDop is a User Configurable Tool for Processing Delay Doppler Altimeter Data."
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml

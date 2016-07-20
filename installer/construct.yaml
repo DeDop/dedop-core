@@ -1,0 +1,31 @@
+name: DeDop
+version: 0.5.0-rc0+2
+
+channels:
+  - http://repo.continuum.io/pkgs/free/
+
+specs:
+  - python 3.5*
+  - conda
+  - nomkl                                [not win]
+  - numpy
+  - scipy
+  - pandas
+  - notebook
+  - matplotlib
+  - lighttpd                             [unix]
+  - menuinst
+
+exclude:
+  - qt
+  - sip
+  - pyqt
+
+license_file: ../LICENSE
+
+post_install: post_install.bat
+
+# Welcome image for Windows installer
+welcome_image: dedop-164.png               [win]
+
+default_prefix: pypypy
