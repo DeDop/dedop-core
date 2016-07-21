@@ -1,21 +1,22 @@
 package:
   name: dedop
-  version: "0.5.0"
-
-source:
-  # git_rev: v0.5.0-rc0+1
-  git_url: https://github.com/DeDop/dedop.git
+  version: "0.5.0"   #  {{ GIT_DESCRIBE_TAG }}
 
 build:
-  # noarch_python: True
-  # preserve_egg_dir: True
+  #string: 'rc0'
+  number: 0  # {{ GIT_DESCRIBE_NUMBER }}
+  #noarch_python: True
+  preserve_egg_dir: True
+  osx_is_app: True
   entry_points:
     # Put any entry points (scripts to be generated automatically) here.
     - dedop = dedop.cli.cli:main
 
-  # If this is a new build for the same version, increment the build
-  # number. If you do not include this key, it defaults to 0.
-  number: 0
+source:
+  # git_rev: v0.5.0-rc0+1
+  git_url: https://github.com/DeDop/dedop.git
+  # The following does not work, i.e. typing "conda build recipe" will loop forever
+  #path: ../
 
 requirements:
   build:
@@ -26,10 +27,13 @@ requirements:
 
   run:
     - python
-    - numpy
-    - scipy
+    - jupyter
+    - ipywidgets
+    - basemap
     - matplotlib
     - netcdf4
+    - scipy
+    - numpy
 
 test:
   # Python imports
@@ -51,10 +55,19 @@ test:
     - pytest
     - pytest-cov
 
+app:
+  entry: dedop
+  icon: dedop-64.png
+  own_environment: False
+  summary:  "Delay Doppler Altimeter Tool"
+
 about:
   home: https://github.com/DeDop/dedop
   license: GPL-3
+  license_file: LICENSE
   summary: "DeDop is a User Configurable Tool for Processing Delay Doppler Altimeter Data."
+
+
 
 # See
 # http://docs.continuum.io/conda/build.html for
