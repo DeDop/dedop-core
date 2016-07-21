@@ -28,11 +28,11 @@ After installing Miniconda open a terminal window and create an isolated Python 
 
 Then install the DeDop library requirements::
 
-    conda install numpy scipy netCDF4
+    conda install numpy scipy netcdf4
 
 If you like to perform analysis tasks with DeDop, then also install::
 
-    conda install -c IOOS basemap matplotlib jupyter
+    conda install matplotlib bokeh jupyter ipywidgets
 
 Then checkout the DeDop source code from GitHub::
 

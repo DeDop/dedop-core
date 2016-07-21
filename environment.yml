@@ -1,13 +1,11 @@
 name: dedop
 dependencies:
-#- basemap=1.0.8.dev0=np110py35_1
 - curl=7.45.0=0
 - cycler=0.10.0=py35_0
 - decorator=4.0.10=py35_0
 - entrypoints=0.2.2=py35_0
 - fontconfig=2.11.1=6
 - freetype=2.5.5=1
-#- geos=3.4.2=4
 - hdf5=1.8.15.1=2
 - ipykernel=4.3.1=py35_0
 - ipython=5.0.0=py35_0

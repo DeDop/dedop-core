@@ -12,8 +12,8 @@ call activate %THIS_PYTHON%
 @echo ========================================================
 @echo Installing dependencies...
 @echo ========================================================
-call conda install -y numpy scipy netCDF4
-call conda install -y -c IOOS basemap matplotlib jupyter
+call conda install -y numpy scipy netcdf4
+call conda install -y pyproj matplotlib bokeh jupyter ipywidgets
 
 @echo ========================================================
 @echo Installing DeDop...

@@ -16,8 +16,8 @@ source activate ${THIS_PYTHON}
 echo ========================================================
 echo Installing dependencies...
 echo ========================================================
-conda install -y numpy scipy netCDF4
-conda install -y -c IOOS basemap matplotlib jupyter
+conda install -y numpy scipy netcdf4
+conda install -y pyproj matplotlib bokeh jupyter ipywidgets
 
 echo ========================================================
 echo Installing DeDop...

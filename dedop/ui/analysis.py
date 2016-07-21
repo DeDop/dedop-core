@@ -1,10 +1,24 @@
+import bokeh
+import bokeh.io
+import bokeh.model
+import bokeh.plotting
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
+import pyproj
 from IPython.display import display
+from bokeh.models import ColumnDataSource, Circle
+from bokeh.tile_providers import STAMEN_TONER, STAMEN_TERRAIN
 from ipywidgets import interact, fixed
-from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, num2date
+
+
+# (Plotting) Resources:
+# * http://matplotlib.org/api/pyplot_api.html
+# * http://matplotlib.org/users/image_tutorial.html
+# * http://ipywidgets.readthedocs.io/en/latest/
+# * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/geo.html
+# * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/notebook.html
 
 
 def inspect_l1b(file_path, interactive=True) -> 'L1bInspector':
@@ -16,12 +30,6 @@ def inspect_l1b(file_path, interactive=True) -> 'L1bInspector':
     """
     return L1bInspector(file_path, interactive)
 
-
-# Resources:
-# * http://matplotlib.org/api/pyplot_api.html
-# * http://matplotlib.org/users/image_tutorial.html
-# * http://matplotlib.org/basemap/users/examples.html
-# * http://ipywidgets.readthedocs.io/en/latest/
 
 class L1bInspector:
     """
@@ -113,32 +121,43 @@ class L1bPlottingContext:
         self._plt = plt
         self._inspector = inspector
         self._interactive = interactive
+        if interactive:
+            bokeh.io.output_notebook()
 
-    def locations(self, scales=None):
-        if not scales:
-            scales = [20, 10, 5, 1.2]
+    def locations(self):
 
-        m = Basemap(projection='tmerc', lat_0=self._inspector.lat_0, lon_0=self._inspector.lon_0, width=10000,
-                    height=10000)
-        x, y = m(self._inspector.lon, self._inspector.lat)
-        size = max(x.max() - x.min(), y.max() - y.min())
-        num_ax = len(scales)
-        fig, axes = plt.subplots(nrows=1, ncols=num_ax, figsize=(12, 12 / num_ax))
-        for axis, scale in zip(axes, scales):
-            width = scale * size
-            height = scale * size
-            m = Basemap(ax=axis, projection='tmerc',
-                        lat_0=self._inspector.lat_0, lon_0=self._inspector.lon_0,
-                        width=width, height=height)
-            x, y = m(self._inspector.lon, self._inspector.lat)
-            m.drawmapboundary(fill_color='#99FFFF')
-            m.fillcontinents(color='#CC9966', lake_color='#99FFFF')
-            m.scatter(x, y, s=10, marker='o', color='blue')
-            axis.set_title('%s x' % scale, fontsize=12)
+        # Spherical Mercator
+        mercator = pyproj.Proj(init='epsg:3857')
+        # Equirectangular lat/lon on WGS84
+        equirectangular = pyproj.Proj(init='epsg:4326')
+
+        lon = self._inspector.lon
+        lat = self._inspector.lat
+        x, y = pyproj.transform(equirectangular, mercator, lon, lat)
+        # print(list(zip(lon, lat)))
+        # print(list(zip(x, y)))
+
+        source = ColumnDataSource(data=dict(x=x, y=y))
+        circle = Circle(x='x', y='y', size=6, fill_color='blue', fill_alpha=0.5, line_color=None)
+
+        # map_options = GMapOptions(lat=30.29, lng=-97.73, map_type="roadmap", zoom=11)
+        # plot = GMapPlot(x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options)
+        # plot.title.text = 'L1B Footprint'
+        # plot.add_glyph(source, circle)
+        # plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
+
+        fig = bokeh.plotting.figure(tools='pan, wheel_zoom', x_range=(x.min(), x.max()), y_range=(y.min(), y.max()))
+        fig.axis.visible = True
+        fig.add_tile(STAMEN_TONER)
+        fig.add_tile(STAMEN_TERRAIN)
+        fig.title.text = "L1B Footprint"
+        fig.add_glyph(source, circle)
+
         if self._interactive:
-            plt.show()
+            # bokeh.io.show(plot)
+            bokeh.io.show(fig)
         else:
-            plt.savefig("plot_locations.png")
+            bokeh.io.output_file("plot_locations.html")
 
     def waveform_im(self, vmin=None, vmax=None):
         vmin = vmin if vmin else self._inspector.waveform_range[0]
