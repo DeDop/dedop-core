@@ -60,7 +60,8 @@ target/
 .idea
 /*.iml
 
-*.nc
+/*.nc
+/data
 
 /dedop-config.py
 /installer/dedop-installer.exe
