@@ -10,7 +10,7 @@ build:
   osx_is_app: True
   entry_points:
     # Put any entry points (scripts to be generated automatically) here.
-    - dedop = dedop.cli.cli:main
+    - dedop = dedop.ui.cli:main
 
 source:
   # git_rev: v0.5.0-rc0+1
@@ -39,8 +39,8 @@ test:
   # Python imports
   imports:
     - dedop
-    - dedop.cli.cli
-    - dedop.cli.analysis
+    - dedop.ui.cli
+    - dedop.ui.analysis
 
   commands:
     # You can put test commands to be run here.  Use this to test that the

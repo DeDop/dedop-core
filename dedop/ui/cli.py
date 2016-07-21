@@ -1,8 +1,8 @@
 """
 This module provides DeDop's command-line interface (CLI) API and the CLI executable.
 
-To use the CLI executable, invoke the module file as a script, type ``python3 cli.py [ARGS] [OPTIONS]``. Type
-`python3 cli.py --help`` for usage help.
+To use the CLI executable, invoke the module file as a script, type ``python3 dedop/ui/cli.py [ARGS] [OPTIONS]``. Type
+`python3 dedop/ui/cli.py --help`` for usage help.
 
 The CLI operates on sub-commands. New sub-commands can be added by inheriting from the :py:class:`Command` class
 and extending the ``Command.REGISTRY`` list of known command classes.
@@ -16,7 +16,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Tuple, Optional
 from dedop.proc.sar import L1BProcessor
 from dedop.model.processor import BaseProcessor, ProcessorException
-from dedop.cli.workspace import WorkspaceManager, WorkspaceError
+from dedop.ui.workspace import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 from dedop.util.config import get_config_value, get_config_path

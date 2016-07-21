@@ -1,10 +1,10 @@
 import os.path
 from unittest import TestCase
 
-from dedop import cli
+from dedop.ui import cli
 from dedop.model.processor import BaseProcessor, DummyProcessor
 from dedop.util.fetchstd import fetch_std_streams
-from tests.cli.test_workspace import WorkspaceTestBase
+from tests.ui.test_workspace import WorkspaceTestBase
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')
 WORKSPACES_DIR = os.path.join(TEST_DATA_DIR, 'test_cli')

@@ -4,7 +4,7 @@ import pkgutil
 import shutil
 
 from typing import List
-from dedop.cli.workspace_info import WorkspaceInfo
+from dedop.ui.workspace_info import WorkspaceInfo
 
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
@@ -187,7 +187,7 @@ class WorkspaceManager:
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
         config_dir = self._get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
-        package = 'dedop.cli.defaults'
+        package = 'dedop.ui.defaults'
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
         self._copy_resource(package, 'CST.json', dir_path)

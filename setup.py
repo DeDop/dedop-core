@@ -12,11 +12,11 @@ setup(
     author='DeDop Development Team',
     packages=packages,
     package_data={
-        'dedop.cli.defaults': ['*.json', '*.txt'],
+        'dedop.ui.defaults': ['*.json', '*.txt'],
     },
     entry_points={
         'console_scripts': [
-            'dedop = dedop.cli:main'
+            'dedop = dedop.ui.cli:main'
         ]
     },
     # Requirements are not given here as we use a Conda environment
@@ -25,7 +25,7 @@ setup(
     #                  'netCDF4 >= 1.1',
     #                  'scipy',
     #                  'typing'],
-    # extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
+    # extras_require={'dedop.ui': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',
