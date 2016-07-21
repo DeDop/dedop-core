@@ -5,8 +5,8 @@ package:
 build:
   #string: 'rc0'
   number: 0  # {{ GIT_DESCRIBE_NUMBER }}
-  noarch_python: True
-  preserve_egg_dir: False
+  # noarch_python: True
+  # preserve_egg_dir: False
   osx_is_app: True
   entry_points:
     # Put any entry points (scripts to be generated automatically) here.
