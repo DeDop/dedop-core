@@ -150,7 +150,8 @@ class L1bPlottingContext:
         fig.axis.visible = True
         fig.add_tile(STAMEN_TONER)
         fig.add_tile(STAMEN_TERRAIN)
-        fig.title.text = "L1B Footprint"
+        #fig.title.text = "L1B Footprint"
+        fig.title = 'L1B Footprint'
         fig.add_glyph(source, circle)
 
         if self._interactive:
