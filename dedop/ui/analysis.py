@@ -8,7 +8,8 @@ import numpy as np
 import pyproj
 from IPython.display import display
 from bokeh.models import ColumnDataSource, Circle
-from bokeh.tile_providers import STAMEN_TONER, STAMEN_TERRAIN
+from bokeh.models.tools import ResizeTool, BoxZoomTool, WheelZoomTool, PanTool
+from bokeh.tile_providers import STAMEN_TERRAIN
 from ipywidgets import interact, fixed
 from netCDF4 import Dataset, num2date
 
@@ -146,12 +147,12 @@ class L1bPlottingContext:
         # plot.add_glyph(source, circle)
         # plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool())
 
-        fig = bokeh.plotting.figure(tools='pan, wheel_zoom', x_range=(x.min(), x.max()), y_range=(y.min(), y.max()))
-        fig.axis.visible = True
-        fig.add_tile(STAMEN_TONER)
+        fig = bokeh.plotting.figure(x_range=(x.min(), x.max()), y_range=(y.min(), y.max()), toolbar_location='above')
+        fig.axis.visible = False
+        # fig.add_tile(STAMEN_TONER)
         fig.add_tile(STAMEN_TERRAIN)
-        #fig.title.text = "L1B Footprint"
-        fig.title = 'L1B Footprint'
+        fig.title.text = "L1B Footprint"
+        # fig.title = 'L1B Footprint'
         fig.add_glyph(source, circle)
 
         if self._interactive:
