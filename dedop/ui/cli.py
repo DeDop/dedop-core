@@ -12,14 +12,14 @@ import argparse
 import os.path
 import sys
 from abc import ABCMeta, abstractmethod
-
 from typing import Tuple, Optional
-from dedop.proc.sar import L1BProcessor
+
 from dedop.model.processor import BaseProcessor, ProcessorException
+from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace import WorkspaceManager, WorkspaceError
+from dedop.util.config import get_config_value, get_config_path
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
-from dedop.util.config import get_config_value, get_config_path
 
 _DEFAULT_SUFFIX = '_1'
 
@@ -807,14 +807,18 @@ class ManageOutputsCommand(Command):
         parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
         parser_clean.set_defaults(mo_command=cls.execute_open)
 
-        parser_compare = subparsers.add_parser('compare', aliases=['cm'], help='Compare outputs')
+        parser_compare = subparsers.add_parser('compare', aliases=['cmp'], help='Compare outputs')
         cls.setup_default_parser_argument(parser_compare)
-        parser_compare.add_argument('other_config_name', metavar='OTHER', help='Another configuration')
+        parser_compare.add_argument('other_config_name', metavar='OTHER-CONFIG', help='Another configuration')
+        parser_compare.add_argument('l1b_filename', metavar='L1B_FILENAME', nargs='?',
+                                    help='The L1B filename contained in both configurations')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
-        parser_analyse = subparsers.add_parser('analyse', aliases=['an'], help='Analyse output')
+        parser_analyse = subparsers.add_parser('inspect', aliases=['ins'], help='Inspect output')
         cls.setup_default_parser_argument(parser_analyse)
-        parser_analyse.set_defaults(mo_command=cls.execute_analyse)
+        parser_analyse.add_argument('l1b_filename', metavar='L1B_FILENAME', nargs='?',
+                                    help='The L1B filename contained in CONFIG or the current configuration')
+        parser_analyse.set_defaults(mo_command=cls.execute_inspect)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
         cls.setup_default_parser_argument(parser_list)
@@ -881,26 +885,34 @@ class ManageOutputsCommand(Command):
             if not config_name_1:
                 return _STATUS_NO_CONFIG
         config_name_2 = command_args.other_config_name
+        l1b_filename = command_args.l1b_filename
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_1):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_1)
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_2):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_2)
-        # TODO (forman, 20160704): implement "mo compare" command
+        print('TODO: comparing output of "%s" and "%s", L1B is "%s"' % (config_name_1, config_name_2, l1b_filename))
+        # TODO (forman, 20160704): implement "output compare" command
         #
         # Implementation here...
         #
-        print('TODO: comparing output of "%s" and "%s"' % (config_name_1, config_name_2))
         return cls.STATUS_OK
 
     @classmethod
-    def execute_analyse(cls, command_args):
+    def execute_inspect(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        # TODO (forman, 20160704): implement "mo analyse" command
-        #
-        # Implementation here...
-        #
-        print('TODO: analysing output of "%s"' % config_name)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
+
+        l1b_filename = command_args.l1b_filename
+
+        try:
+            _WORKSPACE_MANAGER.inspect_l1b(workspace_name, config_name, l1b_filename)
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
+
 
     @classmethod
     def execute_list(cls, command_args):

@@ -2,8 +2,8 @@ import fnmatch
 import os.path
 import pkgutil
 import shutil
-
 from typing import List
+
 from dedop.ui.workspace_info import WorkspaceInfo
 
 _WORKSPACES_DIR_NAME = 'workspaces'
@@ -297,6 +297,7 @@ class WorkspaceManager:
                         raise WorkspaceError(str(e))
                 monitor.progress(1)
 
+    # TODO forman rename to get_input_filenames
     def get_input_names(self, workspace_name: str, pattern=None):
         """
         :param workspace_name: workspace name in which the input files are to be queried
@@ -311,6 +312,7 @@ class WorkspaceManager:
         return [self._get_workspace_path(workspace_name, 'inputs', name) for name in
                 self.get_input_names(workspace_name)]
 
+    # TODO forman make it public
     def _get_workspace_path(self, workspace_name, *paths):
         return os.path.join(self._workspaces_dir, workspace_name, *paths)
 
@@ -334,6 +336,7 @@ class WorkspaceManager:
                 except (IOError, OSError) as e:
                     raise WorkspaceError(str(e))
 
+    # TODO forman rename to get_output_filenames
     def get_output_names(self, workspace_name: str, config_name: str, pattern=None):
         """
         :param workspace_name: workspace name in which the output files are to be listed
@@ -344,6 +347,54 @@ class WorkspaceManager:
         if os.path.exists(outputs_dir):
             return self.get_nc_filename_list(outputs_dir, pattern)
         return []
+
+    def inspect_l1b(self, workspace_name: str, config_name: str, l1b_filename: str = None):
+
+        if l1b_filename:
+            if os.path.exists(l1b_filename):
+                l1b_path = l1b_filename
+                l1b_filename = os.path.basename(l1b_path)
+            else:
+                l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
+                if not os.path.exists(l1b_filename):
+                    raise WorkspaceError('L1B file "%s" not found' % l1b_filename)
+        else:
+            names = self.get_output_names(workspace_name, config_name)
+            if not names:
+                raise WorkspaceError('there are no L1B outputs yet in workspace "%s" and configuration "%s"' % (
+                    workspace_name, config_name))
+            l1b_filename = names[0]
+            l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
+
+        notebook_dir = self._get_workspace_path(workspace_name, 'notebooks')
+        if not os.path.exists(notebook_dir):
+            try:
+                os.mkdir(notebook_dir)
+            except (IOError, OSError) as e:
+                return 60, str(e)
+
+        package = 'dedop.ui.defaults'
+
+        template_data = pkgutil.get_data(package, 'inspect-__L1B_FILE_PATH__.ipynb')
+        data = template_data.decode("utf-8").replace('__L1B_FILE_PATH__', repr(l1b_path))
+        notebook_filename = 'inspect-%s.ipynb' % l1b_filename
+        notebook_path = os.path.join(notebook_dir, notebook_filename)
+        with open(notebook_path, 'w') as fp:
+            fp.write(data)
+            print('wrote notebook file "%s"' % notebook_path)
+
+        # TODO (forman, 20160722): this command is for Windows, make it work for Max OS and Linux
+        command = 'start "DeDop - %s" /Min jupyter notebook --notebook-dir "%s" "%s"' % \
+                  (l1b_filename, notebook_dir, notebook_path)
+
+        import subprocess
+        try:
+            # TODO (forman, 20160722): use Popen here, so that users can continue using the CLI
+            print('calling:', command)
+            exit_code = subprocess.check_call(command, shell=True)
+            print('exit code', exit_code)
+        except (subprocess.CalledProcessError, IOError, OSError) as error:
+            raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
 
     @staticmethod
     def get_nc_filename_list(outputs_dir, pattern):
@@ -388,3 +439,6 @@ class WorkspaceManager:
 
     def get_output_dir(self, workspace_name, config_name):
         return self._get_workspace_path(workspace_name, 'configs', config_name, 'outputs')
+
+    def get_output_path(self, workspace_name, config_name, *paths):
+        return os.path.join(self.get_output_dir(workspace_name, config_name), *paths)

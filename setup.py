@@ -12,7 +12,7 @@ setup(
     author='DeDop Development Team',
     packages=packages,
     package_data={
-        'dedop.ui.defaults': ['*.json', '*.txt'],
+        'dedop.ui.defaults': ['*.json', '*.txt', '*.ipynb'],
     },
     entry_points={
         'console_scripts': [
