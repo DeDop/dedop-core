@@ -882,19 +882,20 @@ class ManageOutputsCommand(Command):
         workspace_name, config_name_1 = _get_workspace_and_config_name(command_args)
         if not config_name_1:
             config_name_1 = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
-            if not config_name_1:
-                return _STATUS_NO_CONFIG
+        if not config_name_1:
+            return _STATUS_NO_CONFIG
         config_name_2 = command_args.other_config_name
-        l1b_filename = command_args.l1b_filename
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_1):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_1)
         if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_2):
             return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_2)
-        print('TODO: comparing output of "%s" and "%s", L1B is "%s"' % (config_name_1, config_name_2, l1b_filename))
-        # TODO (forman, 20160704): implement "output compare" command
-        #
-        # Implementation here...
-        #
+
+        l1b_filename = command_args.l1b_filename
+
+        try:
+            _WORKSPACE_MANAGER.compare_l1b_products(workspace_name, config_name_1, config_name_2, l1b_filename)
+        except WorkspaceError as error:
+            return 1, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -904,15 +905,16 @@ class ManageOutputsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
+        if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name):
+            return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name)
 
         l1b_filename = command_args.l1b_filename
 
         try:
-            _WORKSPACE_MANAGER.inspect_l1b(workspace_name, config_name, l1b_filename)
+            _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, config_name, l1b_filename)
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
-
 
     @classmethod
     def execute_list(cls, command_args):

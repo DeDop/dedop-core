@@ -13,6 +13,7 @@ from bokeh.tile_providers import STAMEN_TERRAIN
 from ipywidgets import interact, fixed
 from netCDF4 import Dataset, num2date
 
+from numpy import ndarray
 
 # (Plotting) Resources:
 # * http://matplotlib.org/api/pyplot_api.html
@@ -22,26 +23,29 @@ from netCDF4 import Dataset, num2date
 # * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/notebook.html
 
 
-def inspect_l1b(file_path, interactive=True) -> 'L1bInspector':
+def inspect_l1b_product(file_path, interactive=True) -> 'L1bProductInspector':
     """
-    Open a L1B file for inspection.
+    Open a L1B product for inspection.
 
-    :param file_path: The L1B file path.
+    :param file_path: The file path of the LB product.
     :param interactive: whether the returned inspector is supposed to run in interactive mode (i.e. IPython notebook)
     """
-    return L1bInspector(file_path, interactive)
+    return L1bProductInspector(file_path, interactive)
 
 
-class L1bInspector:
+class L1bProductInspector:
     """
     The `L1bInspector` class provides access to L1B contents and provides a number of analysis functions.
 
-    :param file_path: The L1B file path.
+    :param file_path: The file path of the LB product.
     :param interactive: whether this inspector is supposed to run in interactive mode (i.e. IPython notebook)
     """
 
     def __init__(self, file_path, interactive):
-        self._plot = L1bPlottingContext(self, interactive)
+        if not file_path:
+            raise ValueError('file_path must be given')
+
+        self._plot = L1bInpectionPlotting(self, interactive)
 
         self._file_path = file_path
 
@@ -84,7 +88,7 @@ class L1bInspector:
         waveform_scaling = dataset['scale_factor_ku_l1b_echo_sar_ku'][:]
         waveform_scaling = waveform_scaling.reshape(waveform_scaling.shape + (1,))
 
-        self.waveform = waveform_scaling * waveform_counts
+        self._waveform = waveform_scaling * waveform_counts
         self.waveform_range = self.waveform.min(), self.waveform.max()
 
         self.num_times = waveform_counts.shape[0]
@@ -99,7 +103,7 @@ class L1bInspector:
         return self._file_path
 
     @property
-    def plot(self) -> 'L1bPlottingContext':
+    def plot(self) -> 'L1bInpectionPlotting':
         """
         Get the plotting context.
         """
@@ -112,13 +116,20 @@ class L1bInspector:
         """
         return self._dataset
 
+    @property
+    def waveform(self) -> ndarray:
+        """
+        Get the pre-scaled waveform array.
+        """
+        return self._waveform
+
     def close(self):
         """Close the underlying dataset's file access."""
         self._dataset.close()
 
 
-class L1bPlottingContext:
-    def __init__(self, inspector: 'L1bInspector', interactive=True):
+class L1bInpectionPlotting:
+    def __init__(self, inspector: 'L1bProductInspector', interactive=True):
         self._plt = plt
         self._inspector = inspector
         self._interactive = interactive

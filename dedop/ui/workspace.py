@@ -348,24 +348,35 @@ class WorkspaceManager:
             return self.get_nc_filename_list(outputs_dir, pattern)
         return []
 
-    def inspect_l1b(self, workspace_name: str, config_name: str, l1b_filename: str = None):
+    def inspect_l1b_product(self, workspace_name: str, config_name: str, l1b_filename: str = None):
 
-        if l1b_filename:
-            if os.path.exists(l1b_filename):
-                l1b_path = l1b_filename
-                l1b_filename = os.path.basename(l1b_path)
-            else:
-                l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
-                if not os.path.exists(l1b_filename):
-                    raise WorkspaceError('L1B file "%s" not found' % l1b_filename)
-        else:
-            names = self.get_output_names(workspace_name, config_name)
-            if not names:
-                raise WorkspaceError('there are no L1B outputs yet in workspace "%s" and configuration "%s"' % (
-                    workspace_name, config_name))
-            l1b_filename = names[0]
-            l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
+        l1b_path = self.get_1b_file_path(workspace_name, config_name, l1b_filename, force=True)
+        l1b_filename = os.path.basename(l1b_path)
 
+        package = 'dedop.ui.defaults'
+        template_data = pkgutil.get_data(package, 'inspect-template.ipynb')
+        notebook_json = template_data.decode("utf-8").replace('__L1B_FILE_PATH__', repr(l1b_path))
+        notebook_filename = 'inspect-%s.ipynb' % l1b_filename
+
+        return self._start_notebook(workspace_name, notebook_filename, notebook_json, 'compare - %s' % l1b_filename)
+
+    def compare_l1b_products(self, workspace_name: str, config_name_1: str, config_name_2: str,
+                             l1b_filename: str = None):
+
+        l1b_path_1 = self.get_1b_file_path(workspace_name, config_name_1, l1b_filename, force=True)
+        l1b_path_2 = self.get_1b_file_path(workspace_name, config_name_2, l1b_filename, force=True)
+        l1b_filename = os.path.basename(l1b_path_1)
+
+        package = 'dedop.ui.defaults'
+        template_data = pkgutil.get_data(package, 'compare-template.ipynb')
+        notebook_json = template_data.decode("utf-8") \
+            .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1)) \
+            .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2))
+        notebook_filename = 'compare-%s.ipynb' % l1b_filename
+
+        return self._start_notebook(workspace_name, notebook_filename, notebook_json, 'compare - %s' % l1b_filename)
+
+    def _start_notebook(self, workspace_name: str, notebook_filename: str, notebook_json: str, title: str):
         notebook_dir = self._get_workspace_path(workspace_name, 'notebooks')
         if not os.path.exists(notebook_dir):
             try:
@@ -373,19 +384,14 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 return 60, str(e)
 
-        package = 'dedop.ui.defaults'
-
-        template_data = pkgutil.get_data(package, 'inspect-__L1B_FILE_PATH__.ipynb')
-        data = template_data.decode("utf-8").replace('__L1B_FILE_PATH__', repr(l1b_path))
-        notebook_filename = 'inspect-%s.ipynb' % l1b_filename
         notebook_path = os.path.join(notebook_dir, notebook_filename)
         with open(notebook_path, 'w') as fp:
-            fp.write(data)
+            fp.write(notebook_json)
             print('wrote notebook file "%s"' % notebook_path)
 
         # TODO (forman, 20160722): this command is for Windows, make it work for Max OS and Linux
         command = 'start "DeDop - %s" /Min jupyter notebook --notebook-dir "%s" "%s"' % \
-                  (l1b_filename, notebook_dir, notebook_path)
+                  (title, notebook_dir, notebook_path)
 
         import subprocess
         try:
@@ -395,6 +401,29 @@ class WorkspaceManager:
             print('exit code', exit_code)
         except (subprocess.CalledProcessError, IOError, OSError) as error:
             raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
+
+    def get_1b_file_path(self, workspace_name, config_name, l1b_filename, force=False):
+        if l1b_filename:
+            if os.path.isfile(l1b_filename):
+                l1b_path = l1b_filename
+            else:
+                l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
+                if not os.path.isfile(l1b_filename):
+                    if force:
+                        raise WorkspaceError('L1B file "%s" not found' % l1b_filename)
+                    else:
+                        return None
+        else:
+            names = self.get_output_names(workspace_name, config_name)
+            if not names:
+                if force:
+                    raise WorkspaceError('there are no L1B outputs yet in workspace "%s" and configuration "%s"' % (
+                        workspace_name, config_name))
+                else:
+                    return None
+            l1b_filename = names[0]
+            l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
+        return l1b_path
 
     @staticmethod
     def get_nc_filename_list(outputs_dir, pattern):
