@@ -787,7 +787,7 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Manage L1B and analysis outputs.'
+        help_line = 'Manage and analyse L1B outputs.'
         return dict(aliases=['mo'], help=help_line, description=help_line)
 
     @classmethod

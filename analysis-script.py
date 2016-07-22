@@ -1,6 +1,6 @@
 import sys
 
-from dedop.ui.analysis import inspect_l1b
+from dedop.ui.inspect import inspect_l1b
 
 l1b_file = sys.argv[1]
 
