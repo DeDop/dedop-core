@@ -2,6 +2,8 @@ import fnmatch
 import os.path
 import pkgutil
 import shutil
+import subprocess
+import sys
 from typing import List
 
 from dedop.ui.workspace_info import WorkspaceInfo
@@ -241,13 +243,6 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
-    def print_config_info(self, workspace_name: str, config_name: str):
-        """
-        :param workspace_name: workspace name
-        :param config_name: config name to be queried
-        """
-        # TODO (hans-permana, 20160707) Find out what information to be displayed
-
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self._get_config_path(workspace_name, config_name, config_file_key + '.json')
 
@@ -316,6 +311,7 @@ class WorkspaceManager:
     def _get_workspace_path(self, workspace_name, *paths):
         return os.path.join(self._workspaces_dir, workspace_name, *paths)
 
+    # TODO forman make it public
     def _get_config_path(self, workspace_name, config_name, *paths):
         return self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
 
@@ -348,35 +344,39 @@ class WorkspaceManager:
             return self.get_nc_filename_list(outputs_dir, pattern)
         return []
 
-    def inspect_l1b_product(self, workspace_name: str, config_name: str, l1b_filename: str = None):
-
-        l1b_path = self.get_1b_file_path(workspace_name, config_name, l1b_filename, force=True)
-        l1b_filename = os.path.basename(l1b_path)
+    def inspect_l1b_product(self, workspace_name: str, l1b_path: str):
 
         package = 'dedop.ui.defaults'
         template_data = pkgutil.get_data(package, 'inspect-template.ipynb')
-        notebook_json = template_data.decode("utf-8").replace('__L1B_FILE_PATH__', repr(l1b_path))
-        notebook_filename = 'inspect-%s.ipynb' % l1b_filename
+        notebook_json = template_data.decode("utf-8") \
+            .replace('__L1B_FILE_PATH__', repr(l1b_path).replace('\\', '\\\\'))
 
-        return self._start_notebook(workspace_name, notebook_filename, notebook_json, 'compare - %s' % l1b_filename)
+        return self._launch_notebook_from_template(workspace_name, 'inspect', notebook_json, 'inspect - [%s]' %
+                                                   self.name_to_title(l1b_path, 80))
 
-    def compare_l1b_products(self, workspace_name: str, config_name_1: str, config_name_2: str,
-                             l1b_filename: str = None):
-
-        l1b_path_1 = self.get_1b_file_path(workspace_name, config_name_1, l1b_filename, force=True)
-        l1b_path_2 = self.get_1b_file_path(workspace_name, config_name_2, l1b_filename, force=True)
-        l1b_filename = os.path.basename(l1b_path_1)
+    def compare_l1b_products(self, workspace_name, l1b_path_1: str, l1b_path_2: str):
 
         package = 'dedop.ui.defaults'
         template_data = pkgutil.get_data(package, 'compare-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
-            .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1)) \
-            .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2))
-        notebook_filename = 'compare-%s.ipynb' % l1b_filename
+            .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1).replace('\\', '\\\\')) \
+            .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2).replace('\\', '\\\\'))
 
-        return self._start_notebook(workspace_name, notebook_filename, notebook_json, 'compare - %s' % l1b_filename)
+        return self._launch_notebook_from_template(workspace_name, 'compare', notebook_json, 'compare - [%s] [%s]' % (
+            self.name_to_title(l1b_path_1, 40),
+            self.name_to_title(l1b_path_2, 40),))
 
-    def _start_notebook(self, workspace_name: str, notebook_filename: str, notebook_json: str, title: str):
+    @classmethod
+    def name_to_title(cls, name, max_len):
+        assert name
+        assert max_len > 3
+        return name if len(name) <= max_len else '...' + name[3 - max_len:]
+
+    def _launch_notebook_from_template(self,
+                                       workspace_name: str,
+                                       notebook_basename: str,
+                                       notebook_json: str,
+                                       title: str):
         notebook_dir = self._get_workspace_path(workspace_name, 'notebooks')
         if not os.path.exists(notebook_dir):
             try:
@@ -384,46 +384,40 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 return 60, str(e)
 
-        notebook_path = os.path.join(notebook_dir, notebook_filename)
+        index = 0
+        while True:
+            index += 1
+            notebook_filename = '%s-%d.ipynb' % (notebook_basename, index)
+            notebook_path = os.path.join(notebook_dir, notebook_filename)
+            if not os.path.exists(notebook_path):
+                break
+
+        # noinspection PyUnboundLocalVariable
         with open(notebook_path, 'w') as fp:
             fp.write(notebook_json)
             print('wrote notebook file "%s"' % notebook_path)
 
-        # TODO (forman, 20160722): this command is for Windows, make it work for Max OS and Linux
-        command = 'start "DeDop - %s" /Min jupyter notebook --notebook-dir "%s" "%s"' % \
-                  (title, notebook_dir, notebook_path)
+        self.launch_notebook(title, notebook_dir, notebook_path=notebook_path)
 
-        import subprocess
+    def launch_notebook(self, title: str, notebook_dir: str, notebook_path: str = None):
+        # TODO (forman, 20160722): this command is for Windows, make it work for Mac OS and Linux
+        # we must start a new terminal window so that users can close the Notebook session easily
+        terminal_title = 'DeDop - %s' % title
+
+        if sys.platform.startswith('win'):
+            terminal_command = 'start "%s" /Min jupyter notebook --notebook-dir "%s"' % (terminal_title, notebook_dir)
+            if notebook_path:
+                terminal_command += ' "%s"' % notebook_path
+        else:
+            raise NotImplementedError('terminal_command')
+
         try:
-            # TODO (forman, 20160722): use Popen here, so that users can continue using the CLI
-            print('calling:', command)
-            exit_code = subprocess.check_call(command, shell=True)
-            print('exit code', exit_code)
+            # print('calling:', command)
+            subprocess.check_call(terminal_command, shell=True)
+            print('A new terminal window named "%s" has been opened.' % terminal_title)
+            print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
             raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
-
-    def get_1b_file_path(self, workspace_name, config_name, l1b_filename, force=False):
-        if l1b_filename:
-            if os.path.isfile(l1b_filename):
-                l1b_path = l1b_filename
-            else:
-                l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
-                if not os.path.isfile(l1b_filename):
-                    if force:
-                        raise WorkspaceError('L1B file "%s" not found' % l1b_filename)
-                    else:
-                        return None
-        else:
-            names = self.get_output_names(workspace_name, config_name)
-            if not names:
-                if force:
-                    raise WorkspaceError('there are no L1B outputs yet in workspace "%s" and configuration "%s"' % (
-                        workspace_name, config_name))
-                else:
-                    return None
-            l1b_filename = names[0]
-            l1b_path = self.get_output_path(workspace_name, config_name, l1b_filename)
-        return l1b_path
 
     @staticmethod
     def get_nc_filename_list(outputs_dir, pattern):

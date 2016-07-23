@@ -11,6 +11,7 @@ and extending the ``Command.REGISTRY`` list of known command classes.
 import argparse
 import os.path
 import sys
+import subprocess
 from abc import ABCMeta, abstractmethod
 from typing import Tuple, Optional
 
@@ -466,7 +467,7 @@ class ManageConfigsCommand(Command):
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
-        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show configuration')
+        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show configuration info')
         parser_info.add_argument(nargs='?', **config_name_attributes)
         parser_info.set_defaults(cf_command=cls.execute_info)
 
@@ -580,16 +581,20 @@ class ManageConfigsCommand(Command):
 
     @classmethod
     def execute_info(cls, command_args):
-        workspace_name, config_name = _get_workspace_name(command_args)
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        # TODO (forman, 20180702): implement 'mc info' command
-        #
-        # Implementation here...
-        #
-        print('TODO: show configuration %s' % config_name)
+        config_path = _WORKSPACE_MANAGER._get_config_path(workspace_name, config_name)
+        print('current workspace:    ', workspace_name)
+        print('current configuration:', config_name)
+        print('configuration path:   ', config_path)
+        if sys.platform.startswith('win'):
+            # /A-D = don't show directories
+            subprocess.check_call('dir /A-D "%s"' % config_path, shell=True)
+        else:
+            subprocess.check_call('ls "%s"' % config_path, shell=True)
         return cls.STATUS_OK
 
     @classmethod
@@ -792,14 +797,12 @@ class ManageOutputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        # TODO (hans-permana, 20160707): make the general arguments visible in sub-command
-        cls.setup_default_parser_argument(parser)
-        parser.set_defaults(mo_parser=parser)
+        parser.set_defaults(mo_parser=parser)  # so we cant print usage, if no sub-command given
 
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
-        cls.setup_default_parser_argument(parser_clean)
+        cls.set_workspace_config_parser_arguments(parser_clean)
         parser_clean.add_argument('-q', '--quiet', action='store_true',
                                   help='Suppress output of progress information.')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
@@ -807,34 +810,48 @@ class ManageOutputsCommand(Command):
         parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
         parser_clean.set_defaults(mo_command=cls.execute_open)
 
-        parser_compare = subparsers.add_parser('compare', aliases=['cmp'], help='Compare outputs')
-        cls.setup_default_parser_argument(parser_compare)
-        parser_compare.add_argument('other_config_name', metavar='OTHER-CONFIG', help='Another configuration')
-        parser_compare.add_argument('l1b_filename', metavar='L1B_FILENAME', nargs='?',
-                                    help='The L1B filename contained in both configurations')
-        parser_compare.set_defaults(mo_command=cls.execute_compare)
-
         parser_analyse = subparsers.add_parser('inspect', aliases=['ins'], help='Inspect output')
-        cls.setup_default_parser_argument(parser_analyse)
-        parser_analyse.add_argument('l1b_filename', metavar='L1B_FILENAME', nargs='?',
-                                    help='The L1B filename contained in CONFIG or the current configuration')
+        cls.set_workspace_config_parser_arguments(parser_analyse)
+        parser_analyse.add_argument('l1b_filename', metavar='L1B_FILENAME',
+                                    help='The filename or path of the a L1B product. If only a filename is given, '
+                                         'it must exist in outputs of the given workspace/configuration.')
         parser_analyse.set_defaults(mo_command=cls.execute_inspect)
 
+        parser_compare = subparsers.add_parser('compare', aliases=['cmp'], help='Compare outputs')
+        cls.set_workspace_config_parser_arguments(parser_compare)
+        cls.set_workspace2_config2_parser_arguments(parser_compare)
+        parser_compare.add_argument('l1b_filename_1', metavar='L1B_FILENAME_1',
+                                    help='The filename or path of the first L1B product. If only a filename is given, '
+                                         'it must exist in outputs of the given workspace/configuration.')
+        parser_compare.add_argument('l1b_filename_2', metavar='L1B_FILENAME_2', nargs='?',
+                                    help='The filename or path of the second L1B product. If only a filename is given, '
+                                         'it must exist in outputs of the given second or first workspace/configuration.'
+                                         ' If omitted, the first filename or path is used.')
+        parser_compare.set_defaults(mo_command=cls.execute_compare)
+
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
-        cls.setup_default_parser_argument(parser_list)
+        cls.set_workspace_config_parser_arguments(parser_list)
         parser_list.add_argument('pattern', metavar='WC', nargs='?',
                                  help="Wildcard pattern.")
         parser_list.set_defaults(mo_command=cls.execute_list)
 
     @classmethod
-    def setup_default_parser_argument(cls, parser):
+    def set_workspace_config_parser_arguments(cls, parser):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
                                          help="Name of the workspace.")
         parser.add_argument('-w', '--workspace', **workspace_name_attributes)
         config_name_attributes = dict(dest='config_name', metavar='CONFIG',
                                       help="Name of the configuration.")
         parser.add_argument('-c', '--config', **config_name_attributes)
-        return config_name_attributes, workspace_name_attributes
+
+    @classmethod
+    def set_workspace2_config2_parser_arguments(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name_2', metavar='WORKSPACE_2',
+                                         help="The workspace of the second L1B product.")
+        parser.add_argument('-W', '--workspace-2', **workspace_name_attributes)
+        config_name_attributes = dict(dest='config_name_2', metavar='CONFIG_2',
+                                      help="The configuration of the second L1B product")
+        parser.add_argument('-C', '--config-2', **config_name_attributes)
 
     def execute(self, command_args):
         if hasattr(command_args, 'mo_command') and command_args.mo_command:
@@ -874,28 +891,7 @@ class ManageOutputsCommand(Command):
             output_dir = _WORKSPACE_MANAGER.get_output_dir(workspace_name, config_name)
             _open_file(output_dir)
         except WorkspaceError as error:
-            return 1, str(error)
-        return cls.STATUS_OK
-
-    @classmethod
-    def execute_compare(cls, command_args):
-        workspace_name, config_name_1 = _get_workspace_and_config_name(command_args)
-        if not config_name_1:
-            config_name_1 = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
-        if not config_name_1:
-            return _STATUS_NO_CONFIG
-        config_name_2 = command_args.other_config_name
-        if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_1):
-            return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_1)
-        if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name_2):
-            return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name_2)
-
-        l1b_filename = command_args.l1b_filename
-
-        try:
-            _WORKSPACE_MANAGER.compare_l1b_products(workspace_name, config_name_1, config_name_2, l1b_filename)
-        except WorkspaceError as error:
-            return 1, str(error)
+            return 40, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -905,15 +901,59 @@ class ManageOutputsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        if not _WORKSPACE_MANAGER.config_exists(workspace_name, config_name):
-            return 50, 'workspace "%s" doesn\'t contain a configuration "%s"' % (workspace_name, config_name)
 
         l1b_filename = command_args.l1b_filename
+        if os.path.dirname(l1b_filename):
+            l1b_path = os.path.abspath(l1b_filename)
+        else:
+            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            l1b_path = _WORKSPACE_MANAGER.get_output_path(workspace_name, config_name, l1b_filename)
+        if not os.path.exists(l1b_path):
+            return 50, 'L1B product not found: %s' % l1b_path
 
         try:
-            _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, config_name, l1b_filename)
+            _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_filename)
         except WorkspaceError as error:
-            return 1, str(error)
+            return 50, str(error)
+        return cls.STATUS_OK
+
+    @classmethod
+    def execute_compare(cls, command_args):
+        workspace_name_1, config_name_1 = _get_workspace_and_config_name(command_args)
+        if not workspace_name_1:
+            return _STATUS_NO_WORKSPACE
+        if not config_name_1:
+            return _STATUS_NO_CONFIG
+        workspace_name_2 = command_args.workspace_name_2
+        workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
+        config_name_2 = command_args.config_name_2
+        config_name_2 = config_name_2 if config_name_2 else config_name_1
+
+        l1b_filename_1 = command_args.l1b_filename_1
+        if os.path.dirname(l1b_filename_1):
+            l1b_path_1 = os.path.abspath(l1b_filename_1)
+        else:
+            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            l1b_path_1 = _WORKSPACE_MANAGER.get_output_path(workspace_name_1, config_name_1, l1b_filename_1)
+        if not os.path.exists(l1b_path_1):
+            return 60, 'First L1B product not found: %s' % l1b_path_1
+
+        l1b_filename_2 = command_args.l1b_filename_2
+        if os.path.dirname(l1b_filename_1):
+            l1b_path_2 = os.path.abspath(l1b_filename_2)
+        else:
+            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            l1b_path_2 = _WORKSPACE_MANAGER.get_output_path(workspace_name_2, config_name_2, l1b_filename_2)
+        if not os.path.exists(l1b_path_2):
+            return 60, 'Second L1B product not found: %s' % l1b_path_2
+
+        if os.path.samefile(l1b_path_1, l1b_path_2):
+            print('warning: comparing "%s" with itself')
+
+        try:
+            _WORKSPACE_MANAGER.compare_l1b_products(workspace_name_1, l1b_path_1, l1b_path_2)
+        except WorkspaceError as error:
+            return 60, str(error)
         return cls.STATUS_OK
 
     @classmethod
@@ -936,6 +976,30 @@ class ManageOutputsCommand(Command):
             output_name = output_names[i]
             print('%3d: %s' % (i + 1, output_name))
         return cls.STATUS_OK
+
+
+class OpenNotebookCommand(Command):
+    @classmethod
+    def name(cls):
+        return 'notebook'
+
+    @classmethod
+    def parser_kwargs(cls):
+        help_line = 'Open a new Jupyter Notebook for DeDop.'
+        return dict(aliases=['nb'], help=help_line, description=help_line)
+
+    def execute(self, command_args):
+        workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
+        if not os.path.exists(workspaces_dir):
+            try:
+                os.makedirs(workspaces_dir)
+            except (OSError, IOError) as error:
+                return 70, str(error)
+        try:
+            _WORKSPACE_MANAGER.launch_notebook('Notebook', workspaces_dir)
+        except WorkspaceError as error:
+            return 70, str(error)
+        return self.STATUS_OK
 
 
 class ShowStatusCommand(Command):
@@ -1039,6 +1103,7 @@ COMMAND_REGISTRY = [
     ManageConfigsCommand,
     ManageInputsCommand,
     ManageOutputsCommand,
+    OpenNotebookCommand,
     ShowStatusCommand,
     ShowManualCommand,
     ShowCopyrightCommand,
