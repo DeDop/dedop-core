@@ -10,6 +10,8 @@ from dedop.ui.workspace_info import WorkspaceInfo
 
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
+_INPUTS_DIR_NAME = 'inputs'
+_OUTPUTS_DIR_NAME = 'outputs'
 _CURRENT_FILE_NAME = '.current'
 
 DEFAULT_WORKSPACES_DIR = os.path.expanduser(os.path.join('~', '.dedop', _WORKSPACES_DIR_NAME))
@@ -99,7 +101,7 @@ class WorkspaceManager:
         _writeline(os.path.join(self._workspaces_dir, _CURRENT_FILE_NAME), workspace_name)
 
     def workspace_exists(self, workspace_name) -> bool:
-        return os.path.exists(self._get_workspace_path(workspace_name))
+        return os.path.exists(self.get_workspace_path(workspace_name))
 
     def create_workspace(self, workspace_name: str) -> str:
         """
@@ -107,7 +109,7 @@ class WorkspaceManager:
         :return: workspace path
         :raise: WorkspaceError
         """
-        workspace_dir = self._get_workspace_path(workspace_name)
+        workspace_dir = self.get_workspace_path(workspace_name)
         if os.path.isdir(workspace_dir) and os.listdir(workspace_dir):
             raise WorkspaceError('workspace "%s" already exists' % workspace_name)
         return self._ensure_dir_exists(workspace_dir)
@@ -118,7 +120,7 @@ class WorkspaceManager:
         :raise: WorkspaceError
         """
         self._assert_workspace_exists(workspace_name)
-        dir_path = self._get_workspace_path(workspace_name)
+        dir_path = self.get_workspace_path(workspace_name)
         if os.path.exists(dir_path):
             try:
                 shutil.rmtree(dir_path)
@@ -132,7 +134,7 @@ class WorkspaceManager:
         :raise: WorkspaceError
         """
         self._assert_workspace_exists(workspace_name)
-        dir_path = self._get_workspace_path('')
+        dir_path = self.get_workspace_path('')
         if os.path.exists(dir_path):
             try:
                 shutil.copytree(os.path.join(dir_path, workspace_name),
@@ -149,7 +151,7 @@ class WorkspaceManager:
         self._assert_workspace_exists(workspace_name)
         if not new_workspace_name:
             raise WorkspaceError("missing the new workspace name")
-        dir_path = self._get_workspace_path('')
+        dir_path = self.get_workspace_path('')
         if os.path.exists(dir_path):
             try:
                 shutil.move(os.path.join(dir_path, workspace_name),
@@ -163,7 +165,7 @@ class WorkspaceManager:
         :raise: WorkspaceError
         """
         self._assert_workspace_exists(workspace_name)
-        dir_path = self._get_workspace_path(workspace_name)
+        dir_path = self.get_workspace_path(workspace_name)
         config_name = self.get_current_config_name(workspace_name)
         return WorkspaceInfo(dir_path, workspace_name, self.get_workspace_names(), config_name,
                              self.get_config_names(workspace_name))
@@ -176,7 +178,7 @@ class WorkspaceManager:
         return []
 
     def config_exists(self, workspace_name: str, config_name: str) -> bool:
-        config_dir = self._get_config_path(workspace_name, config_name)
+        config_dir = self.get_config_path(workspace_name, config_name)
         return os.path.isdir(config_dir) and os.listdir(config_dir)
 
     def create_config(self, workspace_name: str, config_name: str):
@@ -187,7 +189,7 @@ class WorkspaceManager:
         self._assert_workspace_exists(workspace_name)
         if self.config_exists(workspace_name, config_name):
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
-        config_dir = self._get_config_path(workspace_name, config_name)
+        config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
         package = 'dedop.ui.defaults'
         self._copy_resource(package, 'CHD.json', dir_path)
@@ -202,7 +204,7 @@ class WorkspaceManager:
         """
         self._assert_workspace_exists(workspace_name)
         self._assert_config_exists(workspace_name, config_name)
-        dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
+        dir_path = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
         if os.path.exists(dir_path):
             try:
                 shutil.rmtree(dir_path)
@@ -218,8 +220,8 @@ class WorkspaceManager:
         """
         self._assert_workspace_exists(workspace_name)
         self._assert_config_exists(workspace_name, config_name)
-        dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
-        dir_path_new = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
+        dir_path = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
+        dir_path_new = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
         if os.path.exists(dir_path):
             try:
                 shutil.copytree(dir_path, dir_path_new)
@@ -235,8 +237,8 @@ class WorkspaceManager:
         """
         self._assert_workspace_exists(workspace_name)
         self._assert_config_exists(workspace_name, config_name)
-        dir_path = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
-        dir_path_new = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
+        dir_path = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name)
+        dir_path_new = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, new_config_name)
         if os.path.exists(dir_path):
             try:
                 os.rename(dir_path, dir_path_new)
@@ -244,22 +246,22 @@ class WorkspaceManager:
                 raise WorkspaceError(str(e))
 
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
-        return self._get_config_path(workspace_name, config_name, config_file_key + '.json')
+        return self.get_config_path(workspace_name, config_name, config_file_key + '.json')
 
     def get_config_names(self, workspace_name: str) -> List[str]:
         self._assert_workspace_exists(workspace_name)
-        configs_dir = self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME)
+        configs_dir = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME)
         if os.path.exists(configs_dir):
             return sorted([name for name in os.listdir(configs_dir) if os.path.isdir(os.path.join(configs_dir, name))])
         return None
 
     def get_current_config_name(self, workspace_name: str) -> str:
         self._assert_workspace_exists(workspace_name)
-        return _readline(self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME))
+        return _readline(self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME))
 
     def set_current_config_name(self, workspace_name: str, config_name: str):
         self._assert_workspace_exists(workspace_name)
-        _writeline(self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
+        _writeline(self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
         """
@@ -267,7 +269,7 @@ class WorkspaceManager:
         :param input_paths: path to the input files to be added
         :param monitor: to monitor the progress
         """
-        inputs_dir = self._ensure_dir_exists(self._get_workspace_path(workspace_name, 'inputs'))
+        inputs_dir = self._ensure_dir_exists(self.get_inputs_path(workspace_name))
         with monitor.starting('adding inputs', len(input_paths)):
             for input_path in input_paths:
                 try:
@@ -282,7 +284,7 @@ class WorkspaceManager:
         :param input_names: name of input files to be removed
         :param monitor: to monitor the progress
         """
-        input_paths = [self._get_workspace_path(workspace_name, 'inputs', input_name) for input_name in input_names]
+        input_paths = [self.get_inputs_path(workspace_name, input_name) for input_name in input_names]
         with monitor.starting('removing inputs', len(input_paths)):
             for input_path in input_paths:
                 if os.path.exists(input_path):
@@ -298,29 +300,33 @@ class WorkspaceManager:
         :param workspace_name: workspace name in which the input files are to be queried
         :param pattern: a regex to identify the input files to be listed
         """
-        inputs_dir = self._get_workspace_path(workspace_name, 'inputs')
+        inputs_dir = self.get_inputs_path(workspace_name)
         if os.path.exists(inputs_dir):
             return self.get_nc_filename_list(inputs_dir, pattern)
         return []
 
     def get_input_paths(self, workspace_name: str):
-        return [self._get_workspace_path(workspace_name, 'inputs', name) for name in
+        return [self.get_inputs_path(workspace_name, name) for name in
                 self.get_input_names(workspace_name)]
 
-    # TODO forman make it public
-    def _get_workspace_path(self, workspace_name, *paths):
+    def get_workspace_path(self, workspace_name, *paths):
         return os.path.join(self._workspaces_dir, workspace_name, *paths)
 
-    # TODO forman make it public
-    def _get_config_path(self, workspace_name, config_name, *paths):
-        return self._get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
+    def get_config_path(self, workspace_name, config_name, *paths):
+        return self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
+
+    def get_inputs_path(self, workspace_name, *paths):
+        return self.get_workspace_path(workspace_name, _INPUTS_DIR_NAME, *paths)
+
+    def get_outputs_path(self, workspace_name, config_name, *paths):
+        return self.get_config_path(workspace_name, config_name, _OUTPUTS_DIR_NAME, *paths)
 
     def remove_outputs(self, workspace_name, config_name):
         """
         :param workspace_name: the workspace name in which the output files are located
         :param config_name: the config name with which the output files were created
         """
-        output_dir = self.get_output_dir(workspace_name, config_name)
+        output_dir = self.get_outputs_path(workspace_name, config_name)
         if not os.path.exists(output_dir):
             raise WorkspaceError('output directory does not exist')
         output_names = os.listdir(output_dir)
@@ -339,7 +345,7 @@ class WorkspaceManager:
         :param config_name: config name with which the output files were created
         :param pattern: a regex to identify the output files to be listed
         """
-        outputs_dir = self.get_output_dir(workspace_name, config_name)
+        outputs_dir = self.get_outputs_path(workspace_name, config_name)
         if os.path.exists(outputs_dir):
             return self.get_nc_filename_list(outputs_dir, pattern)
         return []
@@ -377,7 +383,7 @@ class WorkspaceManager:
                                        notebook_basename: str,
                                        notebook_json: str,
                                        title: str):
-        notebook_dir = self._get_workspace_path(workspace_name, 'notebooks')
+        notebook_dir = self.get_workspace_path(workspace_name, 'notebooks')
         if not os.path.exists(notebook_dir):
             try:
                 os.mkdir(notebook_dir)
@@ -452,16 +458,12 @@ class WorkspaceManager:
         return dir_path
 
     def _assert_workspace_exists(self, workspace_name):
-        if not os.path.exists(self._get_workspace_path(workspace_name)):
+        if not os.path.exists(self.get_workspace_path(workspace_name)):
             raise WorkspaceError('workspace "%s" does not exist' % workspace_name)
 
     def _assert_config_exists(self, workspace_name, config_name):
-        if not os.path.exists(self._get_workspace_path(workspace_name, 'configs', config_name)):
+        if not os.path.exists(self.get_config_path(workspace_name, config_name)):
             raise WorkspaceError(
                 'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
 
-    def get_output_dir(self, workspace_name, config_name):
-        return self._get_workspace_path(workspace_name, 'configs', config_name, 'outputs')
 
-    def get_output_path(self, workspace_name, config_name, *paths):
-        return os.path.join(self.get_output_dir(workspace_name, config_name), *paths)

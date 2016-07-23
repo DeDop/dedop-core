@@ -186,7 +186,7 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
     def test_list_output_files(self):
         self.manager.create_workspace('ernie')
         self.manager.create_config('ernie', 'laugh')
-        output_dir = self.manager.get_output_dir('ernie', 'laugh')
+        output_dir = self.manager.get_outputs_path('ernie', 'laugh')
         self.createWorkspaceSubDir(output_dir)
         self.createWorkspaceFile(output_dir, 'output1.nc')
         self.createWorkspaceFile(output_dir, 'output2.nc')
@@ -204,7 +204,7 @@ class WorkspaceManagerTest(WorkspaceTestBase, TestCase):
     def test_remove_output_files(self):
         self.manager.create_workspace('ernie')
         self.manager.create_config('ernie', 'laugh')
-        output_dir = self.manager.get_output_dir('ernie', 'laugh')
+        output_dir = self.manager.get_outputs_path('ernie', 'laugh')
         self.createWorkspaceSubDir(output_dir)
         self.createWorkspaceFile(output_dir, 'output1.nc')
         self.createWorkspaceFile(output_dir, 'output2.nc')

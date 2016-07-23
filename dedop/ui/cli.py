@@ -229,7 +229,7 @@ class RunProcessorCommand(Command):
         if not inputs:
             code, msg = _STATUS_NO_INPUTS
             return code, msg % workspace_name
-        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_output_dir(
+        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
             workspace_name, config_name)
         chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
         cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
@@ -586,7 +586,7 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        config_path = _WORKSPACE_MANAGER._get_config_path(workspace_name, config_name)
+        config_path = _WORKSPACE_MANAGER.get_config_path(workspace_name, config_name)
         print('current workspace:    ', workspace_name)
         print('current configuration:', config_name)
         print('configuration path:   ', config_path)
@@ -888,8 +888,8 @@ class ManageOutputsCommand(Command):
     def execute_open(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         try:
-            output_dir = _WORKSPACE_MANAGER.get_output_dir(workspace_name, config_name)
-            _open_file(output_dir)
+            outputs_dir = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
+            _open_file(outputs_dir)
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
@@ -907,7 +907,7 @@ class ManageOutputsCommand(Command):
             l1b_path = os.path.abspath(l1b_filename)
         else:
             # TODO (forman, 20160723): check that workspace_name, config_name are valid
-            l1b_path = _WORKSPACE_MANAGER.get_output_path(workspace_name, config_name, l1b_filename)
+            l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
         if not os.path.exists(l1b_path):
             return 50, 'L1B product not found: %s' % l1b_path
 
@@ -934,7 +934,7 @@ class ManageOutputsCommand(Command):
             l1b_path_1 = os.path.abspath(l1b_filename_1)
         else:
             # TODO (forman, 20160723): check that workspace_name, config_name are valid
-            l1b_path_1 = _WORKSPACE_MANAGER.get_output_path(workspace_name_1, config_name_1, l1b_filename_1)
+            l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
         if not os.path.exists(l1b_path_1):
             return 60, 'First L1B product not found: %s' % l1b_path_1
 
@@ -943,7 +943,7 @@ class ManageOutputsCommand(Command):
             l1b_path_2 = os.path.abspath(l1b_filename_2)
         else:
             # TODO (forman, 20160723): check that workspace_name, config_name are valid
-            l1b_path_2 = _WORKSPACE_MANAGER.get_output_path(workspace_name_2, config_name_2, l1b_filename_2)
+            l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
         if not os.path.exists(l1b_path_2):
             return 60, 'Second L1B product not found: %s' % l1b_path_2
 
