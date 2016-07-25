@@ -801,23 +801,33 @@ class ManageOutputsCommand(Command):
 
         subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
-        parser_clean = subparsers.add_parser('clean', aliases=['cl'], help='Clean output')
+        parser_clean = subparsers.add_parser('clean', aliases=['cl'],
+                                             help='Clean outputs folder of current configuration or CONFIG')
         cls.set_workspace_config_parser_arguments(parser_clean)
         parser_clean.add_argument('-q', '--quiet', action='store_true',
                                   help='Suppress output of progress information.')
         parser_clean.set_defaults(mo_command=cls.execute_clean)
 
-        parser_clean = subparsers.add_parser('open', aliases=['op'], help='Open output in file browser')
-        parser_clean.set_defaults(mo_command=cls.execute_open)
+        parser_list = subparsers.add_parser('list', aliases=['ls'],
+                                            help='List outputs folder of current configuration or CONFIG')
+        cls.set_workspace_config_parser_arguments(parser_list)
+        parser_list.add_argument('pattern', metavar='WC', nargs='?',
+                                 help="Wildcard pattern.")
+        parser_list.set_defaults(mo_command=cls.execute_list)
 
-        parser_analyse = subparsers.add_parser('inspect', aliases=['ins'], help='Inspect output')
-        cls.set_workspace_config_parser_arguments(parser_analyse)
-        parser_analyse.add_argument('l1b_filename', metavar='L1B_FILENAME',
+        parser_open = subparsers.add_parser('open', aliases=['op'],
+                                            help='Open outputs folder of current configuration or CONFIG')
+        cls.set_workspace_config_parser_arguments(parser_open)
+        parser_open.set_defaults(mo_command=cls.execute_open)
+
+        parser_inspect = subparsers.add_parser('inspect', aliases=['ins'], help='Inspect L1B product')
+        cls.set_workspace_config_parser_arguments(parser_inspect)
+        parser_inspect.add_argument('l1b_filename', metavar='L1B_FILENAME',
                                     help='The filename or path of the a L1B product. If only a filename is given, '
                                          'it must exist in outputs of the given workspace/configuration.')
-        parser_analyse.set_defaults(mo_command=cls.execute_inspect)
+        parser_inspect.set_defaults(mo_command=cls.execute_inspect)
 
-        parser_compare = subparsers.add_parser('compare', aliases=['cmp'], help='Compare outputs')
+        parser_compare = subparsers.add_parser('compare', aliases=['cmp'], help='Compare two L1B products')
         cls.set_workspace_config_parser_arguments(parser_compare)
         cls.set_workspace2_config2_parser_arguments(parser_compare)
         parser_compare.add_argument('l1b_filename_1', metavar='L1B_FILENAME_1',
@@ -829,11 +839,6 @@ class ManageOutputsCommand(Command):
                                          'workspace/configuration. If omitted, the first filename or path is used.')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
-        parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
-        cls.set_workspace_config_parser_arguments(parser_list)
-        parser_list.add_argument('pattern', metavar='WC', nargs='?',
-                                 help="Wildcard pattern.")
-        parser_list.set_defaults(mo_command=cls.execute_list)
 
     @classmethod
     def set_workspace_config_parser_arguments(cls, parser):
@@ -887,9 +892,16 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_open(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        if not workspace_name:
+            return _STATUS_NO_WORKSPACE
+        if not config_name:
+            return _STATUS_NO_CONFIG
         try:
             outputs_dir = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
-            _WORKSPACE_MANAGER.open_file(outputs_dir)
+            if os.path.exists(outputs_dir):
+                _WORKSPACE_MANAGER.open_file(outputs_dir)
+            else:
+                print('no outputs created with config "%s" in workspace "%s"' % (config_name, workspace_name))
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
