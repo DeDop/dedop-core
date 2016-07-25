@@ -458,33 +458,40 @@ class WorkspaceManager:
 
     @classmethod
     def open_file(cls, path):
-        try:
-            # This is Windows only:
-            os.startfile(path)
-        except AttributeError:
-            launch_editor_command_template = get_config_value('launch_editor_command', None)
-            if launch_editor_command_template:
-                if isinstance(launch_editor_command_template, str) and launch_editor_command_template.strip():
-                    launch_editor_command_template = launch_editor_command_template.strip()
-                else:
-                    launch_editor_command_template = None
-                if not launch_editor_command_template:
-                    raise WorkspaceError('configuration parameter "launch_editor_command" must be a non-empty string')
+        launch_editor_command_template = get_config_value('launch_editor_command', None)
+        if launch_editor_command_template:
+            if isinstance(launch_editor_command_template, str) and launch_editor_command_template.strip():
+                launch_editor_command_template = launch_editor_command_template.strip()
             else:
+                launch_editor_command_template = None
+            if not launch_editor_command_template:
+                raise WorkspaceError('configuration parameter "launch_editor_command" must be a non-empty string')
+        else:
+            try:
+                # Windows:
+                # Start a file with its associated application.
+                os.startfile(path)
+                return
+            except AttributeError:
                 if shutil.which('xdg-open'):
+                    # Unix Desktops
                     # xdg-open opens a file or URL in the user's preferred application.
                     launch_editor_command_template = 'xdg-open "{file}"'
                 elif shutil.which('open'):
+                    # Mac OS X
+                    # Open a file or folder. The open command opens a file (or a folder or URL), just as
+                    # if you had double-clicked the file's icon.
                     launch_editor_command_template = 'open "{file}"'
                 else:
                     print('warning: don\'t know how to open %s' % path)
                     return
-            launch_editor_command = launch_editor_command_template.format(file=path)
-            try:
-                # print('launch_editor_command:', launch_editor_command)
-                subprocess.call(launch_editor_command, shell=True)
-            except (IOError, OSError) as error:
-                raise WorkspaceError(str(error))
+
+        launch_editor_command = launch_editor_command_template.format(file=path)
+        try:
+            # print('launch_editor_command:', launch_editor_command)
+            subprocess.call(launch_editor_command, shell=True)
+        except (IOError, OSError) as error:
+            raise WorkspaceError(str(error))
 
     @staticmethod
     def get_nc_filename_list(outputs_dir, pattern):
