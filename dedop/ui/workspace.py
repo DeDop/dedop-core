@@ -69,7 +69,7 @@ class WorkspaceManager:
        by a file ``.dedop/workspaces/.current`` which contains the name of the current workspace.
        The name of current configuration within the current workspace could be stored in
        ``.dedop/workspaces/<workspace-name>/configs/.current``.
-    3. Configurations: when creating a new configuration, the CNF, CST, CHD files are created from software defaults.
+    3. Configurations: when creating a new configuration, the CNF, CST, CHD files are created from software data.
        This allows a user to share their workspace with someone else without worrying about whether
        either has edited their default configurations.
     4. Ease of use: there should be always a valid current workspace and current config. If ``workspaces``  is empty,
@@ -191,7 +191,7 @@ class WorkspaceManager:
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
         config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
-        package = 'dedop.ui.defaults'
+        package = 'dedop.ui.data.config'
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
         self._copy_resource(package, 'CST.json', dir_path)
@@ -351,23 +351,17 @@ class WorkspaceManager:
         return []
 
     def inspect_l1b_product(self, workspace_name: str, l1b_path: str):
-
-        package = 'dedop.ui.defaults'
-        template_data = pkgutil.get_data(package, 'inspect-template.ipynb')
+        template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'inspect-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH__', repr(l1b_path).replace('\\', '\\\\'))
-
         return self._launch_notebook_from_template(workspace_name, 'inspect', notebook_json, 'inspect - [%s]' %
                                                    self.name_to_title(l1b_path, 80))
 
     def compare_l1b_products(self, workspace_name, l1b_path_1: str, l1b_path_2: str):
-
-        package = 'dedop.ui.defaults'
-        template_data = pkgutil.get_data(package, 'compare-template.ipynb')
+        template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'compare-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1).replace('\\', '\\\\')) \
             .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2).replace('\\', '\\\\'))
-
         return self._launch_notebook_from_template(workspace_name, 'compare', notebook_json, 'compare - [%s] [%s]' % (
             self.name_to_title(l1b_path_1, 40),
             self.name_to_title(l1b_path_2, 40),))
