@@ -7,6 +7,7 @@ import sys
 from typing import List
 
 from dedop.ui.workspace_info import WorkspaceInfo
+from dedop.util.config import get_config_value
 
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
@@ -399,42 +400,57 @@ class WorkspaceManager:
 
         self.launch_notebook(title, notebook_dir, notebook_path=notebook_path)
 
-    def launch_notebook(self, title: str, notebook_dir: str, notebook_path: str = None):
+    @classmethod
+    def launch_notebook(cls, title: str, notebook_dir: str, notebook_path: str = None):
 
         # we start a new terminal/command window here so that non-expert users can close the Notebook session easily
         # by closing the newly created window.
 
         terminal_title = 'DeDop - %s' % title
 
-        notebook_cmd = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
+        notebook_command = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
         if notebook_path:
-            notebook_cmd += ' "%s"' % notebook_path
+            notebook_command += ' "%s"' % notebook_path
 
-        open_new_window = True
-        if sys.platform.startswith('win'):
-            terminal_cmd = 'start "%s" /Min %s' % (terminal_title, notebook_cmd)
-        elif sys.platform == 'darwin':
-            # Mac OS X
-            terminal_cmd = 'osascript -e \'tell app \"Terminal\"\' -e \'do script \"%s\"\' -e \'set custom title of first window to \"DeDop\"\' -e \'end tell\'' % notebook_cmd.replace('\"', '\\\"')
-        elif 'linux' in sys.platform:
-            import shutil
-            if shutil.which("konsole"):
-                # KDE
-                terminal_cmd = 'konsole -p tabtitle="%s" -e \'%s\'' % (terminal_title, notebook_cmd)
-            elif shutil.which("gnome-terminal"):
-                # GNOME / Ubuntu
-                terminal_cmd = 'gnome-terminal --title "%s" -e \'%s\'' % (terminal_title, notebook_cmd)
-            elif shutil.which("xterm"):
-                terminal_cmd = 'xterm  -e \'%s\'' % notebook_cmd
+        launch_notebook_command_template = get_config_value('launch_notebook_command_template', None)
+        if launch_notebook_command_template:
+            if isinstance(launch_notebook_command_template, str) or not launch_notebook_command_template.strip():
+                launch_notebook_command_template = launch_notebook_command_template.strip()
             else:
-                terminal_cmd = notebook_cmd
-                open_new_window = False
+                launch_notebook_command_template = None
+            if not launch_notebook_command_template:
+                raise WorkspaceError('configuration parameter "terminal_cmd" must be a non-empty string')
+            launch_notebook_in_new_terminal = get_config_value('launch_notebook_in_new_terminal', False)
         else:
-            raise NotImplementedError('terminal_command')
+            launch_notebook_in_new_terminal = True
+            if sys.platform.startswith('win'):
+                # Windows
+                launch_notebook_command_template = 'start "{title}" /Min {command}'
+            elif sys.platform == 'darwin':
+                # Mac OS X
+                launch_notebook_command_template = 'osascript ' \
+                                                 '-e \'tell app "Terminal"\' ' \
+                                                 '-e \'do script "{command}"\' ' \
+                                                 '-e \'set custom title of first window to "{title}"\' ' \
+                                                 '-e \'end tell\'' % notebook_command.replace('"', '\\"')
+            else:
+                if shutil.which("konsole"):
+                    # KDE
+                    launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
+                elif shutil.which("gnome-terminal"):
+                    # GNOME / Ubuntu
+                    launch_notebook_command_template = 'gnome-terminal --title "{title}" -e \'{command}\''
+                elif shutil.which("xterm"):
+                    launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
+                else:
+                    launch_notebook_command_template = notebook_command
+                    launch_notebook_in_new_terminal = False
+
+        open_notebook_command = launch_notebook_command_template.format(title=terminal_title, command=notebook_command)
         try:
-            # print('calling:', terminal_command)
-            subprocess.check_call(terminal_cmd, shell=True)
-            if open_new_window:
+            # print('calling:', open_notebook_command)
+            subprocess.check_call(open_notebook_command, shell=True)
+            if launch_notebook_in_new_terminal:
                 print('A new terminal window named "%s" has been opened.' % terminal_title)
                 print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
