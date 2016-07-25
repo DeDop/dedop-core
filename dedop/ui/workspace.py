@@ -410,18 +410,37 @@ class WorkspaceManager:
         # we must start a new terminal window so that users can close the Notebook session easily
         terminal_title = 'DeDop - %s' % title
 
+        notebook_cmd = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
+        if notebook_path:
+            notebook_cmd += ' "%s"' % notebook_path
+
+        open_new_window = True
         if sys.platform.startswith('win'):
-            terminal_command = 'start "%s" /Min jupyter notebook --notebook-dir "%s"' % (terminal_title, notebook_dir)
-            if notebook_path:
-                terminal_command += ' "%s"' % notebook_path
+            terminal_cmd = 'start "%s" /Min %s' % (terminal_title, notebook_cmd)
+        elif sys.platform == 'darwin':
+            # Mac OS X
+            raise NotImplementedError('terminal_command for mac')
+        elif 'linux' in sys.platform:
+            import shutil
+            if shutil.which("konsole"):
+                # KDE
+                terminal_cmd = 'konsole -p tabtitle="%s" -e \'%s\'' % (terminal_title, notebook_cmd)
+            elif shutil.which("gnome-terminal"):
+                # GNOME
+                terminal_cmd = 'gnome-terminal --title "%s" -e \'%s\'' % (terminal_title, notebook_cmd)
+            elif shutil.which("xterm"):
+                terminal_cmd = 'xterm  -e \'%s\'' % (notebook_cmd)
+            else:
+                terminal_cmd = notebook_cmd
+                open_new_window = False
         else:
             raise NotImplementedError('terminal_command')
-
         try:
-            # print('calling:', command)
-            subprocess.check_call(terminal_command, shell=True)
-            print('A new terminal window named "%s" has been opened.' % terminal_title)
-            print('Close the window or press CTRL+C within it to terminate the Notebook session.')
+            # print('calling:', terminal_command)
+            subprocess.check_call(terminal_cmd, shell=True)
+            if (open_new_window):
+                print('A new terminal window named "%s" has been opened.' % terminal_title)
+                print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
             raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
 
