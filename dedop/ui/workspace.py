@@ -406,8 +406,10 @@ class WorkspaceManager:
         self.launch_notebook(title, notebook_dir, notebook_path=notebook_path)
 
     def launch_notebook(self, title: str, notebook_dir: str, notebook_path: str = None):
-        # TODO (forman, 20160722): this command is for Windows, make it work for Mac OS and Linux
-        # we must start a new terminal window so that users can close the Notebook session easily
+
+        # we start a new terminal/command window here so that non-expert users can close the Notebook session easily
+        # by closing the newly created window.
+
         terminal_title = 'DeDop - %s' % title
 
         notebook_cmd = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
@@ -426,10 +428,10 @@ class WorkspaceManager:
                 # KDE
                 terminal_cmd = 'konsole -p tabtitle="%s" -e \'%s\'' % (terminal_title, notebook_cmd)
             elif shutil.which("gnome-terminal"):
-                # GNOME
+                # GNOME / Ubuntu
                 terminal_cmd = 'gnome-terminal --title "%s" -e \'%s\'' % (terminal_title, notebook_cmd)
             elif shutil.which("xterm"):
-                terminal_cmd = 'xterm  -e \'%s\'' % (notebook_cmd)
+                terminal_cmd = 'xterm  -e \'%s\'' % notebook_cmd
             else:
                 terminal_cmd = notebook_cmd
                 open_new_window = False
@@ -438,7 +440,7 @@ class WorkspaceManager:
         try:
             # print('calling:', terminal_command)
             subprocess.check_call(terminal_cmd, shell=True)
-            if (open_new_window):
+            if open_new_window:
                 print('A new terminal window named "%s" has been opened.' % terminal_title)
                 print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
@@ -484,5 +486,3 @@ class WorkspaceManager:
         if not os.path.exists(self.get_config_path(workspace_name, config_name)):
             raise WorkspaceError(
                 'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
-
-
