@@ -412,14 +412,14 @@ class WorkspaceManager:
         if notebook_path:
             notebook_command += ' "%s"' % notebook_path
 
-        launch_notebook_command_template = get_config_value('launch_notebook_command_template', None)
+        launch_notebook_command_template = get_config_value('launch_notebook_command', None)
         if launch_notebook_command_template:
-            if isinstance(launch_notebook_command_template, str) or not launch_notebook_command_template.strip():
+            if isinstance(launch_notebook_command_template, str) and launch_notebook_command_template.strip():
                 launch_notebook_command_template = launch_notebook_command_template.strip()
             else:
                 launch_notebook_command_template = None
             if not launch_notebook_command_template:
-                raise WorkspaceError('configuration parameter "terminal_cmd" must be a non-empty string')
+                raise WorkspaceError('configuration parameter "launch_notebook_command" must be a non-empty string')
             launch_notebook_in_new_terminal = get_config_value('launch_notebook_in_new_terminal', False)
         else:
             launch_notebook_in_new_terminal = True
@@ -455,6 +455,36 @@ class WorkspaceManager:
                 print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
             raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
+
+    @classmethod
+    def open_file(cls, path):
+        try:
+            # This is Windows only:
+            os.startfile(path)
+        except AttributeError:
+            launch_editor_command_template = get_config_value('launch_editor_command', None)
+            if launch_editor_command_template:
+                if isinstance(launch_editor_command_template, str) and launch_editor_command_template.strip():
+                    launch_editor_command_template = launch_editor_command_template.strip()
+                else:
+                    launch_editor_command_template = None
+                if not launch_editor_command_template:
+                    raise WorkspaceError('configuration parameter "launch_editor_command" must be a non-empty string')
+            else:
+                if shutil.which('xdg-open'):
+                    # xdg-open opens a file or URL in the user's preferred application.
+                    launch_editor_command_template = 'xdg-open "{file}"'
+                elif shutil.which('open'):
+                    launch_editor_command_template = 'open "{file}"'
+                else:
+                    print('warning: don\'t know how to open %s' % path)
+                    return
+            launch_editor_command = launch_editor_command_template.format(file=path)
+            try:
+                # print('launch_editor_command:', launch_editor_command)
+                subprocess.call(launch_editor_command, shell=True)
+            except (IOError, OSError) as error:
+                raise WorkspaceError(str(error))
 
     @staticmethod
     def get_nc_filename_list(outputs_dir, pattern):

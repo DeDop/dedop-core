@@ -10,8 +10,8 @@ and extending the ``Command.REGISTRY`` list of known command classes.
 
 import argparse
 import os.path
-import sys
 import subprocess
+import sys
 from abc import ABCMeta, abstractmethod
 from typing import Tuple, Optional
 
@@ -109,14 +109,6 @@ def _expand_wildcard_paths(inputs_files):
             glob_input = glob.glob(input_files)
         expanded_inputs.extend(glob_input)
     return expanded_inputs
-
-
-def _open_file(chd_file):
-    try:
-        os.startfile(chd_file)
-    except AttributeError:
-        import subprocess
-        subprocess.call(['open', chd_file], shell=True)
 
 
 def _dir_size(dir_path):
@@ -558,9 +550,9 @@ class ManageConfigsCommand(Command):
             chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
             cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
             cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
-            _open_file(chd_file)
-            _open_file(cnf_file)
-            _open_file(cst_file)
+            _WORKSPACE_MANAGER.open_file(chd_file)
+            _WORKSPACE_MANAGER.open_file(cnf_file)
+            _WORKSPACE_MANAGER.open_file(cst_file)
         except (WorkspaceError, IOError, OSError) as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -897,7 +889,7 @@ class ManageOutputsCommand(Command):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         try:
             outputs_dir = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
-            _open_file(outputs_dir)
+            _WORKSPACE_MANAGER.open_file(outputs_dir)
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
