@@ -430,9 +430,9 @@ class WorkspaceManager:
                 # Mac OS X
                 launch_notebook_command_template = 'osascript ' \
                                                  '-e \'tell app "Terminal"\' ' \
-                                                 '-e \'do script "{command}"\' ' \
+                                                 '-e \'do shell script "{command}"\' ' \
                                                  '-e \'set custom title of first window to "{title}"\' ' \
-                                                 '-e \'end tell\'' % notebook_command.replace('"', '\\"')
+                                                 '-e \'end tell\''
             else:
                 if shutil.which("konsole"):
                     # KDE
