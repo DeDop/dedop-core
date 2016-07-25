@@ -419,7 +419,7 @@ class WorkspaceManager:
             terminal_cmd = 'start "%s" /Min %s' % (terminal_title, notebook_cmd)
         elif sys.platform == 'darwin':
             # Mac OS X
-            raise NotImplementedError('terminal_command for mac')
+            terminal_cmd = 'osascript -e \'tell app \"Terminal\"\' -e \'do script \"%s\"\' -e \'set custom title of first window to \"DeDop\"\' -e \'end tell\'' % notebook_cmd.replace('\"', '\\\"')
         elif 'linux' in sys.platform:
             import shutil
             if shutil.which("konsole"):
