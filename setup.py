@@ -12,7 +12,8 @@ setup(
     author='DeDop Development Team',
     packages=packages,
     package_data={
-        'dedop.ui.defaults': ['*.json', '*.txt', '*.ipynb'],
+        'dedop.ui.data.notebooks': ['*.ipynb'],
+        'dedop.ui.data.config': ['*.json'],
     },
     entry_points={
         'console_scripts': [

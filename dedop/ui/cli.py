@@ -222,9 +222,9 @@ class RunProcessorCommand(Command):
     def execute(self, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+            workspace_name = ManageWorkspacesCommand.create_default_workspace()
         if not config_name:
-            config_name = ManageConfigsCommand.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
+            config_name = ManageConfigsCommand.create_default_config(workspace_name)
         inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
         if not inputs:
             code, msg = _STATUS_NO_INPUTS
@@ -399,6 +399,10 @@ class ManageWorkspacesCommand(Command):
         return cls.STATUS_OK
 
     @classmethod
+    def create_default_workspace(cls) -> str:
+        return cls.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+
+    @classmethod
     def create_workspace(cls, workspace_name, exists_ok=False) -> str:
         if exists_ok and _WORKSPACE_MANAGER.workspace_exists(_DEFAULT_WORKSPACE_NAME):
             return workspace_name
@@ -547,9 +551,9 @@ class ManageConfigsCommand(Command):
     def execute_edit(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+            workspace_name = ManageWorkspacesCommand.create_default_workspace()
         if not config_name:
-            config_name = cls.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
+            config_name = cls.create_default_config(workspace_name)
         try:
             chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
             cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
@@ -616,6 +620,10 @@ class ManageConfigsCommand(Command):
         return cls.STATUS_OK
 
     @classmethod
+    def create_default_config(cls, workspace_name) -> str:
+        return cls.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
+
+    @classmethod
     def create_config(cls, workspace_name, config_name, exist_ok=True) -> str:
         """
         Create a new configuration *config_name* in workspace *workspace_name*.
@@ -627,7 +635,7 @@ class ManageConfigsCommand(Command):
         :raise: WorkspaceError
         """
         if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+            workspace_name = ManageWorkspacesCommand.create_default_workspace()
         if exist_ok and _WORKSPACE_MANAGER.config_exists(workspace_name, config_name):
             return config_name
         _WORKSPACE_MANAGER.create_config(workspace_name, config_name)
@@ -723,7 +731,7 @@ class ManageInputsCommand(Command):
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
         try:
             if not workspace_name:
-                workspace_name = ManageWorkspacesCommand.create_workspace(_DEFAULT_WORKSPACE_NAME, exists_ok=True)
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
             _WORKSPACE_MANAGER.add_inputs(workspace_name, inputs, monitor)
             input_count = len(inputs)
             if input_count == 0:
@@ -825,8 +833,8 @@ class ManageOutputsCommand(Command):
                                          'it must exist in outputs of the given workspace/configuration.')
         parser_compare.add_argument('l1b_filename_2', metavar='L1B_FILENAME_2', nargs='?',
                                     help='The filename or path of the second L1B product. If only a filename is given, '
-                                         'it must exist in outputs of the given second or first workspace/configuration.'
-                                         ' If omitted, the first filename or path is used.')
+                                         'it must exist in outputs of the given second or first '
+                                         'workspace/configuration. If omitted, the first filename or path is used.')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List outputs')
@@ -898,15 +906,14 @@ class ManageOutputsCommand(Command):
     def execute_inspect(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
-        if not config_name:
-            return _STATUS_NO_CONFIG
+            workspace_name = ManageWorkspacesCommand.create_default_workspace()
 
         l1b_filename = command_args.l1b_filename
         if os.path.dirname(l1b_filename):
             l1b_path = os.path.abspath(l1b_filename)
         else:
-            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            if not config_name:
+                return _STATUS_NO_CONFIG
             l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
         if not os.path.exists(l1b_path):
             return 50, 'L1B product not found: %s' % l1b_path
@@ -921,9 +928,7 @@ class ManageOutputsCommand(Command):
     def execute_compare(cls, command_args):
         workspace_name_1, config_name_1 = _get_workspace_and_config_name(command_args)
         if not workspace_name_1:
-            return _STATUS_NO_WORKSPACE
-        if not config_name_1:
-            return _STATUS_NO_CONFIG
+            workspace_name_1 = ManageWorkspacesCommand.create_default_workspace()
         workspace_name_2 = command_args.workspace_name_2
         workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
         config_name_2 = command_args.config_name_2
@@ -933,7 +938,8 @@ class ManageOutputsCommand(Command):
         if os.path.dirname(l1b_filename_1):
             l1b_path_1 = os.path.abspath(l1b_filename_1)
         else:
-            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            if not config_name_1:
+                return _STATUS_NO_CONFIG
             l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
         if not os.path.exists(l1b_path_1):
             return 60, 'First L1B product not found: %s' % l1b_path_1
@@ -942,7 +948,10 @@ class ManageOutputsCommand(Command):
         if os.path.dirname(l1b_filename_1):
             l1b_path_2 = os.path.abspath(l1b_filename_2)
         else:
-            # TODO (forman, 20160723): check that workspace_name, config_name are valid
+            if not workspace_name_2:
+                return _STATUS_NO_WORKSPACE
+            if not config_name_2:
+                return _STATUS_NO_CONFIG
             l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
         if not os.path.exists(l1b_path_2):
             return 60, 'Second L1B product not found: %s' % l1b_path_2

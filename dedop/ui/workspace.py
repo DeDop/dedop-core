@@ -69,7 +69,7 @@ class WorkspaceManager:
        by a file ``.dedop/workspaces/.current`` which contains the name of the current workspace.
        The name of current configuration within the current workspace could be stored in
        ``.dedop/workspaces/<workspace-name>/configs/.current``.
-    3. Configurations: when creating a new configuration, the CNF, CST, CHD files are created from software defaults.
+    3. Configurations: when creating a new configuration, the CNF, CST, CHD files are created from software data.
        This allows a user to share their workspace with someone else without worrying about whether
        either has edited their default configurations.
     4. Ease of use: there should be always a valid current workspace and current config. If ``workspaces``  is empty,
@@ -191,7 +191,7 @@ class WorkspaceManager:
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
         config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
-        package = 'dedop.ui.defaults'
+        package = 'dedop.ui.data.config'
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
         self._copy_resource(package, 'CST.json', dir_path)
@@ -351,23 +351,17 @@ class WorkspaceManager:
         return []
 
     def inspect_l1b_product(self, workspace_name: str, l1b_path: str):
-
-        package = 'dedop.ui.defaults'
-        template_data = pkgutil.get_data(package, 'inspect-template.ipynb')
+        template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'inspect-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH__', repr(l1b_path).replace('\\', '\\\\'))
-
         return self._launch_notebook_from_template(workspace_name, 'inspect', notebook_json, 'inspect - [%s]' %
                                                    self.name_to_title(l1b_path, 80))
 
     def compare_l1b_products(self, workspace_name, l1b_path_1: str, l1b_path_2: str):
-
-        package = 'dedop.ui.defaults'
-        template_data = pkgutil.get_data(package, 'compare-template.ipynb')
+        template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'compare-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1).replace('\\', '\\\\')) \
             .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2).replace('\\', '\\\\'))
-
         return self._launch_notebook_from_template(workspace_name, 'compare', notebook_json, 'compare - [%s] [%s]' % (
             self.name_to_title(l1b_path_1, 40),
             self.name_to_title(l1b_path_2, 40),))
@@ -406,8 +400,10 @@ class WorkspaceManager:
         self.launch_notebook(title, notebook_dir, notebook_path=notebook_path)
 
     def launch_notebook(self, title: str, notebook_dir: str, notebook_path: str = None):
-        # TODO (forman, 20160722): this command is for Windows, make it work for Mac OS and Linux
-        # we must start a new terminal window so that users can close the Notebook session easily
+
+        # we start a new terminal/command window here so that non-expert users can close the Notebook session easily
+        # by closing the newly created window.
+
         terminal_title = 'DeDop - %s' % title
 
         notebook_cmd = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
@@ -426,10 +422,10 @@ class WorkspaceManager:
                 # KDE
                 terminal_cmd = 'konsole -p tabtitle="%s" -e \'%s\'' % (terminal_title, notebook_cmd)
             elif shutil.which("gnome-terminal"):
-                # GNOME
+                # GNOME / Ubuntu
                 terminal_cmd = 'gnome-terminal --title "%s" -e \'%s\'' % (terminal_title, notebook_cmd)
             elif shutil.which("xterm"):
-                terminal_cmd = 'xterm  -e \'%s\'' % (notebook_cmd)
+                terminal_cmd = 'xterm  -e \'%s\'' % notebook_cmd
             else:
                 terminal_cmd = notebook_cmd
                 open_new_window = False
@@ -438,7 +434,7 @@ class WorkspaceManager:
         try:
             # print('calling:', terminal_command)
             subprocess.check_call(terminal_cmd, shell=True)
-            if (open_new_window):
+            if open_new_window:
                 print('A new terminal window named "%s" has been opened.' % terminal_title)
                 print('Close the window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
@@ -484,5 +480,3 @@ class WorkspaceManager:
         if not os.path.exists(self.get_config_path(workspace_name, config_name)):
             raise WorkspaceError(
                 'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
-
-

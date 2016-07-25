@@ -8,16 +8,20 @@ import numpy as np
 import pyproj
 from IPython.display import display
 from bokeh.models import ColumnDataSource, Circle
-from bokeh.models.tools import ResizeTool, BoxZoomTool, WheelZoomTool, PanTool
 from bokeh.tile_providers import STAMEN_TERRAIN
 from ipywidgets import interact, fixed
+from matplotlib import cm
+from matplotlib.collections import LineCollection, PolyCollection
+# noinspection PyUnresolvedReferences
+from mpl_toolkits.mplot3d import Axes3D
 from netCDF4 import Dataset, num2date
-
 from numpy import ndarray
+
 
 # (Plotting) Resources:
 # * http://matplotlib.org/api/pyplot_api.html
 # * http://matplotlib.org/users/image_tutorial.html
+# * http://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html#d-plots-in-3d
 # * http://ipywidgets.readthedocs.io/en/latest/
 # * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/geo.html
 # * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/notebook.html
@@ -186,7 +190,75 @@ class L1bInpectionPlotting:
         else:
             plt.savefig("plot_waveform_im.png")
 
+    def waveform_3d_surf(self, zmin=0, zmax=None):
+        self._waveform_3d(type='surf', zmin=zmin, zmax=zmax, alpha=1)
+
+    def waveform_3d_poly(self, zmin=0, zmax=None, alpha=0.5):
+        self._waveform_3d(type='poly', zmin=zmin, zmax=zmax, alpha=alpha)
+
+    def waveform_3d_line(self, zmin=0, zmax=None, alpha=0.5):
+        self._waveform_3d(type='line', zmin=zmin, zmax=zmax, alpha=alpha)
+
+    def _waveform_3d(self, type, zmin, zmax, alpha):
+        fig = plt.figure(figsize=(10, 10))
+        ax = fig.gca(projection='3d')
+
+        num_times = self._inspector.num_times
+        num_samples = self._inspector.num_samples
+        if type == 'surf':
+            x = np.arange(0, num_samples)
+            y = np.arange(0, num_times)
+            x, y = np.meshgrid(x, y)
+            z = self._inspector.waveform
+            surf = ax.plot_surface(x, y, z, rstride=3, cstride=3, cmap=cm.coolwarm, shade=True,
+                                   linewidth=0, antialiased=False)
+            # ax.zaxis.set_major_locator(LinearLocator(10))
+            # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+            fig.colorbar(surf, shrink=0.5, aspect=5)
+        else:
+            waveforms = []
+            for y_index in range(num_times):
+                waveform = np.ndarray(shape=(num_samples, 2), dtype=np.float64)
+                waveform[:, 0] = np.arange(0, num_samples)
+                waveform[:, 1] = self._inspector.waveform[y_index]
+                waveforms.append(waveform)
+            linewidths = [0.5] * num_times
+            # TODO (forman, 20160725): check why cmap is not recognized
+            cmap = cm.coolwarm
+            if type == 'poly':
+                edgecolors = ((0.2, 0.2, 1., 0.7),) * num_times
+                facecolors = ((1., 1., 1., 0.5),) * num_times
+                collection = PolyCollection(waveforms, cmap=cmap,
+                                            linewidths=linewidths,
+                                            edgecolors=edgecolors,
+                                            facecolors=facecolors)
+            else:
+                colors = ((0.2, 0.2, 1., 0.7),) * num_times
+                collection = LineCollection(waveforms, cmap=cmap,
+                                            linewidths=linewidths, colors=colors)
+            collection.set_alpha(alpha)
+            ax.add_collection3d(collection, zs=np.arange(0, num_times), zdir='y')
+
+        wf_min, wf_max = self._inspector.waveform_range
+        ax.set_xlabel('Echo Sample Index')
+        ax.set_xlim3d(0, num_samples - 1)
+        ax.set_ylabel('Time Index')
+        ax.set_ylim3d(0, num_times - 1)
+        ax.set_zlabel('Waveform')
+        ax.set_zlim3d(zmin if zmin is not None else wf_min, zmax if zmax is not None else wf_max)
+
+        if self._interactive:
+            plt.show()
+        else:
+            plt.savefig("plot_waveform_3d_%s.png" % type)
+
     def waveform_hist(self, vmin=None, vmax=None, bins=128, log=False):
+        """
+        Draw waveform histogram.
+
+        :param ind: Time index
+        :param ref_ind: Reference time index
+        """
         vmin = vmin if vmin else self._inspector.waveform_range[0]
         vmax = vmax if vmax else self._inspector.waveform_range[1]
 
@@ -216,13 +288,19 @@ class L1bInpectionPlotting:
         else:
             plt.savefig("plot_waveform_hist.png")
 
-    def waveform(self, ind=None, ref_ind=None):
-        if ind is None and self._interactive:
-            interact(self._plot_waveform, ind=(0, self._inspector.num_times - 1), ref_ind=fixed(ref_ind))
-        else:
-            self._plot_waveform(ind=ind if ind else 0, ref_ind=ref_ind)
+    def waveform_line(self, ind=None, ref_ind=None):
+        """
+        Draw waveform 2D line plot.
 
-    def _plot_waveform(self, ind: int, ref_ind=None):
+        :param ind: Time index
+        :param ref_ind: Reference time index
+        """
+        if ind is None and self._interactive:
+            interact(self._plot_waveform_line, ind=(0, self._inspector.num_times - 1), ref_ind=fixed(ref_ind))
+        else:
+            self._plot_waveform_line(ind=ind if ind else 0, ref_ind=ref_ind)
+
+    def _plot_waveform_line(self, ind: int, ref_ind=None):
         plt.figure(figsize=(12, 6))
         plt.plot(self._inspector.echo_sample_ind, self._inspector.waveform[ind], 'b-')
         plt.xlabel('Echo Sample Index')
