@@ -16,6 +16,7 @@ _OUTPUTS_DIR_NAME = 'outputs'
 _CURRENT_FILE_NAME = '.current'
 
 DEFAULT_WORKSPACES_DIR = os.path.expanduser(os.path.join('~', '.dedop', _WORKSPACES_DIR_NAME))
+DEFAULT_TEMP_DIR = os.path.expanduser(os.path.join('~', '.dedop', 'temp'))
 
 
 class WorkspaceError(Exception):
@@ -413,6 +414,7 @@ class WorkspaceManager:
             notebook_command += ' "%s"' % notebook_path
 
         launch_notebook_command_template = get_config_value('launch_notebook_command', None)
+        launch_notebook_in_new_terminal = True
         if launch_notebook_command_template:
             if isinstance(launch_notebook_command_template, str) and launch_notebook_command_template.strip():
                 launch_notebook_command_template = launch_notebook_command_template.strip()
@@ -422,7 +424,6 @@ class WorkspaceManager:
                 raise WorkspaceError('configuration parameter "launch_notebook_command" must be a non-empty string')
             launch_notebook_in_new_terminal = get_config_value('launch_notebook_in_new_terminal', False)
         else:
-            launch_notebook_in_new_terminal = True
             if sys.platform.startswith('win'):
                 # Windows
                 launch_notebook_command_template = 'start "{title}" /Min {command}'
@@ -441,31 +442,36 @@ class WorkspaceManager:
                 launch_notebook_command_template = notebook_command
                 launch_notebook_in_new_terminal = False
 
+        command_file = ''
         if '{command_file}' in launch_notebook_command_template:
-            # Mac OS X
-            import tempfile
-            import stat
-            if sys.platform.startswith('win'):
-                fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='.bat')
-                fp.write('call "{prefix}/Scripts/activate.bat" "{prefix}"\n'
-                         'call {command}\n'.format(prefix=sys.prefix, command=notebook_command))
-                fp.close()
-            else:
-                fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='')
-                fp.write('#!/bin/bash\n'
-                         'source "{prefix}/bin/activate" "{prefix}"\n'
-                         '{command}\n'.format(prefix=sys.prefix, command=notebook_command))
-                fp.close()
-                os.chmod(command_file, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
-        else:
-            command_file = ''
-        open_notebook_command = launch_notebook_command_template.format(title=terminal_title,
-                                                                        command=notebook_command,
-                                                                        command_file=command_file,
-                                                                        prefix=sys.prefix)
+            try:
+                if not os.path.exists(DEFAULT_TEMP_DIR):
+                    os.makedirs(DEFAULT_TEMP_DIR)
+
+                command_basename = 'launch-notebook-%s' % hex(id(cls))
+                if sys.platform.startswith('win'):
+                    command_file = os.path.join(DEFAULT_TEMP_DIR, command_basename + '.bat')
+                    with open(command_file) as fp:
+                        fp.write('call "{prefix}/Scripts/activate.bat" "{prefix}"\n'
+                                 'call {command}\n'.format(prefix=sys.prefix, command=notebook_command))
+                else:
+                    import stat
+                    command_file = os.path.join(DEFAULT_TEMP_DIR, command_basename)
+                    with open(command_file) as fp:
+                        fp.write('#!/bin/bash\n'
+                                 'source "{prefix}/bin/activate" "{prefix}"\n'
+                                 '{command}\n'.format(prefix=sys.prefix, command=notebook_command))
+                    os.chmod(command_file, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+            except (OSError, IOError) as error:
+                raise WorkspaceError(str(error))
+
+        launch_notebook_command = launch_notebook_command_template.format(title=terminal_title,
+                                                                          command=notebook_command,
+                                                                          command_file=command_file,
+                                                                          prefix=sys.prefix)
         try:
             # print('calling:', open_notebook_command)
-            subprocess.check_call(open_notebook_command, shell=True)
+            subprocess.check_call(launch_notebook_command, shell=True)
             if launch_notebook_in_new_terminal:
                 print('A new terminal window named "%s" has been opened.' % terminal_title)
                 print('Close the window or press CTRL+C within it to terminate the Notebook session.')
