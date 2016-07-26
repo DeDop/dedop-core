@@ -428,25 +428,41 @@ class WorkspaceManager:
                 launch_notebook_command_template = 'start "{title}" /Min {command}'
             elif sys.platform == 'darwin':
                 # Mac OS X
-                launch_notebook_command_template = 'osascript ' \
-                                                 '-e \'tell app "Terminal"\' ' \
-                                                 '-e \'do shell script "cd "%s";source ./activate .;{command}"\' ' \
-                                                 '-e \'set custom title of first window to "{title}"\' ' \
-                                                 '-e \'end tell\'' % sys.prefix
+                launch_notebook_command_template = 'open -a Terminal "{command_file}"'
+            elif shutil.which("konsole"):
+                # KDE
+                launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
+            elif shutil.which("gnome-terminal"):
+                # GNOME / Ubuntu
+                launch_notebook_command_template = 'gnome-terminal --title "{title}" -e \'bash -c \'{command}\'\''
+            elif shutil.which("xterm"):
+                launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
             else:
-                if shutil.which("konsole"):
-                    # KDE
-                    launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
-                elif shutil.which("gnome-terminal"):
-                    # GNOME / Ubuntu
-                    launch_notebook_command_template = 'gnome-terminal --title "{title}" -e \'bash -c "{command}"\''
-                elif shutil.which("xterm"):
-                    launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
-                else:
-                    launch_notebook_command_template = notebook_command
-                    launch_notebook_in_new_terminal = False
+                launch_notebook_command_template = notebook_command
+                launch_notebook_in_new_terminal = False
 
-        open_notebook_command = launch_notebook_command_template.format(title=terminal_title, command=notebook_command)
+        if '{command_file}' in launch_notebook_command_template:
+            # Mac OS X
+            import tempfile
+            import stat
+            if sys.platform.startswith('win'):
+                fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='.bat')
+                fp.write('call "{prefix}/Scripts/activate.bat" .\n'
+                         'call {command}\n'.format(prefix=sys.prefix, command=notebook_command))
+                fp.close()
+            else:
+                fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='')
+                fp.write('#!/bin/bash\n'
+                         'source "{prefix}/bin/activate" .\n'
+                         '{command}\n'.format(prefix=sys.prefix, command=notebook_command))
+                fp.close()
+                os.chmod(command_file, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+        else:
+            command_file = ''
+        open_notebook_command = launch_notebook_command_template.format(title=terminal_title,
+                                                                        command=notebook_command,
+                                                                        command_file=command_file,
+                                                                        prefix=sys.prefix)
         try:
             # print('calling:', open_notebook_command)
             subprocess.check_call(open_notebook_command, shell=True)
