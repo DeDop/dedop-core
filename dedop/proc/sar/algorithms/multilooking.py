@@ -1,6 +1,7 @@
 import numpy as np
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, OptimizeWarning
 from typing import List
+import warnings
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
@@ -20,12 +21,15 @@ def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
     """attempt to fit a gaussian curve to the data descibed
     by x & y. Returns the fitting parameters"""
 
-    try:
-        fit_params, _ = curve_fit(
-            gauss, x, y
-        )
-    except RuntimeError:
-        return [1, 1, 1]
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", OptimizeWarning)
+
+        try:
+            fit_params, _ = curve_fit(
+                gauss, x, y
+            )
+        except (RuntimeError, OptimizeWarning):
+            return [1, 1, 1]
 
     return fit_params
 
