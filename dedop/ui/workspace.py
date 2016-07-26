@@ -453,7 +453,7 @@ class WorkspaceManager:
             else:
                 fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='')
                 fp.write('#!/bin/bash\n'
-                         'source "{prefix}/bin/activate" .\n'
+                         'source "{prefix}/bin/activate" "{prefix}"\n'
                          '{command}\n'.format(prefix=sys.prefix, command=notebook_command))
                 fp.close()
                 os.chmod(command_file, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
