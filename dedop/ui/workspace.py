@@ -448,16 +448,16 @@ class WorkspaceManager:
                 if not os.path.exists(DEFAULT_TEMP_DIR):
                     os.makedirs(DEFAULT_TEMP_DIR)
 
-                command_basename = 'launch-notebook-%s' % hex(id(cls))
+                command_basename = 'launch-notebook'
                 if sys.platform.startswith('win'):
                     command_file = os.path.join(DEFAULT_TEMP_DIR, command_basename + '.bat')
-                    with open(command_file) as fp:
+                    with open(command_file, 'w') as fp:
                         fp.write('call "{prefix}/Scripts/activate.bat" "{prefix}"\n'
                                  'call {command}\n'.format(prefix=sys.prefix, command=notebook_command))
                 else:
                     import stat
                     command_file = os.path.join(DEFAULT_TEMP_DIR, command_basename)
-                    with open(command_file) as fp:
+                    with open(command_file, 'w') as fp:
                         fp.write('#!/bin/bash\n'
                                  'source "{prefix}/bin/activate" "{prefix}"\n'
                                  '{command}\n'.format(prefix=sys.prefix, command=notebook_command))
