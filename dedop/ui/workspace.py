@@ -447,7 +447,7 @@ class WorkspaceManager:
             import stat
             if sys.platform.startswith('win'):
                 fp, command_file = tempfile.mkstemp(suffix='dedop-launch-notebook-', prefix='.bat')
-                fp.write('call "{prefix}/Scripts/activate.bat" .\n'
+                fp.write('call "{prefix}/Scripts/activate.bat" "{prefix}"\n'
                          'call {command}\n'.format(prefix=sys.prefix, command=notebook_command))
                 fp.close()
             else:
