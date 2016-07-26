@@ -448,7 +448,7 @@ class WorkspaceManager:
                 if not os.path.exists(DEFAULT_TEMP_DIR):
                     os.makedirs(DEFAULT_TEMP_DIR)
 
-                command_basename = 'launch-notebook'
+                command_basename = 'dedop-notebook-server'
                 if sys.platform.startswith('win'):
                     command_file = os.path.join(DEFAULT_TEMP_DIR, command_basename + '.bat')
                     with open(command_file, 'w') as fp:
