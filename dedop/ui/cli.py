@@ -18,7 +18,7 @@ from typing import Tuple, Optional
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace import WorkspaceManager, WorkspaceError
-from dedop.util.config import get_config_value, get_config_path
+from dedop.util.config import get_config_value, get_config_path, write_default_config_file
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
@@ -36,10 +36,12 @@ _STATUS_NO_MATCHING_OUTPUTS = 40, 'no matching outputs found'
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
 
-_LICENSE_INFO_PATH = os.path.dirname(__file__) + '/../../LICENSE'
+_LICENSE_INFO_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'LICENSE')
 _USER_MANUAL_URL = 'http://dedop.readthedocs.io/en/latest/'
 _COPYRIGHT_INFO = """
-%s - The ESA DeDop CLI Tool, Copyright (C) 2016 by European Space Agency (ESA)
+{dedop} - ESA DeDop Shell, copyright (C) 2016 by the DeDop team and contributors
+
+{dedop} has been developed under contract to the European Space Agency (ESA).
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -50,8 +52,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.
 
-Type "%s lic" for details.
-""" % (CLI_NAME, CLI_NAME)
+Type "{dedop} license" for details.
+""".format(dedop=CLI_NAME)
 
 _WORKSPACE_MANAGER = None
 _PROCESSOR_FACTORY = None
@@ -1179,6 +1181,8 @@ def main(args=None, workspace_manager=None, processor_factory=None):
     parser.add_argument('--version', action='version', version=__version__)
     parser.add_argument('-e', '--errors', dest='print_stack_trace', action='store_true',
                         help='on error, print full Python stack trace')
+    parser.add_argument('--new-conf', dest='new_conf', action='store_true',
+                        help='write a new DeDop tools configuration file and exit')
     subparsers = parser.add_subparsers(
         dest='command_name',
         metavar='COMMAND',
@@ -1197,7 +1201,14 @@ def main(args=None, workspace_manager=None, processor_factory=None):
         args_obj = parser.parse_args(args)
         print_stack_trace = args_obj.print_stack_trace
 
-        if args_obj.command_name and args_obj.command_class:
+        if args_obj.new_conf:
+            try:
+                config_file = write_default_config_file()
+                print('wrote new %s' % config_file)
+                status, message = 0, None
+            except (IOError, OSError) as error:
+                status, message = 1, str(error)
+        elif args_obj.command_name and args_obj.command_class:
             assert args_obj.command_name and args_obj.command_class
             status_and_message = args_obj.command_class().execute(args_obj)
             if not status_and_message:
