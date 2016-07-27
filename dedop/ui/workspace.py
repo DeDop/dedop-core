@@ -436,7 +436,7 @@ class WorkspaceManager:
                 launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
             elif shutil.which("gnome-terminal"):
                 # GNOME / Ubuntu
-                launch_notebook_command_template = 'gnome-terminal --title "{title}" -e "bash -c \'{command}\'"\''
+                launch_notebook_command_template = 'gnome-terminal --title "{title}" -e "bash -c \'{command}\'"'
             elif shutil.which("xterm"):
                 launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
             else:
