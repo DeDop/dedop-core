@@ -46,6 +46,9 @@ TODO
 Tool Configuration
 ==================
 
+Configuration File
+------------------
+
 When DeDop is run for the first time it will create a file ``config.py`` in the directory ``.dedop`` of the
 current user's home directory. All DeDop tools use this file to read special software configuration parameters.
 
@@ -71,8 +74,8 @@ To force writing a new DeDop tools configuration file use::
 This may be useful after DeDop software updates. It will ensure that you get the latest configuration parameters
 supported by a given DeDop version.
 
-Parameters
-==========
+Configuration Parameters
+------------------------
 
 Given here are the current DeDop tools configuration parameters:
 
@@ -80,13 +83,10 @@ Given here are the current DeDop tools configuration parameters:
 Parameter name                       Description                                             Default value
 ===================================  =====================================================   ===========================
 ``workspaces_dir``                   Path where the DeDop Shell stores your workspaces.      ``'~/.dedop/workspaces'``
------------------------------------  -----------------------------------------------------   ---------------------------
 ``launch_notebook_command``          An OS-specific shell command string used to launch a    *OS-specific*
                                      new Jupyter notebook server.
------------------------------------  -----------------------------------------------------   ---------------------------
 ``launch_notebook_in_new_terminal``  Whether launching the notebook creates a new terminal   ``False``
                                      window.
------------------------------------  -----------------------------------------------------   ---------------------------
 ``launch_editor_command``            An OS-specific shell command string used to launch a    *OS-specific*
                                      text editor for the processor configuration files.
------------------------------------  -----------------------------------------------------   ---------------------------
+===================================  =====================================================   ===========================
