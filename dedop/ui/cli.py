@@ -18,7 +18,7 @@ from typing import Tuple, Optional
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace import WorkspaceManager, WorkspaceError
-from dedop.util.config import get_config_value, get_config_path, write_default_config_file
+from dedop.util.config import get_config_value, get_config_path, write_default_config_file, DEFAULT_CONFIG_FILE
 from dedop.util.monitor import ConsoleMonitor, Monitor
 from dedop.version import __version__
 
@@ -437,43 +437,43 @@ class ManageConfigsCommand(Command):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
         parser.add_argument('-w', '--workspace', **workspace_name_attributes)
 
-        config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the configuration")
+        config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the DDP configuration")
 
         parser.set_defaults(cf_parser=parser)
 
-        subparsers = parser.add_subparsers(help='DeDop configuration sub-commands')
+        subparsers = parser.add_subparsers(help='DeDop DDP configuration sub-commands')
 
-        parser_add = subparsers.add_parser('add', help='Add new configuration')
+        parser_add = subparsers.add_parser('add', help='Add new DDP configuration')
         parser_add.add_argument(**config_name_attributes)
         parser_add.set_defaults(cf_command=cls.execute_add)
 
-        parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove configuration')
+        parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
         parser_remove.add_argument(nargs='?', **config_name_attributes)
         parser_remove.set_defaults(cf_command=cls.execute_remove)
 
-        parser_edit = subparsers.add_parser('edit', aliases=['ed'], help='Edit configuration')
+        parser_edit = subparsers.add_parser('edit', aliases=['ed'], help='Edit DDP configuration')
         parser_edit.add_argument(nargs='?', **config_name_attributes)
         parser_edit.set_defaults(cf_command=cls.execute_edit)
 
-        parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy configuration')
+        parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy DDP configuration')
         parser_copy.add_argument(nargs='?', **config_name_attributes)
-        parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new configuration')
+        parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new DDP configuration')
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
-        parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename configuration')
+        parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename DDP configuration')
         parser_rename.add_argument(nargs='?', **config_name_attributes)
-        parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the configuration')
+        parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the DDP configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
-        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show configuration info')
+        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show DDP configuration info')
         parser_info.add_argument(nargs='?', **config_name_attributes)
         parser_info.set_defaults(cf_command=cls.execute_info)
 
-        parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current configuration')
+        parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current DDP configuration')
         parser_current.add_argument(nargs='?', **config_name_attributes)
         parser_current.set_defaults(cf_command=cls.execute_current)
 
-        parser_list = subparsers.add_parser('list', aliases=['ls'], help='List configurations')
+        parser_list = subparsers.add_parser('list', aliases=['ls'], help='List DDP configurations')
         parser_list.set_defaults(cf_command=cls.execute_list)
 
     def execute(self, command_args):
@@ -497,11 +497,11 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        answer = _input('delete configuration "%s"? [yes]' % config_name, 'yes')
+        answer = _input('delete DDP configuration "%s"? [yes]' % config_name, 'yes')
         if answer.lower() == 'yes':
             try:
                 _WORKSPACE_MANAGER.delete_config(workspace_name, config_name)
-                print('deleted configuration "%s"' % config_name)
+                print('deleted DDP configuration "%s"' % config_name)
             except WorkspaceError as error:
                 return 1, str(error)
         return cls.STATUS_OK
@@ -519,7 +519,7 @@ class ManageConfigsCommand(Command):
         new_name = cls.ensure_unique_name(workspace_name, new_name)
         try:
             _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
-            print('copied configuration "%s" to "%s"' % (config_name, new_name))
+            print('copied DDP configuration "%s" to "%s"' % (config_name, new_name))
         except WorkspaceError as error:
             return 1, str(error)
         return cls.STATUS_OK
@@ -534,7 +534,7 @@ class ManageConfigsCommand(Command):
         new_name = cls.ensure_unique_name(workspace_name, command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
-            print('renamed configuration "%s" to "%s"' % (config_name, new_name))
+            print('renamed DDP configuration "%s" to "%s"' % (config_name, new_name))
             if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
                 cls.set_current_config(workspace_name, new_name)
         except WorkspaceError as error:
@@ -570,9 +570,9 @@ class ManageConfigsCommand(Command):
             else:
                 config_name = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
                 if config_name:
-                    print('current configuration is "%s"' % config_name)
+                    print('current DDP configuration is "%s"' % config_name)
                 else:
-                    print('no current configuration')
+                    print('no current DDP configuration')
         except WorkspaceError as e:
             return 1, str(e)
         return cls.STATUS_OK
@@ -585,9 +585,9 @@ class ManageConfigsCommand(Command):
         if not config_name:
             return _STATUS_NO_CONFIG
         config_path = _WORKSPACE_MANAGER.get_config_path(workspace_name, config_name)
-        print('current workspace:    ', workspace_name)
-        print('current configuration:', config_name)
-        print('configuration path:   ', config_path)
+        print('current workspace:              ', workspace_name)
+        print('current DDP configuration:      ', config_name)
+        print('current DDP configuration path: ', config_path)
         if sys.platform.startswith('win'):
             # /A-D = don't show directories
             subprocess.check_call('dir /A-D "%s"' % config_path, shell=True)
@@ -603,11 +603,11 @@ class ManageConfigsCommand(Command):
         config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
         num_configs = len(config_names)
         if num_configs == 0:
-            print('no configurations in workspace "%s"' % workspace_name)
+            print('no DDP configurations in workspace "%s"' % workspace_name)
         elif num_configs == 1:
-            print('1 configuration in workspace "%s":' % workspace_name)
+            print('1 DDP configuration in workspace "%s":' % workspace_name)
         else:
-            print('%d configurations in workspace "%s":' % (num_configs, workspace_name))
+            print('%d DDP configurations in workspace "%s":' % (num_configs, workspace_name))
         for i in range(num_configs):
             config_name = config_names[i]
             print('%3d: %s' % (i + 1, config_name))
@@ -633,7 +633,7 @@ class ManageConfigsCommand(Command):
         if exist_ok and _WORKSPACE_MANAGER.config_exists(workspace_name, config_name):
             return config_name
         _WORKSPACE_MANAGER.create_config(workspace_name, config_name)
-        print('created configuration "%s" in workspace "%s"' % (config_name, workspace_name))
+        print('created DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         cls.set_current_config(workspace_name, config_name)
         return config_name
 
@@ -647,7 +647,7 @@ class ManageConfigsCommand(Command):
         :raise: WorkspaceError
         """
         _WORKSPACE_MANAGER.set_current_config_name(workspace_name, config_name)
-        print('current configuration is "%s"' % config_name)
+        print('current DDP configuration is "%s"' % config_name)
 
     @classmethod
     def ensure_unique_name(cls, workspace_name, new_name):
@@ -655,7 +655,7 @@ class ManageConfigsCommand(Command):
         valid_new_name = new_name
         config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
         while valid_new_name in config_names:
-            print('configuration "%s" already exists' % valid_new_name)
+            print('DDP configuration "%s" already exists' % valid_new_name)
             valid_new_name = '%s_%d' % (new_name, index)
             index += 1
         return valid_new_name
@@ -1048,17 +1048,18 @@ class ShowStatusCommand(Command):
             except (WorkspaceError, IOError, OSError) as error:
                 workspaces_size = '(error: %s)' % str(error)
         else:
-            workspace_names = '(not set)'
             workspaces_dir = '(not yet created)'
             workspaces_size = '(not yet created)'
+            workspace_names = '(not yet created)'
             cur_workspace_name = '(not set)'
             cur_config_name = '(not set)'
 
-        print('workspaces location:     %s' % workspaces_dir)
-        print('workspaces total size:   %s' % workspaces_size)
-        print('workspace names:         %s' % workspace_names)
-        print('current workspace:       %s' % cur_workspace_name)
-        print('current configuration:   %s' % cur_config_name)
+        print('configuration location:     %s' % DEFAULT_CONFIG_FILE)
+        print('workspaces location:        %s' % workspaces_dir)
+        print('workspaces total size:      %s' % workspaces_size)
+        print('workspace names:            %s' % workspace_names)
+        print('current workspace:          %s' % cur_workspace_name)
+        print('current DDP configuration:  %s' % cur_config_name)
 
         return self.STATUS_OK
 

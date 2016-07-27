@@ -1,6 +1,6 @@
 import os.path
 
-_DEFAULT_CONFIG_FILE = os.path.join('~', '.dedop', 'config.py')
+DEFAULT_CONFIG_FILE = os.path.join('~', '.dedop', 'config.py')
 _LOCAL_CONFIG_FILE = 'dedop-config.py'
 
 _CONFIG = None
@@ -42,7 +42,7 @@ def get_config():
     if _CONFIG is None:
         _CONFIG = {}
 
-        default_config_file = os.path.expanduser(_DEFAULT_CONFIG_FILE)
+        default_config_file = os.path.expanduser(DEFAULT_CONFIG_FILE)
         if not os.path.exists(default_config_file):
             try:
                 write_default_config_file()
@@ -86,7 +86,7 @@ def read_python_config(file):
 
 
 def write_default_config_file() -> str:
-    default_config_file = os.path.expanduser(_DEFAULT_CONFIG_FILE)
+    default_config_file = os.path.expanduser(DEFAULT_CONFIG_FILE)
     default_config_dir = os.path.dirname(default_config_file)
     if default_config_dir and not os.path.exists(default_config_dir):
         os.mkdir(default_config_dir)
