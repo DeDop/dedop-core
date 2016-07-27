@@ -923,7 +923,7 @@ class ManageOutputsCommand(Command):
             return 50, 'L1B product not found: %s' % l1b_path
 
         try:
-            _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_filename)
+            _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_path)
         except WorkspaceError as error:
             return 50, str(error)
         return cls.STATUS_OK
