@@ -194,6 +194,7 @@ class WorkspaceManager:
         config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
         package = 'dedop.ui.data.config'
+        # TODO (forman, 20160727): copy text files so that '\n' is replaced by OS-specific line separator
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
         self._copy_resource(package, 'CST.json', dir_path)
