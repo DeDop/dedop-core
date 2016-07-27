@@ -414,7 +414,7 @@ class ManageWorkspacesCommand(Command):
 class ManageConfigsCommand(Command):
     @classmethod
     def name(cls):
-        return 'conf'
+        return 'config'
 
     @classmethod
     def parser_kwargs(cls):
