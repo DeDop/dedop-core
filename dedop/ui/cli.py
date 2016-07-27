@@ -214,36 +214,36 @@ class RunProcessorCommand(Command):
                             help="Alternative output directory.")
 
     def execute(self, command_args):
-        workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-        if not config_name:
-            config_name = ManageConfigsCommand.create_default_config(workspace_name)
-        inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
-        if not inputs:
-            code, msg = _STATUS_NO_INPUTS
-            return code, msg % workspace_name
-        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
-            workspace_name, config_name)
-        chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
-        cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
-        cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
-        skip_l1bs = command_args.skip_l1bs
+        try:
+            workspace_name, config_name = _get_workspace_and_config_name(command_args)
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+            if not config_name:
+                config_name = ManageConfigsCommand.create_default_config(workspace_name)
+            inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
+            if not inputs:
+                code, msg = _STATUS_NO_INPUTS
+                return code, msg % workspace_name
+            output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
+                workspace_name, config_name)
+            chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
+            cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
+            cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+            skip_l1bs = command_args.skip_l1bs
 
-        # noinspection PyCallingNonCallable
-        processor = _PROCESSOR_FACTORY(config_name,
-                                       chd_file=chd_file,
-                                       cnf_file=cnf_file,
-                                       cst_file=cst_file,
-                                       output_dir=output_dir,
-                                       skip_l1bs=skip_l1bs)
-        for input_file in inputs:
-            monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
-            try:
+            # noinspection PyCallingNonCallable
+            processor = _PROCESSOR_FACTORY(config_name,
+                                           chd_file=chd_file,
+                                           cnf_file=cnf_file,
+                                           cst_file=cst_file,
+                                           output_dir=output_dir,
+                                           skip_l1bs=skip_l1bs)
+            for input_file in inputs:
+                monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
                 processor.process(input_file, monitor=monitor)
-            except ProcessorException as e:
-                return 60, str(e)
 
+        except (WorkspaceError, ProcessorException) as error:
+            return 60, str(error)
         return self.STATUS_OK
 
 
@@ -533,11 +533,11 @@ class ManageConfigsCommand(Command):
     @classmethod
     def execute_edit(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-        if not config_name:
-            config_name = cls.create_default_config(workspace_name)
         try:
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+            if not config_name:
+                config_name = cls.create_default_config(workspace_name)
             chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
             cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
             cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
@@ -899,20 +899,20 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_inspect(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-
-        l1b_filename = command_args.l1b_filename
-        if os.path.dirname(l1b_filename):
-            l1b_path = os.path.abspath(l1b_filename)
-        else:
-            if not config_name:
-                return _STATUS_NO_CONFIG
-            l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
-        if not os.path.exists(l1b_path):
-            return 50, 'L1B product not found: %s' % l1b_path
-
         try:
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+
+            l1b_filename = command_args.l1b_filename
+            if os.path.dirname(l1b_filename):
+                l1b_path = os.path.abspath(l1b_filename)
+            else:
+                if not config_name:
+                    return _STATUS_NO_CONFIG
+                l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
+            if not os.path.exists(l1b_path):
+                return 50, 'L1B product not found: %s' % l1b_path
+
             _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_path)
         except WorkspaceError as error:
             return 50, str(error)
@@ -921,39 +921,39 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_compare(cls, command_args):
         workspace_name_1, config_name_1 = _get_workspace_and_config_name(command_args)
-        if not workspace_name_1:
-            workspace_name_1 = ManageWorkspacesCommand.create_default_workspace()
-        workspace_name_2 = command_args.workspace_name_2
-        workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
-        config_name_2 = command_args.config_name_2
-        config_name_2 = config_name_2 if config_name_2 else config_name_1
-
-        l1b_filename_1 = command_args.l1b_filename_1
-        if os.path.dirname(l1b_filename_1):
-            l1b_path_1 = os.path.abspath(l1b_filename_1)
-        else:
-            if not config_name_1:
-                return _STATUS_NO_CONFIG
-            l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
-        if not os.path.exists(l1b_path_1):
-            return 60, 'First L1B product not found: %s' % l1b_path_1
-
-        l1b_filename_2 = command_args.l1b_filename_2
-        if os.path.dirname(l1b_filename_1):
-            l1b_path_2 = os.path.abspath(l1b_filename_2)
-        else:
-            if not workspace_name_2:
-                return _STATUS_NO_WORKSPACE
-            if not config_name_2:
-                return _STATUS_NO_CONFIG
-            l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
-        if not os.path.exists(l1b_path_2):
-            return 60, 'Second L1B product not found: %s' % l1b_path_2
-
-        if os.path.samefile(l1b_path_1, l1b_path_2):
-            print('warning: comparing "%s" with itself')
-
         try:
+            if not workspace_name_1:
+                workspace_name_1 = ManageWorkspacesCommand.create_default_workspace()
+            workspace_name_2 = command_args.workspace_name_2
+            workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
+            config_name_2 = command_args.config_name_2
+            config_name_2 = config_name_2 if config_name_2 else config_name_1
+
+            l1b_filename_1 = command_args.l1b_filename_1
+            if os.path.dirname(l1b_filename_1):
+                l1b_path_1 = os.path.abspath(l1b_filename_1)
+            else:
+                if not config_name_1:
+                    return _STATUS_NO_CONFIG
+                l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
+            if not os.path.exists(l1b_path_1):
+                return 60, 'First L1B product not found: %s' % l1b_path_1
+
+            l1b_filename_2 = command_args.l1b_filename_2
+            if os.path.dirname(l1b_filename_1):
+                l1b_path_2 = os.path.abspath(l1b_filename_2)
+            else:
+                if not workspace_name_2:
+                    return _STATUS_NO_WORKSPACE
+                if not config_name_2:
+                    return _STATUS_NO_CONFIG
+                l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
+            if not os.path.exists(l1b_path_2):
+                return 60, 'Second L1B product not found: %s' % l1b_path_2
+
+            if os.path.samefile(l1b_path_1, l1b_path_2):
+                print('warning: comparing "%s" with itself')
+
             _WORKSPACE_MANAGER.compare_l1b_products(workspace_name_1, l1b_path_1, l1b_path_2)
         except WorkspaceError as error:
             return 60, str(error)
