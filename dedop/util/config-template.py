@@ -31,7 +31,7 @@
 # launch_notebook_in_new_terminal = False
 
 
-# 'launch_editor_command' is the OS-specific shell command string used to edit your configuration files.
+# 'launch_editor_command' is the OS-specific shell command string used to edit your processor configuration files.
 # The following template parameters may be used in the string and are replaced by DeDop:
 #   - {file} - the file to be opened for editing.
 #
