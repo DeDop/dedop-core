@@ -423,9 +423,6 @@ class ManageConfigsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
-
         config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the DDP configuration")
 
         parser.set_defaults(cf_parser=parser)
@@ -433,37 +430,50 @@ class ManageConfigsCommand(Command):
         subparsers = parser.add_subparsers(help='DeDop DDP configuration sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new DDP configuration')
+        cls.setup_default_parser_argument(parser_add)
         parser_add.add_argument(**config_name_attributes)
         parser_add.set_defaults(cf_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
+        cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument(nargs='?', **config_name_attributes)
         parser_remove.set_defaults(cf_command=cls.execute_remove)
 
         parser_edit = subparsers.add_parser('edit', aliases=['ed'], help='Edit DDP configuration')
+        cls.setup_default_parser_argument(parser_edit)
         parser_edit.add_argument(nargs='?', **config_name_attributes)
         parser_edit.set_defaults(cf_command=cls.execute_edit)
 
         parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy DDP configuration')
+        cls.setup_default_parser_argument(parser_copy)
         parser_copy.add_argument(nargs='?', **config_name_attributes)
         parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new DDP configuration')
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
         parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename DDP configuration')
+        cls.setup_default_parser_argument(parser_rename)
         parser_rename.add_argument(nargs='?', **config_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the DDP configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
         parser_info = subparsers.add_parser('info', aliases=['i'], help='Show DDP configuration info')
+        cls.setup_default_parser_argument(parser_info)
         parser_info.add_argument(nargs='?', **config_name_attributes)
         parser_info.set_defaults(cf_command=cls.execute_info)
 
         parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current DDP configuration')
+        cls.setup_default_parser_argument(parser_current)
         parser_current.add_argument(nargs='?', **config_name_attributes)
         parser_current.set_defaults(cf_command=cls.execute_current)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List DDP configurations')
+        cls.setup_default_parser_argument(parser_list)
         parser_list.set_defaults(cf_command=cls.execute_list)
+
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
 
     def execute(self, command_args):
         if hasattr(command_args, 'cf_command') and command_args.cf_command:
@@ -664,7 +674,6 @@ class ManageInputsCommand(Command):
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        cls.setup_default_parser_argument(parser)
         parser.set_defaults(mi_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1A inputs sub-commands')
