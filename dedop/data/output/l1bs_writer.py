@@ -1,6 +1,7 @@
 from enum import Enum
 
 import numpy as np
+from math import degrees
 
 from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
@@ -610,8 +611,8 @@ class L1BSWriter(NetCDFWriter):
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1bs_echo_sar_ku=utc_days,
             UTC_sec_l1bs_echo_sar_ku=utc_secs,
-            lat_l1bs_echo_sar_ku=surface_location_data.lat_surf,
-            lon_l1bs_echo_sar_ku=surface_location_data.lon_surf,
+            lat_l1bs_echo_sar_ku=degrees(surface_location_data.lat_surf),
+            lon_l1bs_echo_sar_ku=degrees(surface_location_data.lon_surf),
             surf_type_l1bs_echo_sar_ku=surface_location_data.surface_type.value,
             # records_count_l1bs_echo_sar_ku=None,
             alt_l1bs_echo_sar_ku=surface_location_data.alt_sat,

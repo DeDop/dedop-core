@@ -1,6 +1,7 @@
 from enum import Enum
 
 import numpy as np
+from math import degrees
 
 from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
@@ -725,8 +726,8 @@ class L1BWriter(NetCDFWriter):
             isp_coarse_time_l1b_echo_sar_ku=closest_burst.isp_coarse_time,
             isp_fine_time_l1b_echo_sar_ku=closest_burst.isp_fine_time,
             sral_fine_time_l1b_echo_sar_ku=closest_burst.sral_fine_time,
-            lat_l1b_echo_sar_ku=surface_location_data.lat_surf,
-            lon_l1b_echo_sar_ku=surface_location_data.lon_surf,
+            lat_l1b_echo_sar_ku=degrees(surface_location_data.lat_surf),
+            lon_l1b_echo_sar_ku=degrees(surface_location_data.lon_surf),
             alt_l1b_echo_sar_ku=surface_location_data.alt_sat,
             orb_alt_rate_l1b_echo_sar_ku=surface_location_data.alt_rate_sat,
             flag_time_status_l1b_echo_sar_ku=closest_burst.flag_time_status,
