@@ -61,12 +61,11 @@ class L1bProductInspector:
 
         if 'time_l1bs_echo_sar_ku' in self.var_names:
             product_type = 'l1bs'
-            print('WARNING: L1BS product inspection not yet supported.')
+            print('WARNING: L1BS product inspection not yet fully supported.')
         elif 'time_l1b_echo_sar_ku' in self.var_names:
             product_type = 'l1b'
         else:
-            raise ValueError(
-                'the product file "%s" is not supported. Please provide either L1B or L1BS product.' % file_path)
+            raise ValueError('"%s" is neither a supported L1B or L1BS product' % file_path)
 
         self.dim_name_to_size = {}
         for name, dim in dataset.dimensions.items():
