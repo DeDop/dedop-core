@@ -58,3 +58,25 @@ Command Reference
 =================
 
 TODO
+
+Tool Configuration
+==================
+
+When DeDop is run for the first time it will create a file `config.py` in the directory `.dedop` of the current users
+home directory.
+
+On Windows, the full path is usually::
+
+    C:\\Users\\<username>\\.dedop\\config.py
+
+where ``C:\\Users\\<username>`` is also given by `%USERPROFILE%` on the Windows command-prompt.
+
+    %USERPROFILE%\\.dedop\\config.py
+
+On Unixes, the file is::
+
+    /home/<username>/.dedop/config.py
+
+where `/home/<username>` is also given by `~` or `$HOME` in a terminal or shell.
+
+Open the file in a text editor to adjust its settings. All settings are explained in the file itself.

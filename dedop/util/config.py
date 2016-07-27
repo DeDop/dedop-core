@@ -43,11 +43,26 @@ def get_config():
         _CONFIG = {}
 
         default_config_file = os.path.expanduser(_DEFAULT_CONFIG_FILE)
+        if not os.path.exists(default_config_file):
+            try:
+                with open(default_config_file, 'w') as fp:
+                    import pkgutil
+                    template_data = pkgutil.get_data('dedop.util', 'config-template.py')
+                    text = template_data.decode("utf-8")
+                    # TODO (forman, 20160727): copy text files so that '\n' is replaced by OS-specific line separator??
+                    # from io import StringIO
+                    # sio = StringIO(text)
+                    # text = sio.readlines()
+                    # sio.close()
+                    fp.write(text)
+            except (IOError, OSError) as error:
+                print('warning: failed to create %s: %s' % (default_config_file, str(error)))
+
         if os.path.isfile(default_config_file):
             try:
                 _CONFIG = read_python_config(default_config_file)
-            except Exception as e:
-                print('warning: failed to read %s: %s' % (default_config_file, str(e)))
+            except Exception as error:
+                print('warning: failed to read %s: %s' % (default_config_file, str(error)))
 
         local_config_file = os.path.expanduser(_LOCAL_CONFIG_FILE)
         if os.path.isfile(local_config_file):
@@ -77,3 +92,5 @@ def read_python_config(file):
     finally:
         if fp is not file:
             fp.close()
+
+
