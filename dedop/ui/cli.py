@@ -196,7 +196,7 @@ class RunProcessorCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Run the DeDop processor (DDP).'
-        return dict(help=help_line, description=help_line)
+        return dict(aliases=['r'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -207,7 +207,7 @@ class RunProcessorCommand(Command):
         parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
                             help='Use WORKSPACE, defaults to current workspace.')
         parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
-                            help='Use CONFIG in workspace, defaults to current configuration.')
+                            help='Use CONFIG in workspace, defaults to current DDP configuration.')
         parser.add_argument('-i', '--inputs', metavar='L1A_FILE', nargs='*',
                             help="L1A input files. Defaults to all L1A files in workspace.")
         parser.add_argument('-o', '--output', dest='output_dir', metavar='DIR',
@@ -255,7 +255,7 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage DeDop workspaces.'
-        return dict(aliases=['mw'], help=help_line, description=help_line)
+        return dict(aliases=['w'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -282,10 +282,6 @@ class ManageWorkspacesCommand(Command):
         parser_rename.add_argument(nargs='?', **workspace_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the workspace')
         parser_rename.set_defaults(ws_command=cls.execute_rename)
-
-        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show workspace')
-        parser_info.add_argument(nargs='?', **workspace_name_attributes)
-        parser_info.set_defaults(ws_command=cls.execute_info)
 
         parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current workspace')
         parser_current.add_argument(nargs='?', **workspace_name_attributes)
@@ -369,13 +365,6 @@ class ManageWorkspacesCommand(Command):
             return 1, str(e)
         return cls.STATUS_OK
 
-    @classmethod
-    def execute_info(cls, command_args):
-        workspace_name = _get_workspace_name(command_args)
-        workspace_info = _WORKSPACE_MANAGER.get_workspace_info(workspace_name)
-        print(workspace_info.get_workspace_info_string())
-        return cls.STATUS_OK
-
     # noinspection PyUnusedLocal
     @classmethod
     def execute_list(cls, command_args):
@@ -425,12 +414,12 @@ class ManageWorkspacesCommand(Command):
 class ManageConfigsCommand(Command):
     @classmethod
     def name(cls):
-        return 'config'
+        return 'conf'
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Manage DeDop configurations.'
-        return dict(aliases=['mc'], help=help_line, description=help_line)
+        help_line = 'Manage DeDop DDP configurations.'
+        return dict(aliases=['c'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -671,7 +660,7 @@ class ManageInputsCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage L1A inputs.'
-        return dict(aliases=['mi'], help=help_line, description=help_line)
+        return dict(aliases=['i'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -795,7 +784,7 @@ class ManageOutputsCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage and analyse L1B outputs.'
-        return dict(aliases=['mo'], help=help_line, description=help_line)
+        return dict(aliases=['o'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -841,14 +830,13 @@ class ManageOutputsCommand(Command):
                                          'workspace/configuration. If omitted, the first filename or path is used.')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
-
     @classmethod
     def set_workspace_config_parser_arguments(cls, parser):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
                                          help="Name of the workspace.")
         parser.add_argument('-w', '--workspace', **workspace_name_attributes)
         config_name_attributes = dict(dest='config_name', metavar='CONFIG',
-                                      help="Name of the configuration.")
+                                      help="Name of the DDP configuration.")
         parser.add_argument('-c', '--config', **config_name_attributes)
 
     @classmethod
@@ -857,7 +845,7 @@ class ManageOutputsCommand(Command):
                                          help="The workspace of the second L1B product.")
         parser.add_argument('-W', '--workspace-2', **workspace_name_attributes)
         config_name_attributes = dict(dest='config_name_2', metavar='CONFIG_2',
-                                      help="The configuration of the second L1B product")
+                                      help="The DDP configuration of the second L1B product")
         parser.add_argument('-C', '--config-2', **config_name_attributes)
 
     def execute(self, command_args):
@@ -903,7 +891,7 @@ class ManageOutputsCommand(Command):
             if os.path.exists(outputs_dir):
                 _WORKSPACE_MANAGER.open_file(outputs_dir)
             else:
-                print('no outputs created with config "%s" in workspace "%s"' % (config_name, workspace_name))
+                print('no outputs created with DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
@@ -1000,8 +988,8 @@ class OpenNotebookCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Open a new Jupyter Notebook for DeDop.'
-        return dict(aliases=['nb'], help=help_line, description=help_line)
+        help_line = 'Open a Jupyter Notebook for DeDop.'
+        return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
         workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
@@ -1025,9 +1013,19 @@ class ShowStatusCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Print DeDop status information.'
-        return dict(aliases=['st'], help=help_line, description=help_line)
+        return dict(aliases=['s'], help=help_line, description=help_line)
+
+    @classmethod
+    def configure_parser(cls, parser: argparse.ArgumentParser):
+        parser.add_argument('-l', '--long', action='store_true',
+                                  help='show extended status information')
 
     def execute(self, command_args):
+        # TODO (forman, 20160727): use command_args.long to print extended status info
+        if command_args.long:
+            print('warning: option "--long" not yet supported')
+            # workspace_info = _WORKSPACE_MANAGER.get_workspace_info()
+            # print(workspace_info.get_workspace_info_string())
         workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
         if os.path.exists(workspaces_dir):
             workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
@@ -1044,7 +1042,7 @@ class ShowStatusCommand(Command):
                 cur_workspace_name = '(not set)'
                 cur_config_name = '(not set)'
             try:
-                workspaces_size = '%s bytes' % _dir_size(workspaces_dir)
+                workspaces_size = '%s MiB' % (_dir_size(workspaces_dir) >> 20)
             except (WorkspaceError, IOError, OSError) as error:
                 workspaces_size = '(error: %s)' % str(error)
         else:
@@ -1114,13 +1112,13 @@ class ShowManualCommand(Command):
 #: List of sub-commands supported by the CLI. Entries are classes derived from :py:class:`Command` class.
 #: DeDop plugins may extend this list by their commands during plugin initialisation.
 COMMAND_REGISTRY = [
-    RunProcessorCommand,
     ManageWorkspacesCommand,
     ManageConfigsCommand,
     ManageInputsCommand,
     ManageOutputsCommand,
-    OpenNotebookCommand,
+    RunProcessorCommand,
     ShowStatusCommand,
+    OpenNotebookCommand,
     ShowManualCommand,
     ShowCopyrightCommand,
     ShowLicenseCommand,

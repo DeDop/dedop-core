@@ -161,12 +161,10 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
-    def get_workspace_info(self, workspace_name: str):
+    def get_workspace_info(self):
         """
-        :param workspace_name: workspace name to be queried
         :raise: WorkspaceError
         """
-        self._assert_workspace_exists(workspace_name)
         dir_path = self.get_workspace_path(workspace_name)
         config_name = self.get_current_config_name(workspace_name)
         return WorkspaceInfo(dir_path, workspace_name, self.get_workspace_names(), config_name,
