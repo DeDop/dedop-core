@@ -161,15 +161,6 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
-    def get_workspace_info(self):
-        """
-        :raise: WorkspaceError
-        """
-        dir_path = self.get_workspace_path(workspace_name)
-        config_name = self.get_current_config_name(workspace_name)
-        return WorkspaceInfo(dir_path, workspace_name, self.get_workspace_names(), config_name,
-                             self.get_config_names(workspace_name))
-
     def get_workspace_names(self) -> List[str]:
         workspaces_dir = self._workspaces_dir
         if os.path.exists(workspaces_dir):
@@ -262,6 +253,7 @@ class WorkspaceManager:
 
     def set_current_config_name(self, workspace_name: str, config_name: str):
         self._assert_workspace_exists(workspace_name)
+        self._assert_config_exists(workspace_name, config_name)
         _writeline(self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
@@ -553,4 +545,4 @@ class WorkspaceManager:
     def _assert_config_exists(self, workspace_name, config_name):
         if not os.path.exists(self.get_config_path(workspace_name, config_name)):
             raise WorkspaceError(
-                'configuration "%s" inside workspace "%s" does not exist' % (config_name, workspace_name))
+                'DDP configuration "%s" of workspace "%s" does not exist' % (config_name, workspace_name))
