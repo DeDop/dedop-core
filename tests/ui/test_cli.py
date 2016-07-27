@@ -115,8 +115,8 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "tests"'])
 
         self._test_main(['mc', 'add', 'config1'],
-                        expected_stdout=['created configuration "config1" in workspace "tests"',
-                                         'current configuration is "config1"'])
+                        expected_stdout=['created DDP configuration "config1" in workspace "tests"',
+                                         'current DDP configuration is "config1"'])
 
         self._test_main(['mi', 'add', input_files],
                         expected_stdout='added 2 inputs')
@@ -144,29 +144,29 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "tests"'])
 
         self._test_main(['mc', 'add', 'config1'],
-                        expected_stdout=['created configuration "config1" in workspace "tests"',
-                                         'current configuration is "config1"'])
+                        expected_stdout=['created DDP configuration "config1" in workspace "tests"',
+                                         'current DDP configuration is "config1"'])
 
         self._test_main(['mc', 'cp'],
-                        expected_stdout=['copied configuration "config1" to "config1_copy"'])
+                        expected_stdout=['copied DDP configuration "config1" to "config1_copy"'])
 
         self._test_main(['mc', 'cp', 'config1', 'config9'],
-                        expected_stdout=['copied configuration "config1" to "config9"'])
+                        expected_stdout=['copied DDP configuration "config1" to "config9"'])
 
         self._test_main(['mc', 'cp', 'config1', 'config9'],
-                        expected_stdout=['configuration "config9" already exists',
-                                         'copied configuration "config1" to "config9_2"'])
+                        expected_stdout=['DDP configuration "config9" already exists',
+                                         'copied DDP configuration "config1" to "config9_2"'])
 
         self._test_main(['mc', 'rn', 'config2'],
-                        expected_stdout=['renamed configuration "config1" to "config2"',
-                                         'current configuration is "config2'])
+                        expected_stdout=['renamed DDP configuration "config1" to "config2"',
+                                         'current DDP configuration is "config2'])
 
         self._test_main(['mc', 'rn', 'config9', 'config10'],
-                        expected_stdout=['renamed configuration "config9" to "config10"'])
+                        expected_stdout=['renamed DDP configuration "config9" to "config10"'])
 
         self._test_main(['mc', 'rn', 'config10', 'config2'],
-                        expected_stdout=['configuration "config2" already exists',
-                                         'renamed configuration "config10" to "config2_2"'])
+                        expected_stdout=['DDP configuration "config2" already exists',
+                                         'renamed DDP configuration "config10" to "config2_2"'])
 
         self._test_main(['mc', 'rn'],
                         expected_exit_code=2,
@@ -179,8 +179,8 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "tests"'])
 
         self._test_main(['mc', 'add', 'config1'],
-                        expected_stdout=['created configuration "config1"',
-                                         'current configuration is "config1"'])
+                        expected_stdout=['created DDP configuration "config1"',
+                                         'current DDP configuration is "config1"'])
 
         self._test_main(['mi', 'add', input_files],
                         expected_stdout='added 2 inputs')
@@ -208,8 +208,8 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "tests"'])
 
         self._test_main(['mc', 'add', 'config1'],
-                        expected_stdout=['created configuration "config1"',
-                                         'current configuration is "config1"'])
+                        expected_stdout=['created DDP configuration "config1"',
+                                         'current DDP configuration is "config1"'])
 
         self._test_main(['mi', 'add', ''],
                         expected_exit_code=40,
@@ -256,8 +256,8 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['created workspace "tests"',
                                          'current workspace is "tests"'])
         self._test_main(['mc', 'add', 'test-a'],
-                        expected_stdout=['created configuration "test-a"',
-                                         'current configuration is "test-a"'])
+                        expected_stdout=['created DDP configuration "test-a"',
+                                         'current DDP configuration is "test-a"'])
         self._test_main(['mi', 'add', input_files],
                         expected_stdout='added 2 inputs')
         self._test_main(['run'],
@@ -267,7 +267,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['run'],
                         expected_exit_code=30,
                         expected_stdout=['created workspace "default"',
-                                         'created configuration "default" in workspace "default"'],
+                                         'created DDP configuration "default" in workspace "default"'],
                         expected_stderr=['workspace "default" doesn\'t have any inputs yet'])
 
     def test_command_run_current(self):
@@ -277,6 +277,6 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "default"',
                                          'added 2 inputs'])
         self._test_main(['run'],
-                        expected_stdout=['created configuration "default"',
-                                         'current configuration is "default"',
+                        expected_stdout=['created DDP configuration "default"',
+                                         'current DDP configuration is "default"',
                                          'processing "default"'])

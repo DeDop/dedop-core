@@ -33,8 +33,8 @@ From the output, you can see that a new workspace named ``default`` has been cre
 The following command lets you edit the current DDP configuration::
 
     $ dedop config edit
-    created configuration "default" in workspace "default"
-    current configuration is "default"
+    created DDP configuration "default" in workspace "default"
+    current DDP configuration is "default"
 
 From the output, you can see that a new processor configuration named ``default`` has been created.
 The ``dedop config edit`` command should open three processor configuration files in your default text editor.
