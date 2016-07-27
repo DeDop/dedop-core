@@ -63,7 +63,7 @@ where ``/home/<username>`` is also given by ``~`` or ``$HOME`` in a terminal or 
 
 **Windows**: On Windows 7+, the full path to the DeDop tools configuration file is usually::
 
-    C:\\Users\\<username>\\.dedop\\config.py
+    C:/Users/<username>/.dedop/config.py
 
 where ``C:/Users/<username>`` is also given by ``%USERPROFILE%`` on the Windows command-prompt.
 
