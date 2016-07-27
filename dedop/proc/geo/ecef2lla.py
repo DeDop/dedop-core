@@ -57,6 +57,7 @@ def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, f
 
     # now iterate until geodetic coordinates are within GEODETIC_ERR
     #   (or for COORD_ITERS number of iterations)
+    max_iters = True
 
     for iter_count in range(COORD_ITERS):
         sin_sqr_lat = sin(lat_est) * sin(lat_est)
@@ -78,7 +79,10 @@ def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, f
         alt_est = alt
 
         if (lat_err < GEODETIC_ERR) and (alt_err < GEODETIC_ERR):
+            max_iters = False
             break
+    if max_iters:
+        raise RuntimeWarning("MAX_ITERS reached in ecef2lla")
 
     if (x == 0.):
         if (y == 0.):

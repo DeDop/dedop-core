@@ -4,7 +4,7 @@ from typing import Dict, Any, Sequence
 from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
 from dedop.proc.functions import *
-from dedop.proc.geo import lla2ecef, ecef2lla
+from dedop.proc.geo import lla2ecef, ecef2lla, normalize
 from dedop.conf import CharacterisationFile, ConstantsFile
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
@@ -74,8 +74,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.time_surf = isp_record.time_sar_ku
 
-        self.lat_surf = isp_record.lat_sar_sat
-        self.lon_surf = isp_record.lon_sar_sat
+        self.lat_surf = normalize(isp_record.lat_sar_sat, self.cst)
+        self.lon_surf = normalize(isp_record.lon_sar_sat, self.cst)
         self.alt_surf = isp_record.alt_sar_sat -\
                         isp_record.win_delay_sar_ku * self.cst.c / 2.
 
