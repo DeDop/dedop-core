@@ -16,6 +16,7 @@ Contents:
    :maxdepth: 2
 
    introduction
+   quick_start
    installation
    manual
    api_reference
