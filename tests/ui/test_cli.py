@@ -103,10 +103,10 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          'current workspace is "tests"'])
 
         self._test_main(['mw', 'info', 'tests'],
-                        expected_stdout=['Available workspace:',
-                                         'tests*',
-                                         'Available input files:',
-                                         'Available output files:'])
+                        expected_stdout=['Workspaces:',
+                                         ' *tests',
+                                         'Inputs:',
+                                         'Outputs:'])
 
     def test_command_mw_info_all(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
@@ -125,18 +125,18 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout='processing "config1": writing L1B')
 
         self._test_main(['mw', 'info', 'tests'],
-                        expected_stdout=['Available workspace:',
-                                         'tests*',
-                                         'Available configurations:',
-                                         'config1*',
-                                         'Available input files:',
-                                         'L1A_01.nc	0 MB',
-                                         'L1A_02.nc	0 MB',
-                                         'Available output files:',
-                                         'L1BS__01_config1.nc		0 MB',
-                                         'L1BS__02_config1.nc		0 MB',
-                                         'L1B__01_config1.nc		0 MB',
-                                         'L1B__02_config1.nc		0 MB'])
+                        expected_stdout=['Workspaces:',
+                                         '*tests',
+                                         'Inputs:',
+                                         'L1A_01.nc		0 MiB',
+                                         'L1A_02.nc		0 MiB',
+                                         'DDP configurations:',
+                                         '*config1',
+                                         'Outputs:',
+                                         'L1BS__01_config1.nc		0 MiB',
+                                         'L1BS__02_config1.nc		0 MiB',
+                                         'L1B__01_config1.nc		0 MiB',
+                                         'L1B__02_config1.nc		0 MiB'])
 
     def test_command_mc(self):
         self._test_main(['mw', 'add', 'tests'],
