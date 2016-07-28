@@ -239,11 +239,11 @@ class RunProcessorCommand(Command):
                 return code, msg % workspace_name
 
             for config_name in config_names:
-                output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
-                    workspace_name, config_name)
                 chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
                 cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
                 cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+                output_dir = command_args.output_dir if command_args.output_dir else \
+                    _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
                 skip_l1bs = command_args.skip_l1bs
 
                 # noinspection PyCallingNonCallable
@@ -915,7 +915,8 @@ class ManageOutputsCommand(Command):
             if os.path.exists(outputs_dir):
                 _WORKSPACE_MANAGER.open_file(outputs_dir)
             else:
-                print('no outputs created with DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
+                print(
+                    'no outputs created with DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
@@ -1042,7 +1043,7 @@ class ShowStatusCommand(Command):
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
         parser.add_argument('-l', '--long', action='store_true',
-                                  help='show extended status information')
+                            help='show extended status information')
 
     def execute(self, command_args):
         # TODO (forman, 20160727): use command_args.long to print extended status info
