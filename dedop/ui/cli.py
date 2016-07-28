@@ -195,7 +195,7 @@ class RunProcessorCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Run the DeDop processor (DDP).'
+        help_line = 'Run the Delay Doppler Processor (DDP).'
         return dict(aliases=['r'], help=help_line, description=help_line)
 
     @classmethod
