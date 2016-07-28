@@ -6,7 +6,6 @@ import subprocess
 import sys
 from typing import List
 
-from dedop.ui.workspace_info import WorkspaceInfo
 from dedop.util.config import get_config_value
 
 _WORKSPACES_DIR_NAME = 'workspaces'
@@ -348,7 +347,7 @@ class WorkspaceManager:
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH__', repr(l1b_path).replace('\\', '\\\\'))
         return self._launch_notebook_from_template(workspace_name, 'inspect', notebook_json, 'inspect - [%s]' %
-                                                   self.name_to_title(l1b_path, 80))
+                                                   self._limit_title(l1b_path, 60))
 
     def compare_l1b_products(self, workspace_name, l1b_path_1: str, l1b_path_2: str):
         template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'compare-template.ipynb')
@@ -356,14 +355,8 @@ class WorkspaceManager:
             .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1).replace('\\', '\\\\')) \
             .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2).replace('\\', '\\\\'))
         return self._launch_notebook_from_template(workspace_name, 'compare', notebook_json, 'compare - [%s] [%s]' % (
-            self.name_to_title(l1b_path_1, 40),
-            self.name_to_title(l1b_path_2, 40),))
-
-    @classmethod
-    def name_to_title(cls, name, max_len):
-        assert name
-        assert max_len > 3
-        return name if len(name) <= max_len else '...' + name[3 - max_len:]
+            self._limit_title(l1b_path_1, 30),
+            self._limit_title(l1b_path_2, 30),))
 
     def _launch_notebook_from_template(self,
                                        workspace_name: str,
@@ -464,8 +457,8 @@ class WorkspaceManager:
             # print('calling:', open_notebook_command)
             subprocess.check_call(launch_notebook_command, shell=True)
             if launch_notebook_in_new_terminal:
-                print('A new terminal window named "%s" has been opened.' % terminal_title)
-                print('Close the window or press CTRL+C within it to terminate the Notebook session.')
+                print('A terminal window titled "%s" has been opened.' % cls._limit_title(terminal_title, 30, mode='l'))
+                print('Close that window or press CTRL+C within it to terminate the Notebook session.')
         except (subprocess.CalledProcessError, IOError, OSError) as error:
             raise WorkspaceError('failed to launch Jupyter Notebook: %s' % str(error))
 
@@ -537,6 +530,14 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
         return dir_path
+
+    @classmethod
+    def _limit_title(cls, name, max_len, mode='r'):
+        assert name
+        assert max_len > 3
+        assert mode == 'r' or mode == 'l'
+        return name if len(name) <= max_len else (
+            '...' + name[3 - max_len:] if mode == 'r' else name[:max_len - 3] + '...')
 
     def _assert_workspace_exists(self, workspace_name):
         if not os.path.exists(self.get_workspace_path(workspace_name)):
