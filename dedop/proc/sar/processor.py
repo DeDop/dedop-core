@@ -92,24 +92,24 @@ class L1BProcessor(BaseProcessor):
         """
         self.l1a_file = L1ADataset(l1a_file, chd=self.chd, cst=self.cst, cnf=self.cnf)
 
-        print("processing %s" % self.l1a_file.file_path)
+        print('processing %s using "%s"' % (self.l1a_file.file_path, self.name))
 
         t0 = time.time()
 
-        with monitor.starting("processing", total_work=self.l1a_file.max_index + self.min_surfs):
-            status = self.___process(l1a_file, monitor)
+        with monitor.starting('processing', total_work=self.l1a_file.max_index + self.min_surfs):
+            status = self._process(l1a_file, monitor)
 
         dt = time.time() - t0
 
-        print("produced %s" % self.l1b_file.file_path)
+        print('produced %s' % self.l1b_file.file_path)
         if self.l1bs_file is not None:
-            print("produced %s" % self.l1bs_file.file_path)
+            print('produced %s' % self.l1bs_file.file_path)
 
-        print("processing took %s" % str(datetime.timedelta(seconds=dt)))
+        print('processing took %s' % str(datetime.timedelta(seconds=dt)))
 
         return status
 
-    def ___process(self, l1a_file, monitor):
+    def _process(self, l1a_file, monitor):
         running = True
         surface_processing = False
         status = -1
