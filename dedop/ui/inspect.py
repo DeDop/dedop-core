@@ -146,7 +146,7 @@ class L1bInpectionPlotting:
         self._inspector = inspector
         self._interactive = interactive
         if interactive:
-            bokeh.io.output_notebook()
+            bokeh.io.output_notebook(hide_banner=True)
 
     def locations(self):
 

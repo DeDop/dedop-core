@@ -111,7 +111,7 @@ class L1bComparisonPlotting:
         self._comparator = product_comparator
         self._interactive = interactive
         if interactive:
-            bokeh.io.output_notebook()
+            bokeh.io.output_notebook(hide_banner=True)
 
     def locations(self):
 
