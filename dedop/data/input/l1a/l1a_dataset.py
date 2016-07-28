@@ -117,7 +117,7 @@ class L1ADataset(InputDataset):
             days=self.UTC_day_l1a_echo_sar_ku[index],
             seconds=self.UTC_sec_l1a_echo_sar_ku[index],
             inst_id_sar_isp=0,
-            pri_sar_pre_dat=0,
+            pri_sar_pre_dat=self.chd.pri_sar,
             ambiguity_order_sar=0,
             burst_sar_ku=self.burst_count_prod_l1a_echo_sar_ku[index],
             lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
