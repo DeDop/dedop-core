@@ -87,7 +87,7 @@
 		"description": "Threshold that determines whether a surface has low or high variability"
 	},
 	"zp_fact_range_cnf": {
-		"value": 128,
+		"value": 2,
 		"units": null,
 		"description": "Zero padding factor used during range compression"
 	},
