@@ -1,9 +1,12 @@
+import os
+import os.path
 from typing import Tuple
 
 import bokeh
 import bokeh.io
 import bokeh.model
 import bokeh.plotting
+import bokeh.util.platform
 import matplotlib.pyplot as plt
 import pyproj
 from bokeh.models import ColumnDataSource, Circle
@@ -11,6 +14,7 @@ from bokeh.tile_providers import STAMEN_TERRAIN
 from netCDF4 import Dataset
 from numpy import ndarray
 
+from .figurewriter import FigureWriter
 from .inspect import L1bProductInspector
 
 
@@ -22,40 +26,59 @@ from .inspect import L1bProductInspector
 # * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/notebook.html
 
 
-def compare_l1b_products(file_path_1: str, file_path_2: str, interactive=True) -> 'L1bProductInspector':
+def compare_l1b_products(product_file_path_1: str,
+                         product_file_path_2: str,
+                         output_path=None, output_format=None) -> 'L1bProductComparator':
     """
     Open two L1B files for comparison.
 
-    :param file_path_1: The file path of the first L1B product.
-    :param file_path_2: The file path of the second L1B product.
-    :param interactive: whether the returned comparator is supposed to run in interactive mode (i.e. IPython notebook)
+    If *output_format* is "dir" then a new directory given by *output_path*
+    will be created. Each plot figure will will be saved in a new file.
+
+    If *output_format* is "pdf" then a new multi-page PDF document given by *output_path*
+    will be created or overwritten if it exists. Each plot figure will will be saved in a new PDF page.
+    Format "pdf" does not support all plot types.
+
+    If *output_format* is not given it defaults it is derived from *output_path*.
+
+    Note that both *output_path* and *output_format* arguments are ignored if the inspection is run in an
+    Jupyter (IPython) Notebook.
+
+    :param product_file_path_1: The file path of the first L1B product.
+    :param product_file_path_2: The file path of the second L1B product.
+    :param output_path: The output path where plot figures are written to.
+    :param output_format: The output format. Supported formats are "pdf" and "dir".
     """
-    return L1bProductComparator(file_path_1, file_path_2, interactive)
+    if bokeh.util.platform.is_notebook():
+        bokeh.io.output_notebook(hide_banner=True)
+        figure_writer = None
+    else:
+        figure_writer = FigureWriter(output_path, output_format)
+    return L1bProductComparator(product_file_path_1, product_file_path_2, figure_writer)
 
 
 class L1bProductComparator:
     """
     The `L1bInspector` class provides access to L1B contents and provides a number of analysis functions.
-
-    :param file_path_1: The file path of the first L1B product.
-    :param file_path_2: The file path of the second L1B product.
-    :param interactive: whether this inspector is supposed to run in interactive mode (i.e. IPython notebook)
     """
 
-    def __init__(self, file_path_1: str, file_path_2: str, interactive):
-        if not file_path_1:
+    def __init__(self,
+                 product_file_path_1: str,
+                 product_file_path_2: str,
+                 figure_writer: FigureWriter):
+        if not product_file_path_1:
             raise ValueError('file_path_1 must be given')
-        if not file_path_2:
+        if not product_file_path_2:
             raise ValueError('file_path_2 must be given')
-        product_inspector_1 = L1bProductInspector(file_path_1, interactive)
-        product_inspector_2 = L1bProductInspector(file_path_2, interactive)
+        product_inspector_1 = L1bProductInspector(product_file_path_1, figure_writer)
+        product_inspector_2 = L1bProductInspector(product_file_path_2, figure_writer)
         if product_inspector_1.waveform.shape != product_inspector_2.waveform.shape:
             raise ValueError('"%s" and "%s" cannot be compared as they have different waveform dimensions' % (
-                file_path_1, file_path_2))
+                product_file_path_1, product_file_path_2))
 
         self._product_inspector_1 = product_inspector_1
         self._product_inspector_2 = product_inspector_2
-        self._plot = L1bComparisonPlotting(self, interactive)
+        self._plot = L1bProductComparatorPlots(self, figure_writer)
         self._waveforms_delta = product_inspector_1.waveform - product_inspector_2.waveform
 
     @property
@@ -101,7 +124,7 @@ class L1bProductComparator:
         return self._waveforms_delta
 
     @property
-    def plot(self) -> 'L1bComparisonPlotting':
+    def plot(self) -> 'L1bProductComparatorPlots':
         """
         Get the plotting context.
         """
@@ -113,13 +136,12 @@ class L1bProductComparator:
         self.p2.close()
 
 
-class L1bComparisonPlotting:
-    def __init__(self, product_comparator: L1bProductComparator, interactive=True):
+class L1bProductComparatorPlots:
+    def __init__(self, product_comparator: L1bProductComparator, figure_writer: FigureWriter):
         self._plt = plt
         self._comparator = product_comparator
-        self._interactive = interactive
-        if interactive:
-            bokeh.io.output_notebook(hide_banner=True)
+        self._interactive = figure_writer is None
+        self._figure_writer = figure_writer
 
     def locations(self):
 
@@ -161,10 +183,12 @@ class L1bComparisonPlotting:
         fig.add_glyph(source2, circle2)
 
         if self._interactive:
-            # bokeh.io.show(plot)
             bokeh.io.show(fig)
+        elif self._figure_writer.output_format == "dir":
+            os.makedirs(self._figure_writer.output_path, exist_ok=True)
+            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'locations.html'), title='L1B Locations')
         else:
-            bokeh.io.output_file("plot_locations.html")
+            print('warning: cannot save locations figure with output format "%s"' % self._figure_writer.output_format)
 
     def waveforms_delta_im(self, vmin=None, vmax=None):
         waveforms_delta = self._comparator.waveforms_delta
@@ -179,7 +203,7 @@ class L1bComparisonPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_delta_im.png")
+            self.savefig("plot_waveform_delta_im.png")
 
     def waveforms_scatter(self):
         x = self._comparator.p1.waveform
@@ -194,4 +218,7 @@ class L1bComparisonPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveforms_scatter.png")
+            self.savefig("plot_waveforms_scatter.png")
+
+    def savefig(self, filename):
+        return self._figure_writer.savefig(filename)

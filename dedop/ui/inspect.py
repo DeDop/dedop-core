@@ -21,6 +21,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from netCDF4 import Dataset, num2date
 from numpy import ndarray
 
+from .figurewriter import FigureWriter
+
 
 # (Plotting) Resources:
 # * http://matplotlib.org/api/pyplot_api.html
@@ -51,7 +53,12 @@ def inspect_l1b_product(product_file_path, output_path=None, output_format=None)
     :param output_path: The output path where plot figures are written to.
     :param output_format: The output format. Supported formats are "pdf" and "dir".
     """
-    return L1bProductInspector(product_file_path, output_path, output_format)
+    if bokeh.util.platform.is_notebook():
+        bokeh.io.output_notebook(hide_banner=True)
+        figure_writer = None
+    else:
+        figure_writer = FigureWriter(output_path, output_format)
+    return L1bProductInspector(product_file_path, figure_writer)
 
 
 class L1bProductInspector:
@@ -59,12 +66,12 @@ class L1bProductInspector:
     The `L1bInspector` class provides access to L1B contents and provides a number of analysis functions.
     """
 
-    def __init__(self, product_file_path, output_path, output_format):
+    def __init__(self, product_file_path, figure_writer: FigureWriter):
 
         if not product_file_path:
             raise ValueError('product_file_path must be given')
 
-        self._plot = L1bProductInspectorPlot(self, output_path, output_format)
+        self._plot = L1bProductInspectorPlots(self, figure_writer)
 
         self._file_path = product_file_path
 
@@ -130,7 +137,7 @@ class L1bProductInspector:
         return self._file_path
 
     @property
-    def plot(self) -> 'L1bProductInspectorPlot':
+    def plot(self) -> 'L1bProductInspectorPlots':
         """
         Get the plotting context.
         """
@@ -156,48 +163,11 @@ class L1bProductInspector:
         self._plot.close()
 
 
-class L1bProductInspectorPlot:
-    def __init__(self, inspector: 'L1bProductInspector', output_path:str, output_format:str):
-        self._plt = plt
+class L1bProductInspectorPlots:
+    def __init__(self, inspector: 'L1bProductInspector', figure_writer: FigureWriter):
         self._inspector = inspector
-        self._pdf_pages = None
-        self._output_path = None
-        self._output_format = None
-        self._interactive = bokeh.util.platform.is_notebook()
-        if self._interactive:
-            bokeh.io.output_notebook(hide_banner=True)
-        else:
-            if not output_path:
-                raise ValueError('output_path must be given')
-
-            if not output_format:
-                # guess format from filename
-                _, ext = os.path.splitext(output_path)
-                if len(ext) > 1:
-                    output_format = ext[1:].lower()
-                else:
-                    output_format = 'dir'
-            else:
-                output_format = output_format.lower()
-
-            if output_format not in ['pdf', 'dir']:
-                raise ValueError('output_format "%s" is unsupported' % output_format)
-
-            self._output_path = output_path
-            self._output_format = output_format
-            self._pdf_pages = None
-
-            if output_format == 'pdf':
-                # see http://matplotlib.org/faq/howto_faq.html#save-multiple-plots-to-one-pdf-file
-                output_dir = os.path.dirname(output_path)
-                output_basename, ext = os.path.splitext(os.path.basename(output_path))
-                if not output_basename:
-                    raise ValueError('output_path is missing a basename')
-                if not ext:
-                    ext = '.pdf'
-                elif not (ext == '.pdf' or ext == '.PDF'):
-                    raise ValueError('output_path extension must be ".pdf"')
-                self._output_path = os.path.join(output_dir, output_basename + ext)
+        self._interactive = figure_writer is None
+        self._figure_writer = figure_writer
 
     def locations(self):
 
@@ -230,11 +200,12 @@ class L1bProductInspectorPlot:
         fig.add_glyph(source, circle)
 
         if self._interactive:
-            # bokeh.io.show(plot)
             bokeh.io.show(fig)
-        elif self._output_format != "pdf":
-            os.makedirs(self._output_path, exist_ok=True)
-            bokeh.io.save(fig, os.path.join(self._output_path, 'locations.html'), title='L1B Locations')
+        elif self._figure_writer.output_format == "dir":
+            os.makedirs(self._figure_writer.output_path, exist_ok=True)
+            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'locations.html'), title='L1B Locations')
+        else:
+            print('warning: cannot save locations figure with output format "%s"' % self._figure_writer.output_format)
 
     def waveform_im(self, vmin=None, vmax=None):
         vmin = vmin if vmin else self._inspector.waveform_range[0]
@@ -638,30 +609,9 @@ class L1bProductInspectorPlot:
         else:
             self.savefig('%s.png' % z_name)
 
-    def savefig(self, file_name=None):
-        is_pdf = self._output_format == "pdf"
-        if is_pdf:
-            file_path = self._output_path
-        else:
-            if not file_name:
-                raise ValueError('file_name must be given')
-            file_path = os.path.join(self._output_path, file_name)
-
-        dir_path = os.path.dirname(file_path)
-        if dir_path and not os.path.exists(dir_path):
-            os.makedirs(dir_path, exist_ok=True)
-
-        if is_pdf:
-            if not self._pdf_pages:
-                self._pdf_pages = PdfPages(file_path)
-            file_object = self._pdf_pages
-            file_format = 'pdf'
-        else:
-            file_object = file_path
-            file_format = None
-
-        plt.savefig(file_object, format=file_format)
+    def savefig(self, filename):
+        return self._figure_writer.savefig(filename)
 
     def close(self):
-        if self._pdf_pages:
-            self._pdf_pages.close()
+        if self._figure_writer:
+            self._figure_writer.close()

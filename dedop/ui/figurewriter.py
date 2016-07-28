@@ -1,5 +1,6 @@
 import os.path
 
+import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 
@@ -7,13 +8,11 @@ class FigureWriter:
     """
     Writer for Matplotlib figures.
 
-    :param plt: Matplotlib pyplot API
     :param output_path: PDF file path or directory.
     :param output_format: output format. Must be either "pdf" or "dir".
     """
 
-    def __init__(self, plt, output_path: str, output_format: str):
-        self._plt = plt
+    def __init__(self, output_path: str, output_format: str):
         self._pdf_pages = None
         self._output_path = None
         self._output_format = None
@@ -50,7 +49,15 @@ class FigureWriter:
                 raise ValueError('output_path extension must be ".pdf"')
             self._output_path = os.path.join(output_dir, output_basename + ext)
 
-    def save_current_figure(self, file_name=None):
+    @property
+    def output_path(self):
+        return self._output_path
+
+    @property
+    def output_format(self):
+        return self._output_format
+
+    def savefig(self, file_name=None):
         is_pdf = self._output_format == "pdf"
         if is_pdf:
             file_path = self._output_path
@@ -72,9 +79,10 @@ class FigureWriter:
             file_object = file_path
             file_format = None
 
-        # Save the current figure
-        self._plt.savefig(file_object, format=file_format)
+        # Save the current matplotlib pyplot figure
+        plt.savefig(file_object, format=file_format)
 
     def close(self):
         if self._pdf_pages:
             self._pdf_pages.close()
+            self._pdf_pages = None
