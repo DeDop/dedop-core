@@ -56,6 +56,7 @@ class L1bProductComparator:
         self._product_inspector_1 = product_inspector_1
         self._product_inspector_2 = product_inspector_2
         self._plot = L1bComparisonPlotting(self, interactive)
+        self._waveforms_delta = product_inspector_1.waveform - product_inspector_2.waveform
 
     @property
     def p1(self) -> L1bProductInspector:
@@ -72,25 +73,32 @@ class L1bProductComparator:
         return self._product_inspector_2
 
     @property
-    def file_path(self) -> Tuple[str, str]:
+    def file_paths(self) -> Tuple[str, str]:
         """
         Get the L1b file path.
         """
         return self.p1.file_path, self.p2.file_path
 
     @property
-    def dataset(self) -> Tuple[Dataset, Dataset]:
+    def datasets(self) -> Tuple[Dataset, Dataset]:
         """
         Get the underlying netCDF dataset object.
         """
         return self.p1.dataset, self.p2.dataset
 
     @property
-    def waveform(self) -> Tuple[ndarray, ndarray]:
+    def waveforms(self) -> Tuple[ndarray, ndarray]:
         """
         Get the underlying netCDF dataset object.
         """
         return self.p1.waveform, self.p2.waveform
+
+    @property
+    def waveforms_delta(self) -> ndarray:
+        """
+        Get the delta waveforms[0] - waveforms[1].
+        """
+        return self._waveforms_delta
 
     @property
     def plot(self) -> 'L1bComparisonPlotting':
@@ -159,19 +167,19 @@ class L1bComparisonPlotting:
             bokeh.io.output_file("plot_locations.html")
 
     def waveforms_delta_im(self, vmin=None, vmax=None):
-        waveform_diff = self._comparator.p1.waveform - self._comparator.p2.waveform
-        vmin = vmin if vmin else waveform_diff.min()
-        vmax = vmax if vmax else waveform_diff.max()
+        waveforms_delta = self._comparator.waveforms_delta
+        vmin = vmin if vmin else waveforms_delta.min()
+        vmax = vmax if vmax else waveforms_delta.max()
         plt.figure(figsize=(10, 10))
-        plt.imshow(waveform_diff, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax, cmap='RdBu_r')
+        plt.imshow(waveforms_delta, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax, cmap='RdBu_r')
         plt.xlabel('Echo Sample Index')
         plt.ylabel('Time Index')
-        plt.title('Waveform 1 - Waveform 2')
+        plt.title('Waveform 1, Waveform 2 Delta')
         plt.colorbar(orientation='vertical')
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_diff_im.png")
+            plt.savefig("plot_waveform_delta_im.png")
 
     def waveforms_scatter(self):
         x = self._comparator.p1.waveform
