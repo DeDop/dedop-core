@@ -131,6 +131,21 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+        self._test_main(['c', 'cur'],
+                        expected_stdout=['current DDP configuration is "config2"'])
+
+        self._test_main(['c', 'i'],
+                        expected_stdout=['current workspace:               tests',
+                                         'current DDP configuration:       config2',
+                                         'current DDP configuration path:'])
+
+        self._test_main(['c', 'list'],
+                        expected_stdout=['4 DDP configurations in workspace "tests":',
+                                         '1: config1_copy',
+                                         '2: config2',
+                                         '3: config2_2',
+                                         '4: config9_2'])
+
     def test_command_output(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
         self._test_main(['w', 'add', 'tests'],
