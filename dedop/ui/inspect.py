@@ -59,6 +59,14 @@ class L1bProductInspector:
         self.dim_names = sorted(list(dataset.dimensions.keys()))
         self.var_names = sorted(list(dataset.variables))
 
+        if 'time_l1bs_echo_sar_ku' in self.var_names:
+            product_type = 'l1bs'
+            print('WARNING: L1BS product inspection not yet fully supported.')
+        elif 'time_l1b_echo_sar_ku' in self.var_names:
+            product_type = 'l1b'
+        else:
+            raise ValueError('"%s" is neither a supported L1B nor L1BS product' % file_path)
+
         self.dim_name_to_size = {}
         for name, dim in dataset.dimensions.items():
             self.dim_name_to_size[name] = dim.size
@@ -73,8 +81,8 @@ class L1bProductInspector:
 
         self.attributes = {name: dataset.getncattr(name) for name in dataset.ncattrs()}
 
-        self.lat = dataset['lat_l1b_echo_sar_ku'][:]
-        self.lon = dataset['lon_l1b_echo_sar_ku'][:] - 180.0
+        self.lat = dataset['lat_%s_echo_sar_ku' % product_type][:]
+        self.lon = dataset['lon_%s_echo_sar_ku' % product_type][:]
 
         self.lat_0 = self.lat.mean()
         self.lon_0 = self.lon.mean()
@@ -82,14 +90,14 @@ class L1bProductInspector:
         self.lat_range = self.lat.min(), self.lat.max()
         self.lon_range = self.lon.min(), self.lon.max()
 
-        time_var = dataset['time_l1b_echo_sar_ku']
+        time_var = dataset['time_%s_echo_sar_ku' % product_type]
         time = time_var[:]
         self.time = num2date(time, time_var.units, calendar=time_var.calendar)
         self.time_0 = num2date(time.mean(), time_var.units, calendar=time_var.calendar)
         self.time_range = self.time.min(), self.time.max()
 
-        waveform_counts = dataset['i2q2_meas_ku_l1b_echo_sar_ku'][:]
-        waveform_scaling = dataset['scale_factor_ku_l1b_echo_sar_ku'][:]
+        waveform_counts = dataset['i2q2_meas_ku_%s_echo_sar_ku' % product_type][:]
+        waveform_scaling = dataset['scale_factor_ku_%s_echo_sar_ku' % product_type][:]
         waveform_scaling = waveform_scaling.reshape(waveform_scaling.shape + (1,))
 
         self._waveform = waveform_scaling * waveform_counts

@@ -1,13 +1,16 @@
-from typing import Optional, Sequence, Dict, Any, List
+import datetime
 import os
+import time
+from typing import Optional, Sequence, Dict, Any, List
 
-from .algorithms import *
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
-from dedop.model import SurfaceData, L1AProcessingData
-from dedop.model.processor import BaseProcessor
 from dedop.data.input.l1a import L1ADataset
 from dedop.data.output import L1BSWriter, L1BWriter
+from dedop.model import SurfaceData, L1AProcessingData
+from dedop.model.processor import BaseProcessor
 from dedop.util.monitor import Monitor
+
+from .algorithms import *
 
 
 class L1BProcessor(BaseProcessor):
@@ -29,10 +32,21 @@ class L1BProcessor(BaseProcessor):
         """
         return self._packets
 
-    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool=True):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool = True):
         """
         initialise the processor
         """
+        if not name:
+            raise ValueError('name must be given')
+        if not cnf_file:
+            raise ValueError('cnf_file must be given')
+        if not cst_file:
+            raise ValueError('cst_file must be given')
+        if not chd_file:
+            raise ValueError('chd_file must be given')
+        if out_path is None:
+            raise ValueError('out_path must be given')
+
         # store conf objects
         self.cst = ConstantsFile(cst_file)
         self.chd = CharacterisationFile(self.cst, chd_file)
@@ -41,6 +55,7 @@ class L1BProcessor(BaseProcessor):
         self.skip_l1bs = skip_l1bs
         self.out_path = out_path
         self.name = name
+        self.l1a_file = None
 
         # init. surface & packets arrays
         self._surfaces = []
@@ -52,36 +67,52 @@ class L1BProcessor(BaseProcessor):
         self.beam_angles_trend_prev = -1
 
         # initialise the algorithm classes
-        self.surface_locations_algorithm =\
+        self.surface_locations_algorithm = \
             SurfaceLocationAlgorithm(self.chd, self.cst)
-        self.beam_angles_algorithm =\
+        self.beam_angles_algorithm = \
             BeamAnglesAlgorithm(self.chd, self.cst)
-        self.azimuth_processing_algorithm =\
+        self.azimuth_processing_algorithm = \
             AzimuthProcessingAlgorithm(self.chd, self.cst)
-        self.stack_gathering_algorithm =\
+        self.stack_gathering_algorithm = \
             StackGatheringAlgorithm(self.chd, self.cst)
-        self.geometry_corrections_algorithm =\
+        self.geometry_corrections_algorithm = \
             GeometryCorrectionsAlgorithm(self.chd, self.cst)
-        self.range_compression_algorithm =\
+        self.range_compression_algorithm = \
             RangeCompressionAlgorithm(self.chd, self.cst)
-        self.stack_masking_algorithm =\
+        self.stack_masking_algorithm = \
             StackMaskingAlgorithm(self.chd, self.cst)
-        self.multilooking_algorithm =\
+        self.multilooking_algorithm = \
             MultilookingAlgorithm(self.chd, self.cst)
-        self.sigma_zero_algorithm =\
+        self.sigma_zero_algorithm = \
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
 
-    def process(self, l1a_file: str, monitor: Monitor=Monitor.NULL) -> int:
+    def process(self, l1a_file: str, monitor: Monitor = Monitor.NULL) -> int:
         """
         runs the L1B Processing Chain
         """
         self.l1a_file = L1ADataset(l1a_file, chd=self.chd, cst=self.cst, cnf=self.cnf)
-        monitor.start("Processing Input File", self.l1a_file.max_index + self.min_surfs)
 
+        print("processing %s" % self.l1a_file.file_path)
+
+        t0 = time.time()
+
+        with monitor.starting("processing", total_work=self.l1a_file.max_index + self.min_surfs):
+            status = self.___process(l1a_file, monitor)
+
+        dt = time.time() - t0
+
+        print("produced %s" % self.l1b_file.file_path)
+        if self.l1bs_file is not None:
+            print("produced %s" % self.l1bs_file.file_path)
+
+        print("processing took %s" % str(datetime.timedelta(seconds=dt)))
+
+        return status
+
+    def ___process(self, l1a_file, monitor):
         running = True
         surface_processing = False
         status = -1
-
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
 
@@ -90,12 +121,20 @@ class L1BProcessor(BaseProcessor):
         if l1a_base.startswith('L1A'):
             l1a_base = l1a_base[len('L1A'):]
 
+        l1a_base_part = ''
+        if l1a_base:
+            l1a_base_part = '_%s' % l1a_base
+
+        name_part = ''
+        if self.name:
+            name_part = '_%s' % self.name
+
         # create l1b-s output path
-        l1bs_name = 'L1BS_%s_%s.nc' % (l1a_base, self.name)
+        l1bs_name = 'L1BS%s%s.nc' % (l1a_base_part, name_part)
         l1bs_path = os.path.join(self.out_path, l1bs_name)
 
         # create l1b output path
-        l1b_name = 'L1B_%s_%s.nc' % (l1a_base, self.name)
+        l1b_name = 'L1B%s%s.nc' % (l1a_base_part, name_part)
         l1b_path = os.path.join(self.out_path, l1b_name)
 
         # create output file objects
@@ -105,6 +144,7 @@ class L1BProcessor(BaseProcessor):
         else:
             self.l1bs_file = None
 
+        # open output files
         self.l1b_file.open()
         if self.l1bs_file is not None:
             self.l1bs_file.open()
@@ -153,7 +193,6 @@ class L1BProcessor(BaseProcessor):
 
                 self.clear_old_records(working_loc)
 
-
             if not self.surf_locs:
                 running = False
                 status = None
@@ -161,10 +200,10 @@ class L1BProcessor(BaseProcessor):
             if monitor.is_cancelled():
                 running = False
 
+        # close output files
         self.l1b_file.close()
         if self.l1bs_file is not None:
             self.l1bs_file.close()
-        monitor.done()
 
         return status
 
@@ -206,9 +245,9 @@ class L1BProcessor(BaseProcessor):
             self.beam_angles_list_size_prev,
             self.beam_angles_trend_prev
         )
-        self.beam_angles_list_size_prev =\
+        self.beam_angles_list_size_prev = \
             len(packet.beam_angles_list)
-        self.beam_angles_trend_prev =\
+        self.beam_angles_trend_prev = \
             packet.beam_angles_trend
 
         last_index = 0
@@ -218,7 +257,6 @@ class L1BProcessor(BaseProcessor):
                 last_index += 1
 
                 if curr_surface.surface_counter == seen_surface_counter:
-
                     curr_surface.add_stack_beam_index(
                         seen_surface_index,
                         packet.beam_angles_trend,
@@ -259,9 +297,9 @@ class L1BProcessor(BaseProcessor):
         """
         self.range_compression_algorithm(working_surface_location)
 
-        working_surface_location.beams_range_compr =\
+        working_surface_location.beams_range_compr = \
             self.range_compression_algorithm.beam_range_compr
-        working_surface_location.beams_range_compr_iq =\
+        working_surface_location.beams_range_compr_iq = \
             self.range_compression_algorithm.beam_range_compr_iq
 
     def stack_gathering(self, working_surface_location: SurfaceData) -> None:
@@ -271,26 +309,26 @@ class L1BProcessor(BaseProcessor):
         """
         self.stack_gathering_algorithm(working_surface_location)
 
-        working_surface_location.stack_bursts =\
+        working_surface_location.stack_bursts = \
             self.stack_gathering_algorithm.stack_bursts
-        working_surface_location.beams_surf =\
+        working_surface_location.beams_surf = \
             self.stack_gathering_algorithm.beams_surf
-        working_surface_location.beam_angles_surf =\
+        working_surface_location.beam_angles_surf = \
             self.stack_gathering_algorithm.beam_angles_surf
-        working_surface_location.t0_surf =\
+        working_surface_location.t0_surf = \
             self.stack_gathering_algorithm.t0_surf
-        working_surface_location.doppler_angles_surf =\
+        working_surface_location.doppler_angles_surf = \
             self.stack_gathering_algorithm.doppler_angles_surf
-        working_surface_location.look_angles_surf =\
+        working_surface_location.look_angles_surf = \
             self.stack_gathering_algorithm.look_angles_surf
-        working_surface_location.pointing_angles_surf =\
+        working_surface_location.pointing_angles_surf = \
             self.stack_gathering_algorithm.pointing_angles_surf
-        working_surface_location.look_index_surf =\
+        working_surface_location.look_index_surf = \
             self.stack_gathering_algorithm.look_index_surf
-        working_surface_location.look_counter_surf =\
+        working_surface_location.look_counter_surf = \
             self.stack_gathering_algorithm.look_counter_surf
 
-        working_surface_location.closest_burst_index =\
+        working_surface_location.closest_burst_index = \
             self.stack_gathering_algorithm.closest_burst_index
 
     def stack_masking(self, working_surface_location: SurfaceData) -> None:
@@ -300,9 +338,9 @@ class L1BProcessor(BaseProcessor):
         self.stack_masking_algorithm(working_surface_location)
 
         # store results in working surface location
-        working_surface_location.beams_masked =\
+        working_surface_location.beams_masked = \
             self.stack_masking_algorithm.beams_masked
-        working_surface_location.stack_mask_vector =\
+        working_surface_location.stack_mask_vector = \
             self.stack_masking_algorithm.stack_mask_vector
 
     def multilooking(self, working_surface_location: SurfaceData) -> None:
@@ -312,14 +350,14 @@ class L1BProcessor(BaseProcessor):
         """
         self.multilooking_algorithm(working_surface_location)
 
-        working_surface_location.stack_std =\
+        working_surface_location.stack_std = \
             self.multilooking_algorithm.stack_std
-        working_surface_location.stack_skewness =\
+        working_surface_location.stack_skewness = \
             self.multilooking_algorithm.stack_skewness
-        working_surface_location.stack_kurtosis =\
+        working_surface_location.stack_kurtosis = \
             self.multilooking_algorithm.stack_kurtosis
 
-        working_surface_location.waveform_multilooked =\
+        working_surface_location.waveform_multilooked = \
             self.multilooking_algorithm.waveform_multilooked
 
     def sigma_zero_scaling(self, working_surface_location: SurfaceData) -> None:

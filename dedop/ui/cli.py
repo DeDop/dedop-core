@@ -195,8 +195,8 @@ class RunProcessorCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Run the DeDop processor (DDP).'
-        return dict(help=help_line, description=help_line)
+        help_line = 'Run the Delay Doppler Processor (DDP).'
+        return dict(aliases=['r'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -207,43 +207,43 @@ class RunProcessorCommand(Command):
         parser.add_argument('-w', '--workspace', dest='workspace_name', metavar='WORKSPACE',
                             help='Use WORKSPACE, defaults to current workspace.')
         parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
-                            help='Use CONFIG in workspace, defaults to current configuration.')
+                            help='Use CONFIG in workspace, defaults to current DDP configuration.')
         parser.add_argument('-i', '--inputs', metavar='L1A_FILE', nargs='*',
                             help="L1A input files. Defaults to all L1A files in workspace.")
         parser.add_argument('-o', '--output', dest='output_dir', metavar='DIR',
                             help="Alternative output directory.")
 
     def execute(self, command_args):
-        workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-        if not config_name:
-            config_name = ManageConfigsCommand.create_default_config(workspace_name)
-        inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
-        if not inputs:
-            code, msg = _STATUS_NO_INPUTS
-            return code, msg % workspace_name
-        output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
-            workspace_name, config_name)
-        chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
-        cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
-        cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
-        skip_l1bs = command_args.skip_l1bs
+        try:
+            workspace_name, config_name = _get_workspace_and_config_name(command_args)
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+            if not config_name:
+                config_name = ManageConfigsCommand.create_default_config(workspace_name)
+            inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
+            if not inputs:
+                code, msg = _STATUS_NO_INPUTS
+                return code, msg % workspace_name
+            output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
+                workspace_name, config_name)
+            chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
+            cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
+            cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+            skip_l1bs = command_args.skip_l1bs
 
-        # noinspection PyCallingNonCallable
-        processor = _PROCESSOR_FACTORY(config_name,
-                                       chd_file=chd_file,
-                                       cnf_file=cnf_file,
-                                       cst_file=cst_file,
-                                       output_dir=output_dir,
-                                       skip_l1bs=skip_l1bs)
-        for input_file in inputs:
-            monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
-            try:
+            # noinspection PyCallingNonCallable
+            processor = _PROCESSOR_FACTORY(config_name,
+                                           chd_file=chd_file,
+                                           cnf_file=cnf_file,
+                                           cst_file=cst_file,
+                                           output_dir=output_dir,
+                                           skip_l1bs=skip_l1bs)
+            for input_file in inputs:
+                monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
                 processor.process(input_file, monitor=monitor)
-            except ProcessorException as e:
-                return 60, str(e)
 
+        except (WorkspaceError, ProcessorException) as error:
+            return 60, str(error)
         return self.STATUS_OK
 
 
@@ -255,7 +255,7 @@ class ManageWorkspacesCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage DeDop workspaces.'
-        return dict(aliases=['mw'], help=help_line, description=help_line)
+        return dict(aliases=['w'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -282,10 +282,6 @@ class ManageWorkspacesCommand(Command):
         parser_rename.add_argument(nargs='?', **workspace_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the workspace')
         parser_rename.set_defaults(ws_command=cls.execute_rename)
-
-        parser_info = subparsers.add_parser('info', aliases=['i'], help='Show workspace')
-        parser_info.add_argument(nargs='?', **workspace_name_attributes)
-        parser_info.set_defaults(ws_command=cls.execute_info)
 
         parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current workspace')
         parser_current.add_argument(nargs='?', **workspace_name_attributes)
@@ -369,13 +365,6 @@ class ManageWorkspacesCommand(Command):
             return 1, str(e)
         return cls.STATUS_OK
 
-    @classmethod
-    def execute_info(cls, command_args):
-        workspace_name = _get_workspace_name(command_args)
-        workspace_info = _WORKSPACE_MANAGER.get_workspace_info(workspace_name)
-        print(workspace_info.get_workspace_info_string())
-        return cls.STATUS_OK
-
     # noinspection PyUnusedLocal
     @classmethod
     def execute_list(cls, command_args):
@@ -429,14 +418,11 @@ class ManageConfigsCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Manage DeDop configurations.'
-        return dict(aliases=['mc'], help=help_line, description=help_line)
+        help_line = 'Manage DeDop DDP configurations.'
+        return dict(aliases=['c'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
-        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
-
         config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the DDP configuration")
 
         parser.set_defaults(cf_parser=parser)
@@ -444,37 +430,50 @@ class ManageConfigsCommand(Command):
         subparsers = parser.add_subparsers(help='DeDop DDP configuration sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new DDP configuration')
+        cls.setup_default_parser_argument(parser_add)
         parser_add.add_argument(**config_name_attributes)
         parser_add.set_defaults(cf_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
+        cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument(nargs='?', **config_name_attributes)
         parser_remove.set_defaults(cf_command=cls.execute_remove)
 
         parser_edit = subparsers.add_parser('edit', aliases=['ed'], help='Edit DDP configuration')
+        cls.setup_default_parser_argument(parser_edit)
         parser_edit.add_argument(nargs='?', **config_name_attributes)
         parser_edit.set_defaults(cf_command=cls.execute_edit)
 
         parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy DDP configuration')
+        cls.setup_default_parser_argument(parser_copy)
         parser_copy.add_argument(nargs='?', **config_name_attributes)
         parser_copy.add_argument('new_name', metavar='NEW_NAME', nargs='?', help='Name of the new DDP configuration')
         parser_copy.set_defaults(cf_command=cls.execute_copy)
 
         parser_rename = subparsers.add_parser('rename', aliases=['rn'], help='Rename DDP configuration')
+        cls.setup_default_parser_argument(parser_rename)
         parser_rename.add_argument(nargs='?', **config_name_attributes)
         parser_rename.add_argument('new_name', metavar='NEW_NAME', help='New name of the DDP configuration')
         parser_rename.set_defaults(cf_command=cls.execute_rename)
 
         parser_info = subparsers.add_parser('info', aliases=['i'], help='Show DDP configuration info')
+        cls.setup_default_parser_argument(parser_info)
         parser_info.add_argument(nargs='?', **config_name_attributes)
         parser_info.set_defaults(cf_command=cls.execute_info)
 
         parser_current = subparsers.add_parser('current', aliases=['cur'], help='Current DDP configuration')
+        cls.setup_default_parser_argument(parser_current)
         parser_current.add_argument(nargs='?', **config_name_attributes)
         parser_current.set_defaults(cf_command=cls.execute_current)
 
         parser_list = subparsers.add_parser('list', aliases=['ls'], help='List DDP configurations')
+        cls.setup_default_parser_argument(parser_list)
         parser_list.set_defaults(cf_command=cls.execute_list)
+
+    @classmethod
+    def setup_default_parser_argument(cls, parser):
+        workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
+        parser.add_argument('-w', '--workspace', **workspace_name_attributes)
 
     def execute(self, command_args):
         if hasattr(command_args, 'cf_command') and command_args.cf_command:
@@ -544,11 +543,11 @@ class ManageConfigsCommand(Command):
     @classmethod
     def execute_edit(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-        if not config_name:
-            config_name = cls.create_default_config(workspace_name)
         try:
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+            if not config_name:
+                config_name = cls.create_default_config(workspace_name)
             chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
             cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
             cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
@@ -671,11 +670,10 @@ class ManageInputsCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage L1A inputs.'
-        return dict(aliases=['mi'], help=help_line, description=help_line)
+        return dict(aliases=['i'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
-        cls.setup_default_parser_argument(parser)
         parser.set_defaults(mi_parser=parser)
 
         subparsers = parser.add_subparsers(help='L1A inputs sub-commands')
@@ -795,7 +793,7 @@ class ManageOutputsCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Manage and analyse L1B outputs.'
-        return dict(aliases=['mo'], help=help_line, description=help_line)
+        return dict(aliases=['o'], help=help_line, description=help_line)
 
     @classmethod
     def configure_parser(cls, parser: argparse.ArgumentParser):
@@ -841,14 +839,13 @@ class ManageOutputsCommand(Command):
                                          'workspace/configuration. If omitted, the first filename or path is used.')
         parser_compare.set_defaults(mo_command=cls.execute_compare)
 
-
     @classmethod
     def set_workspace_config_parser_arguments(cls, parser):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE',
                                          help="Name of the workspace.")
         parser.add_argument('-w', '--workspace', **workspace_name_attributes)
         config_name_attributes = dict(dest='config_name', metavar='CONFIG',
-                                      help="Name of the configuration.")
+                                      help="Name of the DDP configuration.")
         parser.add_argument('-c', '--config', **config_name_attributes)
 
     @classmethod
@@ -857,7 +854,7 @@ class ManageOutputsCommand(Command):
                                          help="The workspace of the second L1B product.")
         parser.add_argument('-W', '--workspace-2', **workspace_name_attributes)
         config_name_attributes = dict(dest='config_name_2', metavar='CONFIG_2',
-                                      help="The configuration of the second L1B product")
+                                      help="The DDP configuration of the second L1B product")
         parser.add_argument('-C', '--config-2', **config_name_attributes)
 
     def execute(self, command_args):
@@ -903,7 +900,7 @@ class ManageOutputsCommand(Command):
             if os.path.exists(outputs_dir):
                 _WORKSPACE_MANAGER.open_file(outputs_dir)
             else:
-                print('no outputs created with config "%s" in workspace "%s"' % (config_name, workspace_name))
+                print('no outputs created with DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         except WorkspaceError as error:
             return 40, str(error)
         return cls.STATUS_OK
@@ -911,20 +908,20 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_inspect(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
-        if not workspace_name:
-            workspace_name = ManageWorkspacesCommand.create_default_workspace()
-
-        l1b_filename = command_args.l1b_filename
-        if os.path.dirname(l1b_filename):
-            l1b_path = os.path.abspath(l1b_filename)
-        else:
-            if not config_name:
-                return _STATUS_NO_CONFIG
-            l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
-        if not os.path.exists(l1b_path):
-            return 50, 'L1B product not found: %s' % l1b_path
-
         try:
+            if not workspace_name:
+                workspace_name = ManageWorkspacesCommand.create_default_workspace()
+
+            l1b_filename = command_args.l1b_filename
+            if os.path.dirname(l1b_filename):
+                l1b_path = os.path.abspath(l1b_filename)
+            else:
+                if not config_name:
+                    return _STATUS_NO_CONFIG
+                l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
+            if not os.path.exists(l1b_path):
+                return 50, 'L1B product not found: %s' % l1b_path
+
             _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_path)
         except WorkspaceError as error:
             return 50, str(error)
@@ -933,39 +930,39 @@ class ManageOutputsCommand(Command):
     @classmethod
     def execute_compare(cls, command_args):
         workspace_name_1, config_name_1 = _get_workspace_and_config_name(command_args)
-        if not workspace_name_1:
-            workspace_name_1 = ManageWorkspacesCommand.create_default_workspace()
-        workspace_name_2 = command_args.workspace_name_2
-        workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
-        config_name_2 = command_args.config_name_2
-        config_name_2 = config_name_2 if config_name_2 else config_name_1
-
-        l1b_filename_1 = command_args.l1b_filename_1
-        if os.path.dirname(l1b_filename_1):
-            l1b_path_1 = os.path.abspath(l1b_filename_1)
-        else:
-            if not config_name_1:
-                return _STATUS_NO_CONFIG
-            l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
-        if not os.path.exists(l1b_path_1):
-            return 60, 'First L1B product not found: %s' % l1b_path_1
-
-        l1b_filename_2 = command_args.l1b_filename_2
-        if os.path.dirname(l1b_filename_1):
-            l1b_path_2 = os.path.abspath(l1b_filename_2)
-        else:
-            if not workspace_name_2:
-                return _STATUS_NO_WORKSPACE
-            if not config_name_2:
-                return _STATUS_NO_CONFIG
-            l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
-        if not os.path.exists(l1b_path_2):
-            return 60, 'Second L1B product not found: %s' % l1b_path_2
-
-        if os.path.samefile(l1b_path_1, l1b_path_2):
-            print('warning: comparing "%s" with itself')
-
         try:
+            if not workspace_name_1:
+                workspace_name_1 = ManageWorkspacesCommand.create_default_workspace()
+            workspace_name_2 = command_args.workspace_name_2
+            workspace_name_2 = workspace_name_2 if workspace_name_2 else workspace_name_1
+            config_name_2 = command_args.config_name_2
+            config_name_2 = config_name_2 if config_name_2 else config_name_1
+
+            l1b_filename_1 = command_args.l1b_filename_1
+            if os.path.dirname(l1b_filename_1):
+                l1b_path_1 = os.path.abspath(l1b_filename_1)
+            else:
+                if not config_name_1:
+                    return _STATUS_NO_CONFIG
+                l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
+            if not os.path.exists(l1b_path_1):
+                return 60, 'First L1B product not found: %s' % l1b_path_1
+
+            l1b_filename_2 = command_args.l1b_filename_2
+            if os.path.dirname(l1b_filename_1):
+                l1b_path_2 = os.path.abspath(l1b_filename_2)
+            else:
+                if not workspace_name_2:
+                    return _STATUS_NO_WORKSPACE
+                if not config_name_2:
+                    return _STATUS_NO_CONFIG
+                l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
+            if not os.path.exists(l1b_path_2):
+                return 60, 'Second L1B product not found: %s' % l1b_path_2
+
+            if os.path.samefile(l1b_path_1, l1b_path_2):
+                print('warning: comparing "%s" with itself')
+
             _WORKSPACE_MANAGER.compare_l1b_products(workspace_name_1, l1b_path_1, l1b_path_2)
         except WorkspaceError as error:
             return 60, str(error)
@@ -1000,8 +997,8 @@ class OpenNotebookCommand(Command):
 
     @classmethod
     def parser_kwargs(cls):
-        help_line = 'Open a new Jupyter Notebook for DeDop.'
-        return dict(aliases=['nb'], help=help_line, description=help_line)
+        help_line = 'Open a Jupyter Notebook for DeDop.'
+        return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
         workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
@@ -1025,9 +1022,19 @@ class ShowStatusCommand(Command):
     @classmethod
     def parser_kwargs(cls):
         help_line = 'Print DeDop status information.'
-        return dict(aliases=['st'], help=help_line, description=help_line)
+        return dict(aliases=['s'], help=help_line, description=help_line)
+
+    @classmethod
+    def configure_parser(cls, parser: argparse.ArgumentParser):
+        parser.add_argument('-l', '--long', action='store_true',
+                                  help='show extended status information')
 
     def execute(self, command_args):
+        # TODO (forman, 20160727): use command_args.long to print extended status info
+        if command_args.long:
+            print('warning: option "--long" not yet supported')
+            # workspace_info = _WORKSPACE_MANAGER.get_workspace_info()
+            # print(workspace_info.get_workspace_info_string())
         workspaces_dir = _WORKSPACE_MANAGER.workspaces_dir
         if os.path.exists(workspaces_dir):
             workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
@@ -1044,7 +1051,7 @@ class ShowStatusCommand(Command):
                 cur_workspace_name = '(not set)'
                 cur_config_name = '(not set)'
             try:
-                workspaces_size = '%s bytes' % _dir_size(workspaces_dir)
+                workspaces_size = '%s MiB' % (_dir_size(workspaces_dir) >> 20)
             except (WorkspaceError, IOError, OSError) as error:
                 workspaces_size = '(error: %s)' % str(error)
         else:
@@ -1114,13 +1121,13 @@ class ShowManualCommand(Command):
 #: List of sub-commands supported by the CLI. Entries are classes derived from :py:class:`Command` class.
 #: DeDop plugins may extend this list by their commands during plugin initialisation.
 COMMAND_REGISTRY = [
-    RunProcessorCommand,
     ManageWorkspacesCommand,
     ManageConfigsCommand,
     ManageInputsCommand,
     ManageOutputsCommand,
-    OpenNotebookCommand,
+    RunProcessorCommand,
     ShowStatusCommand,
+    OpenNotebookCommand,
     ShowManualCommand,
     ShowCopyrightCommand,
     ShowLicenseCommand,

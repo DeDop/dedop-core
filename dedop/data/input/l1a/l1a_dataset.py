@@ -91,7 +91,12 @@ class L1ADataset(InputDataset):
         dset = nc.Dataset(filename)
         super().__init__(dset, cst=cst, chd=chd, cnf=cnf)
 
+        self._file_path = filename
         self._last_index = 0
+
+    @property
+    def file_path(self) -> str:
+        return self._file_path
 
     @property
     def max_index(self) -> int:
