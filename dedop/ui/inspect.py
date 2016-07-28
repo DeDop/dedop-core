@@ -82,7 +82,7 @@ class L1bProductInspector:
         self.attributes = {name: dataset.getncattr(name) for name in dataset.ncattrs()}
 
         self.lat = dataset['lat_%s_echo_sar_ku' % product_type][:]
-        self.lon = dataset['lon_%s_echo_sar_ku' % product_type][:] - 180.0
+        self.lon = dataset['lon_%s_echo_sar_ku' % product_type][:]
 
         self.lat_0 = self.lat.mean()
         self.lon_0 = self.lon.mean()
