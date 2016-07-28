@@ -178,9 +178,9 @@ class L1BProcessor(BaseProcessor):
                         if not self.beam_angles_algorithm.work_location_seen:
                             break
 
-                stack = self.stack_gathering(working_loc)
+                self.stack_gathering(working_loc)
 
-                self.geometry_corrections(working_loc, stack)
+                self.geometry_corrections(working_loc)
                 self.range_compression(working_loc)
                 self.stack_masking(working_loc)
                 self.multilooking(working_loc)
@@ -274,7 +274,7 @@ class L1BProcessor(BaseProcessor):
         self.azimuth_processing_algorithm(packet, self.chd.wv_length_ku)
         packet.beams_focused = self.azimuth_processing_algorithm.beams_focused
 
-    def geometry_corrections(self, working_surface_location: SurfaceData, stack) -> None:
+    def geometry_corrections(self, working_surface_location: SurfaceData) -> None:
         """
         call the geometry correction algorithm and store the results
         """
