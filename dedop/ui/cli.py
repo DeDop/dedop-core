@@ -28,7 +28,7 @@ _DEFAULT_CONFIG_NAME = 'default'
 _DEFAULT_WORKSPACE_NAME = 'default'
 
 _STATUS_NO_WORKSPACE = 10, 'no current workspace, use option -w to name a WORKSPACE'
-_STATUS_NO_CONFIG = 20, 'no current configuration, use "dedop config cur CONFIG"'
+_STATUS_NO_CONFIG = 20, 'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"'
 _STATUS_NO_INPUTS = 30, 'workspace "%s" doesn\'t have any inputs yet, use "dedop input add *.nc" to add some'
 _STATUS_NO_MATCHING_INPUTS = 40, 'no matching inputs found'
 _STATUS_NO_MATCHING_OUTPUTS = 40, 'no matching outputs found'
@@ -209,38 +209,53 @@ class RunProcessorCommand(Command):
         parser.add_argument('-c', '--config', dest='config_name', metavar='CONFIG',
                             help='Use CONFIG in workspace, defaults to current DDP configuration.')
         parser.add_argument('-i', '--inputs', metavar='L1A_FILE', nargs='*',
-                            help="L1A input files. Defaults to all L1A files in workspace.")
+                            help='L1A input files. Defaults to all L1A files in workspace.')
         parser.add_argument('-o', '--output', dest='output_dir', metavar='DIR',
-                            help="Alternative output directory.")
+                            help='Alternative output directory.')
+        parser.add_argument('-a', '--all-configs', dest='all_configs', action='store_true',
+                            help='Run all DDP configurations in workspace. Cannot be used with option -c')
 
     def execute(self, command_args):
         try:
+            if command_args.all_configs and command_args.config_name:
+                return 60, 'option -a cannot be used with option -c"'
+
             workspace_name, config_name = _get_workspace_and_config_name(command_args)
             if not workspace_name:
                 workspace_name = ManageWorkspacesCommand.create_default_workspace()
-            if not config_name:
-                config_name = ManageConfigsCommand.create_default_config(workspace_name)
+
+            if command_args.all_configs:
+                config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
+                if not config_names:
+                    return _STATUS_NO_CONFIG
+            else:
+                if not config_name:
+                    config_name = ManageConfigsCommand.create_default_config(workspace_name)
+                config_names = [config_name]
+
             inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
             if not inputs:
                 code, msg = _STATUS_NO_INPUTS
                 return code, msg % workspace_name
-            output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
-                workspace_name, config_name)
-            chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
-            cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
-            cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
-            skip_l1bs = command_args.skip_l1bs
 
-            # noinspection PyCallingNonCallable
-            processor = _PROCESSOR_FACTORY(config_name,
-                                           chd_file=chd_file,
-                                           cnf_file=cnf_file,
-                                           cst_file=cst_file,
-                                           output_dir=output_dir,
-                                           skip_l1bs=skip_l1bs)
-            for input_file in inputs:
-                monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
-                processor.process(input_file, monitor=monitor)
+            for config_name in config_names:
+                output_dir = command_args.output_dir if command_args.output_dir else _WORKSPACE_MANAGER.get_outputs_path(
+                    workspace_name, config_name)
+                chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
+                cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
+                cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+                skip_l1bs = command_args.skip_l1bs
+
+                # noinspection PyCallingNonCallable
+                processor = _PROCESSOR_FACTORY(config_name,
+                                               chd_file=chd_file,
+                                               cnf_file=cnf_file,
+                                               cst_file=cst_file,
+                                               output_dir=output_dir,
+                                               skip_l1bs=skip_l1bs)
+                for input_file in inputs:
+                    monitor = Monitor.NULL if command_args.quiet else self.new_monitor()
+                    processor.process(input_file, monitor=monitor)
 
         except (WorkspaceError, ProcessorException) as error:
             return 60, str(error)
