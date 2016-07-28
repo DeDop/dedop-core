@@ -1,7 +1,10 @@
+import os.path
+
 import bokeh
 import bokeh.io
 import bokeh.model
 import bokeh.plotting
+import bokeh.util.platform
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,6 +14,7 @@ from bokeh.models import ColumnDataSource, Circle
 from bokeh.tile_providers import STAMEN_TERRAIN
 from ipywidgets import interact, fixed
 from matplotlib import cm
+from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.collections import LineCollection, PolyCollection
 # noinspection PyUnresolvedReferences
 from mpl_toolkits.mplot3d import Axes3D
@@ -27,33 +31,44 @@ from numpy import ndarray
 # * http://bokeh.pydata.org/en/0.11.1/docs/user_guide/notebook.html
 
 
-def inspect_l1b_product(file_path, interactive=True) -> 'L1bProductInspector':
+def inspect_l1b_product(product_file_path, output_path=None, output_format=None) -> 'L1bProductInspector':
     """
     Open a L1B product for inspection.
 
-    :param file_path: The file path of the LB product.
-    :param interactive: whether the returned inspector is supposed to run in interactive mode (i.e. IPython notebook)
+    If *output_format* is "dir" then a new directory given by *output_path*
+    will be created. Each plot figure will will be saved in a new file.
+
+    If *output_format* is "pdf" then a new multi-page PDF document given by *output_path*
+    will be created or overwritten if it exists. Each plot figure will will be saved in a new PDF page.
+    Format "pdf" does not support all plot types.
+
+    If *output_format* is not given it defaults it is derived from *output_path*.
+
+    Note that both *output_path* and *output_format* arguments are ignored if the inspection is run in an
+    Jupyter (IPython) Notebook.
+
+    :param product_file_path: The file path of the LB product.
+    :param output_path: The output path where plot figures are written to.
+    :param output_format: The output format. Supported formats are "pdf" and "dir".
     """
-    return L1bProductInspector(file_path, interactive)
+    return L1bProductInspector(product_file_path, output_path, output_format)
 
 
 class L1bProductInspector:
     """
     The `L1bInspector` class provides access to L1B contents and provides a number of analysis functions.
-
-    :param file_path: The file path of the LB product.
-    :param interactive: whether this inspector is supposed to run in interactive mode (i.e. IPython notebook)
     """
 
-    def __init__(self, file_path, interactive):
-        if not file_path:
-            raise ValueError('file_path must be given')
+    def __init__(self, product_file_path, output_path, output_format):
 
-        self._plot = L1bInpectionPlotting(self, interactive)
+        if not product_file_path:
+            raise ValueError('product_file_path must be given')
 
-        self._file_path = file_path
+        self._plot = L1bProductInspectorPlot(self, output_path, output_format)
 
-        dataset = Dataset(file_path)
+        self._file_path = product_file_path
+
+        dataset = Dataset(product_file_path)
         self._dataset = dataset
 
         self.dim_names = sorted(list(dataset.dimensions.keys()))
@@ -115,7 +130,7 @@ class L1bProductInspector:
         return self._file_path
 
     @property
-    def plot(self) -> 'L1bInpectionPlotting':
+    def plot(self) -> 'L1bProductInspectorPlot':
         """
         Get the plotting context.
         """
@@ -138,15 +153,51 @@ class L1bProductInspector:
     def close(self):
         """Close the underlying dataset's file access."""
         self._dataset.close()
+        self._plot.close()
 
 
-class L1bInpectionPlotting:
-    def __init__(self, inspector: 'L1bProductInspector', interactive=True):
+class L1bProductInspectorPlot:
+    def __init__(self, inspector: 'L1bProductInspector', output_path:str, output_format:str):
         self._plt = plt
         self._inspector = inspector
-        self._interactive = interactive
-        if interactive:
+        self._pdf_pages = None
+        self._output_path = None
+        self._output_format = None
+        self._interactive = bokeh.util.platform.is_notebook()
+        if self._interactive:
             bokeh.io.output_notebook(hide_banner=True)
+        else:
+            if not output_path:
+                raise ValueError('output_path must be given')
+
+            if not output_format:
+                # guess format from filename
+                _, ext = os.path.splitext(output_path)
+                if len(ext) > 1:
+                    output_format = ext[1:].lower()
+                else:
+                    output_format = 'dir'
+            else:
+                output_format = output_format.lower()
+
+            if output_format not in ['pdf', 'dir']:
+                raise ValueError('output_format "%s" is unsupported' % output_format)
+
+            self._output_path = output_path
+            self._output_format = output_format
+            self._pdf_pages = None
+
+            if output_format == 'pdf':
+                # see http://matplotlib.org/faq/howto_faq.html#save-multiple-plots-to-one-pdf-file
+                output_dir = os.path.dirname(output_path)
+                output_basename, ext = os.path.splitext(os.path.basename(output_path))
+                if not output_basename:
+                    raise ValueError('output_path is missing a basename')
+                if not ext:
+                    ext = '.pdf'
+                elif not (ext == '.pdf' or ext == '.PDF'):
+                    raise ValueError('output_path extension must be ".pdf"')
+                self._output_path = os.path.join(output_dir, output_basename + ext)
 
     def locations(self):
 
@@ -174,15 +225,16 @@ class L1bInpectionPlotting:
         fig.axis.visible = False
         # fig.add_tile(STAMEN_TONER)
         fig.add_tile(STAMEN_TERRAIN)
-        fig.title.text = "L1B Footprint"
+        fig.title.text = 'L1B Locations'
         # fig.title = 'L1B Footprint'
         fig.add_glyph(source, circle)
 
         if self._interactive:
             # bokeh.io.show(plot)
             bokeh.io.show(fig)
-        else:
-            bokeh.io.output_file("plot_locations.html")
+        elif self._output_format != "pdf":
+            os.makedirs(self._output_path, exist_ok=True)
+            bokeh.io.save(fig, os.path.join(self._output_path, 'locations.html'), title='L1B Locations')
 
     def waveform_im(self, vmin=None, vmax=None):
         vmin = vmin if vmin else self._inspector.waveform_range[0]
@@ -196,7 +248,7 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_im.png")
+            self.savefig("plot_waveform_im.png")
 
     def waveform_3d_surf(self, zmin=0, zmax=None):
         self._waveform_3d(type='surf', zmin=zmin, zmax=zmax, alpha=1)
@@ -258,14 +310,16 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_3d_%s.png" % type)
+            self.savefig("plot_waveform_3d_%s.png" % type)
 
     def waveform_hist(self, vmin=None, vmax=None, bins=128, log=False):
         """
         Draw waveform histogram.
 
-        :param ind: Time index
-        :param ref_ind: Reference time index
+        :param vmin: Minimum display value
+        :param vmax: Maximum display value
+        :param bins: Number of bins
+        :param log: Show logarithms of bin counts
         """
         vmin = vmin if vmin else self._inspector.waveform_range[0]
         vmax = vmax if vmax else self._inspector.waveform_range[1]
@@ -294,7 +348,7 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_hist.png")
+            self.savefig("plot_waveform_hist.png")
 
     def waveform_line(self, ind=None, ref_ind=None):
         """
@@ -323,7 +377,7 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig("plot_waveform_t%06d.png" % ind)
+            self.savefig("plot_waveform_t%06d.png" % ind)
 
     def im(self, z=None, zmin=None, zmax=None):
         if z is None:
@@ -363,7 +417,7 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig('%s.png' % z_name)
+            self.savefig('%s.png' % z_name)
 
     def line(self, x=None, y=None, sel_dim=False):
         """
@@ -466,7 +520,7 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         else:
-            plt.savefig('%s_over_%s.png' % (x_name, y_name))
+            self.savefig('%s_over_%s.png' % (x_name, y_name))
 
     def im_line(self, z=None, zmin=None, zmax=None, xind=None, yind=None):
         if self._interactive:
@@ -576,10 +630,38 @@ class L1bInpectionPlotting:
         if self._interactive:
             plt.show()
         elif has_xind and has_yind:
-            plt.savefig('%s_x%s_y%s.png' % (z_name, xind, yind))
+            self.savefig('%s_x%s_y%s.png' % (z_name, xind, yind))
         elif has_xind:
-            plt.savefig('%s_x%s.png' % (z_name, xind))
+            self.savefig('%s_x%s.png' % (z_name, xind))
         elif has_yind:
-            plt.savefig('%s_y%s.png' % (z_name, yind))
+            self.savefig('%s_y%s.png' % (z_name, yind))
         else:
-            plt.savefig('%s.png' % z_name)
+            self.savefig('%s.png' % z_name)
+
+    def savefig(self, file_name=None):
+        is_pdf = self._output_format == "pdf"
+        if is_pdf:
+            file_path = self._output_path
+        else:
+            if not file_name:
+                raise ValueError('file_name must be given')
+            file_path = os.path.join(self._output_path, file_name)
+
+        dir_path = os.path.dirname(file_path)
+        if dir_path and not os.path.exists(dir_path):
+            os.makedirs(dir_path, exist_ok=True)
+
+        if is_pdf:
+            if not self._pdf_pages:
+                self._pdf_pages = PdfPages(file_path)
+            file_object = self._pdf_pages
+            file_format = 'pdf'
+        else:
+            file_object = file_path
+            file_format = None
+
+        plt.savefig(file_object, format=file_format)
+
+    def close(self):
+        if self._pdf_pages:
+            self._pdf_pages.close()

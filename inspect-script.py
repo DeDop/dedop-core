@@ -4,7 +4,7 @@ from dedop.ui.inspect import inspect_l1b_product
 
 l1b_file = sys.argv[1]
 
-l1b = inspect_l1b_product(l1b_file, interactive=False)
+l1b = inspect_l1b_product(l1b_file, output_path='./test3', output_format='dir')
 
 l1b.plot.locations()
 l1b.plot.waveform_3d_surf()
