@@ -137,8 +137,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['c', 'i'],
                         expected_stdout=['current workspace:               tests',
                                          'current DDP configuration:       config2',
-                                         'current DDP configuration path:',
-                                         'workspaces\\tests\\configs\\config2'])
+                                         'current DDP configuration path:'])
 
         self._test_main(['c', 'list'],
                         expected_stdout=['4 DDP configurations in workspace "tests":',
