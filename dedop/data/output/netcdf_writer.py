@@ -91,12 +91,13 @@ class NetCDFWriter(metaclass=ABCMeta):
         :param filename: the path of the file to write to
         """
 
+        self._file_path = filename
+
         folder = os.path.dirname(filename)
         os.makedirs(folder, exist_ok=True)
 
-        self._root = nc.Dataset(
-            filename, 'w', format="NETCDF4"
-        )
+        self._root = nc.Dataset(filename, 'w', format="NETCDF4")
+
         self._dimensions = OrderedDict()
         self._variables = OrderedDict()
 
@@ -112,6 +113,10 @@ class NetCDFWriter(metaclass=ABCMeta):
         # added by forman 20160715
         self._root.software_name = 'dedop'
         self._root.software_version = __version__
+
+    @property
+    def file_path(self):
+        return self._file_path
 
     def __enter__(self):
         """
