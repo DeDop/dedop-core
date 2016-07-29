@@ -66,11 +66,11 @@ source code repository: `inspect-script.py <https://github.com/DeDop/dedop/blob/
 This script can by run with the Python interpreter bundled with the dedop installation. To generate a multi page PDF use an
 output filename that has the ``.pdf`` extension::
 
-    $ python inspect-script.py some/path/L1B_default.nc compare-out.pdf
+    $ python inspect-script.py some/path/L1B_default.nc inspect-out.pdf
 
 To generate a directory of figure images, run the script with a directory name or with ``dir`` as 3rd argument::
 
-    $ python inspect-script.py some/path/L1B_default.nc compare-out dir
+    $ python inspect-script.py some/path/L1B_default.nc inspect-out dir
 
 
 Changing the processor configuration
