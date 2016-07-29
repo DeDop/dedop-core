@@ -8,7 +8,7 @@ class L1bComparatorTest(TestCase):
         # Ok, not really a test yet, but at least we import L1bComparator
         with self.assertRaises(ValueError) as e:
             compare_l1b_products(None, 'y', False)
-        self.assertEquals(str(e.exception), 'file_path_1 must be given')
+        self.assertEquals(str(e.exception), 'output_path must be given')
         with self.assertRaises(ValueError) as e:
             compare_l1b_products('x', '', False)
-        self.assertEquals(str(e.exception), 'file_path_2 must be given')
+        self.assertEquals(str(e.exception), 'output_path must be given')

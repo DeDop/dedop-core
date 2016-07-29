@@ -93,6 +93,16 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['w', 'rn', 'tests2', 'tests3'],
                         expected_stdout=['renamed workspace "tests2" to "tests3"'])
 
+        self._test_main(['w', 'cur'],
+                        expected_stdout=['current workspace is "tests9_2"'])
+
+        self._test_main(['w', 'list'],
+                        expected_stdout=['4 workspaces:',
+                                         '1: tests2_2',
+                                         '2: tests3',
+                                         '3: tests9_2',
+                                         '4: tests_1'])
+
         self._test_main(['w', 'rn'],
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
