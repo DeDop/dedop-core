@@ -329,11 +329,11 @@ class ManageWorkspacesCommand(Command):
         if command_args.yes:
             answer = 'yes'
         else:
-            answer = _input('delete workspace "%s"? [yes]' % workspace_name, 'yes')
+            answer = _input('remove workspace "%s"? [yes]' % workspace_name, 'yes')
         if answer.lower() == 'yes':
             try:
                 _WORKSPACE_MANAGER.delete_workspace(workspace_name)
-                print('deleted workspace "%s"' % workspace_name)
+                print('removed workspace "%s"' % workspace_name)
                 if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
                     workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
                     if 'default' in workspace_names:
@@ -532,11 +532,11 @@ class ManageConfigsCommand(Command):
         if command_args.yes:
             answer = 'yes'
         else:
-            answer = _input('delete DDP configuration "%s"? [yes]' % config_name, 'yes')
+            answer = _input('remove DDP configuration "%s"? [yes]' % config_name, 'yes')
         if answer.lower() == 'yes':
             try:
                 _WORKSPACE_MANAGER.delete_config(workspace_name, config_name)
-                print('deleted DDP configuration "%s"' % config_name)
+                print('removed DDP configuration "%s"' % config_name)
                 if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
                     config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
                     if 'default' in config_names:
