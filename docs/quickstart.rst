@@ -29,7 +29,7 @@ Processing a L1A to L1B
 To perform L1A to L1B processing using the Delay Doppler Processor (DDP) you need to add one or more L1A
 input files to your current DeDop *workspace*::
 
-    $ dedop input add EOData/L1A.nc
+    $ dedop input add some/path/to/your/L1A.nc
     created workspace "default"
     current workspace is "default"
     adding inputs: done
@@ -39,6 +39,10 @@ From the output, you can see that a new workspace named ``default`` and a new DD
 Now run the processor with default settings::
 
     $ dedop run
+    created DDP configuration "default" in workspace "default"
+    current DDP configuration is "default"
+    processing ~/.dedop/workspaces/default/inputs/L1A.nc using "default"
+    ...
 
 If the command succeeds, the L1B output files can be found in ``workspaces/default/configs/default/outputs``
 which is by default located in the DeDop user data directory. On Unixes and Darwin (OS) this directory
