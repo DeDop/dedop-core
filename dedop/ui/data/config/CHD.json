@@ -90,12 +90,6 @@
 		"description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
 		"units": "dB"
 	},
-
-	"uso_nominal_freq_chd": {
-		"value": 10000000.0,
-		"description": "USO nominal frequency",
-		"units": "Hz"
-	},
 	"alt_freq_multiplier_chd": {
 		"value": 32,
 		"description": "Factor to convert from USO frequency to altimeter frequency",
