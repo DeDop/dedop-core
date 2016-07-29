@@ -466,8 +466,8 @@ class ManageConfigsCommand(Command):
         parser_add.set_defaults(cf_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
-        parser_remove.add_argument('-y', '--yes', metavar='y',
-                                   help='Select "yes" for any confirmation prompts before deleting a configuration')
+        parser_remove.add_argument('-y', '--yes', action='store_true',
+                                   help='Do not ask for confirmation.')
         cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument(nargs='?', **config_name_attributes)
         parser_remove.set_defaults(cf_command=cls.execute_remove)
