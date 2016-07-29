@@ -13,8 +13,6 @@ from IPython.display import display
 from bokeh.models import ColumnDataSource, Circle
 from bokeh.tile_providers import STAMEN_TERRAIN
 from ipywidgets import interact, fixed
-from matplotlib import cm
-from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.collections import LineCollection, PolyCollection
 # noinspection PyUnresolvedReferences
 from mpl_toolkits.mplot3d import Axes3D
@@ -87,7 +85,7 @@ class L1bProductInspector:
         elif 'time_l1b_echo_sar_ku' in self.var_names:
             product_type = 'l1b'
         else:
-            raise ValueError('"%s" is neither a supported L1B nor L1BS product' % file_path)
+            raise ValueError('"%s" is neither a supported L1B nor L1BS product' % product_file_path)
 
         self.dim_name_to_size = {}
         for name, dim in dataset.dimensions.items():
@@ -169,7 +167,10 @@ class L1bProductInspectorPlots:
         self._interactive = figure_writer is None
         self._figure_writer = figure_writer
 
-    def locations(self):
+    def locations(self, color='blue'):
+        """
+        Plot product locations as circles onto a world map.
+        """
 
         # Spherical Mercator
         mercator = pyproj.Proj(init='epsg:3857')
@@ -183,7 +184,7 @@ class L1bProductInspectorPlots:
         # print(list(zip(x, y)))
 
         source = ColumnDataSource(data=dict(x=x, y=y))
-        circle = Circle(x='x', y='y', size=6, fill_color='blue', fill_alpha=0.5, line_color=None)
+        circle = Circle(x='x', y='y', size=6, fill_color=color, fill_alpha=0.5, line_color=None)
 
         # map_options = GMapOptions(lat=30.29, lng=-97.73, map_type="roadmap", zoom=11)
         # plot = GMapPlot(x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options)
@@ -203,15 +204,16 @@ class L1bProductInspectorPlots:
             bokeh.io.show(fig)
         elif self._figure_writer.output_format == "dir":
             os.makedirs(self._figure_writer.output_path, exist_ok=True)
-            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'locations.html'), title='L1B Locations')
+            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'fig-locations.html'),
+                          title='L1B Locations')
         else:
             print('warning: cannot save locations figure with output format "%s"' % self._figure_writer.output_format)
 
-    def waveform_im(self, vmin=None, vmax=None):
+    def waveform_im(self, vmin=None, vmax=None, cmap='jet'):
         vmin = vmin if vmin else self._inspector.waveform_range[0]
         vmax = vmax if vmax else self._inspector.waveform_range[1]
         plt.figure(figsize=(10, 10))
-        plt.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax)
+        plt.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax, cmap=cmap)
         plt.xlabel('Echo Sample Index')
         plt.ylabel('Time Index')
         plt.title('Waveform')
@@ -219,29 +221,29 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveform_im.png")
+            self.savefig("fig-waveform-im.png")
 
-    def waveform_3d_surf(self, zmin=0, zmax=None):
-        self._waveform_3d(type='surf', zmin=zmin, zmax=zmax, alpha=1)
+    def waveform_3d_surf(self, zmin=0, zmax=None, cmap='jet'):
+        self._waveform_3d(fig_type='surf', zmin=zmin, zmax=zmax, alpha=1, cmap=cmap)
 
-    def waveform_3d_poly(self, zmin=0, zmax=None, alpha=0.5):
-        self._waveform_3d(type='poly', zmin=zmin, zmax=zmax, alpha=alpha)
+    def waveform_3d_poly(self, zmin=0, zmax=None, alpha=0.5, cmap='jet'):
+        self._waveform_3d(fig_type='poly', zmin=zmin, zmax=zmax, alpha=alpha, cmap=cmap)
 
-    def waveform_3d_line(self, zmin=0, zmax=None, alpha=0.5):
-        self._waveform_3d(type='line', zmin=zmin, zmax=zmax, alpha=alpha)
+    def waveform_3d_line(self, zmin=0, zmax=None, alpha=0.5, cmap='jet'):
+        self._waveform_3d(fig_type='line', zmin=zmin, zmax=zmax, alpha=alpha, cmap=cmap)
 
-    def _waveform_3d(self, type, zmin, zmax, alpha):
+    def _waveform_3d(self, fig_type, zmin, zmax, alpha, cmap):
         fig = plt.figure(figsize=(10, 10))
         ax = fig.gca(projection='3d')
 
         num_times = self._inspector.num_times
         num_samples = self._inspector.num_samples
-        if type == 'surf':
+        if fig_type == 'surf':
             x = np.arange(0, num_samples)
             y = np.arange(0, num_times)
             x, y = np.meshgrid(x, y)
             z = self._inspector.waveform
-            surf = ax.plot_surface(x, y, z, rstride=3, cstride=3, cmap=cm.coolwarm, shade=True,
+            surf = ax.plot_surface(x, y, z, rstride=3, cstride=3, cmap=cmap, shade=True,
                                    linewidth=0, antialiased=False)
             # ax.zaxis.set_major_locator(LinearLocator(10))
             # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
@@ -253,20 +255,19 @@ class L1bProductInspectorPlots:
                 waveform[:, 0] = np.arange(0, num_samples)
                 waveform[:, 1] = self._inspector.waveform[y_index]
                 waveforms.append(waveform)
-            linewidths = [0.5] * num_times
+            line_widths = [0.5] * num_times
             # TODO (forman, 20160725): check why cmap is not recognized
-            cmap = cm.coolwarm
-            if type == 'poly':
-                edgecolors = ((0.2, 0.2, 1., 0.7),) * num_times
-                facecolors = ((1., 1., 1., 0.5),) * num_times
+            if fig_type == 'poly':
+                edge_colors = ((0.2, 0.2, 1., 0.7),) * num_times
+                face_colors = ((1., 1., 1., 0.5),) * num_times
                 collection = PolyCollection(waveforms, cmap=cmap,
-                                            linewidths=linewidths,
-                                            edgecolors=edgecolors,
-                                            facecolors=facecolors)
+                                            linewidths=line_widths,
+                                            edgecolors=edge_colors,
+                                            facecolors=face_colors)
             else:
                 colors = ((0.2, 0.2, 1., 0.7),) * num_times
                 collection = LineCollection(waveforms, cmap=cmap,
-                                            linewidths=linewidths, colors=colors)
+                                            linewidths=line_widths, colors=colors)
             collection.set_alpha(alpha)
             ax.add_collection3d(collection, zs=np.arange(0, num_times), zdir='y')
 
@@ -281,9 +282,9 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveform_3d_%s.png" % type)
+            self.savefig("fig-waveform-3d-%s.png" % fig_type)
 
-    def waveform_hist(self, vmin=None, vmax=None, bins=128, log=False):
+    def waveform_hist(self, vmin=None, vmax=None, bins=128, log=False, color='green'):
         """
         Draw waveform histogram.
 
@@ -291,35 +292,29 @@ class L1bProductInspectorPlots:
         :param vmax: Maximum display value
         :param bins: Number of bins
         :param log: Show logarithms of bin counts
+        :param color: Color of the histogram bars, e.g. 'green'
         """
         vmin = vmin if vmin else self._inspector.waveform_range[0]
         vmax = vmax if vmax else self._inspector.waveform_range[1]
+        vmax = vmin + 1 if vmin == vmax else vmax
 
-        # mu, sigma = 100, 15
-        # x = mu + sigma * np.random.randn(10000)
-
-        # the histogram of the data
         plt.figure(figsize=(12, 6))
-        n, bins, patches = plt.hist(self._inspector.waveform.flatten(),
-                                    range=(vmin, vmax),
-                                    bins=bins,
-                                    log=log,
-                                    facecolor='green',
-                                    alpha=1,
-                                    normed=True)
-
-        # add a 'best fit' line
-        # y = mlab.normpdf(bins, mu, sigma)
-        # l = plt.plot(bins, y, 'r--', linewidth=1)
+        plt.hist(self._inspector.waveform.flatten(),
+                 range=(vmin, vmax),
+                 bins=bins,
+                 log=log,
+                 facecolor=color,
+                 alpha=1,
+                 normed=True)
 
         plt.xlabel('Waveform')
-        plt.ylabel('Probability')
+        plt.ylabel('Counts')
         plt.title('Waveform Histogram')
         plt.grid(True)
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveform_hist.png")
+            self.savefig("fig-waveform-hist.png")
 
     def waveform_line(self, ind=None, ref_ind=None):
         """
@@ -348,9 +343,9 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveform_t%06d.png" % ind)
+            self.savefig("fig-waveform-x-%d.png" % ind)
 
-    def im(self, z=None, zmin=None, zmax=None):
+    def im(self, z=None, zmin=None, zmax=None, cmap='jet'):
         if z is None:
             if self._interactive:
                 name_options = list()
@@ -360,13 +355,13 @@ class L1bProductInspectorPlots:
                         name_options.extend(var_names)
                 name_options = sorted(name_options)
                 # TODO (forman, 20160709): add sliders for zmin, zmax
-                interact(self._plot_im, z_name=name_options, zmin=fixed(zmax), zmax=fixed(zmax))
+                interact(self._plot_im, z_name=name_options, zmin=fixed(zmax), zmax=fixed(zmax), cmap=fixed(cmap))
             else:
                 raise ValueError('name must be given')
         else:
-            self._plot_im(z_name=z, zmin=zmin, zmax=zmax)
+            self._plot_im(z_name=z, zmin=zmin, zmax=zmax, cmap=cmap)
 
-    def _plot_im(self, z_name, zmin=None, zmax=None):
+    def _plot_im(self, z_name, zmin=None, zmax=None, cmap='jet'):
         if z_name not in self._inspector.dataset.variables:
             print('Error: "%s" is not a variable' % z_name)
             return
@@ -379,7 +374,7 @@ class L1bProductInspectorPlots:
         zmin = zmin if zmin else var_data.min()
         zmax = zmax if zmax else var_data.max()
         plt.figure(figsize=(10, 10))
-        plt.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto', vmin=zmin, vmax=zmax)
+        plt.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto', vmin=zmin, vmax=zmax, cmap=cmap)
         # TODO (forman, 20160709): show labels in units of dimension variables
         plt.xlabel('%s (index)' % var.dimensions[1])
         plt.ylabel('%s (index)' % var.dimensions[0])
@@ -388,7 +383,7 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig('%s.png' % z_name)
+            self.savefig('fig-%s.png' % z_name)
 
     def line(self, x=None, y=None, sel_dim=False):
         """
@@ -428,6 +423,7 @@ class L1bProductInspectorPlots:
 
                     display(widget_dim)
 
+                    # noinspection PyUnusedLocal
                     def on_widget_dim_change(change):
                         nonlocal widget_x, widget_y
                         widget_y.options = sorted(list(self._inspector.dim_names_to_var_names[(widget_dim.value,)]))
@@ -435,9 +431,11 @@ class L1bProductInspectorPlots:
                         widget_y.value = widget_y.options[0]
                         widget_x.value = widget_x.options[0]
 
+                    # noinspection PyUnusedLocal
                     def on_widget_x_change(change):
                         display()
 
+                    # noinspection PyUnusedLocal
                     def on_widget_y_change(change):
                         display()
 
@@ -453,6 +451,7 @@ class L1bProductInspectorPlots:
                     widget_x.value = x if x and x in widget_x_options else widget_x_options[0]
                     widget_y.value = y if y and y in widget_y_options else widget_y_options[0]
 
+                    # noinspection PyUnusedLocal
                     def on_widget_x_change(change):
                         x_name = widget_x.value
                         if x_name == 'index':
@@ -491,9 +490,9 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig('%s_over_%s.png' % (x_name, y_name))
+            self.savefig('fig-%s-over-%s.png' % (x_name, y_name))
 
-    def im_line(self, z=None, zmin=None, zmax=None, xind=None, yind=None):
+    def im_line(self, z=None, zmin=None, zmax=None, xind=None, yind=None, cmap='jet'):
         if self._interactive:
             has_xind = xind is not None
             has_yind = yind is not None
@@ -518,6 +517,7 @@ class L1bProductInspectorPlots:
                     value = z if z and z in valid_var_names else valid_var_names[0]
                     widget_var = widgets.Dropdown(options=valid_var_names, value=value, description='Var:')
 
+                    # noinspection PyUnusedLocal
                     def on_widget_var_change(change):
                         variable = self._inspector.dataset[widget_var.value]
                         if xind is None:
@@ -532,13 +532,13 @@ class L1bProductInspectorPlots:
                 # TODO (forman, 20160709): add sliders for zmin, zmax
                 interact(self._plot_im_line, z_name=widget_var,
                          xind=widget_xind, yind=widget_yind,
-                         zmin=fixed(zmax), zmax=fixed(zmax))
+                         zmin=fixed(zmax), zmax=fixed(zmax), cmap=fixed(cmap))
         else:
             if not z:
                 raise ValueError('z_name must be given')
-            self._plot_im_line(z, zmin=zmin, zmax=zmin, xind=xind, yind=yind)
+            self._plot_im_line(z, zmin=zmin, zmax=zmin, xind=xind, yind=yind, cmap=cmap)
 
-    def _plot_im_line(self, z_name, zmin=None, zmax=None, xind=None, yind=None):
+    def _plot_im_line(self, z_name, zmin=None, zmax=None, xind=None, yind=None, cmap='jet'):
         assert z_name
         if z_name not in self._inspector.dataset.variables:
             print('Error: "%s" is not a variable' % z_name)
@@ -587,7 +587,8 @@ class L1bProductInspectorPlots:
             # fig.axes.remove(ax2)
             ax2.remove()
 
-        im = ax3.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto', vmin=zmin, vmax=zmax)
+        im = ax3.imshow(self._inspector.waveform, interpolation='nearest', aspect='auto',
+                        vmin=zmin, vmax=zmax, cmap=cmap)
         if has_xind:
             ax3.axvline(x=xind)
         if has_yind:
@@ -601,13 +602,13 @@ class L1bProductInspectorPlots:
         if self._interactive:
             plt.show()
         elif has_xind and has_yind:
-            self.savefig('%s_x%s_y%s.png' % (z_name, xind, yind))
+            self.savefig('fig-%s-x-%s-y-%s.png' % (z_name, xind, yind))
         elif has_xind:
-            self.savefig('%s_x%s.png' % (z_name, xind))
+            self.savefig('fig-%s-x-%s.png' % (z_name, xind))
         elif has_yind:
-            self.savefig('%s_y%s.png' % (z_name, yind))
+            self.savefig('fig-%s-y-%s.png' % (z_name, yind))
         else:
-            self.savefig('%s.png' % z_name)
+            self.savefig('fig-%s.png' % z_name)
 
     def savefig(self, filename):
         return self._figure_writer.savefig(filename)
