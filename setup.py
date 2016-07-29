@@ -8,7 +8,7 @@ setup(
     name="dedop",
     version=__version__,
     description='Delay Doppler (Altimeter) Processor',
-    license='GPL-3',
+    license='GPLv3',
     author='DeDop Development Team',
     packages=packages,
     package_data={
