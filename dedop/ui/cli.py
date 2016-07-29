@@ -287,6 +287,7 @@ class ManageWorkspacesCommand(Command):
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove workspace')
         parser_remove.add_argument(nargs='?', **workspace_name_attributes)
         parser_remove.set_defaults(ws_command=cls.execute_remove)
+        parser_remove.add_argument('-y', '--yes', action='store_true', help='Do not ask for confirmation.')
 
         parser_copy = subparsers.add_parser('copy', aliases=['cp'], help='Copy workspace')
         parser_copy.add_argument(nargs='?', **workspace_name_attributes)
@@ -325,11 +326,22 @@ class ManageWorkspacesCommand(Command):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
             return 1, 'no current workspace'
-        answer = _input('delete workspace "%s"? [yes]' % workspace_name, 'yes')
+        if command_args.yes:
+            answer = 'yes'
+        else:
+            answer = _input('delete workspace "%s"? [yes]' % workspace_name, 'yes')
         if answer.lower() == 'yes':
             try:
                 _WORKSPACE_MANAGER.delete_workspace(workspace_name)
                 print('deleted workspace "%s"' % workspace_name)
+                if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
+                    workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
+                    if 'default' in workspace_names:
+                        cls.set_current_workspace('default')
+                    elif len(workspace_names) > 0:
+                        cls.set_current_workspace(workspace_names[0])
+                    else:
+                        cls.set_current_workspace(None)
             except WorkspaceError as error:
                 return 1, str(error)
         return cls.STATUS_OK
@@ -411,8 +423,12 @@ class ManageWorkspacesCommand(Command):
 
     @classmethod
     def set_current_workspace(cls, workspace_name):
-        _WORKSPACE_MANAGER.set_current_workspace_name(workspace_name)
-        print('current workspace is "%s"' % workspace_name)
+        if workspace_name:
+            _WORKSPACE_MANAGER.set_current_workspace_name(workspace_name)
+            print('current workspace is "%s"' % workspace_name)
+        else:
+            _WORKSPACE_MANAGER.set_current_workspace_name('')
+            print('WARNING: no DDP workspaces')
 
     @classmethod
     def ensure_unique_name(cls, new_name):

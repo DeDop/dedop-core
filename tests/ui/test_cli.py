@@ -107,6 +107,23 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+        self._test_main(['w', 'rm', '-y'],
+                        expected_stdout=['deleted workspace "tests9_2"',
+                                         'current workspace is "tests2_2"'])
+
+        self._test_main(['w', 'rm', '-y', 'tests3'],
+                        expected_stdout=['deleted workspace "tests3"'])
+
+        self._test_main(['w', 'rm', '-y', 'tests_1'],
+                        expected_stdout=['deleted workspace "tests_1"'])
+
+        self._test_main(['w', 'rm', '-y'],
+                        expected_stdout=['deleted workspace "tests2_2"',
+                                         'WARNING: no DDP workspaces'])
+
+        self._test_main(['w', 'list'],
+                        expected_stdout=['no workspaces'])
+
     def test_command_conf(self):
         self._test_main(['w', 'add', 'tests'],
                         expected_stdout=['created workspace "tests"',
@@ -169,6 +186,9 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['c', 'rm', '-y', 'tests', 'config1_copy'],
                         expected_stdout=['deleted DDP configuration "config1_copy"',
                                          'WARNING: no DDP configuration in this workspace'])
+
+        self._test_main(['c', 'list'],
+                        expected_stdout=['no DDP configurations in workspace "tests"'])
 
     def test_command_output(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
