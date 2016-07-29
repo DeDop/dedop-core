@@ -450,6 +450,8 @@ class ManageConfigsCommand(Command):
         parser_add.set_defaults(cf_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
+        parser_remove.add_argument('-y', '--yes', metavar='y',
+                                   help='Select "yes" for any confirmation prompts before deleting a configuration')
         cls.setup_default_parser_argument(parser_remove)
         parser_remove.add_argument(nargs='?', **config_name_attributes)
         parser_remove.set_defaults(cf_command=cls.execute_remove)
@@ -511,11 +513,22 @@ class ManageConfigsCommand(Command):
             return _STATUS_NO_WORKSPACE
         if not config_name:
             return _STATUS_NO_CONFIG
-        answer = _input('delete DDP configuration "%s"? [yes]' % config_name, 'yes')
+        if command_args.yes:
+            answer = 'yes'
+        else:
+            answer = _input('delete DDP configuration "%s"? [yes]' % config_name, 'yes')
         if answer.lower() == 'yes':
             try:
                 _WORKSPACE_MANAGER.delete_config(workspace_name, config_name)
                 print('deleted DDP configuration "%s"' % config_name)
+                if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
+                    config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
+                    if 'default' in config_names:
+                        cls.set_current_config(workspace_name, 'default')
+                    elif len(config_names) > 0:
+                        cls.set_current_config(workspace_name, config_names[0])
+                    else:
+                        cls.set_current_config(workspace_name, None)
             except WorkspaceError as error:
                 return 1, str(error)
         return cls.STATUS_OK
@@ -660,8 +673,12 @@ class ManageConfigsCommand(Command):
         :param config_name: Configuration name
         :raise: WorkspaceError
         """
-        _WORKSPACE_MANAGER.set_current_config_name(workspace_name, config_name)
-        print('current DDP configuration is "%s"' % config_name)
+        if config_name:
+            _WORKSPACE_MANAGER.set_current_config_name(workspace_name, config_name)
+            print('current DDP configuration is "%s"' % config_name)
+        else:
+            _WORKSPACE_MANAGER.set_current_config_name(workspace_name, '')
+            print('WARNING: no DDP configuration in this workspace')
 
     @classmethod
     def ensure_unique_name(cls, workspace_name, new_name):
