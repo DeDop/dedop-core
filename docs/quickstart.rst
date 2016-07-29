@@ -11,10 +11,17 @@ The DeDop tool set currently comprises only the *DeDop Shell* - a command-line i
 
 This section is a tutorial for users new to the DeDop Shell.
 
+Before you start
+================
+
 If you haven't installed DeDop yet, please refer to :doc:`installation`.
 
 During installation, a new menu entry or desktop shortcut named **DeDop Shell** should have been created.
-If you open it, a new terminal window should open up. Type::
+If you click it, a new terminal window should open up. If you can't see a menu entry nor a desktop shortcut
+open the ``bin`` (Unix and Darwin/OS X) or ``Scripts`` (Windows) directory of your DeDop installation directory.
+The you should find a ``dedop-shell`` script. Click this instead of a missing menu entry / desktop shortcut.
+
+In the new terminal window, type::
 
     $ dedop -h
 
