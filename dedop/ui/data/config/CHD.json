@@ -21,8 +21,8 @@
 	},
 	"uso_freq_nom_chd": {
 		"value": 10e6,
-		"description": null,
-		"units": null
+		"description": "USO nominal frequency",
+		"units": "Hz"
 	},
 
 	"N_bursts_cycle_chd": {
