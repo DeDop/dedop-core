@@ -42,9 +42,11 @@ Now run the processor with default settings::
     created DDP configuration "default" in workspace "default"
     current DDP configuration is "default"
     processing ~/.dedop/workspaces/default/inputs/L1A.nc using "default"
+    processing: [##########------------------------------] 25%
     ...
+    processing took 0:05:03.159575
 
-If the command succeeds, the L1B output files can be found in ``workspaces/default/configs/default/outputs``
+If the command succeeded, the L1B output files can be found in ``workspaces/default/configs/default/outputs``,
 which is by default located in the DeDop user data directory. On Unixes and Darwin (OS) this directory
 is ``~/.dedop`` while on Windows it is ``C:/Users/<username>/.dedop``. The location of your workspaces directory
 can be changed by configuration. Please refer to the :doc:`manual`.
@@ -55,9 +57,9 @@ If the processor run was successful you can inspect the generated L1B file::
 
 This command should open up a web browser window that displays an interactive *Jupyter Notebook*.
 Also a second terminal window should have opened up. This hosts the Jupyter Notebook server process.
-Just close the terminal window, if you no longer require the notebook.
+Just close the terminal window, if you no longer require the Notebook.
 
-If you like to perform your analysis in batch mode, rater than using the interactive Notebook,
+If you like to perform your analysis in batch mode rather than using the interactive Notebook,
 you can do so by writing your own analysis script in Python. An example is given in DeDop's
 source code repository: `inspect-script.py <https://github.com/DeDop/dedop/blob/master/inspect-script.py>`_.
 
@@ -68,7 +70,7 @@ output filename that has the ``.pdf`` extension::
 
 To generate a directory of figure images, run the script with a directory name or with ``dir`` as 3rd argument::
 
-    $ python inspect-script.py some/path/L1B_default.nc compare-out
+    $ python inspect-script.py some/path/L1B_default.nc compare-out dir
 
 
 Changing the processor configuration
@@ -77,6 +79,13 @@ Changing the processor configuration
 From the last steps above, the current DDP configuration should be still ``default``. Verify::
 
     $ dedop status
+    configuration location:     ~/.dedop/config.py
+    workspaces location:        ~/.dedop/workspaces
+    workspaces total size:      150 MiB
+    workspace names:            default
+    current workspace:          default
+    current DDP configuration:  default
+
 
 We will now create a new configuration ``myconf``, type::
 
@@ -99,7 +108,6 @@ default value ``10e6`` to ``7.5e6``::
         "description": "USO nominal frequency",
         "units": "Hz"
    },
-
 
 Save the configuration file in your text editor.
 
@@ -125,7 +133,7 @@ output filename that has the ``.pdf`` extension::
 
     $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out.pdf
 
-To generate a directory of figure images, run the script with a directory name::
+To generate a directory of figure images, run the script with a directory name or with ``dir`` as 4th argument::::
 
-    $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out
+    $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out dir
 
