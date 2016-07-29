@@ -156,6 +156,20 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          '3: config2_2',
                                          '4: config9_2'])
 
+        self._test_main(['c', 'rm', '-y', 'tests', 'config2'],
+                        expected_stdout=['deleted DDP configuration "config2"',
+                                         'current DDP configuration is "config1_copy"'])
+
+        self._test_main(['c', 'rm', '-y', 'tests', 'config2_2'],
+                        expected_stdout=['deleted DDP configuration "config2_2"'])
+
+        self._test_main(['c', 'rm', '-y', 'tests', 'config9_2'],
+                        expected_stdout=['deleted DDP configuration "config9_2"'])
+
+        self._test_main(['c', 'rm', '-y', 'tests', 'config1_copy'],
+                        expected_stdout=['deleted DDP configuration "config1_copy"',
+                                         'WARNING: no DDP configuration in this workspace'])
+
     def test_command_output(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
         self._test_main(['w', 'add', 'tests'],
