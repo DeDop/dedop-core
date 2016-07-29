@@ -7,9 +7,10 @@ Quick Start
 ===========
 
 
-The DeDop tool set currently comprises only the *DeDop Shell* - a command-line interface to the DPP.
+The DeDop tool set currently comprises only the *DeDop Shell* - a command-line interface to the Delay Doppler Processor
+(DPP).
 
-This section is a tutorial for users new to the DeDop Shell.
+This chapter is a tutorial for users new to the DeDop Shell.
 
 Before you start
 ================
@@ -135,12 +136,12 @@ Again, if you like to perform your analysis in batch mode, you can do so by writ
 in Python. An example is given in DeDop's source code repository:
 `compare-script.py <https://github.com/DeDop/dedop/blob/master/compare-script.py>`_.
 
-This script can by run with the Python interpreter bundled with the dedop installation. To generate a multi page PDF use an
+This script can be run with the Python interpreter bundled with the dedop installation. To generate a multi page PDF use an
 output filename that has the ``.pdf`` extension::
 
     $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out.pdf
 
-To generate a directory of figure images, run the script with a directory name or with ``dir`` as 4th argument::::
+To generate a directory of figure images, run the script with a directory name or with ``dir`` as 4th argument::
 
     $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out dir
 
