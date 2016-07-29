@@ -428,7 +428,6 @@ class ManageWorkspacesCommand(Command):
             print('current workspace is "%s"' % workspace_name)
         else:
             _WORKSPACE_MANAGER.set_current_workspace_name('')
-            print('WARNING: no DDP workspaces')
 
     @classmethod
     def ensure_unique_name(cls, new_name):
@@ -694,7 +693,6 @@ class ManageConfigsCommand(Command):
             print('current DDP configuration is "%s"' % config_name)
         else:
             _WORKSPACE_MANAGER.set_current_config_name(workspace_name, '')
-            print('WARNING: no DDP configuration in this workspace')
 
     @classmethod
     def ensure_unique_name(cls, workspace_name, new_name):

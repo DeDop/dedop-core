@@ -122,8 +122,7 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['removed workspace "tests_1"'])
 
         self._test_main(['w', 'rm', '-y'],
-                        expected_stdout=['removed workspace "tests2_2"',
-                                         'WARNING: no DDP workspaces'])
+                        expected_stdout=['removed workspace "tests2_2"'])
 
         self._test_main(['w', 'list'],
                         expected_stdout=['no workspaces'])
@@ -192,8 +191,7 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_stdout=['removed DDP configuration "config9_2"'])
 
         self._test_main(['c', 'rm', '-y', 'config1_copy'],
-                        expected_stdout=['removed DDP configuration "config1_copy"',
-                                         'WARNING: no DDP configuration in this workspace'])
+                        expected_stdout=['removed DDP configuration "config1_copy"'])
 
         self._test_main(['c', 'list'],
                         expected_stdout=['no DDP configurations in workspace "tests"'])
