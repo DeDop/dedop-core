@@ -191,4 +191,6 @@ class L1ADataset(InputDataset):
         """
         return the requested variable from the netCDF file
         """
-        return self._dset.variables[variable_name]
+        var = self._dset.variables[variable_name]
+        var.set_auto_mask(False)
+        return var
