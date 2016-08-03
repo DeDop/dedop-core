@@ -53,7 +53,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['-h'], expected_stdout='usage: dedop [-h]')
 
     def test_option_version(self):
-        self._test_main(['--version'], expected_stdout='0.5.0')
+        self._test_main(['--version'], expected_stdout='0.5.1')
 
     def test_command_none(self):
         self._test_main([], expected_stdout='usage: dedop [-h]')
