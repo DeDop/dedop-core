@@ -80,6 +80,7 @@ class L1bProductComparator:
         self._product_inspector_2 = product_inspector_2
         self._plot = L1bProductComparatorPlots(self, figure_writer)
         self._waveforms_delta = product_inspector_1.waveform - product_inspector_2.waveform
+        self._waveforms_delta_range = self._waveforms_delta.min(), self._waveforms_delta.max()
 
     @property
     def p1(self) -> L1bProductInspector:
@@ -124,6 +125,13 @@ class L1bProductComparator:
         return self._waveforms_delta
 
     @property
+    def waveforms_delta_range(self) -> Tuple[float, float]:
+        """
+        Get the range waveforms[0].min(), waveforms[1].max().
+        """
+        return self._waveforms_delta_range
+
+    @property
     def plot(self) -> 'L1bProductComparatorPlots':
         """
         Get the plotting context.
@@ -134,6 +142,7 @@ class L1bProductComparator:
         """Close the underlying dataset's file access."""
         self.p1.close()
         self.p2.close()
+        self.plot.close()
 
 
 class L1bProductComparatorPlots:
@@ -143,7 +152,7 @@ class L1bProductComparatorPlots:
         self._interactive = figure_writer is None
         self._figure_writer = figure_writer
 
-    def locations(self):
+    def locations(self, color1='blue', color2='red'):
 
         # Spherical Mercator
         mercator = pyproj.Proj(init='epsg:3857')
@@ -160,8 +169,8 @@ class L1bProductComparatorPlots:
 
         source1 = ColumnDataSource(data=dict(x=x1, y=y1))
         source2 = ColumnDataSource(data=dict(x=x2, y=y2))
-        circle1 = Circle(x='x', y='y', size=6, fill_color='blue', fill_alpha=0.5, line_color=None)
-        circle2 = Circle(x='x', y='y', size=6, fill_color='green', fill_alpha=0.5, line_color=None)
+        circle1 = Circle(x='x', y='y', size=6, fill_color=color1, fill_alpha=0.5, line_color=None)
+        circle2 = Circle(x='x', y='y', size=6, fill_color=color2, fill_alpha=0.5, line_color=None)
 
         # map_options = GMapOptions(lat=30.29, lng=-97.73, map_type="roadmap", zoom=11)
         # plot = GMapPlot(x_range=DataRange1d(), y_range=DataRange1d(), map_options=map_options)
@@ -186,16 +195,17 @@ class L1bProductComparatorPlots:
             bokeh.io.show(fig)
         elif self._figure_writer.output_format == "dir":
             os.makedirs(self._figure_writer.output_path, exist_ok=True)
-            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'locations.html'), title='L1B Locations')
+            bokeh.io.save(fig, os.path.join(self._figure_writer.output_path, 'fig-locations.html'),
+                          title='L1B Locations')
         else:
             print('warning: cannot save locations figure with output format "%s"' % self._figure_writer.output_format)
 
-    def waveforms_delta_im(self, vmin=None, vmax=None):
-        waveforms_delta = self._comparator.waveforms_delta
-        vmin = vmin if vmin else waveforms_delta.min()
-        vmax = vmax if vmax else waveforms_delta.max()
+    def waveforms_delta_im(self, vmin=None, vmax=None, cmap='RdBu_r'):
+        vmin = vmin if vmin else self._comparator.waveforms_delta_range[0]
+        vmax = vmax if vmax else self._comparator.waveforms_delta_range[1]
         plt.figure(figsize=(10, 10))
-        plt.imshow(waveforms_delta, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax, cmap='RdBu_r')
+        plt.imshow(self._comparator.waveforms_delta, interpolation='nearest', aspect='auto', vmin=vmin, vmax=vmax,
+                   cmap=cmap)
         plt.xlabel('Echo Sample Index')
         plt.ylabel('Time Index')
         plt.title('Waveform 1, Waveform 2 Delta')
@@ -203,13 +213,92 @@ class L1bProductComparatorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveform_delta_im.png")
+            self.savefig("fig-waveform_delta-im.png")
 
-    def waveforms_scatter(self):
+    def waveforms_hist(self, vmin=None, vmax=None, bins=128, log=False, color1='blue', color2='red', alpha=0.5):
+        """
+        Draw waveform histogram.
+
+        :param vmin: Minimum display value
+        :param vmax: Maximum display value
+        :param bins: Number of bins
+        :param log: Show logarithms of bin counts
+        :param color1: Color of the first histogram
+        :param color2: Color of the second histogram
+        :param alpha: Alpha value for histograms
+        """
+        vmin = vmin if vmin else self._comparator.waveforms_delta_range[0]
+        vmax = vmax if vmax else self._comparator.waveforms_delta_range[1]
+        vmax = vmin + 1 if vmin == vmax else vmax
+
+        plt.figure(figsize=(12, 6))
+        plt.hist(self._comparator.p1.waveform.flatten(),
+                 range=(vmin, vmax),
+                 bins=bins,
+                 log=log,
+                 facecolor=color1,
+                 alpha=alpha,
+                 normed=True,
+                 label='Waveform 1')
+        plt.hist(self._comparator.p2.waveform.flatten(),
+                 range=(vmin, vmax),
+                 bins=bins,
+                 log=log,
+                 facecolor=color2,
+                 alpha=alpha,
+                 normed=True,
+                 label='Waveform 2')
+
+        plt.xlabel('Waveform')
+        plt.ylabel('Counts')
+        plt.title('Waveforms Histogram')
+        plt.grid(True)
+        if self._interactive:
+            plt.show()
+        else:
+            self.savefig("fig-waveforms-hist.png")
+
+    def waveforms_delta_hist(self, vmin=None, vmax=None, bins=128, log=False, color='green'):
+        """
+        Draw waveform histogram.
+
+        :param vmin: Minimum display value
+        :param vmax: Maximum display value
+        :param bins: Number of bins
+        :param log: Show logarithms of bin counts
+        """
+        vmin = vmin if vmin else self._comparator.waveforms_delta_range[0]
+        vmax = vmax if vmax else self._comparator.waveforms_delta_range[1]
+        vmax = vmin + 1 if vmin == vmax else vmax
+
+        plt.figure(figsize=(12, 6))
+        plt.hist(self._comparator.waveforms_delta.flatten(),
+                 range=(vmin, vmax),
+                 bins=bins,
+                 log=log,
+                 facecolor=color,
+                 alpha=1,
+                 normed=True)
+
+        plt.xlabel('Waveforms Delta')
+        plt.ylabel('Counts')
+        plt.title('Waveforms Delta Histogram')
+        plt.grid(True)
+        if self._interactive:
+            plt.show()
+        else:
+            self.savefig("fig-waveforms_delta-hist.png")
+
+    def waveforms_scatter(self, vmin=None, vmax=None):
+        vmin = vmin if vmin else self._comparator.waveforms_delta_range[0]
+        vmax = vmax if vmax else self._comparator.waveforms_delta_range[1]
+        vmax = vmin + 1 if vmin == vmax else vmax
+
         x = self._comparator.p1.waveform
         y = self._comparator.p2.waveform
 
         plt.figure(figsize=(12, 6))
+        plt.axis([vmin, vmax, vmin, vmax])
         plt.scatter(x, y, alpha=0.3, edgecolors='none')
         plt.xlabel('Waveform 1')
         plt.ylabel('Waveform 2')
@@ -218,7 +307,35 @@ class L1bProductComparatorPlots:
         if self._interactive:
             plt.show()
         else:
-            self.savefig("plot_waveforms_scatter.png")
+            self.savefig("fig-waveforms-scatter.png")
+
+    def waveforms_hexbin(self, vmin=None, vmax=None, cmap='Blues', log=True):
+        vmin = vmin if vmin else self._comparator.waveforms_delta_range[0]
+        vmax = vmax if vmax else self._comparator.waveforms_delta_range[1]
+        vmax = vmin + 1 if vmin == vmax else vmax
+
+        x = self._comparator.p1.waveform.flatten()
+        y = self._comparator.p2.waveform.flatten()
+
+        plt.figure(figsize=(12, 6))
+        plt.hexbin(x, y, cmap=cmap, bins='log' if log else None)
+        plt.axis([vmin, vmax, vmin, vmax])
+        plt.xlabel('Waveform 1')
+        plt.ylabel('Waveform 2')
+        plt.title('Waveforms Delta Hexagon Binning')
+        plt.grid(True)
+
+        cb = plt.colorbar()
+        cb.set_label('log10(Counts)' if log else 'Counts')
+
+        if self._interactive:
+            plt.show()
+        else:
+            self.savefig("fig-waveforms-hexbin.png")
 
     def savefig(self, filename):
         return self._figure_writer.savefig(filename)
+
+    def close(self):
+        if self._figure_writer:
+            self._figure_writer.close()

@@ -53,7 +53,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['-h'], expected_stdout='usage: dedop [-h]')
 
     def test_option_version(self):
-        self._test_main(['--version'], expected_stdout='0.5.0-rc0+2')
+        self._test_main(['--version'], expected_stdout='0.5.0')
 
     def test_command_none(self):
         self._test_main([], expected_stdout='usage: dedop [-h]')
@@ -107,6 +107,26 @@ class CliTest(WorkspaceTestBase, TestCase):
                         expected_exit_code=2,
                         expected_stderr='error: the following arguments are required: NEW_NAME')
 
+        self._test_main(['w', 'rm', '-y', 'dummy_ws'],
+                        expected_exit_code=1,
+                        expected_stderr='dedop: workspace "dummy_ws" does not exist')
+
+        self._test_main(['w', 'rm', '-y'],
+                        expected_stdout=['removed workspace "tests9_2"',
+                                         'current workspace is "tests2_2"'])
+
+        self._test_main(['w', 'rm', '-y', 'tests3'],
+                        expected_stdout=['removed workspace "tests3"'])
+
+        self._test_main(['w', 'rm', '-y', 'tests_1'],
+                        expected_stdout=['removed workspace "tests_1"'])
+
+        self._test_main(['w', 'rm', '-y'],
+                        expected_stdout=['removed workspace "tests2_2"'])
+
+        self._test_main(['w', 'list'],
+                        expected_stdout=['no workspaces'])
+
     def test_command_conf(self):
         self._test_main(['w', 'add', 'tests'],
                         expected_stdout=['created workspace "tests"',
@@ -156,19 +176,25 @@ class CliTest(WorkspaceTestBase, TestCase):
                                          '3: config2_2',
                                          '4: config9_2'])
 
-        self._test_main(['c', 'rm', '-y', 'tests', 'config2'],
-                        expected_stdout=['deleted DDP configuration "config2"',
+        self._test_main(['c', 'rm', '-y', 'dummy_config'],
+                        expected_exit_code=1,
+                        expected_stderr=['dedop: DDP configuration "dummy_config" of workspace "tests" does not exist'])
+
+        self._test_main(['c', 'rm', '-y', 'config2'],
+                        expected_stdout=['removed DDP configuration "config2"',
                                          'current DDP configuration is "config1_copy"'])
 
-        self._test_main(['c', 'rm', '-y', 'tests', 'config2_2'],
-                        expected_stdout=['deleted DDP configuration "config2_2"'])
+        self._test_main(['c', 'rm', '-y', 'config2_2'],
+                        expected_stdout=['removed DDP configuration "config2_2"'])
 
-        self._test_main(['c', 'rm', '-y', 'tests', 'config9_2'],
-                        expected_stdout=['deleted DDP configuration "config9_2"'])
+        self._test_main(['c', 'rm', '-y', 'config9_2'],
+                        expected_stdout=['removed DDP configuration "config9_2"'])
 
-        self._test_main(['c', 'rm', '-y', 'tests', 'config1_copy'],
-                        expected_stdout=['deleted DDP configuration "config1_copy"',
-                                         'WARNING: no DDP configuration in this workspace'])
+        self._test_main(['c', 'rm', '-y', 'config1_copy'],
+                        expected_stdout=['removed DDP configuration "config1_copy"'])
+
+        self._test_main(['c', 'list'],
+                        expected_stdout=['no DDP configurations in workspace "tests"'])
 
     def test_command_output(self):
         input_files = os.path.join(os.path.dirname(__file__), '*.nc')
