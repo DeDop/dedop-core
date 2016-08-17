@@ -51,8 +51,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
             dtype=np.int8
         )
-
-        for beam_index in range(working_surface_location.data_stack_size):
+        max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
+        for beam_index in range(max_stack):
             shift = working_surface_location.doppler_corrections[beam_index] +\
                     working_surface_location.slant_range_corrections[beam_index] +\
                     working_surface_location.win_delay_corrections[beam_index]

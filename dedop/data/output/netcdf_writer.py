@@ -2,6 +2,7 @@ import netCDF4 as nc
 from collections import OrderedDict
 from enum import Enum
 import os
+import numpy as np
 
 from typing import Sequence, Tuple, Any, Union, Dict
 from abc import ABCMeta, abstractmethod
@@ -334,10 +335,15 @@ class NetCDFWriter(metaclass=ABCMeta):
             if value is None:
                 continue
             try:
-                if ndims == 2:
+                if ndims == 3:
+                    dim_1, dim_2 = value.shape
+                    var[self.output_index, :dim_1, :dim_2] = value[:, :]
+                elif ndims == 2:
                     var[self.output_index, :len(value)] = value[:]
-                else:
+                elif ndims == 1:
                     var[self.output_index] = value
+                else:
+                    raise WriteError("Number of dimensions not supported", value.shape)
             except Exception as err:
                 raise WriteError(
                     "error while writing {} at index {}".format(

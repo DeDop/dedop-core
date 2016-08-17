@@ -91,7 +91,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
             np.argmin(beam_angles_complementary)
 
         beam_length = (self.chd.n_samples_sar // 2) * self.zp_fact_range
-        for beam_index in range(working_surface_location.data_stack_size):
+
+        max_stack = min(self.n_looks_stack, working_surface_location.data_stack_size)
+        for beam_index in range(max_stack):
             beam_power[beam_index] =\
                 np.sum(
                     working_surface_location.beams_masked[beam_index, :beam_length]
@@ -174,7 +176,8 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (n_samples_max,), dtype=int
         )
 
-        for beam_index in range(working_surface_location.data_stack_size):
+        max_stack = min(self.n_looks_stack, working_surface_location.data_stack_size)
+        for beam_index in range(max_stack):
 
             if working_surface_location.stack_mask_vector[beam_index] != 0:
 

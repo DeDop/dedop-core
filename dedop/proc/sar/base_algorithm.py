@@ -2,7 +2,7 @@ from ...util.parameter import Parameter
 from ...conf import ConstantsFile, CharacterisationFile
 
 
-@Parameter('n_looks_stack', default_value=481, data_type=int)
+@Parameter('n_looks_stack', default_value=300, data_type=int)
 @Parameter('zp_fact_range', default_value=2, data_type=int)
 class BaseAlgorithm:
     """

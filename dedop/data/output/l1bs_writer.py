@@ -88,10 +88,9 @@ class L1BSWriter(NetCDFWriter):
             L1BSDimensions.echo_sample_ind, chd.n_samples_sar * cnf.zp_fact_range
         )
         self.define_dimension(
-            L1BSDimensions.max_multi_stack_ind, None
+            L1BSDimensions.max_multi_stack_ind, 300 # todo: get this value from cnf
         )
         # create variable definitions
-        # TODO: add long names
         self.define_variable(
             L1BSVariables.time_l1bs_echo_sar_ku,
             np.float64,
@@ -652,8 +651,8 @@ class L1BSWriter(NetCDFWriter):
             beam_form_l1bs_echo_sar_ku=None,
             burst_start_ind_l1bs_echo_sar_ku=None,
             burst_stop_ind_l1bs_echo_sar_ku=None,
-            # i_echoes_ku_l1bs_echo_sar_ku=np.real(surface_location_data.waveform_multilooked),
-            # q_echoes_ku_l1bs_echo_sar_ku=np.imag(surface_location_data.waveform_multilooked)
+            i_echoes_ku_l1bs_echo_sar_ku=np.real(surface_location_data.beams_range_compr_iq),
+            q_echoes_ku_l1bs_echo_sar_ku=np.imag(surface_location_data.beams_range_compr_iq)
             # start_look_angle_stack_l1bs_echo_sar_ku=None,
             # stop_look_angle_stack_l1bs_echo_sar_ku=None,
             # start_beam_ang_stack_l1bs_echo_sar_ku=None,

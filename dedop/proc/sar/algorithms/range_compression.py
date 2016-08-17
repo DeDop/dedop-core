@@ -8,7 +8,7 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
     def __call__(self, working_surface_location: SurfaceData) -> None:
         # calc. size after zero padding factor applied
         padded_size = self.zp_fact_range * self.chd.n_samples_sar
-        stack_size = working_surface_location.data_stack_size
+        stack_size = min(working_surface_location.data_stack_size, self.n_looks_stack)
 
         # create empty output arrays
         self.beam_range_compr = np.empty(
@@ -29,6 +29,9 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
             )
             # apply shift
             beam_shift = fftshift(beam_fft)
+            # TODO: REMOVE THIS !!
+            # disable extra shift to fix alignment problem
+            # beam_shift = beam_fft
 
             # store complex result
             self.beam_range_compr_iq[beam_index, :] = beam_shift

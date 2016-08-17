@@ -35,7 +35,8 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
 
         win_delay_ref = working_surface_location.win_delay_surf
 
-        for beam_index in range(0, working_surface_location.data_stack_size):
+        max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
+        for beam_index in range(0, max_stack):
 
             stack_burst = working_surface_location.stack_bursts[beam_index]
 
