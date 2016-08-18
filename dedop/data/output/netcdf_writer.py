@@ -297,18 +297,30 @@ class NetCDFWriter(metaclass=ABCMeta):
         else:
             str_name = name
 
+        # convert the list of dimension Enum instances from the
+        # VariableDescription into the names of the Dimension objects
+        # from the root document.
         dimensions = tuple(
             self.dimensions[dim_name].name for
                 dim_name in variable_description.dimensions
         )
-
+        # create a new variable in the root document. The constructor
+        # doesn't let us set attributes here, we have to do that below.
         var = self._root.createVariable(
             str_name, variable_description.data_type,
             dimensions, **variable_description.get_properties()
         )
-        var.setncatts(
-            variable_description.get_attributes()
-        )
+        # get the dict of attributes
+        attdict = variable_description.get_attributes()
+
+        for name, value in attdict.items():
+            # here we check if the attribute is a string, and if so
+            # we encode it into bytes representation. This is because
+            # otherwise netCDF4 will write it as a string-format
+            # attribute, which isn't supported by some older netCDF parsers.
+            if isinstance(value, str):
+                value = value.encode()
+            var.setncattr(name, value)
 
         return var
 
