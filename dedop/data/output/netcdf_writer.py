@@ -314,6 +314,14 @@ class NetCDFWriter(metaclass=ABCMeta):
         attdict = variable_description.get_attributes()
 
         for name, value in attdict.items():
+            # check if the variable is a tuple of strings - we use these for
+            # options such as 'flag_meaning'.
+            # if it is, we need to concatenate it with separating
+            # spaces. otherwise, the parser will concatenate it
+            # without.
+            if isinstance(value, tuple) and any(isinstance(item, str) for item in value):
+                value = " ".join(value)
+
             # here we check if the attribute is a string, and if so
             # we encode it into bytes representation. This is because
             # otherwise netCDF4 will write it as a string-format
