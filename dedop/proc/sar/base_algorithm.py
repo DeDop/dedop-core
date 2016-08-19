@@ -35,7 +35,7 @@ class BaseAlgorithm:
         for param in Parameter.get_parameters(self.__class__).values():
             if param.value_set is not None:
                 setattr(self, param.name, param.value_set)
-            elif hasattr(self.cnf, param.name):
+            try:
                 setattr(self, param.name, getattr(self.cnf, param.name))
-            else:
+            except:
                 setattr(self, param.name, param.default_value)
