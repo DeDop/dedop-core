@@ -37,7 +37,11 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
                   "expected/expected.txt"
 
     def initialize_algorithm(self, input_data):
-        self.cnf = ConfigurationFile()
+        self.cnf = ConfigurationFile(
+            N_looks_stack_cnf=input_data["n_looks_stack_cnf"],
+            flag_doppler_range_correction_cnf=input_data["flag_doppler_range_correction_cnf"],
+            flag_slant_range_correction_cnf=input_data["flag_slant_range_correction_cnf"]
+        )
         self.cst = ConstantsFile(
             c_cst=input_data['c_cst'],
             pi_cst=input_data['pi_cst']
@@ -129,14 +133,8 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
             beams_surf=beams_surf
         )
 
-        self.geometry_corrections_algorithm.n_looks_stack =\
-            input_data["n_looks_stack_cnf"]
-        self.geometry_corrections_algorithm.doppler_correction_enabled =\
-            bool(input_data["flag_doppler_range_correction_cnf"])
-        self.geometry_corrections_algorithm.slant_range_correction_enabled =\
-            bool(input_data["flag_slant_range_correction_cnf"])
-        # TODO: add window delay alignment method selection
 
+        # TODO: add window delay alignment method selection
         self.geometry_corrections_algorithm(working_loc, input_data["wv_length_ku"])
 
         self.assertTrue(
