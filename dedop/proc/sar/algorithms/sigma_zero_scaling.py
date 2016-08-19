@@ -20,7 +20,13 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
             (working_surface_location.data_stack_size),
             dtype=np.float64
         )
-        for beam_index in range(working_surface_location.data_stack_size):
+        # TODO: come back to this and replace it with something less hacky
+        if self.n_looks_stack is not None:
+            max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
+        else:
+            max_stack = working_surface_location.data_stack_size
+            
+        for beam_index in range(max_stack):
             range_sat_surf = working_surface_location.range_sat_surf[beam_index]
 
             vel_sat_sar_norm = norm(
