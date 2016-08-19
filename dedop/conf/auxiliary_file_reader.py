@@ -67,6 +67,6 @@ class AuxiliaryFileReader:
         """
         returns the value of the specified parameter
         """
-        if item in self._get_parameters():
+        if item in self._get_parameters() and item in self._data:
             return self._data[item]
         raise MissingParameterError(item, self._id)
