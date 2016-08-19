@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import ConstantsFile, CharacterisationFile
+from dedop.conf import ConstantsFile, CharacterisationFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import Sigma0ScalingFactorAlgorithm
@@ -16,6 +16,9 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
                   'sigma0_scaling_factor_algorithm_01/expected/expected.txt'
 
     def initialise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile(
+            zp_fact_range_cnf=input_data["zp_fact_range_cnf"]
+        )
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst'],
             earth_radius_cst=input_data['earth_radius_cst'],
@@ -32,7 +35,7 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
             antenna_gain_ku_chd=input_data['antenna_gain_ku_chd']
         )
         self.sigma0_algorithm =\
-            Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
+            Sigma0ScalingFactorAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_sigma0_algorithm_01(self):
         input_data = TestDataLoader(self.inputs_01, delim=' ')
@@ -65,7 +68,6 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
             range_sat_surf=input_data['range_sat_surf'],
             stack_bursts=np.asarray(isps)
         )
-        self.sigma0_algorithm.zp_fact_range = input_data['zp_fact_range_cnf']
         sig0_scale_factor = self.sigma0_algorithm(
             working_loc,
             input_data['wv_length_ku'],

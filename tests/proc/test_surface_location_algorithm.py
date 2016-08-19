@@ -1,6 +1,6 @@
 import unittest
 
-from dedop.conf import ConstantsFile, CharacterisationFile
+from dedop.conf import ConstantsFile, CharacterisationFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
@@ -23,6 +23,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                "inputs.txt"
 
     def initialise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile()
         self.cst = ConstantsFile(
             c_cst=input_data['c_cst'],
             pi_cst=input_data['pi_cst'],
@@ -37,7 +38,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
             pri_sar_pre_dat=input_data['pri_sar_pre_dat']
         )
-        self.surface_location_algorithm = SurfaceLocationAlgorithm(self.chd, self.cst)
+        self.surface_location_algorithm = SurfaceLocationAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_surface_location_algorithm_01(self):
         """

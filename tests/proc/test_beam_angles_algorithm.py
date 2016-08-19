@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms.beam_angles import BeamAnglesAlgorithm
@@ -22,6 +22,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
 
 
     def initialise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile()
         self.cst = ConstantsFile(
             c_cst=input_data['c_cst'],
             pi_cst=input_data['pi_cst']
@@ -32,7 +33,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
             pri_sar_chd=input_data['pri_sar_pre_dat']
         )
-        self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst)
+        self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_beam_angles_algorithm_01(self):
         """

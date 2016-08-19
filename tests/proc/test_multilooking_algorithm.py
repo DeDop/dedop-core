@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms import MultilookingAlgorithm
 from tests.testing import TestDataLoader
@@ -20,6 +20,11 @@ class MultilookingAlgorithmTests(unittest.TestCase):
                   "multilooking_algorithm_02/expected/expected.txt"
 
     def initialise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile(
+            zp_fact_range_cnf=input_data['zp_fact_range_cnf'],
+            flag_avoid_zeros_in_multilooking=input_data['flag_avoid_zeros_in_multilooking'],
+            N_looks_stack_cnf=input_data['n_looks_stack_cnf']
+        )
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst']
         )
@@ -28,7 +33,7 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             N_samples_sar_chd=input_data['n_samples_sar_chd']
         )
         self.multilooking_algorithm =\
-            MultilookingAlgorithm(self.chd, self.cst)
+            MultilookingAlgorithm(self.chd, self.cst, self.cnf)
 
     def zero_float_assertion(self, expected, actual, tol=1e-4):
         if expected == 0:

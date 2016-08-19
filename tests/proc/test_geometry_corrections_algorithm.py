@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import GeometryCorrectionsAlgorithm
@@ -37,6 +37,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
                   "expected/expected.txt"
 
     def initialize_algorithm(self, input_data):
+        self.cnf = ConfigurationFile()
         self.cst = ConstantsFile(
             c_cst=input_data['c_cst'],
             pi_cst=input_data['pi_cst']
@@ -49,7 +50,7 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
             wv_length_ku_chd=input_data['wv_length_ku']
         )
         self.geometry_corrections_algorithm =\
-            GeometryCorrectionsAlgorithm(self.chd, self.cst)
+            GeometryCorrectionsAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_geometry_corrections_algorithm_01(self):
         """

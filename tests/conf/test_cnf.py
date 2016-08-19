@@ -202,7 +202,7 @@ class TestCNF(unittest.TestCase):
 
     def test_N_looks_stack(self):
         expected = self.expected["N_looks_stack_cnf"]
-        actual = self.actual.N_looks_stack
+        actual = self.actual.n_looks_stack
 
         self.assertAlmostEqual(expected, actual)
 

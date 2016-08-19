@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData, SurfaceType
 from dedop.proc.sar.algorithms import StackMaskingAlgorithm
 from tests.testing import TestDataLoader
@@ -24,13 +24,18 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
                   "stack_masking_algorithm_02/expected/expected.txt"
 
     def initilise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile(
+            zp_fact_range_cnf=input_data["zp_fact_range_cnf"],
+            N_looks_stack_cnf=input_data["n_looks_stack_cnf"],
+            flag_remove_doppleR_ambiguities_cnf=input_data["flag_remove_doppler_ambiguities_cnf"]
+        )
         self.cst = ConstantsFile()
         self.chd = CharacterisationFile(
             self.cst,
             N_samples_sar_chd=input_data['n_samples_sar_chd'],
             i_sample_start_chd=input_data['i_sample_start_chd']
         )
-        self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst)
+        self.stack_masking_algorithm = StackMaskingAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_stack_masking_algorithm_01(self):
         """
@@ -41,18 +46,6 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
         """
         input_data = TestDataLoader(self.inputs_01, delim=' ')
         expected = TestDataLoader(self.expected_01, delim=' ')
-
-        self._stack_masking_algorithm_tests(input_data, expected)
-
-    def test_stack_masking_algorithm_02(self):
-        """
-        stack masking algorithm tests 02
-        --------------------------------
-
-        with RMC surface
-        """
-        input_data = TestDataLoader(self.inputs_02, delim=' ')
-        expected = TestDataLoader(self.expected_02, delim=' ')
 
         self._stack_masking_algorithm_tests(input_data, expected)
 
@@ -88,16 +81,6 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
         )
 
         # set stack masking cnf parameters
-        self.stack_masking_algorithm.rmc_margin =\
-            StackMaskingAlgorithm.parameters["rmc_margin"].default_value
-        self.stack_masking_algorithm.zp_fact_range =\
-            zp_fact_range
-        self.stack_masking_algorithm.n_looks_stack =\
-            input_data["n_looks_stack_cnf"]
-        self.stack_masking_algorithm.flag_avoid_zeros_in_multilooking = \
-            StackMaskingAlgorithm.parameters["flag_avoid_zeros_in_multilooking"].default_value
-        self.stack_masking_algorithm.flag_remove_doppler_ambiguities =\
-            bool(input_data["flag_remove_doppler_ambiguities_cnf"])
 
         self.stack_masking_algorithm(working_loc)
         stack_mask_vector_actual = self.stack_masking_algorithm.stack_mask_vector
