@@ -24,12 +24,6 @@ class TestCHD(unittest.TestCase):
         cst = ConstantsFile(self._constants)
         self.actual = CharacterisationFile(cst, self._input_file)
 
-    def test_pitch_bias(self):
-        expected = self.expected["pitch_bias_chd"]
-        actual = self.actual.pitch_bias
-
-        self.assertAlmostEqual(expected, actual)
-
     def test_N_samples_sar(self):
         expected = self.expected["N_samples_sar_chd"]
         actual = self.actual.n_samples_sar
@@ -48,27 +42,9 @@ class TestCHD(unittest.TestCase):
 
         self.assertAlmostEqual(expected, actual)
 
-    def test_onboard_proc_sar_raw(self):
-        expected = self.expected["onboard_proc_sar_raw_chd"]
-        actual = self.actual.onboard_proc_sar_raw
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_yaw_bias(self):
-        expected = self.expected["yaw_bias_chd"]
-        actual = self.actual.yaw_bias
-
-        self.assertAlmostEqual(expected, actual)
-
     def test_freq_ku(self):
         expected = self.expected["freq_ku_chd"]
         actual = self.actual.freq_ku
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_rfu_rx_gain_ground(self):
-        expected = self.expected["rfu_rx_gain_ground_chd"]
-        actual = self.actual.rfu_rx_gain_ground
 
         self.assertAlmostEqual(expected, actual)
 
@@ -96,50 +72,8 @@ class TestCHD(unittest.TestCase):
 
         self.assertAlmostEqual(expected, actual)
 
-    def test_cai_cor2_unit_conv(self):
-        expected = self.expected["cai_cor2_unit_conv_chd"]
-        actual = self.actual.cai_cor2_unit_conv
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_h0_cor2_unit_conv(self):
-        expected = self.expected["h0_cor2_unit_conv_chd"]
-        actual = self.actual.h0_cor2_unit_conv
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_i_sample_start(self):
-        expected = self.expected["i_sample_start_chd"]
-        actual = self.actual.i_sample_start
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_fai_shift_number(self):
-        expected = self.expected["fai_shift_number_chd"]
-        actual = self.actual.fai_shift_number
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_T0_h0_unit_conv(self):
-        expected = self.expected["T0_h0_unit_conv_chd"]
-        actual = self.actual.t0_h0_unit_conv
-
-        self.assertAlmostEqual(expected, actual)
-
     def test_antenna_gain_ku(self):
         expected = self.expected["antenna_gain_ku_chd"]
         actual = self.actual.antenna_gain_ku
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_roll_bias(self):
-        expected = self.expected["roll_bias_chd"]
-        actual = self.actual.roll_bias
-
-        self.assertAlmostEqual(expected, actual)
-
-    def test_pri_T0_unit_conv(self):
-        expected = self.expected["pri_T0_unit_conv_chd"]
-        actual = self.actual.pri_T0_unit_conv
 
         self.assertAlmostEqual(expected, actual)
