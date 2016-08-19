@@ -733,6 +733,21 @@ class SurfaceData:
         del self['stack_mask_vector']
 
     @property
+    def stack_mask(self) -> np.ndarray:
+        """
+        the stack_mask property
+        """
+        return self['stack_mask']
+
+    @stack_mask.setter
+    def stack_mask(self, value: np.ndarray) -> None:
+        self['stack_mask'] = value
+
+    @stack_mask.deleter
+    def stack_mask(self) -> None:
+        del self['stack_mask']
+
+    @property
     def doppler_angles_surf(self) -> np.ndarray:
         """
         the doppler_angles_surf property

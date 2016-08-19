@@ -18,6 +18,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         )
         self.beams_masked = self.apply_mask(working_surface_location, stack_mask)
         self.stack_mask_vector = stack_mask_vector
+        self.stack_mask = stack_mask
 
     def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         geom_mask = np.zeros(
@@ -96,7 +97,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
         if self.flag_avoid_zeros_in_multilooking:
             invalid = (stack_mask == 0)
-            print(invalid)
+            invalid =\
+                invalid[:working_surface_location.data_stack_size, :]
             output[invalid] = np.NaN
 
         return output

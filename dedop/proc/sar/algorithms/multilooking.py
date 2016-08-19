@@ -21,6 +21,11 @@ def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
     """attempt to fit a gaussian curve to the data descibed
     by x & y. Returns the fitting parameters"""
 
+    # skip infinite values
+    valid = np.isfinite(x) * np.isfinite(y)
+    x = x[valid]
+    y = y[valid]
+
     with warnings.catch_warnings():
         warnings.simplefilter("error", OptimizeWarning)
 
@@ -104,7 +109,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         # only the central 249 beams will be used in the gaussian fitting:
         # the doppler-central beam, 124 to the left and 124 to the right.
         last_right_beam = min(min_beam_angle_complementary_index + 124,
-                              working_surface_location.data_stack_size - 1)
+                              max_stack - 1)
         first_left_beam = max(min_beam_angle_complementary_index - 124,
                               0)
         # the parameters and arrays for the gaussian fitting

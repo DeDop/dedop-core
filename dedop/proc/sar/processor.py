@@ -342,6 +342,8 @@ class L1BProcessor(BaseProcessor):
             self.stack_masking_algorithm.beams_masked
         working_surface_location.stack_mask_vector = \
             self.stack_masking_algorithm.stack_mask_vector
+        working_surface_location.stack_mask =\
+            self.stack_masking_algorithm.stack_mask
 
     def multilooking(self, working_surface_location: SurfaceData) -> None:
         """

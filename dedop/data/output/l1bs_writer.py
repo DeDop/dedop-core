@@ -88,7 +88,7 @@ class L1BSWriter(NetCDFWriter):
             L1BSDimensions.echo_sample_ind, chd.n_samples_sar * cnf.zp_fact_range
         )
         self.define_dimension(
-            L1BSDimensions.max_multi_stack_ind, 300 # todo: get this value from cnf
+            L1BSDimensions.max_multi_stack_ind, cnf.n_looks_stack
         )
         # create variable definitions
         self.define_variable(
