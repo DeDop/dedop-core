@@ -72,7 +72,7 @@ class ConfigurationFile(AuxiliaryFileReader):
         AuxiliaryParameter("flag_surface_weighting_cnf")
     right_avoided_samples_cal2 = \
         AuxiliaryParameter("right_avoided_samples_cal2_cnf")
-    N_looks_stack = \
+    n_looks_stack = \
         AuxiliaryParameter("N_looks_stack_cnf")
     flag_cal1_source = \
         AuxiliaryParameter("flag_cal1_source_cnf")
