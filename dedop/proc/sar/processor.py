@@ -68,23 +68,23 @@ class L1BProcessor(BaseProcessor):
 
         # initialise the algorithm classes
         self.surface_locations_algorithm = \
-            SurfaceLocationAlgorithm(self.chd, self.cst)
+            SurfaceLocationAlgorithm(self.chd, self.cst, self.cnf)
         self.beam_angles_algorithm = \
-            BeamAnglesAlgorithm(self.chd, self.cst)
+            BeamAnglesAlgorithm(self.chd, self.cst, self.cnf)
         self.azimuth_processing_algorithm = \
-            AzimuthProcessingAlgorithm(self.chd, self.cst)
+            AzimuthProcessingAlgorithm(self.chd, self.cst, self.cnf)
         self.stack_gathering_algorithm = \
-            StackGatheringAlgorithm(self.chd, self.cst)
+            StackGatheringAlgorithm(self.chd, self.cst, self.cnf)
         self.geometry_corrections_algorithm = \
-            GeometryCorrectionsAlgorithm(self.chd, self.cst)
+            GeometryCorrectionsAlgorithm(self.chd, self.cst, self.cnf)
         self.range_compression_algorithm = \
-            RangeCompressionAlgorithm(self.chd, self.cst)
+            RangeCompressionAlgorithm(self.chd, self.cst, self.cnf)
         self.stack_masking_algorithm = \
-            StackMaskingAlgorithm(self.chd, self.cst)
+            StackMaskingAlgorithm(self.chd, self.cst, self.cnf)
         self.multilooking_algorithm = \
-            MultilookingAlgorithm(self.chd, self.cst)
+            MultilookingAlgorithm(self.chd, self.cst, self.cnf)
         self.sigma_zero_algorithm = \
-            Sigma0ScalingFactorAlgorithm(self.chd, self.cst)
+            Sigma0ScalingFactorAlgorithm(self.chd, self.cst, self.cnf)
 
     def process(self, l1a_file: str, monitor: Monitor = Monitor.NULL) -> int:
         """

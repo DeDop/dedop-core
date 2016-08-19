@@ -5,8 +5,8 @@ import warnings
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
-from ....conf import CharacterisationFile, ConstantsFile
-from ....util.parameter import Parameter
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+from dedop.util.parameter import Parameter
 
 
 def gauss(x, a, b, c):
@@ -37,8 +37,8 @@ def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
 @Parameter("flag_avoid_zeros_in_multilooking", default_value=False)
 class MultilookingAlgorithm(BaseAlgorithm):
 
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
-        super().__init__(chd, cst)
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        super().__init__(chd, cst, cnf)
 
         self.start_look_angle = 0
         self.stop_look_angle = 0

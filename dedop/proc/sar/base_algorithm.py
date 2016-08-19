@@ -1,9 +1,9 @@
 from ...util.parameter import Parameter
-from ...conf import ConstantsFile, CharacterisationFile
+from ...conf import ConstantsFile, CharacterisationFile, ConfigurationFile
 
 
-@Parameter('n_looks_stack', default_value=300, data_type=int)
-@Parameter('zp_fact_range', default_value=2, data_type=int)
+@Parameter('n_looks_stack', data_type=int)
+@Parameter('zp_fact_range', data_type=int)
 class BaseAlgorithm:
     """
     The base class from which all other algorithm classes
@@ -13,7 +13,7 @@ class BaseAlgorithm:
     parameters which are shared between multiple
     algorithms.
     """
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
         """
         Initialise the BaseAlgorithm instance
 
@@ -22,6 +22,7 @@ class BaseAlgorithm:
         """
         self.chd = chd
         self.cst = cst
+        self.cnf = cnf
 
         self.collect_parameter_values()
 
@@ -34,5 +35,7 @@ class BaseAlgorithm:
         for param in Parameter.get_parameters(self.__class__).values():
             if param.value_set is not None:
                 setattr(self, param.name, param.value_set)
+            elif hasattr(self.cnf, param.name):
+                setattr(self, param.name, getattr(self.cnf, param.name))
             else:
                 setattr(self, param.name, param.default_value)

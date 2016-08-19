@@ -4,7 +4,7 @@ from math import cos
 from enum import Enum
 
 from ..base_algorithm import BaseAlgorithm
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import L1AProcessingData
 
 
@@ -31,8 +31,8 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
     """
     class for performing the Azimuth Processing Algorithm
     """
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile) -> None:
-        super().__init__(chd, cst)
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        super().__init__(chd, cst, cnf)
 
         self.beams_focused = None
 

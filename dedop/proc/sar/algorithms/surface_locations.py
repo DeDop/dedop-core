@@ -5,10 +5,10 @@ from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
 from dedop.proc.functions import *
 from dedop.proc.geo import lla2ecef, ecef2lla, normalize
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
         self.first_surf = False
         self.new_surf = False
 
@@ -38,7 +38,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.prev_utc_secs = 0
         self.curr_day_length = 0
 
-        super().__init__(chd, cst)
+        super().__init__(chd, cst, cnf)
 
     def get_surface(self) -> Dict[str, float]:
         return {

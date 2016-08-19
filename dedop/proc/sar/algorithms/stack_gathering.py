@@ -1,6 +1,6 @@
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceType, SurfaceData
 from dedop.model import PacketPid
 from ..base_algorithm import BaseAlgorithm
@@ -8,8 +8,8 @@ from ..base_algorithm import BaseAlgorithm
 
 class StackGatheringAlgorithm(BaseAlgorithm):
 
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
-        super().__init__(chd, cst)
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        super().__init__(chd, cst, cnf)
 
         self.data_stack_size = 0
         self.surface_type = SurfaceType.surface_null
