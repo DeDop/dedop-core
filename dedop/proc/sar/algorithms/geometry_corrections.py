@@ -6,9 +6,9 @@ from ..base_algorithm import BaseAlgorithm
 from dedop.util.parameter import Parameter
 
 
-@Parameter("doppler_correction_enabled", default_value=True)
-@Parameter("slant_range_correction_enabled", default_value=True)
-@Parameter("win_delay_misalignment_correction_enabled", default_value=0)
+@Parameter("flag_doppler_range_correction", default_value=True)
+@Parameter("flag_slant_range_correction", default_value=True)
+@Parameter("flag_window_delay_alignment_method", default_value=0)
 class GeometryCorrectionsAlgorithm(BaseAlgorithm):
     """
     Algorithm class for the Geometry Corrections Algorithm
@@ -55,7 +55,7 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
 
     def compute_doppler_correction(self, working_surface_location: SurfaceData,
                                    stack_burst: L1AProcessingData, beam_index: int, wv_length_ku: float) -> None:
-        if not self.doppler_correction_enabled:
+        if not self.flag_doppler_range_correction:
             return
 
         doppler_range = \
@@ -78,7 +78,7 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
         self.range_sat_surf[beam_index] = norm(
             isp_orbit_surf_ground_vector
         )
-        if not self.slant_range_correction_enabled:
+        if not self.flag_slant_range_correction:
             return
 
         slant_range_correction_time =\

@@ -53,7 +53,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         )
 
         if weighting == AzimuthWeighting.enabled:
-            # TODO: perform azimuth weighting
+            # TODO: perform azimuth windowing
             pass
 
         # azimuth processing with surface dependant method
