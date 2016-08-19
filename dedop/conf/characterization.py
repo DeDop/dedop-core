@@ -43,7 +43,8 @@ class CharacterisationFile(AuxiliaryFileReader):
         param_type=float)
     antenna_gain_ku = AuxiliaryParameter(
         "antenna_gain_ku_chd",
-        """antenna gain for ku-band""")
+        """antenna gain for ku-band""",
+        param_type=float)
 
     uso_freq_nom = AuxiliaryParameter(
         "uso_freq_nom_chd",
