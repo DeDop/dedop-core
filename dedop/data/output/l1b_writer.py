@@ -761,7 +761,7 @@ class L1BWriter(NetCDFWriter):
             cor2_applied_l1b_echo_sar_ku=closest_burst.cor2_applied,
             dh0_l1b_echo_sar_ku=closest_burst.dh0,
             agccode_ku_l1b_echo_sar_ku=closest_burst.agccode_ku,
-            surf_type_l1b_echo_sar_ku= surface_location_data.surface_type.value,
+            surf_type_l1b_echo_sar_ku=surface_location_data.surface_type.value,
             range_ku_l1b_echo_sar_ku=closest_burst.range_ku,
             uso_cor_l1b_echo_sar_ku=None,  # surface_location_data.cnf.flag_cal1_corrections,
             int_path_cor_ku_l1b_echo_sar_ku=closest_burst.int_path_cor_ku,
