@@ -2,6 +2,7 @@ import unittest
 from tests.testing import TestDataLoader
 import netCDF4 as nc
 from math import degrees
+import numpy as np
 
 from dedop.data.output import L1BWriter
 from dedop.model.surface_data import SurfaceData, SurfaceType
@@ -96,7 +97,7 @@ class L1BTests(unittest.TestCase):
                 stack_skewness=data["stack_skewness"][i],
                 stack_kurtosis=data["stack_kurtosis"][i],
                 beam_angles_surf=data["beam_angles_surf"],
-                waveform_multilooked=data["waveform_multilooked"],
+                waveform_multilooked=data["waveform_multilooked"][i] * np.ones((256)),
                 closest_burst_index=0,
                 stack_bursts=[burst]
             )
@@ -144,12 +145,6 @@ class L1BTests(unittest.TestCase):
                 degrees(expected["lon_l1b_echo_sar_ku"][i]),
                 places=6
             )
-
-            # TODO: there's an offset going on here
-            # self.assertAlmostEqual(
-            #     output.variables["alt_l1b_echo_sar_ku"][i],
-            #     expected["alt_l1b_echo_sar_ku"][i]
-            # )
             self.assertAlmostEqual(
                 output.variables["orb_alt_rate_l1b_echo_sar_ku"][i],
                 expected["orb_alt_rate_l1b_echo_sar_ku"][i]
@@ -207,7 +202,8 @@ class L1BTests(unittest.TestCase):
             #     output.variables["beam_ang_l1b_echo_sar_ku"][i],
             #     expected["beam_ang_l1b_echo_sar_ku"][i]
             # )
-            # self.assertAlmostEqual(
-            #     output.variables["i2q2_meas_ku_l1b_echo_sar_ku"][i],
-            #     expected["i2q2_meas_ku_l1b_echo_sar_ku"][i]
-            # )
+            for j in range(256):
+                self.assertAlmostEqual(
+                    output.variables["i2q2_meas_ku_l1b_echo_sar_ku"][i, j],
+                    expected["i2q2_meas_ku_l1b_echo_sar_ku"][i]
+                )

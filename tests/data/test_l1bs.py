@@ -40,9 +40,14 @@ class L1BTests(unittest.TestCase):
         writer.open()
 
         # write outputs
-        stack_data = np.reshape(
-            data["beams_range_compr_iq"], (data["count"], 240, 256)
+        # stack_data = np.reshape(
+        #     data["beams_range_compr_iq"], (data["count"], 240, 256)
+        # )
+        a, b = np.meshgrid(
+            np.linspace(-10, 10, 256),
+            np.linspace(-5, 5, 240)
         )
+        stack_data = a + 1j * b
 
         for i in range(data["count"]):
             burst = L1AProcessingData(
@@ -80,7 +85,7 @@ class L1BTests(unittest.TestCase):
                 stack_std=data["stack_std"][i],
                 stack_skewness=data["stack_skewness"][i],
                 stack_kurtosis=data["stack_kurtosis"][i],
-                beams_range_compr_iq=stack_data[i, :, :],
+                beams_range_compr_iq=stack_data * data["beams_range_compr_iq"][i],
                 closest_burst_index=0,
                 stack_bursts=[burst]
             )
@@ -124,10 +129,6 @@ class L1BTests(unittest.TestCase):
                 output.variables["surf_type_l1bs_echo_sar_ku"][i],
                 expected["surf_type_l1bs_echo_sar_ku"][i]
             )
-            # self.assertAlmostEqual(
-            #     output.variables["alt_l1bs_echo_sar_ku"][i],
-            #     expected["alt_l1bs_echo_sar_ku"][i]
-            # )
             self.assertAlmostEqual(
                 output.variables["orb_alt_rate_l1bs_echo_sar_ku"][i],
                 expected["orb_alt_rate_l1bs_echo_sar_ku"][i]
@@ -168,18 +169,6 @@ class L1BTests(unittest.TestCase):
                 output.variables["meas_z_pos_l1bs_echo_sar_ku"][i],
                 expected["meas_z_pos_l1bs_echo_sar_ku"][i]
             )
-            # self.assertAlmostEqual(
-            #     output.variables["roll_sat_pointing_l1bs_echo_sar_ku"][i],
-            #     expected["roll_sat_pointing_l1bs_echo_sar_ku"][i]
-            # )
-            # self.assertAlmostEqual(
-            #     output.variables["pitch_sat_pointing_l1bs_echo_sar_ku"][i],
-            #     expected["pitch_sat_pointing_l1bs_echo_sar_ku"][i]
-            # )
-            # self.assertAlmostEqual(
-            #     output.variables["yaw_sat_pointing_l1bs_echo_sar_ku"][i],
-            #     expected["yaw_sat_pointing_l1bs_echo_sar_ku"][i]
-            # )
             self.assertAlmostEqual(
                 output.variables["stdev_stack_l1bs_echo_sar_ku"][i],
                 expected["stdev_stack_l1bs_echo_sar_ku"][i]
@@ -192,15 +181,17 @@ class L1BTests(unittest.TestCase):
                 output.variables["kurt_stack_l1bs_echo_sar_ku"][i],
                 expected["kurt_stack_l1bs_echo_sar_ku"][i]
             )
-            # self.assertAlmostEqual(
-            #     output.variables["i2q2_meas_ku_l1bs_echo_sar_ku"][i],
-            #     expected["i2q2_meas_ku_l1bs_echo_sar_ku"][i]
-            # )
-            # self.assertAlmostEqual(
-            #     output.variables["i_echoes_ku_l1bs_echo_sar_ku"][i],
-            #     expected["i_echoes_ku_l1bs_echo_sar_ku"][i]
-            # )
-            # self.assertAlmostEqual(
-            #     output.variables["q_echoes_ku_l1bs_echo_sar_ku"][i],
-            #     expected["q_echoes_ku_l1bs_echo_sar_ku"][i]
-            # )
+            for j in range(256):
+                self.assertAlmostEqual(
+                    output.variables["i2q2_meas_ku_l1bs_echo_sar_ku"][i, j],
+                    expected["i2q2_meas_ku_l1bs_echo_sar_ku"][i]
+                )
+                for k in range(240):
+                    self.assertAlmostEqual(
+                        output.variables["i_echoes_ku_l1bs_echo_sar_ku"][i, j, k],
+                        expected["i_echoes_ku_l1bs_echo_sar_ku"][i] * stack_data[k, j].real
+                    )
+                    self.assertAlmostEqual(
+                        output.variables["q_echoes_ku_l1bs_echo_sar_ku"][i, j, k],
+                        expected["q_echoes_ku_l1bs_echo_sar_ku"][i] * stack_data[j, k].imag
+                    )
