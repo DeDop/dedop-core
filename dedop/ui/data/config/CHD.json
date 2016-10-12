@@ -53,9 +53,14 @@
     "description": "Factor to convert from USO frequency to altimeter frequency",
     "units": null
   },
-  "pri_sar_chd": {
-    "value": 5.610000296769016e-05,
-    "description": "pulse repetition interval",
+  "prf_sar_chd": {
+    "value": 17825.311,
+    "description": "pulse repetition frequency",
     "units": "s"
+  },
+  "brf_sar_chd": {
+    "value": 78.53069,
+    "description": "burst repetition frequency",
+    "units": "Hz"
   }
 }
