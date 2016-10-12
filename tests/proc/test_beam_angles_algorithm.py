@@ -31,7 +31,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             self.cst,
             freq_ku_chd=input_data['freq_ku_chd'],
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
-            pri_sar_chd=input_data['pri_sar_pre_dat']
+            prf_sar_chd=1./input_data['pri_sar_pre_dat']
         )
         self.beam_angles_algorithm = BeamAnglesAlgorithm(self.chd, self.cst, self.cnf)
 
