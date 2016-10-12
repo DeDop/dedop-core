@@ -86,6 +86,9 @@ class L1BProcessor(BaseProcessor):
         self.sigma_zero_algorithm = \
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst, self.cnf)
 
+        # set threshold for gaps
+        self.gap_threshold = self.chd.bri_sar * 1.5
+
     def process(self, l1a_file: str, monitor: Monitor = Monitor.NULL) -> int:
         """
         runs the L1B Processing Chain
@@ -149,17 +152,36 @@ class L1BProcessor(BaseProcessor):
         if self.l1bs_file is not None:
             self.l1bs_file.open()
 
+        prev_time = None
+        gap_processing = False
+        gap_resume = False
+
         while running:
             monitor.progress(1)
 
-            input_packet = next(self.l1a_file)
+            # if a gap has been encountered, then the current lists of input packets & surfaces need to be processed
+            #  before reading another input.
+            if not gap_processing:
 
-            if input_packet is not None:
+                # if this is the first iteration after finishing a gap, then the next packet has already been read
+                #  so another one should not be retrieved from the L1A
+                if not gap_resume:
+                    input_packet = next(self.l1a_file)
 
-                new_surface = self.surface_locations(input_packet)
+                if input_packet is not None:
 
-                if new_surface is None:
-                    continue
+                    # check if there is a gap (or if this is the first packet & prev_time has not been set)
+                    if prev_time is None or input_packet.time_sar_ku - prev_time < self.gap_threshold:
+
+                        prev_time = input_packet.time_sar_ku
+                        new_surface = self.surface_locations(input_packet, force_new=gap_resume)
+
+                        if new_surface is None:
+                            continue
+
+                    else:
+                        print("found gap!")
+                        gap_processing = True
 
             if surface_processing or len(self.surf_locs) >= self.min_surfs:
                 surface_processing = True
@@ -194,8 +216,12 @@ class L1BProcessor(BaseProcessor):
                 self.clear_old_records(working_loc)
 
             if not self.surf_locs:
-                running = False
-                status = None
+                if gap_processing:
+                    gap_processing = False
+                    print("gap finished")
+                else:
+                    running = False
+                    status = None
 
             if monitor.is_cancelled():
                 running = False
@@ -219,14 +245,14 @@ class L1BProcessor(BaseProcessor):
 
         self.surf_locs.pop(0)
 
-    def surface_locations(self, packet: L1AProcessingData) -> Optional[SurfaceData]:
+    def surface_locations(self, packet: L1AProcessingData, force_new: bool=False) -> Optional[SurfaceData]:
         """
-        call the surface locations algortihm and return the new location
+        call the surface locations algorithm and return the new location
         (if one is found)
         """
         self.source_isps.append(packet)
 
-        if self.surface_locations_algorithm(self.surf_locs, self.source_isps):
+        if self.surface_locations_algorithm(self.surf_locs, self.source_isps, force_new=force_new):
             loc = self.surface_locations_algorithm.get_surface()
             return self.new_surface(loc)
         return None

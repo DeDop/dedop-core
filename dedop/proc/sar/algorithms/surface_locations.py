@@ -106,8 +106,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
-    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
-        if not locs:
+    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData], force_new: bool=False) -> bool:
+        if (not locs) or force_new:
             self.first_surf = True
             self.new_surf = True
 

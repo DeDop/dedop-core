@@ -54,10 +54,22 @@ class CharacterisationFile(AuxiliaryFileReader):
         "alt_freq_multiplier_chd",
         param_type=float)
 
-    pri_sar = AuxiliaryParameter(
-        "pri_sar_chd",
-        """pulse repetition interval""",
+    prf_sar = AuxiliaryParameter(
+        "prf_sar_chd",
+        """pulse repetition frequency""",
         param_type=float)
+    brf_sar = AuxiliaryParameter(
+        "brf_sar_chd",
+        """burst repetition frequency""",
+        param_type=float)
+
+    @property
+    def pri_sar(self):
+        return 1. / self.prf_sar
+
+    @property
+    def bri_sar(self):
+        return 1. / self.brf_sar
 
     @property
     def chirp_slope_ku(self) -> float:
