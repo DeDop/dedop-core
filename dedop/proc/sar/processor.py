@@ -156,8 +156,13 @@ class L1BProcessor(BaseProcessor):
         gap_processing = False
         gap_resume = False
 
+        index = -1
+
         while running:
-            monitor.progress(1)
+            index += 1
+
+            print(len(self.surf_locs), len(self.source_isps), index, '\t\t\t\t', end='\r')
+            # monitor.progress(1)
 
             # if a gap has been encountered, then the current lists of input packets & surfaces need to be processed
             #  before reading another input.
@@ -180,10 +185,11 @@ class L1BProcessor(BaseProcessor):
                             continue
 
                     else:
-                        print("found gap!")
+                        print("found gap!", index)
                         gap_processing = True
+                        prev_time = None
 
-            if surface_processing or len(self.surf_locs) >= self.min_surfs:
+            if surface_processing or len(self.surf_locs) >= self.min_surfs or gap_processing:
                 surface_processing = True
 
                 working_loc = self.surf_locs[0]
@@ -202,6 +208,9 @@ class L1BProcessor(BaseProcessor):
 
                 self.stack_gathering(working_loc)
 
+                if working_loc.data_stack_size < (self.cnf.n_looks_stack // 2):
+                    continue
+
                 self.geometry_corrections(working_loc)
                 self.range_compression(working_loc)
                 self.stack_masking(working_loc)
@@ -218,7 +227,8 @@ class L1BProcessor(BaseProcessor):
             if not self.surf_locs:
                 if gap_processing:
                     gap_processing = False
-                    print("gap finished")
+                    surface_processing = False
+                    print("gap finished", index)
                 else:
                     running = False
                     status = None
