@@ -60,6 +60,7 @@ class L1BProcessor(BaseProcessor):
         # init. surface & packets arrays
         self._surfaces = []
         self._packets = []
+        self.surfaces_count = 0
         self.min_surfs = 64 + 16  # 16 elem. margin
 
         # set defaults for beam angles
@@ -118,6 +119,7 @@ class L1BProcessor(BaseProcessor):
         status = -1
         self.beam_angles_list_size_prev = -1
         self.beam_angles_trend_prev = -1
+        self.surfaces_count = 0
 
         # find base name of input file
         l1a_base, _ = os.path.splitext(os.path.basename(l1a_file))
@@ -155,18 +157,21 @@ class L1BProcessor(BaseProcessor):
         prev_time = None
         gap_processing = False
         gap_resume = False
+        sub_monitor = None
 
         index = -1
 
         while running:
             index += 1
 
-            print(len(self.surf_locs), len(self.source_isps), index, '\t\t\t\t', end='\r')
-            # monitor.progress(1)
+            if monitor.is_cancelled():
+                running = False
 
             # if a gap has been encountered, then the current lists of input packets & surfaces need to be processed
             #  before reading another input.
             if not gap_processing:
+
+                monitor.progress(1)
 
                 # if this is the first iteration after finishing a gap, then the next packet has already been read
                 #  so another one should not be retrieved from the L1A
@@ -181,13 +186,19 @@ class L1BProcessor(BaseProcessor):
                         prev_time = input_packet.time_sar_ku
                         new_surface = self.surface_locations(input_packet, force_new=gap_resume)
 
+                        gap_resume = False
+
                         if new_surface is None:
                             continue
 
                     else:
-                        print("found gap!", index)
                         gap_processing = True
                         prev_time = None
+                        sub_monitor = monitor.child(1)
+                        sub_monitor.start("processing gap", len(self.surf_locs))
+
+            elif sub_monitor is not None:
+                sub_monitor.progress(1, len(self.surf_locs))
 
             if surface_processing or len(self.surf_locs) >= self.min_surfs or gap_processing:
                 surface_processing = True
@@ -208,33 +219,36 @@ class L1BProcessor(BaseProcessor):
 
                 self.stack_gathering(working_loc)
 
+                # if the current surface doesn't have enough contributing bursts, then
+                #  it should not be written to the outputs - and so the rest of the processing
+                #  is not needed
                 if working_loc.data_stack_size < (self.cnf.n_looks_stack // 2):
-                    continue
+                    del self.surf_locs[0] # remove this surface from the queue
+                else:
+                    self.geometry_corrections(working_loc)
+                    self.range_compression(working_loc)
+                    self.stack_masking(working_loc)
+                    self.multilooking(working_loc)
+                    self.sigma_zero_scaling(working_loc)
 
-                self.geometry_corrections(working_loc)
-                self.range_compression(working_loc)
-                self.stack_masking(working_loc)
-                self.multilooking(working_loc)
-                self.sigma_zero_scaling(working_loc)
+                    if self.l1b_file is not None:
+                        self.l1b_file.write_record(working_loc)
+                    if self.l1bs_file is not None:
+                        self.l1bs_file.write_record(working_loc)
 
-                if self.l1b_file is not None:
-                    self.l1b_file.write_record(working_loc)
-                if self.l1bs_file is not None:
-                    self.l1bs_file.write_record(working_loc)
-
-                self.clear_old_records(working_loc)
+                    self.clear_old_records(working_loc)
 
             if not self.surf_locs:
                 if gap_processing:
-                    gap_processing = False
-                    surface_processing = False
-                    print("gap finished", index)
+                    # all the remaining surfaces & bursts before the gap have been processed
+                    gap_processing = False # end gap mode
+                    gap_resume = True # next iteration will be the first after the gap
+                    surface_processing = False # require min. number of surfaces again
+                    sub_monitor.done()
                 else:
+                    # the end of the input has been reached
                     running = False
                     status = None
-
-            if monitor.is_cancelled():
-                running = False
 
         # close output files
         self.l1b_file.close()
@@ -412,14 +426,10 @@ class L1BProcessor(BaseProcessor):
         create a new surface location object from the provided data,
         and add it to the list of surface locations
         """
-        if not self.surf_locs:
-            index = 0
-        else:
-            index = self.surf_locs[-1].surface_counter + 1
-
         surf = SurfaceData(
-            self.cst, self.chd, index, **loc_data
+            self.cst, self.chd, self.surfaces_count, **loc_data
         )
+        self.surfaces_count += 1
         self.add_surface(surf)
         surf.compute_surf_sat_vector()
         surf.compute_angular_azimuth_beam_resolution(
