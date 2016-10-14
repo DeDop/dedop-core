@@ -1,8 +1,10 @@
 import unittest
 import os
+import numpy as np
 
 from dedop.conf import CharacterisationFile, ConstantsFile
 from tests.testing import TestDataLoader
+
 
 class TestCHD(unittest.TestCase):
     _root = os.path.join(os.path.dirname(__file__), '..', '..')
@@ -75,5 +77,23 @@ class TestCHD(unittest.TestCase):
     def test_antenna_gain_ku(self):
         expected = self.expected["antenna_gain_ku_chd"]
         actual = self.actual.antenna_gain_ku
+
+        self.assertAlmostEqual(expected, actual)
+
+    def test_antenna_weights(self):
+        expected = self.expected["antenna_weights_chd"]
+        actual = self.actual.antenna_weights
+
+        self.assertTrue(np.allclose(expected, actual))
+
+    def test_antenna_angles(self):
+        expected = self.expected["antenna_angles_chd"]
+        actual = self.actual.antenna_angles
+
+        self.assertTrue(np.allclose(expected, actual))
+
+    def test_antenna_angles_spacing(self):
+        expected = self.expected["antenna_angles_spacing_chd"]
+        actual = self.actual.antenna_angles_spacing
 
         self.assertAlmostEqual(expected, actual)
