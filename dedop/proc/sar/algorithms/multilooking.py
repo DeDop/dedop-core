@@ -69,13 +69,11 @@ class MultilookingAlgorithm(BaseAlgorithm):
         """
         # TODO: FLAG SURFACE WEIGHTING
 
-        # TODO: FLAG ANTENNA WEIGHTING (...or in azimuth processing?)
-
-        # TODO: GAPS
-
         self.compute_stack_characterization_params(working_surface_location)
 
-        self.compute_multilooking(working_surface_location)
+        beams_masked_aw = self.apply_antenna_weighting(working_surface_location, self.cnf.flag_antenna_weighting)
+
+        self.compute_multilooking(working_surface_location, beams_masked_aw)
 
     def compute_stack_characterization_params(self, working_surface_location: SurfaceData) -> None:
         """
@@ -161,11 +159,59 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.stack_skewness /= n_samples_fitting
         self.stack_kurtosis = self.stack_kurtosis / n_samples_fitting - 3
 
-    def compute_multilooking(self, working_surface_location: SurfaceData) -> None:
+    def apply_antenna_weighting(self, surface: SurfaceData, apply_weighting: bool = True) -> np.ndarray:
+        """
+        apply the antenna wieghting ( if apply_weighting is True )
         """
 
-        :param working_surface_location:
-        :return:
+        if apply_weighting:
+            # create array for weighted beams
+            beams_masked_aw = np.empty(surface.beams_masked.shape, dtype=np.float64)
+            for beam_index in range(surface.data_stack_size):
+                # get the angle at the current index
+                pointing_angle = surface.pointing_angles_surf[beam_index]
+                # get the weighting for the current angle
+                antenna_weight = self._select_weight_from_angle(pointing_angle)
+                # apply the weighting to the current beam
+                beams_masked_aw[beam_index, :] = surface.beams_masked[beam_index, :] * antenna_weight
+        else:
+            # just return the un-weighted beams
+            beams_masked_aw = surface.beams_masked
+
+        return beams_masked_aw
+
+    def _select_weight_from_angle(self, angle: float) -> float:
+        """
+        returns the weighting for the provided pointing angle
+        """
+        weights_size = len(self.chd.antenna_weights)
+
+        if angle <= self.chd.antenna_angles[0]:
+            # angle is at or below min. angle
+            selected_weight = self.chd.antenna_weights[0]
+        elif angle >= self.chd.antenna_angles[-1]:
+            # angle is at or above max. angle
+            selected_weight = self.chd.antenna_weights[-1]
+        else:
+            # angle is within range - interpolate value
+            weight_index = (angle - self.chd.antenna_angles[0]) / self.chd.antenna_angles_spacing
+
+            index_left = int(weight_index)
+            index_right = index_left + 1
+
+            weight_left = self.chd.antenna_weights[index_left]
+            weight_right = self.chd.antenna_weights[index_right]
+
+            # get proportion between the left & right weights
+            alpha = (angle - weight_left) / self.chd.antenna_angles_spacing
+            # interpolate value
+            selected_weight = weight_left + alpha * (weight_right - weight_left)
+
+        return selected_weight
+
+    def compute_multilooking(self, surface: SurfaceData, weighted_beams: np.ndarray) -> None:
+        """
+        apply the multi-looking
         """
         start_beam_index = None
         stop_beam_index = None
@@ -181,10 +227,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (n_samples_max,), dtype=int
         )
 
-        max_stack = min(self.n_looks_stack, working_surface_location.data_stack_size)
+        max_stack = min(self.n_looks_stack, surface.data_stack_size)
         for beam_index in range(max_stack):
 
-            if working_surface_location.stack_mask_vector[beam_index] != 0:
+            if surface.stack_mask_vector[beam_index] != 0:
 
                 self.n_beams_multilooking += 1
 
@@ -196,34 +242,35 @@ class MultilookingAlgorithm(BaseAlgorithm):
                 continue
 
             for sample_index in range(self.chd.n_samples_sar * self.zp_fact_range):
-                if self.flag_avoid_zeros_in_multilooking:
-                    if working_surface_location.stack_mask[beam_index, sample_index] == 0:
-                        continue
-                self.waveform_multilooked[sample_index] += working_surface_location.beams_masked[beam_index, sample_index]
+                # if this sample is masked, and avoid_zeroes is set, then skip to next sample
+                if self.flag_avoid_zeros_in_multilooking and\
+                   surface.stack_mask[beam_index, sample_index] == 0:
+                    continue
+                self.waveform_multilooked[sample_index] += weighted_beams[beam_index, sample_index]
                 self.sample_counter[sample_index] += 1
 
-        self.waveform_multilooked /= self.sample_counter# / self.waveform_multilooked
+        self.waveform_multilooked /= self.sample_counter
 
         self.n_beams_start_stop = stop_beam_index - start_beam_index + 1
 
         self.start_look_angle =\
-            working_surface_location.look_angles_surf[start_beam_index]
+            surface.look_angles_surf[start_beam_index]
         self.stop_look_angle =\
-            working_surface_location.look_angles_surf[stop_beam_index]
+            surface.look_angles_surf[stop_beam_index]
 
         self.start_doppler_angle = \
-            working_surface_location.doppler_angles_surf[start_beam_index]
+            surface.doppler_angles_surf[start_beam_index]
         self.stop_doppler_angle = \
-            working_surface_location.doppler_angles_surf[stop_beam_index]
+            surface.doppler_angles_surf[stop_beam_index]
 
         self.start_pointing_angle = \
-            working_surface_location.pointing_angles_surf[start_beam_index]
+            surface.pointing_angles_surf[start_beam_index]
         self.stop_pointing_angle = \
-            working_surface_location.pointing_angles_surf[stop_beam_index]
+            surface.pointing_angles_surf[stop_beam_index]
 
         self.stack_mask_vector_start_stop = np.zeros(
             (self.n_looks_stack,),
-            dtype=working_surface_location.stack_mask_vector.dtype
+            dtype=surface.stack_mask_vector.dtype
         )
         self.stack_mask_vector_start_stop[:self.n_beams_start_stop] =\
-            working_surface_location.stack_mask_vector[start_beam_index:stop_beam_index+1]
+            surface.stack_mask_vector[start_beam_index:stop_beam_index+1]
