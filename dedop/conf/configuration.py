@@ -62,7 +62,8 @@ class ConfigurationFile(AuxiliaryFileReader):
     flag_surface_weighting = \
         AuxiliaryParameter("flag_surface_weighting_cnf")
     flag_antenna_weighting = \
-        AuxiliaryParameter("flag_antenna_weighting_cnf")
+        AuxiliaryParameter("flag_antenna_weighting_cnf",
+                           param_type=float)
 
     # generic
     zp_fact_range = \

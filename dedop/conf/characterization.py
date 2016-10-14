@@ -63,6 +63,21 @@ class CharacterisationFile(AuxiliaryFileReader):
         """burst repetition frequency""",
         param_type=float)
 
+    antenna_weights = AuxiliaryParameterArray(
+        "antenna_weights_chd",
+        """array of antenna weights""",
+        param_type=np.float64, shape=(250,)
+    )
+    antenna_angles = AuxiliaryParameterArray(
+        "antenna_angles_chd",
+        """array of antenna angles""",
+        param_type=np.float64, shape=(250,)
+    )
+    antenna_angles_spacing = AuxiliaryParameter(
+        "antenna_angles_spacing_chd",
+        """spacing between antenna angles""",
+        param_type=float)
+
     @property
     def pri_sar(self):
         return 1. / self.prf_sar

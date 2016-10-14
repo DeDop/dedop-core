@@ -1,5 +1,5 @@
 from .auxiliary_errors import *
-from .auxiliary_parameter import AuxiliaryParameter
+from .auxiliary_parameter import *
 
 import json
 from typing import Any, Sequence

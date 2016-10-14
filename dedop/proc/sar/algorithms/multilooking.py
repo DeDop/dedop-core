@@ -167,7 +167,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         if apply_weighting:
             # create array for weighted beams
             beams_masked_aw = np.empty(surface.beams_masked.shape, dtype=np.float64)
-            for beam_index in range(surface.data_stack_size):
+            for beam_index in range(min(surface.data_stack_size, self.cnf.n_looks_stack)):
                 # get the angle at the current index
                 pointing_angle = surface.pointing_angles_surf[beam_index]
                 # get the weighting for the current angle
