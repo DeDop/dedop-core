@@ -17,7 +17,7 @@ class TestCHD(unittest.TestCase):
         _folder, "chd.json"
     )
     _constants = os.path.join(
-        _root, "test_data", "common", "cst.json"
+        _root, "test_data", "common", "CST.json"
     )
 
     def setUp(self):
@@ -97,3 +97,16 @@ class TestCHD(unittest.TestCase):
         actual = self.actual.antenna_angles_spacing
 
         self.assertAlmostEqual(expected, actual)
+
+    def test_brf(self):
+        expected = self.expected["brf_chd"]
+        actual = self.actual.brf_sar
+
+        self.assertAlmostEqual(expected, actual)
+
+    def test_prf(self):
+        expected = self.expected["prf_chd"]
+        actual = self.actual.prf_sar
+
+        self.assertAlmostEqual(expected, actual)
+

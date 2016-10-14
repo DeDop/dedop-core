@@ -23,7 +23,8 @@ class MultilookingAlgorithmTests(unittest.TestCase):
         self.cnf = ConfigurationFile(
             zp_fact_range_cnf=input_data['zp_fact_range_cnf'],
             flag_avoid_zeros_in_multilooking=input_data['flag_avoid_zeros_in_multilooking'],
-            N_looks_stack_cnf=input_data['n_looks_stack_cnf']
+            N_looks_stack_cnf=input_data['n_looks_stack_cnf'],
+            flag_antenna_weighting_cnf=False  # TODO: add tests for this ( will need to add field to input file )
         )
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst']

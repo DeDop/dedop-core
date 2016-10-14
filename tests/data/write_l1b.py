@@ -9,7 +9,7 @@ from tests.testing import TestDataLoader
 class L1BWriterTests(unittest.TestCase):
     _output_name = 'l1b.nc'
 
-    chd_file = "test_data/common/chd.json"
+    chd_file = "test_data/common/CHD.json"
     expected_01 = "test_data/data/l1bs_output/" \
                   "l1bs_output_01/expected/expected.txt"
 

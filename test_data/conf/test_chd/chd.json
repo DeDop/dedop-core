@@ -417,5 +417,11 @@
 	},
 	"antenna_angles_spacing_chd": {
 		"value": 0.00016
-	}
+	},
+    "brf_sar_chd": {
+        "value": 2.564673
+    },
+    "prf_sar_chd": {
+        "value": 1.42755658
+    }
 }
