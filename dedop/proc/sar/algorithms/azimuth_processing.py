@@ -13,7 +13,6 @@ class AzimuthProcessingMethods(Enum):
     Enum for azimuth processing method selection flag
     """
 
-    dynamic = 0
     approximate = 1
     exact = 2
 
@@ -56,13 +55,8 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             # TODO: perform azimuth windowing
             pass
 
-        # azimuth processing with surface dependant method
-        if method == AzimuthProcessingMethods.dynamic:
-            # TODO: change method based on surface
-            self.compute_approximate_method(packet, wavelength_ku)
-
         # azimuth processing with approx. method
-        elif method == AzimuthProcessingMethods.approximate:
+        if method == AzimuthProcessingMethods.approximate:
             self.compute_approximate_method(packet, wavelength_ku)
         # azimuth processing with exact method
         elif method == AzimuthProcessingMethods.exact:
