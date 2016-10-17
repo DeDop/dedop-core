@@ -13,8 +13,8 @@ class AzimuthProcessingMethods(Enum):
     Enum for azimuth processing method selection flag
     """
 
-    approximate = 1
-    exact = 2
+    approximate = 0
+    exact = 1
 
 
 class AzimuthWeighting(Enum):
