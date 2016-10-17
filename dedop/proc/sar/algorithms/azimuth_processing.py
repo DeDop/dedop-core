@@ -36,7 +36,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         self.beams_focused = None
 
     def __call__(self, packet: L1AProcessingData, wavelength_ku: float,
-                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.dynamic,
+                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.approximate,
                  weighting: AzimuthWeighting=AzimuthWeighting.disabled) -> None:
         """
         Executes the azimuth processing algorithm
