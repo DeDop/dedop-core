@@ -34,8 +34,8 @@ class L1BTests(unittest.TestCase):
 
         # create L1BWriter
         writer = L1BWriter(
-            self.chd, self.cnf,
-            self._output_fname
+            chd=self.chd, cnf=self.cnf, cst=self.cst,
+            filename=self._output_fname
         )
         writer.open()
 
@@ -65,7 +65,6 @@ class L1BTests(unittest.TestCase):
                 cor2_applied=data["cor2_applied"][i],
                 dh0=data["dh0"][i],
                 agccode_ku=data["agccode_ku"][i],
-                range_ku=data["range_ku"][i],
                 int_path_cor_ku=data["int_path_cor_ku"][i],
                 agc_ku=data["agc_ku"][i],
                 sig0_cal_ku=data["sig0_cal_ku"][i]
@@ -99,7 +98,8 @@ class L1BTests(unittest.TestCase):
                 beam_angles_surf=data["beam_angles_surf"],
                 waveform_multilooked=data["waveform_multilooked"][i] * np.ones((256)),
                 closest_burst_index=0,
-                stack_bursts=[burst]
+                stack_bursts=[burst],
+                win_delay_surf=data["win_delay_surf"][i]
             )
             writer.write_record(surf)
 

@@ -37,8 +37,8 @@ class L1BTests(unittest.TestCase):
 
         # create L1BSWriter
         writer = L1BSWriter(
-            self.chd, self.cnf,
-            self._output_fname
+            chd=self.chd, cnf=self.cnf, cst=self.cst,
+            filename=self._output_fname
         )
         writer.open()
 
@@ -57,7 +57,6 @@ class L1BTests(unittest.TestCase):
                 cst=self.cst,
                 chd=self.chd,
                 seq_num=i,
-                range_ku=data["range_ku"][i]
             )
             surf = SurfaceData(
                 chd=self.chd,
@@ -89,6 +88,7 @@ class L1BTests(unittest.TestCase):
                 stack_skewness=data["stack_skewness"][i],
                 stack_kurtosis=data["stack_kurtosis"][i],
                 beams_range_compr_iq=stack_data * data["beams_range_compr_iq"][i],
+                win_delay_surf=data["win_delay_surf"][i],
                 closest_burst_index=0,
                 stack_bursts=[burst]
             )

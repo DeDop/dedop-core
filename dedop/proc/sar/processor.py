@@ -143,9 +143,9 @@ class L1BProcessor(BaseProcessor):
         l1b_path = os.path.join(self.out_path, l1b_name)
 
         # create output file objects
-        self.l1b_file = L1BWriter(filename=l1b_path, chd=self.chd, cnf=self.cnf)
+        self.l1b_file = L1BWriter(filename=l1b_path, chd=self.chd, cnf=self.cnf, cst=self.cst)
         if not self.skip_l1bs:
-            self.l1bs_file = L1BSWriter(filename=l1bs_path, chd=self.chd, cnf=self.cnf)
+            self.l1bs_file = L1BSWriter(filename=l1bs_path, chd=self.chd, cnf=self.cnf, cst=self.cst)
         else:
             self.l1bs_file = None
 

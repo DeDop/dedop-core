@@ -5,7 +5,7 @@ from math import degrees
 
 from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
-from dedop.conf import CharacterisationFile, ConfigurationFile
+from dedop.conf import CharacterisationFile, ConfigurationFile, ConstantsFile
 
 
 class L1BSDimensions(Enum):
@@ -72,13 +72,16 @@ class L1BSWriter(NetCDFWriter):
     """
     class for writing L1B netCDF files
     """
-    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, filename: str):
+    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, cst: ConstantsFile, filename: str):
         """
         Initialize the L1BWriter Instance
 
         :param filename: the path of the output file to write
         """
         super().__init__(filename)
+        self.chd = chd
+        self.cnf = cnf
+        self.cst = cst
 
         # create dimension definitions
         self.define_dimension(
@@ -631,7 +634,7 @@ class L1BSWriter(NetCDFWriter):
             roll_sral_mispointing_l1bs_echo_sar_ku=None,
             pitch_sral_mispointing_l1bs_echo_sar_ku=None,
             yaw_sral_mispointing_l1bs_echo_sar_ku=None,
-            range_ku_l1bs_echo_sar_ku=closest_burst.range_ku,
+            range_ku_l1bs_echo_sar_ku=surface_location_data.win_delay_surf * self.cst.c / 2.,
             int_path_cor_ku_l1bs_echo_sar_ku=None,
             # uso_cor_l1bs_echo_sar_ku=surface_location_data.closest_burst.uso_drift,
             cog_cor_l1bs_echo_sar_ku=None,

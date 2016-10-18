@@ -1,5 +1,5 @@
 count 10
-range_ku 0 1 2 3 4 5 6 7 8 9
+win_delay_surf 0 1 2 3 4 5 6 7 8 9
 time_surf 0 1 2 3 4 5 6 7 8 9
 lat_surf 0 1 2 3 4 5 6 7 8 9
 lon_surf 0 1 2 3 4 5 6 7 8 9
