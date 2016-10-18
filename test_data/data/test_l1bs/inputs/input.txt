@@ -1,0 +1,25 @@
+count 10
+win_delay_surf 0 1 2 3 4 5 6 7 8 9
+time_surf 0 1 2 3 4 5 6 7 8 9
+lat_surf 0 1 2 3 4 5 6 7 8 9
+lon_surf 0 1 2 3 4 5 6 7 8 9
+surface_type 0 1 2 3 4 5 6 7 8 9
+alt_sat 0 1 2 3 4 5 6 7 8 9
+alt_rate_sat 0 1 2 3 4 5 6 7 8 9
+x_sat 0 1 2 3 4 5 6 7 8 9
+y_sat 0 1 2 3 4 5 6 7 8 9
+z_sat 0 1 2 3 4 5 6 7 8 9
+x_vel_sat 0 1 2 3 4 5 6 7 8 9
+y_vel_sat 0 1 2 3 4 5 6 7 8 9
+z_vel_sat 0 1 2 3 4 5 6 7 8 9
+x_surf 0 1 2 3 4 5 6 7 8 9
+y_surf 0 1 2 3 4 5 6 7 8 9
+z_surf 0 1 2 3 4 5 6 7 8 9
+roll_sat 0 1 2 3 4 5 6 7 8 9
+pitch_sat 0 1 2 3 4 5 6 7 8 9
+yaw_sat 0 1 2 3 4 5 6 7 8 9
+waveform_multilooked 0 1 2 3 4 5 6 7 8 9
+stack_std 0 1 2 3 4 5 6 7 8 9
+stack_skewness 0 1 2 3 4 5 6 7 8 9
+stack_kurtosis 0 1 2 3 4 5 6 7 8 9
+beams_range_compr_iq 0.1 0.4 0.2 0.3 0.8 0.7 0.5 0.9 0.6 1.0

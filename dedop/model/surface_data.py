@@ -658,6 +658,21 @@ class SurfaceData:
         del self["beams_range_compr"]
 
     @property
+    def beams_range_compr_iq(self) -> np.ndarray:
+        """
+        the range-compressed beams array
+        """
+        return self["beams_range_compr_iq"]
+
+    @beams_range_compr_iq.setter
+    def beams_range_compr_iq(self, value: np.ndarray) -> None:
+        self["beams_range_compr_iq"] = value
+
+    @beams_range_compr_iq.deleter
+    def beams_range_compr_iq(self) -> None:
+        del self["beams_range_compr_iq"]
+
+    @property
     def beams_masked(self) -> np.ndarray:
         """
         the result of the masking applied to the beams
@@ -716,6 +731,21 @@ class SurfaceData:
     @stack_mask_vector.deleter
     def stack_mask_vector(self) -> None:
         del self['stack_mask_vector']
+
+    @property
+    def stack_mask(self) -> np.ndarray:
+        """
+        the stack_mask property
+        """
+        return self['stack_mask']
+
+    @stack_mask.setter
+    def stack_mask(self, value: np.ndarray) -> None:
+        self['stack_mask'] = value
+
+    @stack_mask.deleter
+    def stack_mask(self) -> None:
+        del self['stack_mask']
 
     @property
     def doppler_angles_surf(self) -> np.ndarray:

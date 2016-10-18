@@ -4,7 +4,7 @@ from math import cos
 from enum import Enum
 
 from ..base_algorithm import BaseAlgorithm
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import L1AProcessingData
 
 
@@ -13,9 +13,8 @@ class AzimuthProcessingMethods(Enum):
     Enum for azimuth processing method selection flag
     """
 
-    dynamic = 0
-    approximate = 1
-    exact = 2
+    approximate = 0
+    exact = 1
 
 
 class AzimuthWeighting(Enum):
@@ -31,13 +30,13 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
     """
     class for performing the Azimuth Processing Algorithm
     """
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile) -> None:
-        super().__init__(chd, cst)
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        super().__init__(chd, cst, cnf)
 
         self.beams_focused = None
 
     def __call__(self, packet: L1AProcessingData, wavelength_ku: float,
-                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.dynamic,
+                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.approximate,
                  weighting: AzimuthWeighting=AzimuthWeighting.disabled) -> None:
         """
         Executes the azimuth processing algorithm
@@ -53,16 +52,11 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         )
 
         if weighting == AzimuthWeighting.enabled:
-            # TODO: perform azimuth weighting
+            # TODO: perform azimuth windowing
             pass
 
-        # azimuth processing with surface dependant method
-        if method == AzimuthProcessingMethods.dynamic:
-            # TODO: change method based on surface
-            self.compute_approximate_method(packet, wavelength_ku)
-
         # azimuth processing with approx. method
-        elif method == AzimuthProcessingMethods.approximate:
+        if method == AzimuthProcessingMethods.approximate:
             self.compute_approximate_method(packet, wavelength_ku)
         # azimuth processing with exact method
         elif method == AzimuthProcessingMethods.exact:

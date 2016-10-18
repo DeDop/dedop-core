@@ -1,42 +1,40 @@
-from .constants_reader import *
+from .auxiliary_file_reader import *
 
 
-class ConstantsFile(ConstantsFileReader):
+class ConstantsFile(AuxiliaryFileReader):
     """
     class for loading the Constants file
     """
+    _id = "CST"
 
-    @property
-    def c(self) -> float:
-        """Speed of light"""
-        return self["c_cst"]
+    c = AuxiliaryParameter(
+        "c_cst",
+        "speed of light",
+        param_type=float)
+    pi = AuxiliaryParameter(
+        "pi_cst",
+        "Pi number",
+        param_type=float)
+    semi_major_axis = AuxiliaryParameter(
+        "semi_major_axis_cst",
+        "semi-major axis of WGS84 ellipsoid",
+        param_type=float)
+    semi_minor_axis = AuxiliaryParameter(
+        "semi_minor_axis_cst",
+        "semi-minor axis of WGS84 ellipsoid",
+        param_type=float)
+    earth_radius = AuxiliaryParameter(
+        "earth_radius_cst",
+        "radius of the earth",
+        param_type=float)
+    flat_coeff = AuxiliaryParameter(
+        "flat_coeff_cst",
+        "flattening coefficient of the WGS84 ellipsoid",
+        param_type=float)
+    sec_in_day = AuxiliaryParameter(
+        "sec_in_day_cst",
+        "number of seconds in a day",
+        param_type=float)
 
-    @property
-    def semi_major_axis(self) -> float:
-        """Semi-major axis of WGS84 ellipsoid"""
-        return self["semi_major_axis_cst"]
-
-    @property
-    def earth_radius(self) -> float:
-        """Earth Radius"""
-        return self["earth_radius_cst"]
-
-    @property
-    def sec_in_day(self) -> float:
-        """Number of seconds in a day"""
-        return self["sec_in_day_cst"]
-
-    @property
-    def pi(self) -> float:
-        """Pi number"""
-        return self["pi_cst"]
-
-    @property
-    def flat_coeff(self) -> float:
-        """Flattening coefficient of WGS84 ellipsoid"""
-        return self["flat_coeff_cst"]
-
-    @property
-    def semi_minor_axis(self) -> float:
-        """Semi-minor axis of WGS84 ellipsoid"""
-        return self["semi_minor_axis_cst"]
+    def __init__(self, filename: str=None, **kwargs: Any):
+        super().__init__(filename, **kwargs)

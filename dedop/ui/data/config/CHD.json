@@ -1,0 +1,66 @@
+{
+  "mean_sat_alt_chd": {
+    "value": 1347000.0,
+    "description": "Mean satellite altitude",
+    "units": "m"
+  },
+
+  "N_samples_sar_chd": {
+    "value": 128,
+    "description": "Number of samples per each SAR pulse",
+    "units": null
+  },
+  "N_ku_pulses_burst_chd": {
+    "value": 64,
+    "description": "Number of Ku-band pulses per burst",
+    "units": null
+  },
+
+  "freq_ku_chd": {
+    "value":13575000000.0,
+    "description": "Emitted frequency in Ku-band",
+    "units": "Hz"
+  },
+  "pulse_length_chd": {
+    "value": 0.000032,
+    "description": "Pulse length",
+    "units": "s"
+  },
+  "bw_ku_chd": {
+    "value": 320000000.0,
+	"description": "Ku-band bandwidth",
+	"units": "Hz"
+  },
+
+  "power_tx_ant_ku_chd": {
+    "value": 7.5,
+    "description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
+    "units": "dB"
+  },
+  "antenna_gain_ku_chd": {
+    "value": 42.1,
+    "description": "Antenna gain for Ku-band",
+    "units": "dB"
+  },
+
+  "uso_freq_nom_chd": {
+    "value": 10e6,
+    "description": "USO nominal frequency",
+    "units": "Hz"
+  },
+  "alt_freq_multiplier_chd": {
+    "value": 32,
+    "description": "Factor to convert from USO frequency to altimeter frequency",
+    "units": null
+  },
+  "prf_sar_chd": {
+    "value": 17825.311,
+    "description": "pulse repetition frequency",
+    "units": "s"
+  },
+  "brf_sar_chd": {
+    "value": 78.53069,
+    "description": "burst repetition frequency",
+    "units": "Hz"
+  }
+}

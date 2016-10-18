@@ -1,2 +1,3 @@
-__version__ = '0.1.0'
+# see http://semver.org/
+__version__ = '0.5.2rc01'
 

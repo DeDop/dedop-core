@@ -91,7 +91,12 @@ class L1ADataset(InputDataset):
         dset = nc.Dataset(filename)
         super().__init__(dset, cst=cst, chd=chd, cnf=cnf)
 
+        self._file_path = filename
         self._last_index = 0
+
+    @property
+    def file_path(self) -> str:
+        return self._file_path
 
     @property
     def max_index(self) -> int:
@@ -117,7 +122,7 @@ class L1ADataset(InputDataset):
             days=self.UTC_day_l1a_echo_sar_ku[index],
             seconds=self.UTC_sec_l1a_echo_sar_ku[index],
             inst_id_sar_isp=0,
-            pri_sar_pre_dat=0,
+            pri_sar_pre_dat=self.chd.pri_sar,
             ambiguity_order_sar=0,
             burst_sar_ku=self.burst_count_prod_l1a_echo_sar_ku[index],
             lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
@@ -186,4 +191,6 @@ class L1ADataset(InputDataset):
         """
         return the requested variable from the netCDF file
         """
-        return self._dset.variables[variable_name]
+        var = self._dset.variables[variable_name]
+        var.set_auto_mask(False)
+        return var

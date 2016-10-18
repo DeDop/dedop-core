@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms import RangeCompressionAlgorithm
 from tests.testing import TestDataLoader
@@ -18,11 +18,15 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
                   "expected/expected.txt"
 
     def initialise_algotithm(self, input_data):
+        self.cnf = ConfigurationFile(
+            zp_fact_range_cnf=input_data["zp_fact_range_cnf"],
+            N_looks_stack_cnf=input_data["n_looks_stack_cnf"]
+        )
         self.cst = ConstantsFile()
         self.chd = CharacterisationFile(
             self.cst, N_samples_sar_chd=input_data['n_samples_sar_chd']
         )
-        self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst)
+        self.range_compression_algorithm = RangeCompressionAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_range_compression_algorithm_01(self):
         """
@@ -48,11 +52,6 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
             data_stack_size=stack_size,
             beams_geo_corr=beams_geo_corr
         )
-        self.range_compression_algorithm.zp_fact_range =\
-            input_data["zp_fact_range_cnf"]
-        self.range_compression_algorithm.n_looks_stack =\
-            input_data["n_looks_stack_cnf"]
-
         self.range_compression_algorithm(working_loc)
 
         beam_range_compr = self.range_compression_algorithm.beam_range_compr

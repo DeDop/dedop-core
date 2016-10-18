@@ -3,14 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-
-.. warning::  This page will soon provide the user manual for the DeDop software. As you can see,
-   it isn't even a skeleton yet, but we'll make it a useful place once we've released the first version
-   of the DeDop processing software.
+|DeDop3| Tool Documentation
+===========================
 
 
-|DeDop3| User Manual
-====================
+.. warning::  This user manual for the DeDop software is still under construction while we are developing towards the first release of the DeDop software.
+
 
 Contents:
 
@@ -18,11 +16,14 @@ Contents:
    :maxdepth: 2
 
    introduction
+   quickstart
+   installation
+   manual
    api_reference
 
 
 
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`

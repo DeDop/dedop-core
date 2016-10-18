@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model import SurfaceData, SurfaceType
 from dedop.model.l1a_processing_data import L1AProcessingData, PacketPid
 from dedop.proc.sar.algorithms import StackGatheringAlgorithm
@@ -16,6 +16,9 @@ class StackGatheringAlgorithmTests(unittest.TestCase):
                   "expected/expected.txt"
 
     def initialise_algorithm(self, input_data):
+        self.cnf = ConfigurationFile(
+            N_looks_stack_cnf=input_data["n_looks_stack_cnf"]
+        )
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst']
         )
@@ -24,7 +27,7 @@ class StackGatheringAlgorithmTests(unittest.TestCase):
             N_samples_sar_chd=input_data['n_samples_sar_chd'],
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd']
         )
-        self.stacking_algorithm = StackGatheringAlgorithm(self.chd, self.cst)
+        self.stacking_algorithm = StackGatheringAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_stacking_algorithm_01(self):
         """
@@ -36,9 +39,6 @@ class StackGatheringAlgorithmTests(unittest.TestCase):
         expected = TestDataLoader(self.expected_01, delim=' ')
 
         self.initialise_algorithm(input_data)
-
-        self.stacking_algorithm.n_looks_stack =\
-            input_data["n_looks_stack_cnf"]
 
         all_stack_size = input_data["all_stack_size"]
 

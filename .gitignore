@@ -58,7 +58,14 @@ target/
 
 # PyCharm
 .idea
+/*.iml
 
-*.nc
+/*.nc
+/data
 
-dedop-config.py
+/dedop-config.py
+/installer/dedop-installer.exe
+/installer/*/python
+/installer/win/version.txt
+
+*-checkpoint.ipynb

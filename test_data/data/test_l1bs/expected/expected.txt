@@ -1,0 +1,25 @@
+count 10
+time_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+UTC_day_l1bs_echo_sar_ku  0 0 0 0 0 0 0 0 0 0
+UTC_sec_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+lat_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+lon_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+surf_type_l1bs_echo_sar_ku  0 1 2 0 1 2 0 1 2 0
+alt_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+orb_alt_rate_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+x_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+y_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+z_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+x_vel_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+y_vel_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+z_vel_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+meas_x_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+meas_y_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+meas_z_pos_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+range_ku_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+i2q2_meas_ku_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+stdev_stack_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+skew_stack_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+kurt_stack_l1bs_echo_sar_ku  0 1 2 3 4 5 6 7 8 9
+i_echoes_ku_l1bs_echo_sar_ku  0.1 0.4 0.2 0.3 0.8 0.7 0.5 0.9 0.6 1.0
+q_echoes_ku_l1bs_echo_sar_ku  0.1 0.4 0.2 0.3 0.8 0.7 0.5 0.9 0.6 1.0

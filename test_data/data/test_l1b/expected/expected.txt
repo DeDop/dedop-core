@@ -1,0 +1,24 @@
+count 10
+time_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+UTC_day_l1b_echo_sar_ku 0 0 0 0 0 0 0 0 0 0
+UTC_sec_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+GPS_time_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+lat_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+lon_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+alt_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+orb_alt_rate_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+x_pos_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+z_pos_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+y_pos_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+x_vel_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+y_vel_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+z_vel_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+surf_type_l1b_echo_sar_ku 0 0 0 0 1 1 1 1 1 1
+scale_factor_ku_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+nb_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+stdev_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+skew_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+kurt_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+beam_ang_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+i2q2_meas_ku_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+range_ku_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9

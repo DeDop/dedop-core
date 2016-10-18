@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
@@ -27,6 +27,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         create cst and chd objects from input_data, then initialise
         an instance of the azimuth processing algorithm
         """
+        self.cnf = ConfigurationFile()
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst']
         )
@@ -35,7 +36,7 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             N_ku_pulses_burst_chd=input_data['n_ku_pulses_burst_chd'],
             N_samples_sar_chd=input_data['n_samples_sar_chd']
         )
-        self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm(self.chd, self.cst)
+        self.azimuth_processing_algorithm = AzimuthProcessingAlgorithm(self.chd, self.cst, self.cnf)
 
     def test_azimuth_processing_algorithm_01(self):
         """

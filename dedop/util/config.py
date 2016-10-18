@@ -1,7 +1,7 @@
 import os.path
 
-_DEFAULT_CONFIG_FILE = '~/.dedop/config.py'
-_LOCAL_CONFIG_FILE = './dedop-config.py'
+DEFAULT_CONFIG_FILE = os.path.join('~', '.dedop', 'config.py')
+_LOCAL_CONFIG_FILE = 'dedop-config.py'
 
 _CONFIG = None
 
@@ -42,12 +42,18 @@ def get_config():
     if _CONFIG is None:
         _CONFIG = {}
 
-        default_config_file = os.path.expanduser(_DEFAULT_CONFIG_FILE)
+        default_config_file = os.path.expanduser(DEFAULT_CONFIG_FILE)
+        if not os.path.exists(default_config_file):
+            try:
+                write_default_config_file()
+            except (IOError, OSError) as error:
+                print('warning: failed to create %s: %s' % (default_config_file, str(error)))
+
         if os.path.isfile(default_config_file):
             try:
                 _CONFIG = read_python_config(default_config_file)
-            except Exception as e:
-                print('warning: failed to read %s: %s' % (default_config_file, str(e)))
+            except Exception as error:
+                print('warning: failed to read %s: %s' % (default_config_file, str(error)))
 
         local_config_file = os.path.expanduser(_LOCAL_CONFIG_FILE)
         if os.path.isfile(local_config_file):
@@ -70,10 +76,28 @@ def read_python_config(file):
 
     fp = open(file, 'r') if isinstance(file, str) else file
     try:
-        code = fp.read()
         config = {}
+        code = compile(fp.read(), file if isinstance(file, str) else '<NO FILE>', 'exec')
         exec(code, None, config)
         return config
     finally:
         if fp is not file:
             fp.close()
+
+
+def write_default_config_file() -> str:
+    default_config_file = os.path.expanduser(DEFAULT_CONFIG_FILE)
+    default_config_dir = os.path.dirname(default_config_file)
+    if default_config_dir and not os.path.exists(default_config_dir):
+        os.mkdir(default_config_dir)
+    with open(default_config_file, 'w') as fp:
+        import pkgutil
+        template_data = pkgutil.get_data('dedop.util', 'config-template.py')
+        text = template_data.decode("utf-8")
+        # TODO (forman, 20160727): copy text files so that '\n' is replaced by OS-specific line separator??
+        # from io import StringIO
+        # sio = StringIO(text)
+        # text = sio.readlines()
+        # sio.close()
+        fp.write(text)
+    return default_config_file

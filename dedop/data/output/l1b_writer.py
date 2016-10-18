@@ -1,10 +1,11 @@
 from enum import Enum
 
 import numpy as np
+from math import degrees
 
 from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
-from ...conf import CharacterisationFile, ConfigurationFile
+from ...conf import CharacterisationFile, ConfigurationFile, ConstantsFile
 
 
 class L1BDimensions(Enum):
@@ -79,7 +80,7 @@ class L1BWriter(NetCDFWriter):
     """
     class for writing L1B netCDF files
     """
-    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, filename: str):
+    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, cst: ConstantsFile, filename: str):
         """
         Initialize the L1BWriter Instance
 
@@ -88,6 +89,7 @@ class L1BWriter(NetCDFWriter):
         super().__init__(filename)
         self.chd = chd
         self.cnf = cnf
+        self.cst = cst
 
         # create dimension definitions
         self.define_dimension(
@@ -725,8 +727,8 @@ class L1BWriter(NetCDFWriter):
             isp_coarse_time_l1b_echo_sar_ku=closest_burst.isp_coarse_time,
             isp_fine_time_l1b_echo_sar_ku=closest_burst.isp_fine_time,
             sral_fine_time_l1b_echo_sar_ku=closest_burst.sral_fine_time,
-            lat_l1b_echo_sar_ku=surface_location_data.lat_surf,
-            lon_l1b_echo_sar_ku=surface_location_data.lon_surf,
+            lat_l1b_echo_sar_ku=degrees(surface_location_data.lat_surf),
+            lon_l1b_echo_sar_ku=degrees(surface_location_data.lon_surf),
             alt_l1b_echo_sar_ku=surface_location_data.alt_sat,
             orb_alt_rate_l1b_echo_sar_ku=surface_location_data.alt_rate_sat,
             flag_time_status_l1b_echo_sar_ku=closest_burst.flag_time_status,
@@ -760,8 +762,8 @@ class L1BWriter(NetCDFWriter):
             cor2_applied_l1b_echo_sar_ku=closest_burst.cor2_applied,
             dh0_l1b_echo_sar_ku=closest_burst.dh0,
             agccode_ku_l1b_echo_sar_ku=closest_burst.agccode_ku,
-            surf_type_l1b_echo_sar_ku= surface_location_data.surface_type.value,
-            range_ku_l1b_echo_sar_ku=closest_burst.range_ku,
+            surf_type_l1b_echo_sar_ku=surface_location_data.surface_type.value,
+            range_ku_l1b_echo_sar_ku=surface_location_data.win_delay_surf * self.cst.c / 2.,
             uso_cor_l1b_echo_sar_ku=None,  # surface_location_data.cnf.flag_cal1_corrections,
             int_path_cor_ku_l1b_echo_sar_ku=closest_burst.int_path_cor_ku,
             range_rate_l1b_echo_sar_ku=None,  # closest_burst.range_rate,

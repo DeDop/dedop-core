@@ -1,26 +1,37 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+from dedop.version import __version__
+
+packages = find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"])
 
 setup(
     name="dedop",
-    version="0.1.0",
+    version=__version__,
     description='Delay Doppler (Altimeter) Processor',
-    license='GPL 3',
+    license='GPLv3',
     author='DeDop Development Team',
-    packages=['dedop.model',
-              'dedop.proc',
-              'dedop.conf',
-              'dedop.util',
-              'dedop.cli'],
+    packages=packages,
+    package_data={
+        'dedop.ui.data.notebooks': ['*.ipynb'],
+        'dedop.ui.data.config': ['*.json'],
+    },
     entry_points={
         'console_scripts': [
-            'dedop = dedop.cli:main'
+            'dedop = dedop.ui.cli:main'
         ]
     },
-    install_requires=['numpy >= 1.9',
-                      'netCDF4 >= 1.1',
-                      'scipy',
-                      'typing'],
-    extras_require={'dedop.cli': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
+    # Requirements are not given here as we use a Conda environment
+    # ,
+    # install_requires=['typing',
+    #                   'numpy',
+    #                   'scipy',
+    #                   'netcdf4',
+    #                   'jupyter',
+    #                   'matplotlib',
+    #                   'ipywidgets',
+    #                   'bokeh',
+    #                   ],
+    # extras_require={'dedop.ui': ['matplotlib >= 1.4', 'basemap >= 1.0.7']},
     # author_email='',
     # maintainer='',
     # maintainer_email='',

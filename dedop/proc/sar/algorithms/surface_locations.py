@@ -4,11 +4,11 @@ from typing import Dict, Any, Sequence
 from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
 from dedop.proc.functions import *
-from dedop.proc.geo import lla2ecef, ecef2lla
-from dedop.conf import CharacterisationFile, ConstantsFile
+from dedop.proc.geo import lla2ecef, ecef2lla, normalize
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
-    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile):
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
         self.first_surf = False
         self.new_surf = False
 
@@ -38,7 +38,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.prev_utc_secs = 0
         self.curr_day_length = 0
 
-        super().__init__(chd, cst)
+        super().__init__(chd, cst, cnf)
 
     def get_surface(self) -> Dict[str, float]:
         return {
@@ -74,8 +74,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.time_surf = isp_record.time_sar_ku
 
-        self.lat_surf = isp_record.lat_sar_sat
-        self.lon_surf = isp_record.lon_sar_sat
+        self.lat_surf = normalize(isp_record.lat_sar_sat, self.cst)
+        self.lon_surf = normalize(isp_record.lon_sar_sat, self.cst)
         self.alt_surf = isp_record.alt_sar_sat -\
                         isp_record.win_delay_sar_ku * self.cst.c / 2.
 
@@ -106,8 +106,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
-    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
-        if not locs:
+    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData], force_new: bool=False) -> bool:
+        if (not locs) or force_new:
             self.first_surf = True
             self.new_surf = True
 

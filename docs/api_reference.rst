@@ -1,15 +1,21 @@
-======================
-|DeDop3| API Reference
-======================
+=============
+API Reference
+=============
+
+.. warning::  This chapter it generated from Python source code and not yet very useful. Also, the API described
+              here is not yet stable.
+
 
 Input / Output
 ==============
 
-.. automodule:: dedop.io.input
+.. automodule:: dedop.data.input
    :members:
 
+.. automodule:: dedop.data.input.l1a
+   :members:
 
-.. automodule:: dedop.io.output
+.. automodule:: dedop.data.output
    :members:
 
 
@@ -47,4 +53,4 @@ Utilities
 
 
 
-.. |DeDop3| replace:: DeDop\ :sup:`3`
+

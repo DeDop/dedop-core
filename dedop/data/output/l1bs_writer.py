@@ -1,10 +1,11 @@
 from enum import Enum
 
 import numpy as np
+from math import degrees
 
 from dedop.model import SurfaceData
 from .netcdf_writer import NetCDFWriter
-from dedop.conf import CharacterisationFile, ConfigurationFile
+from dedop.conf import CharacterisationFile, ConfigurationFile, ConstantsFile
 
 
 class L1BSDimensions(Enum):
@@ -71,13 +72,16 @@ class L1BSWriter(NetCDFWriter):
     """
     class for writing L1B netCDF files
     """
-    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, filename: str):
+    def __init__(self, chd: CharacterisationFile, cnf: ConfigurationFile, cst: ConstantsFile, filename: str):
         """
         Initialize the L1BWriter Instance
 
         :param filename: the path of the output file to write
         """
         super().__init__(filename)
+        self.chd = chd
+        self.cnf = cnf
+        self.cst = cst
 
         # create dimension definitions
         self.define_dimension(
@@ -87,10 +91,9 @@ class L1BSWriter(NetCDFWriter):
             L1BSDimensions.echo_sample_ind, chd.n_samples_sar * cnf.zp_fact_range
         )
         self.define_dimension(
-            L1BSDimensions.max_multi_stack_ind, None
+            L1BSDimensions.max_multi_stack_ind, cnf.n_looks_stack
         )
         # create variable definitions
-        # TODO: add long names
         self.define_variable(
             L1BSVariables.time_l1bs_echo_sar_ku,
             np.float64,
@@ -610,8 +613,8 @@ class L1BSWriter(NetCDFWriter):
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1bs_echo_sar_ku=utc_days,
             UTC_sec_l1bs_echo_sar_ku=utc_secs,
-            lat_l1bs_echo_sar_ku=surface_location_data.lat_surf,
-            lon_l1bs_echo_sar_ku=surface_location_data.lon_surf,
+            lat_l1bs_echo_sar_ku=degrees(surface_location_data.lat_surf),
+            lon_l1bs_echo_sar_ku=degrees(surface_location_data.lon_surf),
             surf_type_l1bs_echo_sar_ku=surface_location_data.surface_type.value,
             # records_count_l1bs_echo_sar_ku=None,
             alt_l1bs_echo_sar_ku=surface_location_data.alt_sat,
@@ -631,7 +634,7 @@ class L1BSWriter(NetCDFWriter):
             roll_sral_mispointing_l1bs_echo_sar_ku=None,
             pitch_sral_mispointing_l1bs_echo_sar_ku=None,
             yaw_sral_mispointing_l1bs_echo_sar_ku=None,
-            range_ku_l1bs_echo_sar_ku=closest_burst.range_ku,
+            range_ku_l1bs_echo_sar_ku=surface_location_data.win_delay_surf * self.cst.c / 2.,
             int_path_cor_ku_l1bs_echo_sar_ku=None,
             # uso_cor_l1bs_echo_sar_ku=surface_location_data.closest_burst.uso_drift,
             cog_cor_l1bs_echo_sar_ku=None,
@@ -651,8 +654,8 @@ class L1BSWriter(NetCDFWriter):
             beam_form_l1bs_echo_sar_ku=None,
             burst_start_ind_l1bs_echo_sar_ku=None,
             burst_stop_ind_l1bs_echo_sar_ku=None,
-            # i_echoes_ku_l1bs_echo_sar_ku=np.real(surface_location_data.waveform_multilooked),
-            # q_echoes_ku_l1bs_echo_sar_ku=np.imag(surface_location_data.waveform_multilooked)
+            i_echoes_ku_l1bs_echo_sar_ku=np.real(surface_location_data.beams_range_compr_iq),
+            q_echoes_ku_l1bs_echo_sar_ku=np.imag(surface_location_data.beams_range_compr_iq)
             # start_look_angle_stack_l1bs_echo_sar_ku=None,
             # stop_look_angle_stack_l1bs_echo_sar_ku=None,
             # start_beam_ang_stack_l1bs_echo_sar_ku=None,

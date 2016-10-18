@@ -1,0 +1,117 @@
+{
+  "flag_cal2_correction_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_uso_correction_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+  },
+  "flag_cal1_corrections_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the CAL1 corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_cal1_intraburst_corrections_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the CAL1 intraburst corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_surface_focusing_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the surface focussing: Deactivated (false); Activated (true)"
+  },
+  "surface_focusing_lat_cnf": {
+    "value": null,
+    "units": "Degrees North",
+    "description": "Location of the surface focusing target (latitude)"
+  },
+  "surface_focusing_lon_cnf": {
+    "value": null,
+    "units": "Degrees East",
+    "description": "Location of the surface focusing target (longitude)"
+  },
+  "surface_focusing_alt_cnf": {
+    "value": null,
+    "units": "m",
+    "description": "Location of the surface focusing target (altitude)"
+  },
+  "flag_azimuth_processing_method_cnf": {
+    "value": 0,
+    "units": "flag",
+    "description": "Flag that indicates the azimuth processing method: Surface dependant (0); Approximate (1); Exact (2)"
+  },
+  "flag_postphase_azimuth_processing_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that enables the post-phase azimuth processing: Deactivated (false); Activated (true)"
+  },
+  "flag_azimuth_windowing_method_cnf": {
+    "value": "none",
+    "units": "flag",
+    "description": "Flag the sets the azimuth windowing method: Disabled ('none'); Boxcar ('Boxcar'); Hamming ('Hamming'); Hanning ('Hanning')"
+  },
+  "flag_doppler_range_correction_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the Doppler range correction in the geometry corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_slant_range_correction_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the slant range correction in the geometry corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_window_delay_alignment_method_cnf": {
+    "value": 0,
+    "units": "flag",
+    "description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
+  },
+  "elevation_reference_value_cnf": {
+    "value": null,
+    "units": null,
+    "description": "NOT YET IMPLEMENTED"
+  },
+  "flag_stack_masking_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the Stack Masking algorithm: Activated (true); Deactivated (false)"
+  },
+  "flag_remove_doppler_ambiguities_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
+  },
+  "ambiguity_mask_margin_cnf": {
+    "value": null,
+    "units": null,
+    "description": "NOT YET IMPLEMENTED"
+  },
+  "flag_avoid_zeros_in_multilooking_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that indicates if the samples set to zero in the beams will be avoided when averaging in multi-looking: No (false); Yes (true)"
+  },
+  "flag_surface_weighting_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the surface weighting: Deactivated (false); Activated (true)"
+  },
+  "flag_antenna_weighting_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the antenna weighting: Deactivated (false); Activated (true)"
+  },
+  "zp_fact_range_cnf": {
+    "value": 2,
+    "units": null,
+    "description": "Zero padding factor used during range compression"
+  },
+  "N_looks_stack_cnf": {
+    "value": 240,
+    "units": null,
+    "description": "Number of looks in 1 stack"
+  }
+}

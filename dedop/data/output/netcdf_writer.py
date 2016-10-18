@@ -2,11 +2,15 @@ import netCDF4 as nc
 from collections import OrderedDict
 from enum import Enum
 import os
+import numpy as np
 
 from typing import Sequence, Tuple, Any, Union, Dict
 from abc import ABCMeta, abstractmethod
+from ...version import __version__
+
 
 Name = Union[str, Enum]
+
 
 class NetCDFWriter(metaclass=ABCMeta):
     """
@@ -88,18 +92,32 @@ class NetCDFWriter(metaclass=ABCMeta):
         :param filename: the path of the file to write to
         """
 
+        self._file_path = filename
+
         folder = os.path.dirname(filename)
         os.makedirs(folder, exist_ok=True)
 
-        self._root = nc.Dataset(
-            filename, 'w', format="NETCDF4"
-        )
+        self._root = nc.Dataset(filename, 'w', format="NETCDF4")
+
         self._dimensions = OrderedDict()
         self._variables = OrderedDict()
 
         self.dimensions = {}
         self.variables = {}
         self.output_index = 0
+
+        # TODO (forman, 20160715): add standard metadata attributes here
+        # see http://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#_attributes
+        # some of these attributes may be user-defined and put in a configuration file (CNF?):
+        # e.g. 'title', 'institution', 'source', 'references', and 'comment'.
+
+        # added by forman 20160715
+        self._root.software_name = 'dedop'
+        self._root.software_version = __version__
+
+    @property
+    def file_path(self):
+        return self._file_path
 
     def __enter__(self):
         """
@@ -279,18 +297,38 @@ class NetCDFWriter(metaclass=ABCMeta):
         else:
             str_name = name
 
+        # convert the list of dimension Enum instances from the
+        # VariableDescription into the names of the Dimension objects
+        # from the root document.
         dimensions = tuple(
             self.dimensions[dim_name].name for
                 dim_name in variable_description.dimensions
         )
-
+        # create a new variable in the root document. The constructor
+        # doesn't let us set attributes here, we have to do that below.
         var = self._root.createVariable(
             str_name, variable_description.data_type,
             dimensions, **variable_description.get_properties()
         )
-        var.setncatts(
-            variable_description.get_attributes()
-        )
+        # get the dict of attributes
+        attdict = variable_description.get_attributes()
+
+        for name, value in attdict.items():
+            # check if the variable is a tuple of strings - we use these for
+            # options such as 'flag_meaning'.
+            # if it is, we need to concatenate it with separating
+            # spaces. otherwise, the parser will concatenate it
+            # without.
+            if isinstance(value, tuple) and any(isinstance(item, str) for item in value):
+                value = " ".join(value)
+
+            # here we check if the attribute is a string, and if so
+            # we encode it into bytes representation. This is because
+            # otherwise netCDF4 will write it as a string-format
+            # attribute, which isn't supported by some older netCDF parsers.
+            if isinstance(value, str):
+                value = value.encode()
+            var.setncattr(name, value)
 
         return var
 
@@ -317,10 +355,15 @@ class NetCDFWriter(metaclass=ABCMeta):
             if value is None:
                 continue
             try:
-                if ndims == 2:
+                if ndims == 3:
+                    dim_1, dim_2 = value.shape
+                    var[self.output_index, :dim_1, :dim_2] = value[:, :]
+                elif ndims == 2:
                     var[self.output_index, :len(value)] = value[:]
-                else:
+                elif ndims == 1:
                     var[self.output_index] = value
+                else:
+                    raise WriteError("Number of dimensions not supported", value.shape)
             except Exception as err:
                 raise WriteError(
                     "error while writing {} at index {}".format(
