@@ -1,3 +1,5 @@
+from dedop.conf.enums import AzimuthWindowingMethod
+
 from .auxiliary_file_reader import *
 
 
@@ -36,7 +38,10 @@ class ConfigurationFile(AuxiliaryFileReader):
     flag_postphase_azimuth_processing = \
         AuxiliaryParameter("flag_postphase_azimuth_processing_cnf")
     flag_azimuth_windowing_method = \
-        AuxiliaryParameter("flag_azimuth_windowing_method_cnf")
+        AuxiliaryParameter("flag_azimuth_windowing_method_cnf",
+                           param_type=AzimuthWindowingMethod)
+    azimuth_window_width = \
+        AuxiliaryParameter("azimuth_window_width_cnf")
 
     # geometry corrections
     flag_doppler_range_correction = \

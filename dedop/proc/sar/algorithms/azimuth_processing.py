@@ -1,11 +1,13 @@
-import numpy as np
-from numpy.linalg import norm
-from math import cos
 from enum import Enum
+from math import cos
+
+import numpy as np
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+from dedop.conf.enums import AzimuthWindowingMethod
+from dedop.model import L1AProcessingData
+from numpy.linalg import norm
 
 from ..base_algorithm import BaseAlgorithm
-from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
-from dedop.model import L1AProcessingData
 
 
 class AzimuthProcessingMethods(Enum):
@@ -36,8 +38,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         self.beams_focused = None
 
     def __call__(self, packet: L1AProcessingData, wavelength_ku: float,
-                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.approximate,
-                 weighting: AzimuthWeighting=AzimuthWeighting.disabled) -> None:
+                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.approximate) -> None:
         """
         Executes the azimuth processing algorithm
 
@@ -51,18 +52,46 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             dtype=np.complex128
         )
 
-        if weighting == AzimuthWeighting.enabled:
-            # TODO: perform azimuth windowing
-            pass
+        window = self.construct_azimuth_window(
+            self.cnf.flag_azimuth_windowing_method,
+            width=self.cnf.azimuth_window_width
+        )
+        windowed_wfm = packet.waveform_cor_sar * window[:, np.newaxis]
 
         # azimuth processing with approx. method
         if method == AzimuthProcessingMethods.approximate:
-            self.compute_approximate_method(packet, wavelength_ku)
+            self.compute_approximate_method(packet, windowed_wfm, wavelength_ku)
         # azimuth processing with exact method
         elif method == AzimuthProcessingMethods.exact:
-            self.compute_exact_method(packet, wavelength_ku)
+            self.compute_exact_method(packet, windowed_wfm, wavelength_ku)
 
-    def compute_approximate_method(self, packet: L1AProcessingData, wavelength_ku: float) -> None:
+    def construct_azimuth_window(self, window_shape: AzimuthWindowingMethod, width: int=64):
+        window = np.zeros((self.chd.n_ku_pulses_burst,), dtype=np.float64)
+
+        centre = self.chd.n_ku_pulses_burst // 2
+
+        start = centre - (width // 2)
+        end = start + width
+
+        if window_shape == AzimuthWindowingMethod.disabled:
+            window[:] = 1.
+        elif window_shape == AzimuthWindowingMethod.boxcar:
+            window[start:end] = 1.
+        elif window_shape == AzimuthWindowingMethod.hamming:
+            n = np.arange(width)
+            window[start:end] = .5 - .5 * np.cos((2. * self.cst.pi * n) / (width - 1))
+        elif window_shape == AzimuthWindowingMethod.hanning:
+            n = np.arange(width)
+            window[start:end] = .54 - .46 * np.cos((2. * self.cst.pi * n) / (width - 1))
+        else:
+            raise NotImplementedError(
+                "Unsupported Azimuth Windowing Method: {}".format(window_shape)
+            )
+
+        return window
+
+
+    def compute_approximate_method(self, packet: L1AProcessingData, windowed_wfm: np.ndarray, wavelength_ku: float) -> None:
         """
         Azimuth processing approximate method
 
@@ -78,7 +107,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
 
         # use the nadir beam angle to compute the phase shift
         wfm_phase_shift = self.compute_phase_shift(
-            packet, nadir_beam_angle, wavelength_ku
+            packet, windowed_wfm, nadir_beam_angle, wavelength_ku
         )
         # compute the azimuth FFTs
         wfm_fft_azimuth = self.compute_fft_azimuth_dimension(
@@ -100,7 +129,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         copy_end = self.chd.n_ku_pulses_burst - beams_offset
         self.beams_focused[:copy_end, :] = wfm_fft_azimuth[beams_offset:, :]
 
-    def compute_exact_method(self, packet: L1AProcessingData, wavelength_ku: float) -> None:
+    def compute_exact_method(self, packet: L1AProcessingData, windowed_wfm: np.ndarray, wavelength_ku: float) -> None:
         """
         Azimuth processing exact method
 
@@ -117,7 +146,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             # calculate the shape shift based upon the current
             # beam angle
             wfm_phase_shift = self.compute_phase_shift(
-                packet, beam_angle_value, wavelength_ku
+                packet, windowed_wfm, beam_angle_value, wavelength_ku
             )
             # calculate the FFT of the current beam
             wfm_fft_azimuth = self.compute_fft_azimuth_dimension(
@@ -129,7 +158,8 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             self.beams_focused[beam_index, :] =\
                 wfm_fft_azimuth[self.chd.n_ku_pulses_burst // 2, :]
 
-    def compute_phase_shift(self, packet: L1AProcessingData, beam_angle: float, wavelength_ku: float) -> np.ndarray:
+    def compute_phase_shift(self, packet: L1AProcessingData, windowed_wfm: np.ndarray, beam_angle: float,
+                            wavelength_ku: float) -> np.ndarray:
         """
         For each pulse of the burst, a phase (based on the given beam
         angle value) is applied to the waveform
@@ -142,7 +172,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         """
         # create empty output array
         waveform_phase_shift = np.empty(
-            packet.waveform_cor_sar.shape,
+            windowed_wfm.shape,
             dtype=np.complex128
         )
 
@@ -152,7 +182,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
                                       norm(packet.vel_sat_sar) * cos(beam_angle) *
                                       packet.pri_sar_pre_dat * pulse_index)
             waveform_phase_shift[pulse_index, :] = \
-                beam_angle_phase * packet.waveform_cor_sar[pulse_index, :]
+                beam_angle_phase * windowed_wfm[pulse_index, :]
 
         return waveform_phase_shift
 
