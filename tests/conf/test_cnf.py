@@ -2,6 +2,7 @@ import unittest
 import os
 
 from dedop.conf import ConfigurationFile
+from dedop.conf.enums import AzimuthWindowingMethod
 from tests.testing import TestDataLoader
 
 
@@ -26,9 +27,17 @@ class TestCNF(unittest.TestCase):
 
         self.assertAlmostEqual(expected, actual)
 
-    def test_flag_azimuth_processing_method(self):
-        expected = self.expected["flag_azimuth_processing_method_cnf"]
-        actual = self.actual.flag_azimuth_processing_method
+    def test_flag_azimuth_windowing_method(self):
+        expected = AzimuthWindowingMethod(
+            self.expected["flag_azimuth_windowing_method_cnf"]
+        )
+        actual = self.actual.flag_azimuth_windowing_method
+
+        self.assertAlmostEqual(expected, actual)
+
+    def test_azimuth_window_width(self):
+        expected = self.expected["azimuth_window_width_cnf"]
+        actual = self.actual.azimuth_window_width
 
         self.assertAlmostEqual(expected, actual)
 
