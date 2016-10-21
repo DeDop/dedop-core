@@ -55,11 +55,14 @@ class ConfigurationFile(AuxiliaryFileReader):
 
     # stack masking
     flag_stack_masking = \
-        AuxiliaryParameter("flag_stack_masking_cnf")
+        AuxiliaryParameter("flag_stack_masking_cnf",
+                           param_type=bool)
     flag_remove_doppler_ambiguities = \
-        AuxiliaryParameter("flag_remove_doppler_ambiguities_cnf")
+        AuxiliaryParameter("flag_remove_doppler_ambiguities_cnf",
+                           param_type=bool)
     ambiguity_mask_margin = \
-        AuxiliaryParameter("ambiguity_mask_margin_cnf")
+        AuxiliaryParameter("ambiguity_mask_margin_cnf",
+                           param_type=int)
 
     # multilooking
     flag_avoid_zeros_in_multilooking = \
