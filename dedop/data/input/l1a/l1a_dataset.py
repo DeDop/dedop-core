@@ -136,7 +136,7 @@ class L1ADataset(InputDataset):
             pitch_sar=radians(self.pitch_sral_mispointing_l1a_echo_sar_ku[index]),
             yaw_sar=radians(self.yaw_sral_mispointing_l1a_echo_sar_ku[index]),
             h0_sar=self.h0_applied_l1a_echo_sar_ku[index],
-            t0_sar=self.chd.t0_nom * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
+            t0_sar=self.chd.t0_nom,  # * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
             cor2_sar=self.cor2_applied_l1a_echo_sar_ku[index],
             win_delay_sar_ku=self.range_ku_l1a_echo_sar_ku[index] * 2 / self.cst.c,
             x_sar_sat=self.x_pos_l1a_echo_sar_ku[index],
