@@ -21,7 +21,10 @@ class TestDataLoader:
 
                 name, *values = filter(bool, row)
 
-                vals = list(map(literal_eval, values))
+                try:
+                    vals = list(map(literal_eval, values))
+                except ValueError:
+                    vals = list(values)
 
                 if len(vals) > 1:
                     vals = np.asarray(vals)

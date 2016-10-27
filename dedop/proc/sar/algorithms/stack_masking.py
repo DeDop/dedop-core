@@ -7,18 +7,41 @@ from ....util.parameter import Parameter
 
 
 @Parameter("flag_avoid_zeros_in_multilooking", data_type=bool)
+@Parameter("flag_stack_masking", data_type=bool)
 class StackMaskingAlgorithm(BaseAlgorithm):
 
     def __call__(self, working_surface_location: SurfaceData) -> None:
-        geom_mask = self.compute_geometry_mask(working_surface_location)
-        ambig_mask = self.compute_ambiguity_mask(working_surface_location)
 
-        stack_mask, stack_mask_vector = self.combine_masks(
-            geom_mask, ambig_mask
-        )
-        self.beams_masked = self.apply_mask(working_surface_location, stack_mask)
+        if self.flag_stack_masking:
+            geom_mask = self.compute_geometry_mask(working_surface_location)
+            ambig_mask = self.compute_ambiguity_mask(working_surface_location)
+
+            stack_mask, stack_mask_vector = self.combine_masks(
+                geom_mask, ambig_mask
+            )
+            self.beams_masked = self.apply_mask(working_surface_location, stack_mask)
+        else:
+            stack_mask, stack_mask_vector = self.default_mask()
+            self.beams_masked = working_surface_location.beams_range_compr
+
         self.stack_mask_vector = stack_mask_vector
         self.stack_mask = stack_mask
+
+    def default_mask(self) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        returns an empty (all 1s) mask and corresponding mask vector
+        """
+        beam_size = self.chd.n_samples_sar * self.zp_fact_range
+        mask = np.ones(
+            (self.n_looks_stack, beam_size),
+            dtype=np.float64
+        )
+        mask_vector = np.ones(
+            (self.n_looks_stack,),
+            dtype=np.float64
+        ) * (beam_size - 1)
+
+        return mask, mask_vector
 
     def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         geom_mask = np.zeros(

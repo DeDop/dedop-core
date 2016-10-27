@@ -1,8 +1,8 @@
 import unittest
 
 import numpy as np
-
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+from dedop.conf.enums import AzimuthWindowingMethod
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
 from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
@@ -27,7 +27,10 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         create cst and chd objects from input_data, then initialise
         an instance of the azimuth processing algorithm
         """
-        self.cnf = ConfigurationFile()
+        self.cnf = ConfigurationFile(
+            flag_azimuth_windowing_method_cnf=AzimuthWindowingMethod.disabled,
+            azimuth_window_width_cnf=64
+        )
         self.cst = ConstantsFile(
             pi_cst=input_data['pi_cst']
         )

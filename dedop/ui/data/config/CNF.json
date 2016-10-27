@@ -52,7 +52,12 @@
   "flag_azimuth_windowing_method_cnf": {
     "value": "none",
     "units": "flag",
-    "description": "Flag the sets the azimuth windowing method: Disabled ('none'); Boxcar ('Boxcar'); Hamming ('Hamming'); Hanning ('Hanning')"
+    "description": "Flag the sets the azimuth windowing method: Disabled ('none'); Boxcar ('boxcar'); Hamming ('hamming'); Hanning ('hanning')"
+  },
+  "azimuth_window_width_cnf": {
+    "value": 64,
+    "units": "count",
+    "description": "Width of Azimuth window (minimum value: 32, maximum value: 64)"
   },
   "flag_doppler_range_correction_cnf": {
     "value": false,

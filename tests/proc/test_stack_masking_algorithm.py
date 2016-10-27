@@ -27,7 +27,8 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
         self.cnf = ConfigurationFile(
             zp_fact_range_cnf=input_data["zp_fact_range_cnf"],
             N_looks_stack_cnf=input_data["n_looks_stack_cnf"],
-            flag_remove_doppleR_ambiguities_cnf=input_data["flag_remove_doppler_ambiguities_cnf"]
+            flag_remove_doppler_ambiguities_cnf=input_data["flag_remove_doppler_ambiguities_cnf"],
+            flag_stack_masking_cnf=input_data["flag_stack_masking_cnf"]
         )
         self.cst = ConstantsFile()
         self.chd = CharacterisationFile(
@@ -49,6 +50,18 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
 
         self._stack_masking_algorithm_tests(input_data, expected)
 
+    def test_stack_masking_algorithm_02(self):
+        """
+        stack masking algorithm tests 02
+        --------------------------------
+
+        with masking disabled
+        """
+        input_data = TestDataLoader(self.inputs_02, delim=' ')
+        expected = TestDataLoader(self.expected_02, delim=' ')
+
+        self._stack_masking_algorithm_tests(input_data, expected)
+
     def _stack_masking_algorithm_tests(self, input_data, expected):
         """
         runs the stack masking algorithm test with provided input data
@@ -61,7 +74,7 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
         self.initilise_algorithm(input_data)
 
         stack_size = input_data["data_stack_size"]
-        zp_fact_range = input_data["zp_fact_range_cnf"]
+        zp_fact_range = self.cnf.zp_fact_range
 
         beams_range_compr_samples =\
             np.tile(input_data["beams_range_compr"], 2)

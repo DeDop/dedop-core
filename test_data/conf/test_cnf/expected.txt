@@ -1,10 +1,11 @@
 flag_uso_correction_cnf	True
-N_looks_stack_cnf	0
+N_looks_stack_cnf	240
 min_num_contributing_looks_cnf	486
 roughness_seed_cnf	0.01
 N_beams_sub_stack_cnf	480
 epoch_seed_cnf	50
-flag_azimuth_processing_method_cnf	0
+flag_azimuth_windowing_method_cnf	"boxcar"
+azimuth_window_width_cnf	48
 flag_l1bs_file_cnf	False
 thermal_noise_width_cnf	10
 flag_postphase_azimuth_processing_cnf	True
