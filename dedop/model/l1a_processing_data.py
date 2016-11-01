@@ -736,6 +736,14 @@ class L1AProcessingData:
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
 
+    @property
+    def vel_sat_sar_norm(self):
+        if self._vel_sat_norm is None:
+            self._vel_sat_norm = np.linalg.norm(
+                self.vel_sat_sar
+            )
+        return self._vel_sat_norm
+
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
@@ -745,6 +753,7 @@ class L1AProcessingData:
         self._seq_count_sar = seq_num
         self._beam_angles_trend = None
         self._burst_processed = False
+        self._vel_sat_norm = None
 
         self.isp_pid = PacketPid.null
 

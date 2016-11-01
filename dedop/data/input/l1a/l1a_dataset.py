@@ -88,7 +88,7 @@ class L1ADataset(InputDataset):
         """
         The L1ADataset class reads L1A NetCDF data files.
         """
-        dset = nc.Dataset(filename)
+        dset = nc.Dataset(filename, mode='r')
         super().__init__(dset, cst=cst, chd=chd, cnf=cnf)
 
         self._file_path = filename

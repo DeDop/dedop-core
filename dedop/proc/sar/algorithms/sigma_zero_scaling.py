@@ -24,14 +24,19 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
         if self.n_looks_stack is not None:
             max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
         else:
-            max_stack = working_surface_location.data_stack_size
+            max_stack = working_surface_location.data_stack_size # TODO
+
+        sigma0_offset = 10 * log10(64) - \
+                        10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku +\
+                        10 * log10(self.chd.n_samples_sar * self.zp_fact_range) -\
+                        10 * log10(self.chd.pulse_length * self.chd.pulse_length * chirp_slope_ku)
             
         for beam_index in range(max_stack):
             range_sat_surf = working_surface_location.range_sat_surf[beam_index]
 
-            vel_sat_sar_norm = norm(
-                working_surface_location.stack_bursts[beam_index].vel_sat_sar
-            )
+            vel_sat_sar_norm =\
+                working_surface_location.stack_bursts[beam_index].vel_sat_sar_norm
+
             pri_sar_pre_dat =\
                 working_surface_location.stack_bursts[beam_index].pri_sar_pre_dat
 
@@ -47,12 +52,10 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
             )
             surface_area = azimuth_distance * range_distance
 
-            sigma0_scaling_factor_beam[beam_index] = 10 * log10(64) +\
+            sigma0_scaling_factor_beam[beam_index] = sigma0_offset +\
                 30 * log10(self.cst.pi) + 40 * log10(range_sat_surf) -\
-                10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku -\
-                20 * log10(wavelength_ku) - 10 * log10(surface_area) +\
-                10 * log10(self.chd.n_samples_sar * self.zp_fact_range) -\
-                10 * log10(self.chd.pulse_length * self.chd.pulse_length * chirp_slope_ku)
+                20 * log10(wavelength_ku) - 10 * log10(surface_area)
+
 
         self.sigma0_scaling_factor = np.mean(sigma0_scaling_factor_beam)
         return self.sigma0_scaling_factor

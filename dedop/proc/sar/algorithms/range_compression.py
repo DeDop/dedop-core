@@ -1,10 +1,15 @@
 import numpy as np
-from numpy.fft import fft, fftshift
+from pyfftw.builders import fft
+from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
 
 class RangeCompressionAlgorithm(BaseAlgorithm):
+
+    def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        super().__init__(chd, cst, cnf)
+
     def __call__(self, working_surface_location: SurfaceData) -> None:
         # calc. size after zero padding factor applied
         padded_size = self.zp_fact_range * self.chd.n_samples_sar
@@ -20,22 +25,23 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
             dtype=np.complex128
         )
 
-        for beam_index in range(stack_size):
+        # calc. FFT with zero-padding & orthogonal scaling
+        fft_obj = fft(
+            working_surface_location.beams_geo_corr, axis=1,
+            n=padded_size, threads=4
+        )
+        beam_fft = fft_obj(working_surface_location.beams_geo_corr,
+                           ortho=True, normalise_idft=False)
 
-            # calc. FFT with zero-padding & orthogonal scaling
-            beam_fft = fft(
-                working_surface_location.beams_geo_corr[beam_index, :],
-                n=padded_size, norm="ortho"
-            )
-            # apply shift
-            beam_shift = fftshift(beam_fft)
-            # TODO: REMOVE THIS !!
-            # disable extra shift to fix alignment problem
-            # beam_shift = beam_fft
+        # apply shift
+        beam_shift = np.fft.fftshift(beam_fft, axes=1)[:stack_size]
+        # TODO: REMOVE THIS !!
+        # disable extra shift to fix alignment problem
+        # beam_shift = beam_fft
 
-            # store complex result
-            self.beam_range_compr_iq[beam_index, :] = beam_shift
+        # store complex result
+        self.beam_range_compr_iq[:stack_size, :] = beam_shift
 
-            # compute square modulus
-            self.beam_range_compr[beam_index, :] =\
-                np.abs(beam_shift) ** 2
+        # compute square modulus
+        self.beam_range_compr[:stack_size, :] =\
+            np.abs(beam_shift) ** 2
