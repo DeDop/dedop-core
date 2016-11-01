@@ -1,5 +1,4 @@
 import numpy as np
-from pyfftw.builders import fft
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 
 from dedop.model import SurfaceData
@@ -26,13 +25,10 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
         )
 
         # calc. FFT with zero-padding & orthogonal scaling
-        fft_obj = fft(
+        beam_fft = np.fft.fft(
             working_surface_location.beams_geo_corr, axis=1,
-            n=padded_size, threads=4
+            n=padded_size, norm='ortho'
         )
-        beam_fft = fft_obj(working_surface_location.beams_geo_corr,
-                           ortho=True, normalise_idft=False)
-
         # apply shift
         beam_shift = np.fft.fftshift(beam_fft, axes=1)[:stack_size]
         # TODO: REMOVE THIS !!

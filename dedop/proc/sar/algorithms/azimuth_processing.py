@@ -1,11 +1,11 @@
 import numpy as np
 from numpy.linalg import norm
-from pyfftw.builders import fft
 from math import cos
 from enum import Enum
 
 from ..base_algorithm import BaseAlgorithm
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+from dedop.conf.enums import AzimuthWindowingMethod
 from dedop.model import L1AProcessingData
 
 
@@ -193,11 +193,10 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         """
         # compute the FFT along the azimuth dimension,
         # and apply orthogonal normalization to the result
-        fft_obj = fft(
+        out_fft = np.fft.fft(
             waveform_phase_shift,
-            axis=0, threads=4
+            axis=0, norm='ortho'
         )
-        out_fft = fft_obj(waveform_phase_shift, ortho=True, normalise_idft=False)
         # return the shifted FFT values
         return np.fft.fftshift(
             out_fft, axes=0
