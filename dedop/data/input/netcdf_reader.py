@@ -18,7 +18,7 @@ class NetCDFReader:
     def dimensions(self):
         return self._doc.dimensions
 
-    def __init__(self, filename, chunk_size=20):
+    def __init__(self, filename, chunk_size=40):
         """
         open document and set block size
         """
@@ -32,10 +32,12 @@ class NetCDFReader:
             name = varname.value
 
             var = self._doc.variables[name]
-            size = list(var.shape)
+            var.set_auto_mask(False)
 
-            if size[0] > self.chunk_size:
-                size[0] = self.chunk_size
+            # size = list(var.shape)
+            #
+            # if size[0] > self.chunk_size:
+            #     size[0] = self.chunk_size
 
     def get_value(self, varname: L1AVariables, index: int):
         """
@@ -64,7 +66,6 @@ class NetCDFReader:
                 continue
 
             end = min(varlen, chunk_end)
-            clen = end - chunk_start
 
             self.cache[varname] = var[chunk_start:end].copy()
 

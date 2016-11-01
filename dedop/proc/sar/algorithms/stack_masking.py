@@ -6,7 +6,6 @@ from ..base_algorithm import BaseAlgorithm
 from ....util.parameter import Parameter
 
 
-@Parameter("flag_avoid_zeros_in_multilooking", data_type=bool)
 @Parameter("flag_stack_masking", data_type=bool)
 class StackMaskingAlgorithm(BaseAlgorithm):
 
@@ -46,7 +45,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
     def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         geom_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
-            dtype=np.int8
+            dtype=np.float64
         )
         max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
         for beam_index in range(max_stack):
@@ -71,7 +70,7 @@ class StackMaskingAlgorithm(BaseAlgorithm):
     def compute_ambiguity_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
         ambi_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
-            dtype=np.int8
+            dtype=np.float64
         )
         ## TODO: to be defined
         ambi_mask[:, :] = 1
@@ -80,8 +79,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
     def combine_masks(self, geom_mask: np.ndarray, ambig_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         stack_size, beam_size = geom_mask.shape
-        stack_mask = np.zeros((stack_size, beam_size))
-        stack_mask_vector = np.zeros((stack_size))
+        stack_mask = np.zeros((stack_size, beam_size), dtype=np.float64)
+        stack_mask_vector = np.zeros((stack_size), dtype=np.float64)
 
         for beam_index in range(stack_size):
             stack_mask[beam_index, :] = geom_mask[beam_index, :] * ambig_mask[beam_index, :]
@@ -117,11 +116,5 @@ class StackMaskingAlgorithm(BaseAlgorithm):
     def apply_mask(self, working_surface_location: SurfaceData, stack_mask: np.ndarray) -> np.ndarray:
         output = working_surface_location.beams_range_compr *\
                  stack_mask[:working_surface_location.data_stack_size, :]
-
-        if self.flag_avoid_zeros_in_multilooking:
-            invalid = (stack_mask == 0)
-            invalid =\
-                invalid[:working_surface_location.data_stack_size, :]
-            output[invalid] = np.NaN
 
         return output

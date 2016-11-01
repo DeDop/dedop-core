@@ -1,12 +1,12 @@
-import numpy as np
-from numpy.linalg import norm
 from math import cos
 from enum import Enum
-
-from ..base_algorithm import BaseAlgorithm
+import numpy as np
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.conf.enums import AzimuthWindowingMethod
 from dedop.model import L1AProcessingData
+from numpy.linalg import norm
+
+from ..base_algorithm import BaseAlgorithm
 
 
 class AzimuthProcessingMethods(Enum):

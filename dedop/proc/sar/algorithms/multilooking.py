@@ -225,7 +225,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (n_samples_max,), dtype=np.float64
         )
         self.sample_counter = np.zeros(
-            (n_samples_max,), dtype=int
+            (n_samples_max,), dtype=np.float64
         )
 
         max_stack = min(self.n_looks_stack, surface.data_stack_size)
@@ -243,10 +243,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
                 continue
 
             if self.flag_avoid_zeros_in_multilooking:
-                beam_mask = surface.stack_mask[beam_index, :]
-                mask = ne.evaluate("where(beam_mask == 0, 0, 1)")
+               mask = surface.stack_mask[beam_index, :]
             else:
-                mask = 1
+               mask = 1
             self.waveform_multilooked[:] += weighted_beams[beam_index, :] * mask
             self.sample_counter[:] += mask
 
