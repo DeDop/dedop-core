@@ -61,51 +61,72 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
         beam_range_compr_q = np.imag(
             self.range_compression_algorithm.beam_range_compr_iq
         )
+        expected_range_compr = np.reshape(
+            expected["beams_range_compr"],
+            beam_range_compr.shape
+        )
+        expected_range_compr_i = np.reshape(
+            expected["beams_range_compr_i"],
+            beam_range_compr.shape
+        )
+        expected_range_compr_q = np.reshape(
+            expected["beams_range_compr_q"],
+            beam_range_compr.shape
+        )
+        self.assertTrue(
+            np.allclose(beam_range_compr, expected_range_compr)
+        )
+        self.assertTrue(
+            np.allclose(beam_range_compr_i, expected_range_compr_i)
+        )
+        self.assertTrue(
+            np.allclose(beam_range_compr_q, expected_range_compr_q)
+        )
 
-        for stack_index in range(stack_size):
-            for sample_index in range(self.chd.n_samples_sar):
-                expected_index = stack_index * self.chd.n_samples_sar * \
-                                 input_data["zp_fact_range_cnf"] + sample_index
-                pos = "\nstack: {}/{}, sample: {}/{}".format(
-                    stack_index, stack_size,
-                    sample_index, self.chd.n_samples_sar
-                )
-
-                expected_val = expected["beams_range_compr"][expected_index]
-                actual_val = beam_range_compr[stack_index, sample_index]
-
-                if expected_val == 0:
-                    self.assertEqual(
-                        expected_val,
-                        actual_val,
-                        msg=pos
-                    )
-                else:
-                    rel_err = abs((expected_val - actual_val) / expected_val)
-                    self.assertLess(rel_err, 1e-11, msg=pos)
-
-                expected_val = expected["beams_range_compr_i"][expected_index]
-                actual_val = beam_range_compr_i[stack_index, sample_index]
-
-                if expected_val == 0:
-                    self.assertEqual(
-                        expected_val,
-                        actual_val,
-                        msg=pos
-                    )
-                else:
-                    rel_err = abs((expected_val - actual_val) / expected_val)
-                    self.assertLess(rel_err, 1e-9, msg=pos)
-
-                expected_val = expected["beams_range_compr_q"][expected_index]
-                actual_val = beam_range_compr_q[stack_index, sample_index]
-
-                if expected_val == 0:
-                    self.assertEqual(
-                        expected_val,
-                        actual_val,
-                        msg=pos
-                    )
-                else:
-                    rel_err = abs((expected_val - actual_val) / expected_val)
-                    self.assertLess(rel_err, 1e-9, msg=pos)
+        # for stack_index in range(stack_size):
+        #     for sample_index in range(self.chd.n_samples_sar):
+        #         expected_index = stack_index * self.chd.n_samples_sar * \
+        #                          input_data["zp_fact_range_cnf"] + sample_index
+        #         pos = "\nstack: {}/{}, sample: {}/{}".format(
+        #             stack_index, stack_size,
+        #             sample_index, self.chd.n_samples_sar
+        #         )
+        #
+        #         expected_val = expected["beams_range_compr"][expected_index]
+        #         actual_val = beam_range_compr[stack_index, sample_index]
+        #
+        #         if expected_val == 0:
+        #             self.assertEqual(
+        #                 expected_val,
+        #                 actual_val,
+        #                 msg=pos
+        #             )
+        #         else:
+        #             rel_err = abs((expected_val - actual_val) / expected_val)
+        #             self.assertLess(rel_err, 1e-11, msg=pos)
+        #
+        #         expected_val = expected["beams_range_compr_i"][expected_index]
+        #         actual_val = beam_range_compr_i[stack_index, sample_index]
+        #
+        #         if expected_val == 0:
+        #             self.assertEqual(
+        #                 expected_val,
+        #                 actual_val,
+        #                 msg=pos
+        #             )
+        #         else:
+        #             rel_err = abs((expected_val - actual_val) / expected_val)
+        #             self.assertLess(rel_err, 1e-9, msg=pos)
+        #
+        #         expected_val = expected["beams_range_compr_q"][expected_index]
+        #         actual_val = beam_range_compr_q[stack_index, sample_index]
+        #
+        #         if expected_val == 0:
+        #             self.assertEqual(
+        #                 expected_val,
+        #                 actual_val,
+        #                 msg=pos
+        #             )
+        #         else:
+        #             rel_err = abs((expected_val - actual_val) / expected_val)
+        #             self.assertLess(rel_err, 1e-9, msg=pos)

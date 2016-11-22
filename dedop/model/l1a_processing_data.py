@@ -243,60 +243,46 @@ class L1AProcessingData:
         """
         The x_vel_sat_sar property of the packet
         """
-        return self["x_vel_sat_sar"]
+        return self._vel_sat_sar[0, 0]
 
     @x_vel_sat_sar.setter
     def x_vel_sat_sar(self, value):
-        self["x_vel_sat_sar"] = value
-
-    @x_vel_sat_sar.deleter
-    def x_vel_sat_sar(self):
-        del self["x_vel_sat_sar"]
+        self._vel_sat_sar[0, 0] = value
 
     @property
     def y_vel_sat_sar(self):
         """
         The y_vel_sat_sar property of the packet
         """
-        return self["y_vel_sat_sar"]
+        return self._vel_sat_sar[1, 0]
 
     @y_vel_sat_sar.setter
     def y_vel_sat_sar(self, value):
-        self["y_vel_sat_sar"] = value
-
-    @y_vel_sat_sar.deleter
-    def y_vel_sat_sar(self):
-        del self["y_vel_sat_sar"]
+        self._vel_sat_sar[1, 0] = value
 
     @property
     def z_vel_sat_sar(self):
         """
         The z_vel_sat_sar property of the packet
         """
-        return self["z_vel_sat_sar"]
+        return self.vel_sat_sar[2, 0]
 
     @z_vel_sat_sar.setter
     def z_vel_sat_sar(self, value):
-        self["z_vel_sat_sar"] = value
-
-    @z_vel_sat_sar.deleter
-    def z_vel_sat_sar(self):
-        del self["z_vel_sat_sar"]
+        self._vel_sat_sar[2, 0] = value
 
     @property
     def vel_sat_sar(self):
         """
         The Lat, Lon, and Alt of the satellite position
         """
-        return np.asmatrix([self.x_vel_sat_sar,
-                            self.y_vel_sat_sar,
-                            self.z_vel_sat_sar]).T
+        return self._vel_sat_sar
 
     @vel_sat_sar.setter
     def vel_sat_sar(self, value):
-        self.x_vel_sat_sar, \
-         self.y_vel_sat_sar, \
-         self.z_vel_sat_sar = value
+        self._vel_sat_sar[0, 0] = value[0]
+        self._vel_sat_sar[1, 0] = value[1]
+        self._vel_sat_sar[2, 0] = value[2]
 
     @property
     def roll_sar(self):
@@ -736,6 +722,14 @@ class L1AProcessingData:
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
 
+    @property
+    def vel_sat_sar_norm(self):
+        if self._vel_sat_norm is None:
+            self._vel_sat_norm = np.linalg.norm(
+                self.vel_sat_sar
+            )
+        return self._vel_sat_norm
+
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
@@ -745,6 +739,11 @@ class L1AProcessingData:
         self._seq_count_sar = seq_num
         self._beam_angles_trend = None
         self._burst_processed = False
+        self._vel_sat_norm = None
+        x_vel = values.pop('x_vel_sat_sar', 0)
+        y_vel = values.pop('y_vel_sat_sar', 0)
+        z_vel = values.pop('z_vel_sat_sar', 0)
+        self._vel_sat_sar = np.matrix([[x_vel], [y_vel], [z_vel]], dtype=np.float64)
 
         self.isp_pid = PacketPid.null
 

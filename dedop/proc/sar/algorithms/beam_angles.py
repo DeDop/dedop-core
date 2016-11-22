@@ -23,11 +23,17 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
 
         curr_location_seen = False
 
+        # the q angles define the max. & min. view angle for satellite
+        # at the position of the burst
+        q_min = acos(self.cst.c / self.chd.pri_sar / 4. /
+                     self.chd.freq_ku / isp_record.vel_sat_sar_norm)
+        q_max = self.cst.pi - q_min
+
         for surface in surface_locations:
             prev_location_seen = curr_location_seen
 
             beam_angle, curr_location_seen =\
-                self.compute_beam_angle(surface, isp_record)
+                self.compute_beam_angle(surface, isp_record, q_min, q_max)
             if curr_location_seen:
                 self.beam_angles.append(beam_angle)
                 self.surfaces_seen.append(surface.surface_counter)
@@ -41,28 +47,23 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
             elif prev_location_seen:
                 break
 
-    def compute_beam_angle(self, surface: SurfaceData,
-                           isp_record: L1AProcessingData) -> Tuple[float, bool]:
+    def compute_beam_angle(self, surface: SurfaceData, isp_record: L1AProcessingData,
+                           q_min: float, q_max: float) -> Tuple[float, bool]:
         """
         computes the beam angle for the specified surface.
         """
-        # the q angles define the max. & min. view angle for satellite
-        # at the position of the burst
-        q_min = acos(self.cst.c / self.chd.pri_sar / 4. /
-                     self.chd.freq_ku / norm(isp_record.vel_sat_sar))
-        q_max = self.cst.pi - q_min
 
         # create vector from satellite position to surface
         surf_burst = np.matrix([
-            [surface.x_surf - isp_record.x_sar_sat],
-            [surface.y_surf - isp_record.y_sar_sat],
-            [surface.z_surf - isp_record.z_sar_sat]
+            surface.x_surf - isp_record.x_sar_sat,
+            surface.y_surf - isp_record.y_sar_sat,
+            surface.z_surf - isp_record.z_sar_sat
         ])
         # compute angle between surface vector and satellite's velocity
         # vector
         beam_angle = acos(
-            np.dot(surf_burst.T, isp_record.vel_sat_sar) /
-            (norm(surf_burst) * norm(isp_record.vel_sat_sar))
+            np.dot(surf_burst, isp_record.vel_sat_sar) /
+            (norm(surf_burst) * isp_record.vel_sat_sar_norm)
         )
         # if the angle is within the q-range, it can be seen
         if q_min <= beam_angle <= q_max:

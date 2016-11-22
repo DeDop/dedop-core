@@ -7,80 +7,9 @@ import netCDF4 as nc
 from dedop.conf import ConfigurationFile, CharacterisationFile, ConstantsFile
 from dedop.model.l1a_processing_data import L1AProcessingData, PacketPid
 from ..input_dataset import InputDataset
+from .enums import L1AVariables, L1ADimensions
 
-
-class L1ADimensions(Enum):
-    echo_sample_ind = "echo_sample_ind"
-    sar_ku_pulse_burst_ind = "sar_ku_pulse_burst_ind"
-    sar_c_pulse_burst_ind = "sar_c_pulse_burst_ind"
-    ltm_max_ind = "ltm_max_ind"
-    time_l1a_echo_sar_ku = "time_l1a_echo_sar_ku"
-    time_l1a_echo_plrm = "time_l1a_echo_plrm"
-
-
-class L1AVariables(Enum):
-    echo_sample_ind = "echo_sample_ind"
-    sar_ku_pulse_burst_ind = "sar_ku_pulse_burst_ind"
-    sar_c_pulse_burst_ind = "sar_c_pulse_burst_ind"
-    ltm_max_ind = "ltm_max_ind"
-    time_l1a_echo_sar_ku = "time_l1a_echo_sar_ku"
-    UTC_day_l1a_echo_sar_ku = "UTC_day_l1a_echo_sar_ku"
-    UTC_sec_l1a_echo_sar_ku = "UTC_sec_l1a_echo_sar_ku"
-    UTC_time_20hz_l1a_echo_sar_ku = "UTC_time_20hz_l1a_echo_sar_ku"
-    isp_coarse_time_l1a_echo_sar_ku = "isp_coarse_time_l1a_echo_sar_ku"
-    isp_fine_time_l1a_echo_sar_ku = "isp_fine_time_l1a_echo_sar_ku"
-    flag_time_status_l1a_echo_sar_ku = "flag_time_status_l1a_echo_sar_ku"
-    sral_fine_time_l1a_echo_sar_ku = "sral_fine_time_l1a_echo_sar_ku"
-    lat_l1a_echo_sar_ku = "lat_l1a_echo_sar_ku"
-    lon_l1a_echo_sar_ku = "lon_l1a_echo_sar_ku"
-    surf_type_l1a_echo_sar_ku = "surf_type_l1a_echo_sar_ku"
-    burst_count_prod_l1a_echo_sar_ku = "burst_count_prod_l1a_echo_sar_ku"
-    seq_count_l1a_echo_sar_ku = "seq_count_l1a_echo_sar_ku"
-    burst_count_cycle_l1a_echo_sar_ku = "burst_count_cycle_l1a_echo_sar_ku"
-    nav_bul_status_l1a_echo_sar_ku = "nav_bul_status_l1a_echo_sar_ku"
-    nav_bul_source_l1a_echo_sar_ku = "nav_bul_source_l1a_echo_sar_ku"
-    oper_instr_l1a_echo_sar_ku = "oper_instr_l1a_echo_sar_ku"
-    SAR_mode_l1a_echo_sar_ku = "SAR_mode_l1a_echo_sar_ku"
-    cl_gain_l1a_echo_sar_ku = "cl_gain_l1a_echo_sar_ku"
-    acq_stat_l1a_echo_sar_ku = "acq_stat_l1a_echo_sar_ku"
-    dem_eeprom_l1a_echo_sar_ku = "dem_eeprom_l1a_echo_sar_ku"
-    weighting_l1a_echo_sar_ku = "weighting_l1a_echo_sar_ku"
-    loss_track_l1a_echo_sar_ku = "loss_track_l1a_echo_sar_ku"
-    h0_nav_dem_l1a_echo_sar_ku = "h0_nav_dem_l1a_echo_sar_ku"
-    h0_applied_l1a_echo_sar_ku = "h0_applied_l1a_echo_sar_ku"
-    cor2_nav_dem_l1a_echo_sar_ku = "cor2_nav_dem_l1a_echo_sar_ku"
-    cor2_applied_l1a_echo_sar_ku = "cor2_applied_l1a_echo_sar_ku"
-    dh0_l1a_echo_sar_ku = "dh0_l1a_echo_sar_ku"
-    agccode_ku_l1a_echo_sar_ku = "agccode_ku_l1a_echo_sar_ku"
-    agccode_c_l1a_echo_sar_ku = "agccode_c_l1a_echo_sar_ku"
-    alt_l1a_echo_sar_ku = "alt_l1a_echo_sar_ku"
-    orb_alt_rate_l1a_echo_sar_ku = "orb_alt_rate_l1a_echo_sar_ku"
-    x_pos_l1a_echo_sar_ku = "x_pos_l1a_echo_sar_ku"
-    y_pos_l1a_echo_sar_ku = "y_pos_l1a_echo_sar_ku"
-    z_pos_l1a_echo_sar_ku = "z_pos_l1a_echo_sar_ku"
-    x_vel_l1a_echo_sar_ku = "x_vel_l1a_echo_sar_ku"
-    y_vel_l1a_echo_sar_ku = "y_vel_l1a_echo_sar_ku"
-    z_vel_l1a_echo_sar_ku = "z_vel_l1a_echo_sar_ku"
-    roll_sat_pointing_l1a_echo_sar_ku = "roll_sat_pointing_l1a_echo_sar_ku"
-    pitch_sat_pointing_l1a_echo_sar_ku = "pitch_sat_pointing_l1a_echo_sar_ku"
-    yaw_sat_pointing_l1a_echo_sar_ku = "yaw_sat_pointing_l1a_echo_sar_ku"
-    roll_sral_mispointing_l1a_echo_sar_ku = "roll_sral_mispointing_l1a_echo_sar_ku"
-    pitch_sral_mispointing_l1a_echo_sar_ku = "pitch_sral_mispointing_l1a_echo_sar_ku"
-    yaw_sral_mispointing_l1a_echo_sar_ku = "yaw_sral_mispointing_l1a_echo_sar_ku"
-    range_ku_l1a_echo_sar_ku = "range_ku_l1a_echo_sar_ku"
-    int_path_cor_ku_l1a_echo_sar_ku = "int_path_cor_ku_l1a_echo_sar_ku"
-    uso_cor_l1a_echo_sar_ku = "uso_cor_l1a_echo_sar_ku"
-    cog_cor_l1a_echo_sar_ku = "cog_cor_l1a_echo_sar_ku"
-    agc_ku_l1a_echo_sar_ku = "agc_ku_l1a_echo_sar_ku"
-    scale_factor_ku_l1a_echo_sar_ku = "scale_factor_ku_l1a_echo_sar_ku"
-    sig0_cal_ku_l1a_echo_sar_ku = "sig0_cal_ku_l1a_echo_sar_ku"
-    i_meas_ku_l1a_echo_sar_ku = "i_meas_ku_l1a_echo_sar_ku"
-    q_meas_ku_l1a_echo_sar_ku = "q_meas_ku_l1a_echo_sar_ku"
-    gprw_meas_ku_l1a_echo_sar_ku = "gprw_meas_ku_l1a_echo_sar_ku"
-    cal2_ku_ind_l1a_echo_sar_ku = "cal2_ku_ind_l1a_echo_sar_ku"
-    burst_power_cor_ku_l1a_echo_sar_ku = "burst_power_cor_ku_l1a_echo_sar_ku"
-    burst_phase_cor_ku_l1a_echo_sar_ku = "burst_phase_cor_ku_l1a_echo_sar_ku"
-    cal1_ku_ind_l1a_echo_sar_ku = "cal1_ku_ind_l1a_echo_sar_ku"
+from ..netcdf_reader import NetCDFReader
 
 
 class L1ADataset(InputDataset):
@@ -88,7 +17,7 @@ class L1ADataset(InputDataset):
         """
         The L1ADataset class reads L1A NetCDF data files.
         """
-        dset = nc.Dataset(filename)
+        dset = NetCDFReader(filename)
         super().__init__(dset, cst=cst, chd=chd, cnf=cnf)
 
         self._file_path = filename
@@ -108,62 +37,63 @@ class L1ADataset(InputDataset):
 
     def __getitem__(self, index: int) -> L1AProcessingData:
         # convert scale factor to linear value
-        scale_factor = 20 * log10(self.scale_factor_ku_l1a_echo_sar_ku[index])
+        # scale_factor = pow(10, (-self.get_value(L1AVariables.scale_factor_ku_l1a_echo_sar_ku, index) / 20.))
+        scale_factor = 20 * log10(self.get_value(L1AVariables.scale_factor_ku_l1a_echo_sar_ku, index))
         # construct waveform
-        waveform = scale_factor * (self.i_meas_ku_l1a_echo_sar_ku[index, :, :] +
-                              1j * self.q_meas_ku_l1a_echo_sar_ku[index, :, :])
+        waveform = scale_factor * (self.get_value(L1AVariables.i_meas_ku_l1a_echo_sar_ku, index) +
+                              1j * self.get_value(L1AVariables.q_meas_ku_l1a_echo_sar_ku, index))
         packet = L1AProcessingData(
             self.cst, self.chd, index,
             isp_pid=PacketPid.echo_sar,
-            time_sar_ku=self.time_l1a_echo_sar_ku[index],
-            isp_coarse_time=self.isp_coarse_time_l1a_echo_sar_ku[index],
-            isp_fine_time=self.isp_fine_time_l1a_echo_sar_ku[index],
-            sral_fine_time=self.sral_fine_time_l1a_echo_sar_ku[index],
-            days=self.UTC_day_l1a_echo_sar_ku[index],
-            seconds=self.UTC_sec_l1a_echo_sar_ku[index],
+            time_sar_ku=self.get_value(L1AVariables.time_l1a_echo_sar_ku, index),
+            isp_coarse_time=self.get_value(L1AVariables.isp_coarse_time_l1a_echo_sar_ku, index),
+            isp_fine_time=self.get_value(L1AVariables.isp_fine_time_l1a_echo_sar_ku, index),
+            sral_fine_time=self.get_value(L1AVariables.sral_fine_time_l1a_echo_sar_ku, index),
+            days=self.get_value(L1AVariables.UTC_day_l1a_echo_sar_ku, index),
+            seconds=self.get_value(L1AVariables.UTC_sec_l1a_echo_sar_ku, index),
             inst_id_sar_isp=0,
             pri_sar_pre_dat=self.chd.pri_sar,
             ambiguity_order_sar=0,
-            burst_sar_ku=self.burst_count_prod_l1a_echo_sar_ku[index],
-            lat_sar_sat=radians(self.lat_l1a_echo_sar_ku[index]),
-            lon_sar_sat=radians(self.lon_l1a_echo_sar_ku[index]),
-            alt_sar_sat=self.alt_l1a_echo_sar_ku[index],
-            alt_rate_sat_sar=self.orb_alt_rate_l1a_echo_sar_ku[index],
-            x_vel_sat_sar=self.x_vel_l1a_echo_sar_ku[index],
-            y_vel_sat_sar=self.y_vel_l1a_echo_sar_ku[index],
-            z_vel_sat_sar=self.z_vel_l1a_echo_sar_ku[index],
-            roll_sar=radians(self.roll_sral_mispointing_l1a_echo_sar_ku[index]),
-            pitch_sar=radians(self.pitch_sral_mispointing_l1a_echo_sar_ku[index]),
-            yaw_sar=radians(self.yaw_sral_mispointing_l1a_echo_sar_ku[index]),
-            h0_sar=self.h0_applied_l1a_echo_sar_ku[index],
-            t0_sar=self.chd.t0_nom * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
-            cor2_sar=self.cor2_applied_l1a_echo_sar_ku[index],
-            win_delay_sar_ku=self.range_ku_l1a_echo_sar_ku[index] * 2 / self.cst.c,
-            x_sar_sat=self.x_pos_l1a_echo_sar_ku[index],
-            y_sar_sat=self.y_pos_l1a_echo_sar_ku[index],
-            z_sar_sat=self.z_pos_l1a_echo_sar_ku[index],
+            burst_sar_ku=self.get_value(L1AVariables.burst_count_prod_l1a_echo_sar_ku, index),
+            lat_sar_sat=radians(self.get_value(L1AVariables.lat_l1a_echo_sar_ku, index)),
+            lon_sar_sat=radians(self.get_value(L1AVariables.lon_l1a_echo_sar_ku, index)),
+            alt_sar_sat=self.get_value(L1AVariables.alt_l1a_echo_sar_ku, index),
+            alt_rate_sat_sar=self.get_value(L1AVariables.orb_alt_rate_l1a_echo_sar_ku, index),
+            x_vel_sat_sar=self.get_value(L1AVariables.x_vel_l1a_echo_sar_ku, index),
+            y_vel_sat_sar=self.get_value(L1AVariables.y_vel_l1a_echo_sar_ku, index),
+            z_vel_sat_sar=self.get_value(L1AVariables.z_vel_l1a_echo_sar_ku, index),
+            roll_sar=radians(self.get_value(L1AVariables.roll_sral_mispointing_l1a_echo_sar_ku, index)),
+            pitch_sar=radians(self.get_value(L1AVariables.pitch_sral_mispointing_l1a_echo_sar_ku, index)),
+            yaw_sar=radians(self.get_value(L1AVariables.yaw_sral_mispointing_l1a_echo_sar_ku, index)),
+            h0_sar=self.get_value(L1AVariables.h0_applied_l1a_echo_sar_ku, index),
+            t0_sar=self.chd.t0_nom,  # * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
+            cor2_sar=self.get_value(L1AVariables.cor2_applied_l1a_echo_sar_ku, index),
+            win_delay_sar_ku=self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index) * 2 / self.cst.c,
+            x_sar_sat=self.get_value(L1AVariables.x_pos_l1a_echo_sar_ku, index),
+            y_sar_sat=self.get_value(L1AVariables.y_pos_l1a_echo_sar_ku, index),
+            z_sar_sat=self.get_value(L1AVariables.z_pos_l1a_echo_sar_ku, index),
             waveform_cor_sar=waveform,
             beams_focused=None,
-            flag_time_status=self.flag_time_status_l1a_echo_sar_ku[index],
-            nav_bul_status=self.nav_bul_status_l1a_echo_sar_ku[index],
-            nav_bul_source=self.nav_bul_source_l1a_echo_sar_ku[index],
-            source_seq_count=self.seq_count_l1a_echo_sar_ku[index],
-            oper_instr=self.oper_instr_l1a_echo_sar_ku[index],
-            SAR_mode=self.SAR_mode_l1a_echo_sar_ku[index],
-            cl_gain=self.cl_gain_l1a_echo_sar_ku[index],
-            acq_stat=self.acq_stat_l1a_echo_sar_ku[index],
-            dem_eeprom=self.dem_eeprom_l1a_echo_sar_ku[index],
-            loss_track=self.loss_track_l1a_echo_sar_ku[index],
-            h0_nav_dem=self.h0_nav_dem_l1a_echo_sar_ku[index],
-            h0_applied=self.h0_applied_l1a_echo_sar_ku[index],
-            cor2_nav_dem=self.cor2_nav_dem_l1a_echo_sar_ku[index],
-            cor2_applied=self.cor2_applied_l1a_echo_sar_ku[index],
-            dh0=self.dh0_l1a_echo_sar_ku[index],
-            agccode_ku=self.agccode_ku_l1a_echo_sar_ku[index],
-            range_ku=self.range_ku_l1a_echo_sar_ku[index],
-            int_path_cor_ku=self.int_path_cor_ku_l1a_echo_sar_ku[index],
-            agc_ku=self.agc_ku_l1a_echo_sar_ku[index],
-            sig0_cal_ku=self.sig0_cal_ku_l1a_echo_sar_ku[index]
+            flag_time_status=self.get_value(L1AVariables.flag_time_status_l1a_echo_sar_ku, index),
+            nav_bul_status=self.get_value(L1AVariables.nav_bul_status_l1a_echo_sar_ku, index),
+            nav_bul_source=self.get_value(L1AVariables.nav_bul_source_l1a_echo_sar_ku, index),
+            source_seq_count=self.get_value(L1AVariables.seq_count_l1a_echo_sar_ku, index),
+            oper_instr=self.get_value(L1AVariables.oper_instr_l1a_echo_sar_ku, index),
+            SAR_mode=self.get_value(L1AVariables.SAR_mode_l1a_echo_sar_ku, index),
+            cl_gain=self.get_value(L1AVariables.cl_gain_l1a_echo_sar_ku, index),
+            acq_stat=self.get_value(L1AVariables.acq_stat_l1a_echo_sar_ku, index),
+            dem_eeprom=self.get_value(L1AVariables.dem_eeprom_l1a_echo_sar_ku, index),
+            loss_track=self.get_value(L1AVariables.loss_track_l1a_echo_sar_ku, index),
+            h0_nav_dem=self.get_value(L1AVariables.h0_nav_dem_l1a_echo_sar_ku, index),
+            h0_applied=self.get_value(L1AVariables.h0_applied_l1a_echo_sar_ku, index),
+            cor2_nav_dem=self.get_value(L1AVariables.cor2_nav_dem_l1a_echo_sar_ku, index),
+            cor2_applied=self.get_value(L1AVariables.cor2_applied_l1a_echo_sar_ku, index),
+            dh0=self.get_value(L1AVariables.dh0_l1a_echo_sar_ku, index),
+            agccode_ku=self.get_value(L1AVariables.agccode_ku_l1a_echo_sar_ku, index),
+            range_ku=self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index),
+            int_path_cor_ku=self.get_value(L1AVariables.int_path_cor_ku_l1a_echo_sar_ku, index),
+            agc_ku=self.get_value(L1AVariables.agc_ku_l1a_echo_sar_ku, index),
+            sig0_cal_ku=self.get_value(L1AVariables.sig0_cal_ku_l1a_echo_sar_ku, index)
         )
         packet.compute_location_sar_surf()
         packet.compute_doppler_angle()
@@ -186,6 +116,9 @@ class L1ADataset(InputDataset):
         self._last_index += 1
 
         return packet
+
+    def get_value(self, varname, index):
+        return self._dset.get_value(varname, index)
 
     def __getattr__(self, variable_name: str) -> nc.Variable:
         """

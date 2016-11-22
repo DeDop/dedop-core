@@ -1,5 +1,7 @@
 import numpy as np
+import numexpr as ne
 from numpy.linalg import norm
+from math import sqrt
 
 from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
@@ -69,14 +71,19 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
 
     def compute_slant_range_correction(self, working_surface_location: SurfaceData,
                                        stack_burst: L1AProcessingData, beam_index: int) -> None:
-        isp_orbit_surf_ground_vector = np.matrix([
-            [stack_burst.x_sar_sat - working_surface_location.x_surf],
-            [stack_burst.y_sar_sat - working_surface_location.y_surf],
-            [stack_burst.z_sar_sat - working_surface_location.z_surf]
-        ])
-
-        self.range_sat_surf[beam_index] = norm(
-            isp_orbit_surf_ground_vector
+        # isp_orbit_surf_ground_vector = np.matrix([
+        #     [stack_burst.x_sar_sat - working_surface_location.x_surf],
+        #     [stack_burst.y_sar_sat - working_surface_location.y_surf],
+        #     [stack_burst.z_sar_sat - working_surface_location.z_surf]
+        # ])
+        #
+        # self.range_sat_surf[beam_index] = norm(
+        #     isp_orbit_surf_ground_vector
+        # )
+        self.range_sat_surf[beam_index] = sqrt(
+            (stack_burst.x_sar_sat - working_surface_location.x_surf) ** 2 +
+            (stack_burst.y_sar_sat - working_surface_location.y_surf) ** 2 +
+            (stack_burst.z_sar_sat - working_surface_location.z_surf) ** 2
         )
         if not self.flag_slant_range_correction:
             return
@@ -101,17 +108,10 @@ class GeometryCorrectionsAlgorithm(BaseAlgorithm):
                 self.slant_range_corrections[beam_index] +\
                 self.win_delay_corrections[beam_index]
 
-        sample_correction_phase_constant =\
-            2j * self.cst.pi / self.chd.n_samples_sar * shift
+        sample_correction_phase_constant = 2j * self.cst.pi / self.chd.n_samples_sar * shift
+        indicies = np.arange(self.chd.n_samples_sar)
+        beam = working_surface_location.beams_surf[beam_index, :]
 
-        def transform(sample_index, beam_sample):
-            sample_correction = np.exp(
-                sample_correction_phase_constant * float(sample_index)
-            )
-
-            return beam_sample * sample_correction
-
-        self.beams_geo_corr[beam_index, :] = np.asarray([
-            transform(i, sample) for i, sample in
-                enumerate(working_surface_location.beams_surf[beam_index, :])
-        ])
+        self.beams_geo_corr[beam_index, :] = ne.evaluate(
+            "exp(sample_correction_phase_constant * indicies) * beam"
+        )

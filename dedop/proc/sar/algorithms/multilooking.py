@@ -1,4 +1,5 @@
 import numpy as np
+import numexpr as ne
 from scipy.optimize import curve_fit, OptimizeWarning
 from typing import List
 import warnings
@@ -224,7 +225,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (n_samples_max,), dtype=np.float64
         )
         self.sample_counter = np.zeros(
-            (n_samples_max,), dtype=int
+            (n_samples_max,), dtype=np.float64
         )
 
         max_stack = min(self.n_looks_stack, surface.data_stack_size)
@@ -241,13 +242,12 @@ class MultilookingAlgorithm(BaseAlgorithm):
             else:
                 continue
 
-            for sample_index in range(self.chd.n_samples_sar * self.zp_fact_range):
-                # if this sample is masked, and avoid_zeroes is set, then skip to next sample
-                if self.flag_avoid_zeros_in_multilooking and\
-                   surface.stack_mask[beam_index, sample_index] == 0:
-                    continue
-                self.waveform_multilooked[sample_index] += weighted_beams[beam_index, sample_index]
-                self.sample_counter[sample_index] += 1
+            if self.flag_avoid_zeros_in_multilooking:
+               mask = surface.stack_mask[beam_index, :]
+            else:
+               mask = 1
+            self.waveform_multilooked[:] += weighted_beams[beam_index, :] * mask
+            self.sample_counter[:] += mask
 
         self.waveform_multilooked /= self.sample_counter
 

@@ -32,6 +32,7 @@ class AuxiliaryParameter:
 
         self.optional = optional or (default_value is not None)
         self.default = default_value
+        self._cache = {}
 
     def __get__(self, instance: "AuxiliaryFileReader", instance_type: type=None):
         """
@@ -45,6 +46,9 @@ class AuxiliaryParameter:
         if instance is None:
             return self
 
+        if instance in self._cache:
+            return self._cache[instance]
+
         value = self._retreive_value(instance)
 
         if self.cast is not None:
@@ -53,6 +57,7 @@ class AuxiliaryParameter:
         if self.type is not None and not isinstance(value, self.type):
             raise ParameterTypeError(self.name, self.type, type(value))
 
+        self._cache[instance] = value
         return value
 
     def _retreive_value(self, instance):

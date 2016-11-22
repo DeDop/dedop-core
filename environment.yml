@@ -30,6 +30,7 @@ dependencies:
 - nbformat=4.0.1=py35_0
 - netcdf4=1.2.2=np110py35_0
 - notebook=4.2.1=py35_0
+- numexpr=2.4.3=py35_0
 - numpy=1.10.4=py35_2
 - openssl=1.0.2h=1
 - path.py=8.2.1=py35_0

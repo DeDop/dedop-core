@@ -1,6 +1,5 @@
-from enum import Enum
 from math import cos
-
+from enum import Enum
 import numpy as np
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.conf.enums import AzimuthWindowingMethod
