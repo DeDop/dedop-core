@@ -44,7 +44,6 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         :param packet: The L1AProcessingData instance
         :param wavelength_ku: The signal wavelength
         :param method: The method to use
-        :param weighting: Azimuth weighting flag
         """
         self.beams_focused = np.empty(
             packet.waveform_cor_sar.shape,
@@ -89,8 +88,8 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
 
         return window
 
-
-    def compute_approximate_method(self, packet: L1AProcessingData, windowed_wfm: np.ndarray, wavelength_ku: float) -> None:
+    def compute_approximate_method(self, packet: L1AProcessingData, windowed_wfm: np.ndarray,
+                                   wavelength_ku: float) -> None:
         """
         Azimuth processing approximate method
 
@@ -99,6 +98,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         the central beam)
 
         :param packet: L1AProcessingData instance
+        :param windowed_wfm: the input waveform with windowing applied
         :param wavelength_ku: signal wavelength
         """
         # find the nadir beam angle
@@ -139,6 +139,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         from which it was computed.
 
         :param packet: L1AProcessingData
+        :param windowed_wfm: the input waveform with windowing applied
         :param wavelength_ku: signal wavelength
         """
         for beam_index, beam_angle_value in enumerate(packet.beam_angles_list):
@@ -164,6 +165,7 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         angle value) is applied to the waveform
 
         :param packet: the current L1AProcessingData
+        :param windowed_wfm: the input waveform with windowing applied
         :param beam_angle: the input beam angle
         :param wavelength_ku: the signal wavelength
 
@@ -174,7 +176,6 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
             windowed_wfm.shape,
             dtype=np.complex128
         )
-
 
         for pulse_index in range(self.chd.n_ku_pulses_burst):
             beam_angle_phase = np.exp(-2j * 2. * self.cst.pi / wavelength_ku *

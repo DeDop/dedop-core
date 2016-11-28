@@ -7,6 +7,7 @@ from typing import Sequence, Tuple
 from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
 
+
 class BeamAnglesAlgorithm(BaseAlgorithm):
     """
     Class for finding beam angles
@@ -15,7 +16,11 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
     def __call__(self, surface_locations: Sequence[SurfaceData], isp_record: L1AProcessingData,
                  work_location: SurfaceData):
         """
+        compute the beam angles between the provided list of surfaces and the given burst
 
+        :param surface_locations: list of surface locations
+        :param isp_record: current burst
+        :param work_location: working surface location
         """
         self.work_location_seen = False
         self.beam_angles = []
@@ -47,7 +52,8 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
             elif prev_location_seen:
                 break
 
-    def compute_beam_angle(self, surface: SurfaceData, isp_record: L1AProcessingData,
+    @staticmethod
+    def compute_beam_angle(surface: SurfaceData, isp_record: L1AProcessingData,
                            q_min: float, q_max: float) -> Tuple[float, bool]:
         """
         computes the beam angle for the specified surface.

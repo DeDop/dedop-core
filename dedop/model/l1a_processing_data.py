@@ -730,7 +730,6 @@ class L1AProcessingData:
             )
         return self._vel_sat_norm
 
-
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile,
                  seq_num: int=None, *dicts: Dict[str, Any], **values: Any):
         self._data = OrderedDict()

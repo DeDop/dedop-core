@@ -223,7 +223,7 @@ class L1BProcessor(BaseProcessor):
                 #  it should not be written to the outputs - and so the rest of the processing
                 #  is not needed
                 if working_loc.data_stack_size < (self.cnf.n_looks_stack // 2):
-                    del self.surf_locs[0] # remove this surface from the queue
+                    del self.surf_locs[0]  # remove this surface from the queue
                 else:
                     self.geometry_corrections(working_loc)
                     self.range_compression(working_loc)
@@ -241,9 +241,9 @@ class L1BProcessor(BaseProcessor):
             if not self.surf_locs:
                 if gap_processing:
                     # all the remaining surfaces & bursts before the gap have been processed
-                    gap_processing = False # end gap mode
-                    gap_resume = True # next iteration will be the first after the gap
-                    surface_processing = False # require min. number of surfaces again
+                    gap_processing = False  # end gap mode
+                    gap_resume = True  # next iteration will be the first after the gap
+                    surface_processing = False  # require min. number of surfaces again
                     sub_monitor.done()
                 else:
                     # the end of the input has been reached
@@ -438,4 +438,9 @@ class L1BProcessor(BaseProcessor):
         return surf
 
     def add_surface(self, surface: SurfaceData) -> None:
+        """
+        add a surface to the list
+
+        :param surface: the surface
+        """
         self.surf_locs.append(surface)

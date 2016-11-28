@@ -1,5 +1,4 @@
 import numpy as np
-import numexpr as ne
 from scipy.optimize import curve_fit, OptimizeWarning
 from typing import List
 import warnings
@@ -64,9 +63,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
     def __call__(self, working_surface_location: SurfaceData) -> None:
         """
+        compute multilooking for the current surface
 
-        :param working_surface_location:
-        :return:
+        :param working_surface_location: current surface
         """
         # TODO: FLAG SURFACE WEIGHTING
 
@@ -78,11 +77,11 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
     def compute_stack_characterization_params(self, working_surface_location: SurfaceData) -> None:
         """
+        compute stack characterization parameters for the current surface
 
-        :param working_surface_location:
-        :return:
+        :param working_surface_location: current surface
         """
-        beam_power = np.zeros((working_surface_location.data_stack_size), dtype=np.float64)
+        beam_power = np.zeros((working_surface_location.data_stack_size,), dtype=np.float64)
 
         max_beam_power = 0
 
@@ -114,9 +113,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
         # the parameters and arrays for the gaussian fitting
         n_samples_fitting = last_right_beam - first_left_beam + 1
 
-        beam_power_center = np.empty((n_samples_fitting), dtype=np.float64)
-        look_angles_surf_center = np.empty((n_samples_fitting), dtype=np.float64)
-        pointing_angles_surf_center = np.empty((n_samples_fitting), dtype=np.float64)
+        beam_power_center = np.empty((n_samples_fitting,), dtype=np.float64)
+        look_angles_surf_center = np.empty((n_samples_fitting,), dtype=np.float64)
+        pointing_angles_surf_center = np.empty((n_samples_fitting,), dtype=np.float64)
 
         for beam_index in range(first_left_beam, last_right_beam+1):
             rel_beam_index = beam_index - first_left_beam
@@ -162,7 +161,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
     def apply_antenna_weighting(self, surface: SurfaceData, apply_weighting: bool = True) -> np.ndarray:
         """
-        apply the antenna wieghting ( if apply_weighting is True )
+        apply the antenna weighting ( if apply_weighting is True )
+
+        :param surface: the current surface
+        :param apply_weighting: weighting toggle
         """
 
         if apply_weighting:
@@ -184,9 +186,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
     def _select_weight_from_angle(self, angle: float) -> float:
         """
         returns the weighting for the provided pointing angle
-        """
-        weights_size = len(self.chd.antenna_weights)
 
+        :param angle: pointing angle
+        """
         if angle <= self.chd.antenna_angles[0]:
             # angle is at or below min. angle
             selected_weight = self.chd.antenna_weights[0]
@@ -213,6 +215,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
     def compute_multilooking(self, surface: SurfaceData, weighted_beams: np.ndarray) -> None:
         """
         apply the multi-looking
+
+        :param surface: the current surface
+        :param weighted_beams: the input beams with weighting applied
         """
         start_beam_index = None
         stop_beam_index = None

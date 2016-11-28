@@ -1,11 +1,12 @@
 import numpy as np
-from typing import Dict, Any, Sequence
+from typing import Dict, Sequence
 
 from dedop.model import SurfaceData, L1AProcessingData
 from ..base_algorithm import BaseAlgorithm
 from dedop.proc.functions import *
 from dedop.proc.geo import lla2ecef, ecef2lla, normalize
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
     def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
@@ -41,6 +42,11 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         super().__init__(chd, cst, cnf)
 
     def get_surface(self) -> Dict[str, float]:
+        """
+        get dictionary of parameters for new surface
+
+        :return: data for surface
+        """
         return {
             'time_surf': self.time_surf,
             'x_surf': self.x_surf,
@@ -70,6 +76,11 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         }
 
     def store_first_location(self, isps: Sequence[L1AProcessingData]) -> None:
+        """
+        define values for first surface (directly beneath the ISP)
+
+        :param isps: list of input bursts
+        """
         isp_record = isps[-1]
 
         self.time_surf = isp_record.time_sar_ku
@@ -107,6 +118,14 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
     def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData], force_new: bool=False) -> bool:
+        """
+        attempt to compute new surface location
+
+        :param locs: current surface locations
+        :param isps: current bursts
+        :param force_new: flag to force a new surface directly beneath burst
+        :return: 'True' if new surface was created
+        """
         if (not locs) or force_new:
             self.first_surf = True
             self.new_surf = True
@@ -118,6 +137,13 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         return self.new_surf
 
     def find_new_location(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
+        """
+        attempt to find a new surface location
+
+        :param locs: current surface locations
+        :param isps: current bursts
+        :return: 'True' if surface is created
+        """
         surface = locs[-1]
         isp_curr = isps[-1]
         isp_prev = isps[-2]

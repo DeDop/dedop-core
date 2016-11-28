@@ -1,7 +1,5 @@
 from math import sqrt, log10
-
 import numpy as np
-from numpy.linalg import norm
 
 from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
@@ -13,23 +11,24 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
         """
         calculates the sigma0 scaling factor
 
-        :param working_surface_location:
-        :return:
+        :param working_surface_location: current surface
+        :param wavelength_ku: ku band wavelength
+        :param chirp_slope_ku: chirp slope
         """
         sigma0_scaling_factor_beam = np.zeros(
-            (working_surface_location.data_stack_size),
+            (working_surface_location.data_stack_size,),
             dtype=np.float64
         )
-        # TODO: come back to this and replace it with something less hacky
+        # TODO: come back to this and replace it with something less messy
         if self.n_looks_stack is not None:
             max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
         else:
-            max_stack = working_surface_location.data_stack_size # TODO
+            max_stack = working_surface_location.data_stack_size  # TODO
 
         sigma0_offset = 10 * log10(64) - \
-                        10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku +\
-                        10 * log10(self.chd.n_samples_sar * self.zp_fact_range) -\
-                        10 * log10(self.chd.pulse_length * self.chd.pulse_length * chirp_slope_ku)
+            10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku +\
+            10 * log10(self.chd.n_samples_sar * self.zp_fact_range) -\
+            10 * log10(self.chd.pulse_length * self.chd.pulse_length * chirp_slope_ku)
             
         for beam_index in range(max_stack):
             range_sat_surf = working_surface_location.range_sat_surf[beam_index]
@@ -55,7 +54,6 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
             sigma0_scaling_factor_beam[beam_index] = sigma0_offset +\
                 30 * log10(self.cst.pi) + 40 * log10(range_sat_surf) -\
                 20 * log10(wavelength_ku) - 10 * log10(surface_area)
-
 
         self.sigma0_scaling_factor = np.mean(sigma0_scaling_factor_beam)
         return self.sigma0_scaling_factor

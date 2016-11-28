@@ -28,8 +28,7 @@ class BaseAlgorithm:
 
     def collect_parameter_values(self) -> None:
         """
-
-        :return:
+        set CNF parameter values
         """
 
         for param in Parameter.get_parameters(self.__class__).values():

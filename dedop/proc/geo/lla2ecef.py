@@ -29,4 +29,4 @@ def lla2ecef(lla: Sequence[float], cst: ConstantsFile, lla_as_degrees: bool=Fals
     y = (N + alt) * cos(lat) * sin(lon)
     z = (N * (1 - e ** 2) + alt) * sin(lat)
     # Return the ecef coordinates
-    return (x, y, z)
+    return x, y, z

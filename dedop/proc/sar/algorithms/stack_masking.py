@@ -1,7 +1,7 @@
 import numpy as np
-from typing import Optional, Tuple
+from typing import Tuple
 
-from dedop.model import SurfaceType, SurfaceData
+from dedop.model import SurfaceData
 from ..base_algorithm import BaseAlgorithm
 from ....util.parameter import Parameter
 
@@ -10,6 +10,12 @@ from ....util.parameter import Parameter
 class StackMaskingAlgorithm(BaseAlgorithm):
 
     def __call__(self, working_surface_location: SurfaceData) -> None:
+        """
+        apply stack masking algorithm
+
+        :param working_surface_location: current surface location
+        :return:
+        """
 
         if self.flag_stack_masking:
             geom_mask = self.compute_geometry_mask(working_surface_location)
@@ -43,6 +49,12 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         return mask, mask_vector
 
     def compute_geometry_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
+        """
+        create the geometry mask
+
+        :param working_surface_location: current surface
+        :return: geometry mask
+        """
         geom_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
             dtype=np.float64
@@ -68,19 +80,26 @@ class StackMaskingAlgorithm(BaseAlgorithm):
         return geom_mask
 
     def compute_ambiguity_mask(self, working_surface_location: SurfaceData) -> np.ndarray:
+        """
+        create the ambiguity mask (TODO: not yet implemented)
+
+        :param working_surface_location: current surface
+        :return: ambiguity mask
+        """
         ambi_mask = np.zeros(
             (self.n_looks_stack, self.chd.n_samples_sar * self.zp_fact_range),
             dtype=np.float64
         )
-        ## TODO: to be defined
+        # TODO: to be defined
         ambi_mask[:, :] = 1
 
         return ambi_mask
 
-    def combine_masks(self, geom_mask: np.ndarray, ambig_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    @staticmethod
+    def combine_masks(geom_mask: np.ndarray, ambig_mask: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         stack_size, beam_size = geom_mask.shape
         stack_mask = np.zeros((stack_size, beam_size), dtype=np.float64)
-        stack_mask_vector = np.zeros((stack_size), dtype=np.float64)
+        stack_mask_vector = np.zeros((stack_size,), dtype=np.float64)
 
         for beam_index in range(stack_size):
             stack_mask[beam_index, :] = geom_mask[beam_index, :] * ambig_mask[beam_index, :]
@@ -113,7 +132,8 @@ class StackMaskingAlgorithm(BaseAlgorithm):
 
         return stack_mask, stack_mask_vector
 
-    def apply_mask(self, working_surface_location: SurfaceData, stack_mask: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def apply_mask(working_surface_location: SurfaceData, stack_mask: np.ndarray) -> np.ndarray:
         output = working_surface_location.beams_range_compr *\
                  stack_mask[:working_surface_location.data_stack_size, :]
 

@@ -135,7 +135,7 @@ class StackGatheringAlgorithm(BaseAlgorithm):
 
             burst_beam_angle = abs(beam_angle - self.cst.pi / 2.)
             if closest_burst_beam_angle is None or\
-                burst_beam_angle < closest_burst_beam_angle:
+               burst_beam_angle < closest_burst_beam_angle:
                 closest_burst_beam_angle = burst_beam_angle
                 self.closest_burst_index = stack_index
 

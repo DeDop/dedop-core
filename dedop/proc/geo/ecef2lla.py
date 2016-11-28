@@ -9,6 +9,7 @@ from dedop.conf import ConstantsFile
 COORD_ITERS = 10
 GEODETIC_ERR = 1e-9
 
+
 def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, float]:
     """
     converts a cartesian (x, y, z) earth-centred
@@ -84,12 +85,12 @@ def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, f
     if max_iters:
         raise RuntimeWarning("MAX_ITERS reached in ecef2lla")
 
-    if (x == 0.):
-        if (y == 0.):
+    if x == 0.:
+        if y == 0.:
             lon = 0.
-        elif (y > 0.):
+        elif y > 0.:
             lon = cst.pi / 2.
-        elif (y < 0.):
+        elif y < 0.:
             lon = -cst.pi / 2.
     else:
         lon = arctan2(y, x)
