@@ -54,9 +54,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.look_angle_centre = 0
         self.pointing_angle_centre = 0
 
-        self.stack_std = 0
-        self.stack_skewness = 0
-        self.stack_kurtosis = 0
+        self.stack_std = None
+        self.stack_max = None
+        self.stack_skewness = None
+        self.stack_kurtosis = None
 
         self.n_beams_start_stop = 0
         self.n_beams_multilooking = 0
@@ -130,6 +131,7 @@ class MultilookingAlgorithm(BaseAlgorithm):
         x = np.arange(n_samples_fitting)
 
         fit_params_l = gauss_fit(look_angles_surf_center, beam_power_center)
+        self.stack_max = fit_params_l[0]
         self.look_angle_centre = fit_params_l[1]
         self.stack_std = fit_params_l[2] / 2
 

@@ -719,6 +719,14 @@ class L1AProcessingData:
         return self["sig0_cal_ku"]
 
     @property
+    def uso_cor(self):
+        return self["uso_cor"]
+
+    @property
+    def surf_type(self):
+        return self["surf_type"]
+
+    @property
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
 

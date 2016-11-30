@@ -402,6 +402,8 @@ class L1BProcessor(BaseProcessor):
         """
         self.multilooking_algorithm(working_surface_location)
 
+        working_surface_location.stack_max = \
+            self.multilooking_algorithm.stack_max
         working_surface_location.stack_std = \
             self.multilooking_algorithm.stack_std
         working_surface_location.stack_skewness = \

@@ -837,6 +837,19 @@ class SurfaceData:
         del self["stack_std"]
 
     @property
+    def stack_max(self) -> float:
+        """the maximum value of the gaussian fit for the stack"""
+        return self["stack_max"]
+
+    @stack_max.setter
+    def stack_max(self, value: float) -> None:
+        self["stack_max"] = value
+
+    @stack_max.deleter
+    def stack_max(self) -> None:
+        del self["stack_max"]
+
+    @property
     def stack_skewness(self) -> float:
         """the skewness of the gaussian fit for the stack"""
         return self["stack_skewness"]

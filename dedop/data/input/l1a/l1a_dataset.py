@@ -67,6 +67,7 @@ class L1ADataset(InputDataset):
             yaw_sar=radians(self.get_value(L1AVariables.yaw_sral_mispointing_l1a_echo_sar_ku, index)),
             h0_sar=self.get_value(L1AVariables.h0_applied_l1a_echo_sar_ku, index),
             t0_sar=self.chd.t0_nom,  # * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
+            uso_cor=self.get_value(L1AVariables.uso_cor_l1a_echo_sar_ku, index),
             cor2_sar=self.get_value(L1AVariables.cor2_applied_l1a_echo_sar_ku, index),
             win_delay_sar_ku=self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index) * 2 / self.cst.c,
             x_sar_sat=self.get_value(L1AVariables.x_pos_l1a_echo_sar_ku, index),
@@ -93,7 +94,8 @@ class L1ADataset(InputDataset):
             range_ku=self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index),
             int_path_cor_ku=self.get_value(L1AVariables.int_path_cor_ku_l1a_echo_sar_ku, index),
             agc_ku=self.get_value(L1AVariables.agc_ku_l1a_echo_sar_ku, index),
-            sig0_cal_ku=self.get_value(L1AVariables.sig0_cal_ku_l1a_echo_sar_ku, index)
+            sig0_cal_ku=self.get_value(L1AVariables.sig0_cal_ku_l1a_echo_sar_ku, index),
+            surf_type=self.get_value(L1AVariables.surf_type_l1a_echo_sar_ku, index)
         )
         packet.compute_location_sar_surf()
         packet.compute_doppler_angle()
