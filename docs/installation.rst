@@ -23,7 +23,7 @@ you don't need to install the DeDop library dependencies in your default Python.
 After installing Miniconda open a terminal window and create an isolated Python environment and *activate* it. Type::
 
     conda create -n dedop python=3
-    source activate.sh dedop
+    source activate dedop
 
 
 Then install the DeDop library requirements::
