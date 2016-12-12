@@ -2,11 +2,51 @@
 Manual
 ======
 
-The DeDop software manual has not yet been written. While it is being prepared, please refer to the :doc:`quickstart`,
-which should give you a first impression how the DeDop Shell is used.
+The DeDop tool set currently comprises only the *DeDop Shell* - a command-line interface to the
+Delay Doppler Processor (DPP).
 
-Please not that all DeDop Shell commands and also its sub-commands have a ``--help``, or shorter ``-h``, option that
-you can use for getting getting more information.
+
+.. _workspace_manag:
+
+Workspace Management
+====================
+
+TODO
+
+.. _source_file_manag:
+
+L1A Source File Management
+==========================
+
+TODO
+
+.. _config_manag:
+
+Processor Configuration Management
+==================================
+
+TODO
+
+.. _run_proc:
+
+Running the Processor
+=====================
+
+TODO
+
+.. _analyse_l1b:
+
+Analysing L1B Results
+=====================
+
+TODO
+
+.. _command_ref:
+
+Command Reference
+=================
+
+TODO
 
 .. _tool_config:
 
