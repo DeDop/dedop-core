@@ -5,7 +5,7 @@ Installation
 From Binaries
 =============
 
-DeDop is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop/releases/tag/v0.5.2>`_.
+DeDop is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop/releases/tag/v0.5.3>`_.
 For the windows Windows platforms there is a dedicated installer executable. For Mac OS and Unixes a ZIP file is provided.
 All platform distributions have a bundled Python interpreter, that's also the reason why they are quite large in size
 (roughly 300 megabytes).
