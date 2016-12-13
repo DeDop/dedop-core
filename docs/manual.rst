@@ -6,7 +6,7 @@ The DeDop software manual has not yet been written. While it is being prepared, 
 which should give you a first impression how the DeDop Shell is used.
 
 Please not that all DeDop Shell commands and also its sub-commands have a ``--help``, or shorter ``-h``, option that
-you can use for getting getting more information.
+you can use for getting more information.
 
 .. _tool_config:
 
