@@ -17,12 +17,12 @@ From Source
 ===========
 
 DeDop is programmed in Python so you first need to setup a suitable Python environment.
-We recommend using a `Miniconda <http://conda.pydata.org/miniconda.html>`_ Python environment, so
+We recommend using a `Miniconda <http://conda.pydata.org/miniconda.html>`_ Python3 environment, so
 you don't need to install the DeDop library dependencies in your default Python.
 
 After installing Miniconda open a terminal window and create an isolated Python environment and *activate* it. Type::
 
-    conda create -n dedop python=3
+    conda create -n dedop python=3.5
     source activate dedop
 
 
@@ -36,7 +36,7 @@ If you like to perform analysis tasks with DeDop, then also install::
 
 Then checkout the DeDop source code from GitHub::
 
-    git clone https://github.com/DeDop/dedop.git
+    git clone https://github.com/DeDop/dedop-core.git
 
 Step into the newly created source directory and install DeDop in the Python environment `dedop`::
 
