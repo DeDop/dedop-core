@@ -28,7 +28,7 @@ After installing Miniconda open a terminal window and create an isolated Python 
 
 Then install the DeDop library requirements::
 
-    conda install numpy scipy netcdf4 numexpr
+    conda install numpy scipy netcdf4 numexpr pyproj
 
 If you like to perform analysis tasks with DeDop, then also install::
 
@@ -40,7 +40,7 @@ Then checkout the DeDop source code from GitHub::
 
 Step into the newly created source directory and install DeDop in the Python environment `dedop`::
 
-    cd dedop
+    cd dedop-core
     python setup.py develop
 
 After installing from source, you should be able to run the DeDop Shell, try::
