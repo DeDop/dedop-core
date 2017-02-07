@@ -12,14 +12,14 @@ import argparse
 import os.path
 import subprocess
 import sys
-from abc import ABCMeta, abstractmethod
-from typing import Tuple, Optional
+
+from cate.util.cli import run_main, Command, SubCommandCommand, CommandError
 
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.proc.sar import L1BProcessor
-from dedop.ui.workspace import WorkspaceManager, WorkspaceError
-from dedop.util.config import get_config_value, get_config_path, write_default_config_file, DEFAULT_CONFIG_FILE
-from dedop.util.monitor import ConsoleMonitor, Monitor
+from dedop.ui.workspace import WorkspaceError, WorkspaceManager
+from dedop.util.config import DEFAULT_CONFIG_FILE, get_config_path, get_config_value
+from dedop.util.monitor import Monitor
 from dedop.version import __version__
 
 _DEFAULT_SUFFIX = '_1'
@@ -35,10 +35,11 @@ _STATUS_NO_MATCHING_OUTPUTS = 40, 'no matching outputs found'
 
 #: Name of the DeDop CLI executable.
 CLI_NAME = 'dedop'
+CLI_DESCRIPTION = 'Delay Doppler Altimeter Data (DeDop) command-line interface'
 
 _LICENSE_INFO_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'LICENSE')
-_USER_MANUAL_URL = 'http://dedop.readthedocs.io/en/latest/'
-_COPYRIGHT_INFO = """
+_DOCS_URL = 'http://dedop.readthedocs.io/en/latest/'
+_LICENSE = """
 {dedop} - ESA DeDop Shell, copyright (C) 2016 by the DeDop team and contributors
 
 {dedop} has been developed under contract to the European Space Agency (ESA).
@@ -123,69 +124,6 @@ def _dir_size(dir_path):
     return total
 
 
-class Command(metaclass=ABCMeta):
-    """
-    Represents (sub-)command for DeDop's command-line interface.
-    If a plugin wishes to extend DeDop's CLI, it may append a new call derived from ``Command`` to the list
-    ``COMMAND_REGISTRY``.
-    """
-
-    #: Success value to be returned by :py:meth:`execute`. Its value is ``(0, None)``.
-    STATUS_OK = (0, None)
-
-    @classmethod
-    @abstractmethod
-    def name(cls):
-        """
-        Return the command's unique name.
-        :return: the command's unique name.
-        """
-
-    @classmethod
-    @abstractmethod
-    def parser_kwargs(cls):
-        """
-        Return the keyword arguments passed to a ``argparse.ArgumentParser(**parser_kwargs)`` call.
-
-        For the possible keywords refer to
-        https://docs.python.org/3.5/library/argparse.html#argparse.ArgumentParser.
-
-        :return: Parser keyword arguments.
-        """
-
-    @classmethod
-    def configure_parser(cls, parser: argparse.ArgumentParser):
-        """
-        Configure *parser*, i.e. make any required ``parser.add_argument(*args, **kwargs)`` calls.
-        See https://docs.python.org/3.5/library/argparse.html#argparse.ArgumentParser.add_argument
-
-        :param parser: The command parser to configure.
-        """
-        pass
-
-    @abstractmethod
-    def execute(self, command_args: argparse.Namespace) -> Optional[Tuple[int, str]]:
-        """
-        Execute this command and return a tuple (*status*, *message*) where *status* is the CLI executable's
-        exit code and *message* a text to be printed before the executable
-        terminates. If *status* is zero, the message will be printed to ``sys.stdout``, otherwise to ``sys.stderr``.
-        Implementors may can return ``STATUS_OK`` on success.
-
-        The command's arguments in *command_args* are attributes namespace returned by
-        ``argparse.ArgumentParser.parse_args()``.
-        Also refer to to https://docs.python.org/3.5/library/argparse.html#argparse.ArgumentParser.parse_args
-
-
-        :param command_args: The command's arguments.
-        :return: `None`` (= status ok) or a tuple (*status*, *message*) of type (``int``, ``str``)
-                 where *message* may be ``None``.
-        """
-
-    @classmethod
-    def new_monitor(cls):
-        return ConsoleMonitor(stay_in_line=True, progress_bar_size=32)
-
-
 class RunProcessorCommand(Command):
     CMD_NAME = 'run'
 
@@ -218,7 +156,7 @@ class RunProcessorCommand(Command):
     def execute(self, command_args):
         try:
             if command_args.all_configs and command_args.config_name:
-                return 60, 'option -a cannot be used with option -c"'
+                raise CommandError('option -a cannot be used with option -c"')
 
             workspace_name, config_name = _get_workspace_and_config_name(command_args)
             if not workspace_name:
@@ -227,7 +165,8 @@ class RunProcessorCommand(Command):
             if command_args.all_configs:
                 config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
                 if not config_names:
-                    return _STATUS_NO_CONFIG
+                    raise CommandError(
+                        'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
             else:
                 if not config_name:
                     config_name = ManageConfigsCommand.create_default_config(workspace_name)
@@ -235,8 +174,9 @@ class RunProcessorCommand(Command):
 
             inputs = command_args.inputs if command_args.inputs else _WORKSPACE_MANAGER.get_input_paths(workspace_name)
             if not inputs:
-                code, msg = _STATUS_NO_INPUTS
-                return code, msg % workspace_name
+                raise CommandError(
+                    'workspace "%s" doesn\'t have any inputs yet, use "dedop input add *.nc" to add some'
+                    % workspace_name)
 
             for config_name in config_names:
                 chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
@@ -258,11 +198,10 @@ class RunProcessorCommand(Command):
                     processor.process(input_file, monitor=monitor)
 
         except (WorkspaceError, ProcessorException) as error:
-            return 60, str(error)
-        return self.STATUS_OK
+            raise CommandError(error)
 
 
-class ManageWorkspacesCommand(Command):
+class ManageWorkspacesCommand(SubCommandCommand):
     @classmethod
     def name(cls):
         return 'workspace'
@@ -273,9 +212,7 @@ class ManageWorkspacesCommand(Command):
         return dict(aliases=['w'], help=help_line, description=help_line)
 
     @classmethod
-    def configure_parser(cls, parser: argparse.ArgumentParser):
-        subparsers = parser.add_subparsers(help='DeDop workspace sub-commands')
-
+    def configure_parser_and_subparsers(cls, parser, subparsers):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
 
         parser.set_defaults(ws_parser=parser)
@@ -317,15 +254,14 @@ class ManageWorkspacesCommand(Command):
         workspace_name = command_args.workspace_name
         try:
             cls.create_workspace(workspace_name, exists_ok=False)
-            return cls.STATUS_OK
         except WorkspaceError as error:
-            return 1, str(error)
+            raise CommandError(error)
 
     @classmethod
     def execute_remove(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return 1, 'no current workspace'
+            raise CommandError('no current workspace')
         if command_args.yes:
             answer = 'yes'
         else:
@@ -343,14 +279,13 @@ class ManageWorkspacesCommand(Command):
                     else:
                         cls.set_current_workspace(None)
             except WorkspaceError as error:
-                return 1, str(error)
-        return cls.STATUS_OK
+                raise CommandError(error)
 
     @classmethod
     def execute_copy(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return 1, 'no current workspace'
+            raise CommandError('no current workspace')
         new_name = command_args.new_name
         if not new_name:
             new_name = workspace_name + _DEFAULT_SUFFIX
@@ -359,14 +294,13 @@ class ManageWorkspacesCommand(Command):
             _WORKSPACE_MANAGER.copy_workspace(workspace_name, new_name)
             print('copied workspace "%s" to "%s"' % (workspace_name, new_name))
         except WorkspaceError as error:
-            return 1, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_rename(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return 1, 'no current workspace'
+            raise CommandError('no current workspace')
         new_name = cls.ensure_unique_name(command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
@@ -374,8 +308,7 @@ class ManageWorkspacesCommand(Command):
             if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
                 cls.set_current_workspace(new_name)
         except WorkspaceError as error:
-            return 1, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_current(cls, command_args):
@@ -388,9 +321,8 @@ class ManageWorkspacesCommand(Command):
                     print('current workspace is "%s"' % workspace_name)
                 else:
                     print('no current workspace')
-        except WorkspaceError as e:
-            return 1, str(e)
-        return cls.STATUS_OK
+        except WorkspaceError as error:
+            raise CommandError(error)
 
     # noinspection PyUnusedLocal
     @classmethod
@@ -406,7 +338,6 @@ class ManageWorkspacesCommand(Command):
         for i in range(num_workspaces):
             workspace_name = workspace_names[i]
             print('%3d: %s' % (i + 1, workspace_name))
-        return cls.STATUS_OK
 
     @classmethod
     def create_default_workspace(cls) -> str:
@@ -441,7 +372,7 @@ class ManageWorkspacesCommand(Command):
         return valid_new_name
 
 
-class ManageConfigsCommand(Command):
+class ManageConfigsCommand(SubCommandCommand):
     @classmethod
     def name(cls):
         return 'config'
@@ -452,12 +383,10 @@ class ManageConfigsCommand(Command):
         return dict(aliases=['c'], help=help_line, description=help_line)
 
     @classmethod
-    def configure_parser(cls, parser: argparse.ArgumentParser):
+    def configure_parser_and_subparsers(cls, parser, subparsers):
         config_name_attributes = dict(dest='config_name', metavar='CONFIG', help="Name of the DDP configuration")
 
         parser.set_defaults(cf_parser=parser)
-
-        subparsers = parser.add_subparsers(help='DeDop DDP configuration sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new DDP configuration')
         cls.setup_default_parser_argument(parser_add)
@@ -519,15 +448,16 @@ class ManageConfigsCommand(Command):
         try:
             cls.create_config(workspace_name, config_name, exist_ok=False)
         except WorkspaceError as error:
-            return 1, str(error)
+            raise CommandError(error)
 
     @classmethod
     def execute_remove(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         if command_args.yes:
             answer = 'yes'
         else:
@@ -545,16 +475,16 @@ class ManageConfigsCommand(Command):
                     else:
                         cls.set_current_config(workspace_name, None)
             except WorkspaceError as error:
-                return 1, str(error)
-        return cls.STATUS_OK
+                raise CommandError(error)
 
     @classmethod
     def execute_copy(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         new_name = command_args.new_name
         if not new_name:
             new_name = config_name + '_copy'
@@ -563,16 +493,16 @@ class ManageConfigsCommand(Command):
             _WORKSPACE_MANAGER.copy_config(workspace_name, config_name, new_name)
             print('copied DDP configuration "%s" to "%s"' % (config_name, new_name))
         except WorkspaceError as error:
-            return 1, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_rename(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         new_name = cls.ensure_unique_name(workspace_name, command_args.new_name)
         try:
             _WORKSPACE_MANAGER.rename_config(workspace_name, config_name, new_name)
@@ -580,8 +510,7 @@ class ManageConfigsCommand(Command):
             if config_name == _WORKSPACE_MANAGER.get_current_config_name(workspace_name):
                 cls.set_current_config(workspace_name, new_name)
         except WorkspaceError as error:
-            return 1, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_edit(cls, command_args):
@@ -598,8 +527,7 @@ class ManageConfigsCommand(Command):
             _WORKSPACE_MANAGER.open_file(cnf_file)
             _WORKSPACE_MANAGER.open_file(cst_file)
         except (WorkspaceError, IOError, OSError) as error:
-            return 1, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_current(cls, command_args):
@@ -615,17 +543,17 @@ class ManageConfigsCommand(Command):
                     print('current DDP configuration is "%s"' % config_name)
                 else:
                     print('no current DDP configuration')
-        except WorkspaceError as e:
-            return 1, str(e)
-        return cls.STATUS_OK
+        except WorkspaceError as error:
+            raise CommandError(error)
 
     @classmethod
     def execute_info(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         config_path = _WORKSPACE_MANAGER.get_config_path(workspace_name, config_name)
         print('current workspace:              ', workspace_name)
         print('current DDP configuration:      ', config_name)
@@ -635,13 +563,12 @@ class ManageConfigsCommand(Command):
             subprocess.check_call('dir /A-D "%s"' % config_path, shell=True)
         else:
             subprocess.check_call('ls "%s"' % config_path, shell=True)
-        return cls.STATUS_OK
 
     @classmethod
     def execute_list(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
         num_configs = len(config_names)
         if num_configs == 0:
@@ -653,7 +580,6 @@ class ManageConfigsCommand(Command):
         for i in range(num_configs):
             config_name = config_names[i]
             print('%3d: %s' % (i + 1, config_name))
-        return cls.STATUS_OK
 
     @classmethod
     def create_default_config(cls, workspace_name) -> str:
@@ -706,7 +632,7 @@ class ManageConfigsCommand(Command):
         return valid_new_name
 
 
-class ManageInputsCommand(Command):
+class ManageInputsCommand(SubCommandCommand):
     CMD_NAME = 'input'
 
     @classmethod
@@ -719,10 +645,8 @@ class ManageInputsCommand(Command):
         return dict(aliases=['i'], help=help_line, description=help_line)
 
     @classmethod
-    def configure_parser(cls, parser: argparse.ArgumentParser):
+    def configure_parser_and_subparsers(cls, parser, subparsers):
         parser.set_defaults(mi_parser=parser)
-
-        subparsers = parser.add_subparsers(help='L1A inputs sub-commands')
 
         parser_add = subparsers.add_parser('add', help='Add new inputs')
         cls.setup_default_parser_argument(parser_add)
@@ -765,7 +689,7 @@ class ManageInputsCommand(Command):
             inputs = [os.path.join('.', '*.nc')]
         inputs = _expand_wildcard_paths(inputs)
         if not inputs:
-            return _STATUS_NO_MATCHING_INPUTS
+            raise CommandError('no matching inputs found')
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
         try:
             if not workspace_name:
@@ -778,21 +702,20 @@ class ManageInputsCommand(Command):
                 print('one input added')
             else:
                 print('added %s inputs' % input_count)
-        except WorkspaceError as e:
-            return 30, str(e)
-        return cls.STATUS_OK
+        except WorkspaceError as error:
+            raise CommandError(error)
 
     @classmethod
     def execute_remove(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         input_names = command_args.inputs
         if not input_names:
             input_names = '*.nc'
         input_names = _WORKSPACE_MANAGER.get_input_names(workspace_name, pattern=input_names)
         if not input_names:
-            return _STATUS_NO_MATCHING_INPUTS
+            raise CommandError('no matching inputs found')
         monitor = Monitor.NULL if command_args.quiet else cls.new_monitor()
         answer = 'yes' if command_args.quiet else _input('delete inputs "%s"? [yes]' % input_names, 'yes').lower()
         if answer.lower() == 'yes':
@@ -805,15 +728,14 @@ class ManageInputsCommand(Command):
                     print('one input removed')
                 else:
                     print('removed %s inputs' % input_count)
-            except WorkspaceError as e:
-                return 30, str(e)
-        return cls.STATUS_OK
+            except WorkspaceError as error:
+                raise CommandError(error)
 
     @classmethod
     def execute_list(cls, command_args):
         workspace_name = _get_workspace_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         pattern = command_args.pattern
         input_names = _WORKSPACE_MANAGER.get_input_names(workspace_name, pattern=pattern)
         num_inputs = len(input_names)
@@ -826,10 +748,9 @@ class ManageInputsCommand(Command):
         for i in range(num_inputs):
             input_name = input_names[i]
             print('%3d: %s' % (i + 1, input_name))
-        return cls.STATUS_OK
 
 
-class ManageOutputsCommand(Command):
+class ManageOutputsCommand(SubCommandCommand):
     CMD_NAME = 'output'
 
     @classmethod
@@ -842,10 +763,8 @@ class ManageOutputsCommand(Command):
         return dict(aliases=['o'], help=help_line, description=help_line)
 
     @classmethod
-    def configure_parser(cls, parser: argparse.ArgumentParser):
+    def configure_parser_and_subparsers(cls, parser, subparsers):
         parser.set_defaults(mo_parser=parser)  # so we cant print usage, if no sub-command given
-
-        subparsers = parser.add_subparsers(help='L1B outputs sub-commands')
 
         parser_clean = subparsers.add_parser('clean', aliases=['cl'],
                                              help='Clean outputs folder of current configuration or CONFIG')
@@ -913,12 +832,13 @@ class ManageOutputsCommand(Command):
     def execute_clean(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name)
         if not output_names:
-            return _STATUS_NO_MATCHING_OUTPUTS
+            raise CommandError('no matching outputs found')
         answer = 'yes' if command_args.quiet else _input('clean outputs directory? [yes]', 'yes')
         if answer.lower() == 'yes':
             try:
@@ -930,17 +850,17 @@ class ManageOutputsCommand(Command):
                     print('one output removed')
                 else:
                     print('removed %s outputs' % output_count)
-            except WorkspaceError as e:
-                return 30, str(e)
-        return cls.STATUS_OK
+            except WorkspaceError as error:
+                raise CommandError(error)
 
     @classmethod
     def execute_open(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         try:
             outputs_dir = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
             if os.path.exists(outputs_dir):
@@ -949,8 +869,7 @@ class ManageOutputsCommand(Command):
                 print(
                     'no outputs created with DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         except WorkspaceError as error:
-            return 40, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_inspect(cls, command_args):
@@ -964,15 +883,15 @@ class ManageOutputsCommand(Command):
                 l1b_path = os.path.abspath(l1b_filename)
             else:
                 if not config_name:
-                    return _STATUS_NO_CONFIG
+                    raise CommandError(
+                        'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
                 l1b_path = _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name, l1b_filename)
             if not os.path.exists(l1b_path):
-                return 50, 'L1B product not found: %s' % l1b_path
+                raise CommandError('L1B product not found: %s' % l1b_path)
 
             _WORKSPACE_MANAGER.inspect_l1b_product(workspace_name, l1b_path)
         except WorkspaceError as error:
-            return 50, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_compare(cls, command_args):
@@ -990,38 +909,40 @@ class ManageOutputsCommand(Command):
                 l1b_path_1 = os.path.abspath(l1b_filename_1)
             else:
                 if not config_name_1:
-                    return _STATUS_NO_CONFIG
+                    raise CommandError(
+                        'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
                 l1b_path_1 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_1, config_name_1, l1b_filename_1)
             if not os.path.exists(l1b_path_1):
-                return 60, 'First L1B product not found: %s' % l1b_path_1
+                raise CommandError('First L1B product not found: %s' % l1b_path_1)
 
             l1b_filename_2 = command_args.l1b_filename_2
             if os.path.dirname(l1b_filename_1):
                 l1b_path_2 = os.path.abspath(l1b_filename_2)
             else:
                 if not workspace_name_2:
-                    return _STATUS_NO_WORKSPACE
+                    raise CommandError('no current workspace, use option -w to name a WORKSPACE')
                 if not config_name_2:
-                    return _STATUS_NO_CONFIG
+                    raise CommandError(
+                        'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
                 l1b_path_2 = _WORKSPACE_MANAGER.get_outputs_path(workspace_name_2, config_name_2, l1b_filename_2)
             if not os.path.exists(l1b_path_2):
-                return 60, 'Second L1B product not found: %s' % l1b_path_2
+                raise CommandError('Second L1B product not found: %s' % l1b_path_2)
 
             if os.path.samefile(l1b_path_1, l1b_path_2):
                 print('warning: comparing "%s" with itself')
 
             _WORKSPACE_MANAGER.compare_l1b_products(workspace_name_1, l1b_path_1, l1b_path_2)
         except WorkspaceError as error:
-            return 60, str(error)
-        return cls.STATUS_OK
+            raise CommandError(error)
 
     @classmethod
     def execute_list(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         if not workspace_name:
-            return _STATUS_NO_WORKSPACE
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         if not config_name:
-            return _STATUS_NO_CONFIG
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
         pattern = command_args.pattern
         output_names = _WORKSPACE_MANAGER.get_output_names(workspace_name, config_name, pattern=pattern)
         num_outputs = len(output_names)
@@ -1034,7 +955,6 @@ class ManageOutputsCommand(Command):
         for i in range(num_outputs):
             output_name = output_names[i]
             print('%3d: %s' % (i + 1, output_name))
-        return cls.STATUS_OK
 
 
 class OpenNotebookCommand(Command):
@@ -1053,12 +973,11 @@ class OpenNotebookCommand(Command):
             try:
                 os.makedirs(workspaces_dir)
             except (OSError, IOError) as error:
-                return 70, str(error)
+                raise CommandError(error)
         try:
             _WORKSPACE_MANAGER.launch_notebook('Notebook', workspaces_dir)
         except WorkspaceError as error:
-            return 70, str(error)
-        return self.STATUS_OK
+            raise CommandError(error)
 
 
 class ShowStatusCommand(Command):
@@ -1115,8 +1034,6 @@ class ShowStatusCommand(Command):
         print('current workspace:          %s' % cur_workspace_name)
         print('current DDP configuration:  %s' % cur_config_name)
 
-        return self.STATUS_OK
-
 
 class ShowCopyrightCommand(Command):
     @classmethod
@@ -1129,8 +1046,7 @@ class ShowCopyrightCommand(Command):
         return dict(help=help_line, description=help_line)
 
     def execute(self, command_args):
-        print(_COPYRIGHT_INFO)
-        return self.STATUS_OK
+        print(_LICENSE)
 
 
 class ShowLicenseCommand(Command):
@@ -1161,24 +1077,11 @@ class ShowManualCommand(Command):
 
     def execute(self, command_args):
         import webbrowser
-        webbrowser.open_new_tab(_USER_MANUAL_URL)
-        return self.STATUS_OK
+        webbrowser.open_new_tab(_DOCS_URL)
 
 
 #: List of sub-commands supported by the CLI. Entries are classes derived from :py:class:`Command` class.
 #: DeDop plugins may extend this list by their commands during plugin initialisation.
-COMMAND_REGISTRY = [
-    ManageWorkspacesCommand,
-    ManageConfigsCommand,
-    ManageInputsCommand,
-    ManageOutputsCommand,
-    RunProcessorCommand,
-    ShowStatusCommand,
-    OpenNotebookCommand,
-    ShowManualCommand,
-    ShowCopyrightCommand,
-    ShowLicenseCommand,
-]
 
 
 class ExitException(Exception):
@@ -1206,20 +1109,101 @@ class NoExitArgumentParser(argparse.ArgumentParser):
         raise ExitException(status, message)
 
 
-def main(args=None, workspace_manager=None, processor_factory=None):
-    """
-    The entry point function of the DeDop command-line interface.
+# def main(args=None, workspace_manager=None, processor_factory=None):
+#     """
+#     The entry point function of the DeDop command-line interface.
+#
+#     :param args: list of command-line arguments of type ``str``.
+#     :param workspace_manager: optional :py:class:`WorkspaceManager` object.
+#     :param processor_factory: optional function used to create the processor instance. Must have the
+#         same signature as _py:func:`new_l1b_processor`.
+#     :return: An integer exit code where zero means success
+#     """
+#
+#     if args is None:
+#         args = sys.argv[1:]
+#
+#     if not processor_factory:
+#         processor_factory = get_config_value('processor_factory')
+#
+#     global _PROCESSOR_FACTORY
+#     _PROCESSOR_FACTORY = processor_factory if processor_factory else new_l1b_processor
+#
+#     workspaces_dir = get_config_path('workspaces_dir')
+#
+#     global _WORKSPACE_MANAGER
+#     _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager(workspaces_dir=workspaces_dir)
+#
+#     parser = NoExitArgumentParser(prog=CLI_NAME,
+#                                   description='ESA DeDop Shell, version %s' % __version__)
+#     parser.add_argument('--version', action='version', version=__version__)
+#     parser.add_argument('-e', '--errors', dest='print_stack_trace', action='store_true',
+#                         help='on error, print full Python stack trace')
+#     parser.add_argument('--new-conf', dest='new_conf', action='store_true',
+#                         help='write a new DeDop tools configuration file and exit')
+#     subparsers = parser.add_subparsers(
+#         dest='command_name',
+#         metavar='COMMAND',
+#         help='One of the following commands. Type "COMMAND -h" to get command-specific help.'
+#     )
+#
+#     for command_class in COMMAND_REGISTRY:
+#         command_name = command_class.name()
+#         command_parser_kwargs = command_class.parser_kwargs()
+#         command_parser = subparsers.add_parser(command_name, **command_parser_kwargs)
+#         command_class.configure_parser(command_parser)
+#         command_parser.set_defaults(command_class=command_class)
+#
+#     print_stack_trace = False
+#     try:
+#         args_obj = parser.parse_args(args)
+#         print_stack_trace = args_obj.print_stack_trace
+#
+#         if args_obj.new_conf:
+#             try:
+#                 config_file = write_default_config_file()
+#                 print('wrote new %s' % config_file)
+#                 status, message = 0, None
+#             except (IOError, OSError) as error:
+#                 status, message = 1, str(error)
+#         elif args_obj.command_name and args_obj.command_class:
+#             assert args_obj.command_name and args_obj.command_class
+#             status_and_message = args_obj.command_class().execute(args_obj)
+#             if not status_and_message:
+#                 status_and_message = Command.STATUS_OK
+#             status, message = status_and_message
+#         else:
+#             parser.print_help()
+#             status, message = 0, None
+#     except ExitException as e:
+#         status, message = e.status, e.message
+#
+#     if message:
+#         if status:
+#             sys.stderr.write("%s: %s\n" % (CLI_NAME, message))
+#             if print_stack_trace:
+#                 import traceback
+#                 traceback.print_stack()
+#         else:
+#             sys.stdout.write("%s\n" % message)
+#
+#     return status
 
-    :param args: list of command-line arguments of type ``str``.
-    :param workspace_manager: optional :py:class:`WorkspaceManager` object.
-    :param processor_factory: optional function used to create the processor instance. Must have the
-        same signature as _py:func:`new_l1b_processor`.
-    :return: An integer exit code where zero means success
-    """
+COMMAND_REGISTRY = [
+    ManageWorkspacesCommand,
+    ManageConfigsCommand,
+    ManageInputsCommand,
+    ManageOutputsCommand,
+    RunProcessorCommand,
+    ShowStatusCommand,
+    OpenNotebookCommand,
+    ShowManualCommand,
+    ShowCopyrightCommand,
+    ShowLicenseCommand,
+]
 
-    if args is None:
-        args = sys.argv[1:]
 
+def main(args=None, workspace_manager=None, processor_factory=None) -> int:
     if not processor_factory:
         processor_factory = get_config_value('processor_factory')
 
@@ -1231,60 +1215,13 @@ def main(args=None, workspace_manager=None, processor_factory=None):
     global _WORKSPACE_MANAGER
     _WORKSPACE_MANAGER = workspace_manager if workspace_manager else WorkspaceManager(workspaces_dir=workspaces_dir)
 
-    parser = NoExitArgumentParser(prog=CLI_NAME,
-                                  description='ESA DeDop Shell, version %s' % __version__)
-    parser.add_argument('--version', action='version', version=__version__)
-    parser.add_argument('-e', '--errors', dest='print_stack_trace', action='store_true',
-                        help='on error, print full Python stack trace')
-    parser.add_argument('--new-conf', dest='new_conf', action='store_true',
-                        help='write a new DeDop tools configuration file and exit')
-    subparsers = parser.add_subparsers(
-        dest='command_name',
-        metavar='COMMAND',
-        help='One of the following commands. Type "COMMAND -h" to get command-specific help.'
-    )
-
-    for command_class in COMMAND_REGISTRY:
-        command_name = command_class.name()
-        command_parser_kwargs = command_class.parser_kwargs()
-        command_parser = subparsers.add_parser(command_name, **command_parser_kwargs)
-        command_class.configure_parser(command_parser)
-        command_parser.set_defaults(command_class=command_class)
-
-    print_stack_trace = False
-    try:
-        args_obj = parser.parse_args(args)
-        print_stack_trace = args_obj.print_stack_trace
-
-        if args_obj.new_conf:
-            try:
-                config_file = write_default_config_file()
-                print('wrote new %s' % config_file)
-                status, message = 0, None
-            except (IOError, OSError) as error:
-                status, message = 1, str(error)
-        elif args_obj.command_name and args_obj.command_class:
-            assert args_obj.command_name and args_obj.command_class
-            status_and_message = args_obj.command_class().execute(args_obj)
-            if not status_and_message:
-                status_and_message = Command.STATUS_OK
-            status, message = status_and_message
-        else:
-            parser.print_help()
-            status, message = 0, None
-    except ExitException as e:
-        status, message = e.status, e.message
-
-    if message:
-        if status:
-            sys.stderr.write("%s: %s\n" % (CLI_NAME, message))
-            if print_stack_trace:
-                import traceback
-                traceback.print_stack()
-        else:
-            sys.stdout.write("%s\n" % message)
-
-    return status
+    return run_main(CLI_NAME,
+                    CLI_DESCRIPTION,
+                    __version__,
+                    COMMAND_REGISTRY,
+                    license_text=_LICENSE,
+                    docs_url=_DOCS_URL,
+                    args=args)
 
 
 if __name__ == '__main__':
