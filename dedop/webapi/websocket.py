@@ -1,4 +1,3 @@
-from dedop.conf.defaults import DEFAULT_WORKSPACE_PATH
 from dedop.ui.workspace_manager import WorkspaceManager
 
 
@@ -26,6 +25,5 @@ class WebSocketService:
         workspace = self.workspace_manager.create_workspace(workspace_name)
         return workspace.to_json_dict()
 
-    def delete_workspace(self, workspace_name) -> dict():
-        workspace = self.workspace_manager.delete_workspace(workspace_name)
-        return workspace.to_json_dict()
+    def delete_workspace(self, workspace_name) -> None:
+        self.workspace_manager.delete_workspace(workspace_name)

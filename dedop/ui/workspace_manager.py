@@ -120,7 +120,6 @@ class WorkspaceManager:
 
     def delete_workspace(self, workspace_name: str):
         """
-        :param workspace_root_dir: workspace base directory eg. ~/.dedop/workspaces
         :param workspace_name: workspace name to be deleted
         :raise: WorkspaceError: thrown when workspace not found or cannot delete the workspace
         """
