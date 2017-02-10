@@ -4,16 +4,12 @@ from collections import OrderedDict
 
 
 class Workspace:
-    def __init__(self, base_dir, name, is_current=True):
-        assert base_dir
+    def __init__(self, workspace_dir, name, is_current=True):
+        assert workspace_dir
         assert name
-        self._base_dir = base_dir
+        self._workspace_dir = workspace_dir
         self._name = name
         self._is_current = is_current
-
-    @property
-    def base_dir(self) -> str:
-        return self._base_dir
 
     @property
     def name(self) -> str:
@@ -25,7 +21,7 @@ class Workspace:
 
     @property
     def workspace_dir(self) -> str:
-        return self.get_workspace_dir(self.base_dir, self._name)
+        return self._workspace_dir
 
     @classmethod
     def get_workspace_dir(cls, base_dir, name) -> str:
@@ -61,7 +57,7 @@ class Workspace:
         return Workspace(base_dir, workspace_name, is_current=is_current)
 
     def to_json_dict(self):
-        return OrderedDict([('workspace_dir', self.base_dir),
+        return OrderedDict([('workspace_dir', self.workspace_dir),
                             ('name', self.name),
                             ('is_current', self.is_current),
                             ])

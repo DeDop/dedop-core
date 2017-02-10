@@ -22,6 +22,10 @@ class WebSocketService:
             "arg": param1
         }
 
-    def new_workspace(self, workspace_name, base_dir=DEFAULT_WORKSPACE_PATH) -> dict:
-        workspace = self.workspace_manager.create_workspace(base_dir, workspace_name)
+    def new_workspace(self, workspace_name) -> dict:
+        workspace = self.workspace_manager.create_workspace(workspace_name)
+        return workspace.to_json_dict()
+
+    def delete_workspace(self, workspace_name) -> dict():
+        workspace = self.workspace_manager.delete_workspace(workspace_name)
         return workspace.to_json_dict()

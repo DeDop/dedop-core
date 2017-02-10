@@ -105,15 +105,14 @@ class WorkspaceManager:
     def workspace_exists(self, workspace_name) -> bool:
         return os.path.exists(self.get_workspace_path(workspace_name))
 
-    def create_workspace(self, workspace_root_dir: str, workspace_name: str) -> Workspace:
+    def create_workspace(self, workspace_name: str) -> Workspace:
         """
-        :param workspace_root_dir: workspace base directory eg. ~/.dedop/workspaces
         :param workspace_name: new workspace name
         :raise: WorkspaceError: when workspace already exists
         """
         if not workspace_name:
             raise WorkspaceError('no workspace name is specified')
-        workspace_dir = self.get_workspace_path(workspace_root_dir, workspace_name)
+        workspace_dir = self.get_workspace_path(workspace_name)
         if os.path.isdir(workspace_dir) and os.listdir(workspace_dir):
             raise WorkspaceError('workspace "%s" already exists' % workspace_name)
         self._ensure_dir_exists(workspace_dir)
@@ -121,8 +120,9 @@ class WorkspaceManager:
 
     def delete_workspace(self, workspace_name: str):
         """
-        :param workspace_name: workspace name
-        :raise: WorkspaceError
+        :param workspace_root_dir: workspace base directory eg. ~/.dedop/workspaces
+        :param workspace_name: workspace name to be deleted
+        :raise: WorkspaceError: thrown when workspace not found or cannot delete the workspace
         """
         self._assert_workspace_exists(workspace_name)
         dir_path = self.get_workspace_path(workspace_name)
@@ -305,8 +305,8 @@ class WorkspaceManager:
         return [self.get_inputs_path(workspace_name, name) for name in
                 self.get_input_names(workspace_name)]
 
-    def get_workspace_path(self, workspace_base_dir, workspace_name, *paths):
-        return os.path.join(workspace_base_dir if workspace_base_dir else self._workspaces_dir, workspace_name, *paths)
+    def get_workspace_path(self, workspace_name, *paths):
+        return os.path.join(self._workspaces_dir, workspace_name, *paths)
 
     def get_config_path(self, workspace_name, config_name, *paths):
         return self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, config_name, *paths)
