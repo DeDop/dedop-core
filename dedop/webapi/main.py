@@ -6,6 +6,7 @@ from cate.util.web.webapi import run_main, url_pattern, WebAPIRequestHandler, We
 from tornado.web import Application
 
 from dedop.conf.defaults import WEBAPI_PROGRESS_DEFER_PERIOD, WEBAPI_LOG_FILE_PREFIX
+from dedop.ui.workspace_manager import WorkspaceManager
 from dedop.version import __version__
 from dedop.webapi.websocket import WebSocketService
 
@@ -22,7 +23,7 @@ class WebAPIVersionHandler(WebAPIRequestHandler):
 
 
 def service_factory(application):
-    return WebSocketService()
+    return WebSocketService(application.workspace_manager)
 
 
 # All JSON REST responses should have same structure, namely a dictionary as follows:
@@ -40,6 +41,7 @@ def create_application():
         (url_pattern('/app'), JsonRcpWebSocketHandler, dict(service_factory=service_factory,
                                                             report_defer_period=WEBAPI_PROGRESS_DEFER_PERIOD)),
     ])
+    application.workspace_manager = WorkspaceManager()
     return application
 
 

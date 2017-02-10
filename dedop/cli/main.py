@@ -17,7 +17,7 @@ from cate.util.cli import run_main, Command, SubCommandCommand, CommandError
 
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.proc.sar import L1BProcessor
-from dedop.ui.workspace import WorkspaceError, WorkspaceManager
+from dedop.ui.workspace_manager import WorkspaceError, WorkspaceManager
 from dedop.util.config import DEFAULT_CONFIG_FILE, get_config_path, get_config_value
 from dedop.util.monitor import Monitor
 from dedop.version import __version__
