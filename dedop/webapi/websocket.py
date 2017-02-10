@@ -1,5 +1,3 @@
-from typing import List
-
 from dedop.ui.workspace_manager import WorkspaceManager
 
 
@@ -42,8 +40,12 @@ class WebSocketService:
         workspace = self.workspace_manager.get_current_workspace()
         return workspace.to_json_dict()
 
-    def set_current_workspace(self, workspace_name) -> None:
-        self.workspace_manager.set_current_workspace_name(workspace_name)
+    def set_current_workspace(self, workspace_name) -> dict:
+        workspace = self.workspace_manager.set_current_workspace_name(workspace_name)
+        return workspace.to_json_dict()
 
-    def get_all_workspaces(self) -> List[str]:
-        return self.workspace_manager.get_workspace_names()
+    def get_all_workspaces(self) -> dict:
+        workspace_names = self.workspace_manager.get_workspace_names()
+        return {
+            "workspaces": workspace_names
+        }

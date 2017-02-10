@@ -6,7 +6,7 @@ from dedop.conf.defaults import DEFAULT_WORKSPACE_PATH
 
 
 class Workspace:
-    def __init__(self, workspace_dir, name, is_current=True):
+    def __init__(self, workspace_dir, name, is_current=False):
         self._workspace_dir = workspace_dir if workspace_dir else DEFAULT_WORKSPACE_PATH
         self._name = name
         self._is_current = is_current

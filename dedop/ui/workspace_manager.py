@@ -102,6 +102,8 @@ class WorkspaceManager:
     def set_current_workspace_name(self, workspace_name: str):
         self._assert_workspace_exists(workspace_name)
         _writeline(os.path.join(self._workspaces_dir, _CURRENT_FILE_NAME), workspace_name)
+        workspace_dir = self.get_workspace_path(workspace_name)
+        return Workspace(workspace_dir, workspace_name, is_current=True)
 
     def workspace_exists(self, workspace_name) -> bool:
         return os.path.exists(self.get_workspace_path(workspace_name))
