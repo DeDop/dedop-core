@@ -89,13 +89,15 @@ def _get_workspace_name(command_args):
     workspace_name = command_args.workspace_name
     if workspace_name:
         return workspace_name
-    return _WORKSPACE_MANAGER.get_current_workspace_name()
+    workspace = _WORKSPACE_MANAGER.get_current_workspace()
+    return workspace.name
 
 
 def _get_workspace_and_config_name(command_args):
     workspace_name = command_args.workspace_name
     if not workspace_name:
-        workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
+        workspace = _WORKSPACE_MANAGER.get_current_workspace()
+        workspace_name = workspace.name
     config_name = command_args.config_name
     if workspace_name and not config_name:
         config_name = _WORKSPACE_MANAGER.get_current_config_name(workspace_name)
@@ -270,7 +272,8 @@ class ManageWorkspacesCommand(SubCommandCommand):
             try:
                 _WORKSPACE_MANAGER.delete_workspace(workspace_name)
                 print('removed workspace "%s"' % workspace_name)
-                if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
+                workspace = _WORKSPACE_MANAGER.get_current_workspace()
+                if workspace_name == workspace.name:
                     workspace_names = _WORKSPACE_MANAGER.get_workspace_names()
                     if 'default' in workspace_names:
                         cls.set_current_workspace('default')
@@ -305,7 +308,8 @@ class ManageWorkspacesCommand(SubCommandCommand):
         try:
             _WORKSPACE_MANAGER.rename_workspace(workspace_name, new_name)
             print('renamed workspace "%s" to "%s"' % (workspace_name, new_name))
-            if workspace_name == _WORKSPACE_MANAGER.get_current_workspace_name():
+            workspace = _WORKSPACE_MANAGER.get_current_workspace()
+            if workspace_name == workspace.name:
                 cls.set_current_workspace(new_name)
         except WorkspaceError as error:
             raise CommandError(error)
@@ -316,7 +320,8 @@ class ManageWorkspacesCommand(SubCommandCommand):
             if command_args.workspace_name:
                 cls.set_current_workspace(command_args.workspace_name)
             else:
-                workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
+                workspace = _WORKSPACE_MANAGER.get_current_workspace()
+                workspace_name = workspace.name
                 if workspace_name:
                     print('current workspace is "%s"' % workspace_name)
                 else:
@@ -1008,7 +1013,8 @@ class ShowStatusCommand(Command):
                 workspace_names = ', '.join(workspace_names)
             else:
                 workspace_names = '(not set)'
-            cur_workspace_name = _WORKSPACE_MANAGER.get_current_workspace_name()
+            workspace = _WORKSPACE_MANAGER.get_current_workspace()
+            cur_workspace_name = workspace.name
             if cur_workspace_name:
                 cur_config_name = _WORKSPACE_MANAGER.get_current_config_name(cur_workspace_name)
                 if not cur_config_name:

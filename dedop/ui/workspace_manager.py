@@ -27,7 +27,7 @@ class WorkspaceError(Exception):
         return self.message
 
 
-def _readline(file_path: str) -> str:
+def _readline(file_path: str) -> str or None:
     if os.path.exists(file_path) and os.path.isfile(file_path):
         try:
             with open(file_path, 'r') as fp:
@@ -95,8 +95,9 @@ class WorkspaceManager:
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
 
-    def get_current_workspace_name(self) -> str:
-        return _readline(os.path.join(self._workspaces_dir, _CURRENT_FILE_NAME))
+    def get_current_workspace(self) -> Workspace:
+        current_workspace = _readline(os.path.join(self._workspaces_dir, _CURRENT_FILE_NAME))
+        return Workspace(None, current_workspace)
 
     def set_current_workspace_name(self, workspace_name: str):
         self._assert_workspace_exists(workspace_name)
@@ -145,6 +146,8 @@ class WorkspaceManager:
                                 os.path.join(dir_path, new_workspace_name))
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
+        workspace_dir = self.get_workspace_path(new_workspace_name)
+        return Workspace(workspace_dir, new_workspace_name)
 
     def rename_workspace(self, workspace_name: str, new_workspace_name: str):
         """
@@ -162,6 +165,8 @@ class WorkspaceManager:
                             os.path.join(dir_path, new_workspace_name))
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
+        workspace_dir = self.get_workspace_path(new_workspace_name)
+        return Workspace(workspace_dir, new_workspace_name)
 
     def get_workspace_names(self) -> List[str]:
         workspaces_dir = self._workspaces_dir
@@ -304,7 +309,7 @@ class WorkspaceManager:
         return [self.get_inputs_path(workspace_name, name) for name in
                 self.get_input_names(workspace_name)]
 
-    def get_workspace_path(self, workspace_name, *paths):
+    def get_workspace_path(self, workspace_name, *paths) -> str:
         return os.path.join(self._workspaces_dir, workspace_name, *paths)
 
     def get_config_path(self, workspace_name, config_name, *paths):

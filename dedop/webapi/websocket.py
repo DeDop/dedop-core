@@ -1,3 +1,5 @@
+from typing import List
+
 from dedop.ui.workspace_manager import WorkspaceManager
 
 
@@ -27,3 +29,21 @@ class WebSocketService:
 
     def delete_workspace(self, workspace_name) -> None:
         self.workspace_manager.delete_workspace(workspace_name)
+
+    def copy_workspace(self, workspace_name, new_workspace_name) -> dict:
+        workspace = self.workspace_manager.copy_workspace(workspace_name, new_workspace_name)
+        return workspace.to_json_dict()
+
+    def rename_workspace(self, workspace_name, new_workspace_name) -> dict:
+        workspace = self.workspace_manager.rename_workspace(workspace_name, new_workspace_name)
+        return workspace.to_json_dict()
+
+    def get_current_workspace(self) -> dict:
+        workspace = self.workspace_manager.get_current_workspace()
+        return workspace.to_json_dict()
+
+    def set_current_workspace(self, workspace_name) -> None:
+        self.workspace_manager.set_current_workspace_name(workspace_name)
+
+    def get_all_workspaces(self) -> List[str]:
+        return self.workspace_manager.get_workspace_names()
