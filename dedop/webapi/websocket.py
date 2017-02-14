@@ -14,13 +14,6 @@ class WebSocketService:
     def __init__(self, workspace_manager: WorkspaceManager):
         self.workspace_manager = workspace_manager
 
-    def test_action(self, param1: str) -> dict:
-        return {
-            "status": "ok",
-            "content": "successful test",
-            "arg": param1
-        }
-
     def new_workspace(self, workspace_name) -> dict:
         workspace = self.workspace_manager.create_workspace(workspace_name)
         return workspace.to_json_dict()
