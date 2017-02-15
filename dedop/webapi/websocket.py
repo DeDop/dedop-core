@@ -1,3 +1,6 @@
+from cate.util import Monitor
+from typing import List
+
 from dedop.ui.workspace_manager import WorkspaceManager
 
 
@@ -42,3 +45,6 @@ class WebSocketService:
         return {
             "workspaces": workspace_names
         }
+
+    def add_input_files(self, workspace_name: str, input_file_paths: List[str]):
+        self.workspace_manager.add_inputs(workspace_name, input_file_paths, Monitor.NONE)
