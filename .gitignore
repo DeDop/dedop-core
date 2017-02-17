@@ -69,3 +69,4 @@ target/
 /installer/win/version.txt
 
 *-checkpoint.ipynb
+test_data/data/test_l1b/temp/

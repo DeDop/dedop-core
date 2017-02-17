@@ -1,7 +1,7 @@
 import os.path
 from unittest import TestCase
 
-from dedop.ui.workspace import WorkspaceManager, WorkspaceError
+from dedop.ui.workspace_manager import WorkspaceManager, WorkspaceError
 from dedop.util.monitor import ConsoleMonitor
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'test_data')

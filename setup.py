@@ -17,7 +17,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'dedop = dedop.ui.cli:main'
+            'dedop = dedop.cli.main:main',
+            'dedop-webapi = dedop.webapi.main:main'
         ]
     },
     # Requirements are not given here as we use a Conda environment
