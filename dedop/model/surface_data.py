@@ -892,7 +892,6 @@ class SurfaceData:
     def gps_time_surf(self) -> float:
         return self.time_surf + 20 * 365 * 86400 - 19
 
-
     @property
     def prev_tai(self):
         return self["prev_tai"]

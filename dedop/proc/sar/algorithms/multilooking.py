@@ -18,7 +18,7 @@ def gauss(x, a, b, c):
 
 
 def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
-    """attempt to fit a gaussian curve to the data descibed
+    """attempt to fit a gaussian curve to the data described
     by x & y. Returns the fitting parameters"""
 
     # skip infinite values
@@ -33,7 +33,7 @@ def gauss_fit(x: np.ndarray, y: np.ndarray) -> List[float]:
             fit_params, _ = curve_fit(
                 gauss, x, y
             )
-        except (RuntimeError, OptimizeWarning):
+        except (RuntimeError, OptimizeWarning, TypeError):
             return [1, 1, 1]
 
     return fit_params
@@ -234,6 +234,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.sample_counter = np.zeros(
             (n_samples_max,), dtype=np.float64
         )
+        self.stack_mask_vector_start_stop = np.zeros(
+            (self.n_looks_stack,),
+            dtype=surface.stack_mask_vector.dtype
+        )
 
         max_stack = min(self.n_looks_stack, surface.data_stack_size)
         for beam_index in range(max_stack):
@@ -258,6 +262,9 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
         self.waveform_multilooked /= self.sample_counter
 
+        if stop_beam_index is None or start_beam_index is None:
+            self.n_beams_start_stop = 0
+            return
         self.n_beams_start_stop = stop_beam_index - start_beam_index + 1
 
         self.start_look_angle =\
@@ -275,9 +282,5 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.stop_pointing_angle = \
             surface.pointing_angles_surf[stop_beam_index]
 
-        self.stack_mask_vector_start_stop = np.zeros(
-            (self.n_looks_stack,),
-            dtype=surface.stack_mask_vector.dtype
-        )
         self.stack_mask_vector_start_stop[:self.n_beams_start_stop] =\
             surface.stack_mask_vector[start_beam_index:stop_beam_index+1]

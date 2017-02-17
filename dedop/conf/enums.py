@@ -6,3 +6,20 @@ class AzimuthWindowingMethod(Enum):
     boxcar = "boxcar"
     hanning = "hanning"
     hamming = "hamming"
+
+class AzimuthProcessingMethod(Enum):
+    """
+    Enum for azimuth processing method selection flag
+    """
+
+    approximate = "approx"
+    exact = "exact"
+
+
+class AzimuthWeighting(Enum):
+    """
+    Enum for azimuth weighting toggle flag
+    """
+
+    enabled = 1
+    disabled = 0

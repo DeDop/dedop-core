@@ -1,4 +1,4 @@
-from dedop.conf.enums import AzimuthWindowingMethod
+from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod
 
 from .auxiliary_file_reader import *
 
@@ -34,7 +34,8 @@ class ConfigurationFile(AuxiliaryFileReader):
 
     # azimuth processing
     flag_azimuth_processing_method = \
-        AuxiliaryParameter("flag_azimuth_processing_method_cnf")
+        AuxiliaryParameter("flag_azimuth_processing_method_cnf",
+                           param_type=AzimuthProcessingMethod) #todo: check this
     flag_postphase_azimuth_processing = \
         AuxiliaryParameter("flag_postphase_azimuth_processing_cnf")
     flag_azimuth_windowing_method = \

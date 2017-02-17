@@ -1,32 +1,15 @@
 from math import cos
-from enum import Enum
 import numpy as np
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
-from dedop.conf.enums import AzimuthWindowingMethod
+from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod
 from dedop.model import L1AProcessingData
+from dedop.util.parameter import Parameter
 from numpy.linalg import norm
 
 from ..base_algorithm import BaseAlgorithm
 
 
-class AzimuthProcessingMethods(Enum):
-    """
-    Enum for azimuth processing method selection flag
-    """
-
-    approximate = 0
-    exact = 1
-
-
-class AzimuthWeighting(Enum):
-    """
-    Enum for azimuth weighting toggle flag
-    """
-
-    enabled = 1
-    disabled = 0
-
-
+@Parameter('flag_azimuth_processing_method', data_type=AzimuthProcessingMethod)
 class AzimuthProcessingAlgorithm(BaseAlgorithm):
     """
     class for performing the Azimuth Processing Algorithm
@@ -36,14 +19,12 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
 
         self.beams_focused = None
 
-    def __call__(self, packet: L1AProcessingData, wavelength_ku: float,
-                 method: AzimuthProcessingMethods=AzimuthProcessingMethods.approximate) -> None:
+    def __call__(self, packet: L1AProcessingData, wavelength_ku: float) -> None:
         """
         Executes the azimuth processing algorithm
 
         :param packet: The L1AProcessingData instance
         :param wavelength_ku: The signal wavelength
-        :param method: The method to use
         """
         self.beams_focused = np.empty(
             packet.waveform_cor_sar.shape,
@@ -57,11 +38,13 @@ class AzimuthProcessingAlgorithm(BaseAlgorithm):
         windowed_wfm = packet.waveform_cor_sar * window[:, np.newaxis]
 
         # azimuth processing with approx. method
-        if method == AzimuthProcessingMethods.approximate:
+        if self.cnf.flag_azimuth_processing_method == AzimuthProcessingMethod.approximate:
             self.compute_approximate_method(packet, windowed_wfm, wavelength_ku)
         # azimuth processing with exact method
-        elif method == AzimuthProcessingMethods.exact:
+        elif self.cnf.flag_azimuth_processing_method == AzimuthProcessingMethod.exact:
             self.compute_exact_method(packet, windowed_wfm, wavelength_ku)
+        else:
+            raise ValueError("unknown azimuth processing method: {}".format(self.cnf.flag_azimuth_processing_method))
 
     def construct_azimuth_window(self, window_shape: AzimuthWindowingMethod, width: int=64):
         window = np.zeros((self.chd.n_ku_pulses_burst,), dtype=np.float64)

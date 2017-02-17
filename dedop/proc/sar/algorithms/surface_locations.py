@@ -166,9 +166,12 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
              [isp_prev.z_sar_surf - surface.z_sat,]],
             dtype=np.float64
         )
-        ground_surf_orbit_angle_prev = angle_between(
-            surface.surf_sat_vector, ground_surf_orbit_vector_prev
-        )
+        try:
+            ground_surf_orbit_angle_prev = angle_between(
+                surface.surf_sat_vector, ground_surf_orbit_vector_prev
+            )
+        except RuntimeWarning:
+            print(isp_curr.counter)
 
         # compute alpha - the ratio of the position of the surface
         #   between the two ISP readings
