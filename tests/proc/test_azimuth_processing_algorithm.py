@@ -2,10 +2,9 @@ import unittest
 
 import numpy as np
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
-from dedop.conf.enums import AzimuthWindowingMethod
+from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.proc.sar.algorithms import AzimuthProcessingAlgorithm
-from dedop.proc.sar.algorithms.azimuth_processing import AzimuthProcessingMethods
 from tests.testing import TestDataLoader
 
 
@@ -27,8 +26,11 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
         create cst and chd objects from input_data, then initialise
         an instance of the azimuth processing algorithm
         """
+        proc_method = AzimuthProcessingMethod(input_data["flag_azimuth_processing_method_cnf"])
+
         self.cnf = ConfigurationFile(
             flag_azimuth_windowing_method_cnf=AzimuthWindowingMethod.disabled,
+            flag_azimuth_processing_method_cnf=proc_method,
             azimuth_window_width_cnf=64
         )
         self.cst = ConstantsFile(
@@ -75,12 +77,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             input_data["beam_angles_trend_previous_burst"]
         )
 
-        # select processing method
-        proc_method = AzimuthProcessingMethods(
-            input_data["flag_azimuth_processing_method_cnf"]
-        )
         # execute azimuth processing algorithm
-        self.azimuth_processing_algorithm(packet, wv_len, method=proc_method)
+        self.azimuth_processing_algorithm(packet, wv_len)
 
         beams_focused = self.azimuth_processing_algorithm.beams_focused
 
@@ -156,12 +154,8 @@ class AzimuthProcessingAlgorithmTests(unittest.TestCase):
             input_data["beam_angles_trend_previous_burst"]
         )
 
-        # select processing method
-        proc_method = AzimuthProcessingMethods(
-            input_data["flag_azimuth_processing_method_cnf"]
-        )
         # execute azimuth processing algorithm
-        self.azimuth_processing_algorithm(packet, wv_len, method=proc_method)
+        self.azimuth_processing_algorithm(packet, wv_len)
 
         beams_focused = self.azimuth_processing_algorithm.beams_focused
 

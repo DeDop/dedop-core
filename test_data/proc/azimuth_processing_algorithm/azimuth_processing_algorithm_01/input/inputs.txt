@@ -4,7 +4,7 @@ pi_cst 3.141592653589793
 wv_length_ku 0.022084
 flag_azimuth_weighting_cnf 0
 azimuth_fft_weights_ku 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-flag_azimuth_processing_method_cnf 0
+flag_azimuth_processing_method_cnf approx
 time_sar_ku 601281600.003682
 x_vel_sat_sar -594.831016
 y_vel_sat_sar 2315.362908
