@@ -67,7 +67,9 @@ class L1BTests(unittest.TestCase):
                 agccode_ku=data["agccode_ku"][i],
                 int_path_cor_ku=data["int_path_cor_ku"][i],
                 agc_ku=data["agc_ku"][i],
-                sig0_cal_ku=data["sig0_cal_ku"][i]
+                sig0_cal_ku=data["sig0_cal_ku"][i],
+                surf_type=data["surface_type"][i],
+                uso_cor=data["uso_cor"][i]
             )
 
             surf = SurfaceData(
@@ -89,7 +91,6 @@ class L1BTests(unittest.TestCase):
                 x_vel_sat=data["x_vel_sat"][i],
                 y_vel_sat=data["y_vel_sat"][i],
                 z_vel_sat=data["z_vel_sat"][i],
-                surface_type=SurfaceType(data["surface_type"][i]),
                 sigma0_scaling_factor=data["sigma0_scaling_factor"][i],
                 data_stack_size=data["data_stack_size"][i],
                 stack_std=data["stack_std"][i],
@@ -97,6 +98,7 @@ class L1BTests(unittest.TestCase):
                 stack_kurtosis=data["stack_kurtosis"][i],
                 beam_angles_surf=data["beam_angles_surf"],
                 waveform_multilooked=data["waveform_multilooked"][i] * np.ones((256)),
+                stack_max=data["stack_max"][i],
                 closest_burst_index=0,
                 stack_bursts=[burst],
                 win_delay_surf=data["win_delay_surf"][i]
