@@ -40,9 +40,9 @@
     "description": "Location of the surface focusing target (altitude)"
   },
   "flag_azimuth_processing_method_cnf": {
-    "value": 0,
+    "value": "approx",
     "units": "flag",
-    "description": "Flag that indicates the azimuth processing method: Surface dependant (0); Approximate (1); Exact (2)"
+    "description": "Flag that indicates the azimuth processing method: Approximate ('approx'); Exact ('exact')"
   },
   "flag_postphase_azimuth_processing_cnf": {
     "value": false,
