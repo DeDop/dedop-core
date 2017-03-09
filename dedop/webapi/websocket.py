@@ -1,4 +1,5 @@
 from cate.util import Monitor
+from netCDF4 import Dataset
 from typing import List
 
 from dedop.ui.workspace_manager import WorkspaceManager
@@ -51,3 +52,8 @@ class WebSocketService:
 
     def remove_input_files(self, workspace_name: str, input_names: str):
         self.workspace_manager.remove_inputs(workspace_name, input_names, Monitor.NONE)
+
+    @staticmethod
+    def get_global_attributes(input_file_path):
+        ds = Dataset(input_file_path)
+        return ds.__dict__
