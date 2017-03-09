@@ -1,4 +1,22 @@
 {
+  "__metainf__": {
+    "description": "DeDop Configuration File",
+    "version": 1,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          ["flag_azimuth_processing_method_cnf", "*", "integer codes changed to text enum"]
+        ],
+        "comment": "Update to azimuth processing method flag"
+      }
+    ]
+  },
   "flag_cal2_correction_cnf": {
     "value": false,
     "units": "flag",

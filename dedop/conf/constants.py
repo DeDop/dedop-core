@@ -6,6 +6,7 @@ class ConstantsFile(AuxiliaryFileReader):
     class for loading the Constants file
     """
     _id = "CST"
+    _fileversion = 0
 
     c = AuxiliaryParameter(
         "c_cst",

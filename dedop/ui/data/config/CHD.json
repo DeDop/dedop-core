@@ -1,4 +1,15 @@
 {
+  "__metainf__": {
+    "description": "DeDop Characterisation File",
+    "version": 0,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      }
+    ]
+  },
   "mean_sat_alt_chd": {
     "value": 1347000.0,
     "description": "Mean satellite altitude",

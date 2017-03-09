@@ -8,6 +8,7 @@ class ConfigurationFile(AuxiliaryFileReader):
     class for loading the Configuration File
     """
     _id = "CNF"
+    _fileversion = 1
 
     def __init__(self, filename: str=None, **kwargs: Any):
         super().__init__(filename, **kwargs)
