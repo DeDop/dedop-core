@@ -2,12 +2,17 @@ import os
 import sys
 from collections import OrderedDict
 
-from dedop.conf.defaults import DEFAULT_WORKSPACE_PATH
+from dedop.conf.defaults import DEFAULT_DATA_PATH, DEFAULT_WORKSPACE_PATH
 
 
 class Workspace:
     def __init__(self, workspace_dir, name, is_current=False):
-        self._workspace_dir = workspace_dir if workspace_dir else DEFAULT_WORKSPACE_PATH
+        if workspace_dir:
+            self._workspace_dir = workspace_dir
+        elif not workspace_dir and not name:
+            self._workspace_dir = DEFAULT_WORKSPACE_PATH
+        else:
+            self._workspace_dir = os.path.join(DEFAULT_DATA_PATH, 'workspaces', name)
         self._name = name
         self._is_current = is_current
 
