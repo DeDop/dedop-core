@@ -1,3 +1,5 @@
+import json
+
 from cate.util import Monitor
 from netCDF4 import Dataset
 from typing import List
@@ -7,7 +9,7 @@ from dedop.ui.workspace_manager import WorkspaceManager
 
 class WebSocketService:
     """
-    Object which implements Cate's server-side methods.
+    Object which implements dedop's server-side methods.
 
     All methods receive inputs deserialized from JSON-RCP requests and must
     return JSON-serializable outputs.
@@ -53,7 +55,7 @@ class WebSocketService:
     def remove_input_files(self, workspace_name: str, input_names: str):
         self.workspace_manager.remove_inputs(workspace_name, input_names, Monitor.NONE)
 
-    def get_all_configs(self, workspace_name: str) -> List[str]:
+    def get_config_names(self, workspace_name: str) -> List[str]:
         return self.workspace_manager.get_config_names(workspace_name)
 
     def add_new_config(self, workspace_name: str, config_name: str):
@@ -68,11 +70,30 @@ class WebSocketService:
     def rename_config(self, workspace_name: str, config_name: str, new_config_name: str):
         self.workspace_manager.rename_config(workspace_name, config_name, new_config_name)
 
-    def get_current_config(self, workspace_name: str) -> str:
-        return self.workspace_manager.get_current_config_name(workspace_name)
+    def get_current_config(self, workspace_name: str) -> dict:
+        return {
+            "name": self.workspace_manager.get_current_config_name(workspace_name)
+        }
 
     def set_current_config(self, workspace_name: str, config_name: str):
         self.workspace_manager.set_current_config_name(workspace_name, config_name)
+
+    def get_configs(self, workspace_name: str, config_name: str) -> dict:
+        chd_config_json = self.get_config_json(workspace_name, config_name, "CHD")
+        cnf_config_json = self.get_config_json(workspace_name, config_name, "CNF")
+        cst_config_json = self.get_config_json(workspace_name, config_name, "CST")
+        return {
+            "name": config_name,
+            "chd": chd_config_json,
+            "cnf": cnf_config_json,
+            "cst": cst_config_json
+        }
+
+    def get_config_json(self, workspace_name, config_name, config_file_key):
+        file_path_chd = self.workspace_manager.get_config_file(workspace_name, config_name, config_file_key)
+        with open(file_path_chd) as data_file:
+            config_json = json.load(data_file)
+        return config_json
 
     @staticmethod
     def get_global_attributes(input_file_path):
