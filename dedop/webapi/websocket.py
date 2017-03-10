@@ -56,6 +56,9 @@ class WebSocketService:
     def get_all_configs(self, workspace_name: str) -> List[str]:
         return self.workspace_manager.get_config_names(workspace_name)
 
+    def add_new_config(self, workspace_name: str, config_name: str):
+        self.workspace_manager.create_config(workspace_name, config_name)
+
     @staticmethod
     def get_global_attributes(input_file_path):
         ds = Dataset(input_file_path)
