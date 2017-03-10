@@ -53,6 +53,9 @@ class WebSocketService:
     def remove_input_files(self, workspace_name: str, input_names: str):
         self.workspace_manager.remove_inputs(workspace_name, input_names, Monitor.NONE)
 
+    def get_all_configs(self, workspace_name: str) -> List[str]:
+        return self.workspace_manager.get_config_names(workspace_name)
+
     @staticmethod
     def get_global_attributes(input_file_path):
         ds = Dataset(input_file_path)
