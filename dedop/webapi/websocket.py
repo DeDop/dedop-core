@@ -62,6 +62,12 @@ class WebSocketService:
     def delete_config(self, workspace_name: str, config_name: str):
         self.workspace_manager.delete_config(workspace_name, config_name)
 
+    def copy_config(self, workspace_name: str, config_name: str, new_config_name: str):
+        self.workspace_manager.copy_config(workspace_name, config_name, new_config_name)
+
+    def rename_config(self, workspace_name: str, config_name: str, new_config_name: str):
+        self.workspace_manager.rename_config(workspace_name, config_name, new_config_name)
+
     @staticmethod
     def get_global_attributes(input_file_path):
         ds = Dataset(input_file_path)
