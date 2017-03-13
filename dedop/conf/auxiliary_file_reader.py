@@ -13,6 +13,8 @@ class AuxiliaryFileReader:
     # the _id field is the short ID of the file - e.g: CHD, CST ...
     # this is purely used to give context to error & warning messages
     _id = None
+    _fileversion = 0
+
 
     def __init__(self, filename: str=None, **kwargs: Any):
         """
@@ -39,8 +41,16 @@ class AuxiliaryFileReader:
         data = {}
         # open the JSON doc for reading
         with open(filename) as input_file:
+            version = cls.get_version(input_file)
+
+            if version != cls._fileversion:
+                raise IncompatibleAuxiliaryFileError(cls._id, cls._fileversion, version)
+
             # get the data of each item in the JSON doc
             for name, param in json.load(input_file).items():
+                # skip the metadata
+                if name == "__metainf__":
+                    continue
                 # check if it's in our array of expected parameters,
                 # and throw a warning if it isn't.
                 if name not in cls._get_parameters():
@@ -50,6 +60,18 @@ class AuxiliaryFileReader:
                 # add the item to the dictionary
                 data[name] = param['value']
         return data
+
+    @staticmethod
+    def get_version(file):
+        # read file as JSON
+        data = json.load(file)
+        # return to start of file
+        file.seek(0)
+
+        if "__metainf__" not in data:
+            # file predates metadata - version -1
+            return -1
+        return data["__metainf__"]["version"]
 
     @classmethod
     def _get_parameters(cls) -> Sequence[str]:

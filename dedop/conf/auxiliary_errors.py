@@ -44,3 +44,26 @@ class ParameterTypeError(TypeError):
             )
         # init TypeError
         super().__init__(message)
+
+
+class IncompatibleAuxiliaryFileError(Exception):
+    def __init__(self, file: str, expected_version: float, actual_version: float):
+        """
+        create a new IncompatibleAuxiliaryFileError
+
+        used to indicate that the file selected is not compatible
+          with the current version of DeDop
+        """
+        # create version text
+        if actual_version < 0:
+            version = "an unknown version"
+        else:
+            version = "version {}".format(actual_version)
+        # create message
+        message = \
+            "The file \"{}\" is {} which is not compatible with the current version ({})\n" \
+            "  Use the command \"dedop config upgrade\" to update to the current version.".format(
+                file, version, expected_version
+            )
+        # init with message
+        super().__init__(message)

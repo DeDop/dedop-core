@@ -9,6 +9,7 @@ class CharacterisationFile(AuxiliaryFileReader):
     class for loading the Characterisation File
     """
     _id = "CHD"
+    _fileversion = 0
 
     mean_sat_alt = AuxiliaryParameter(
         "mean_sat_alt_chd",

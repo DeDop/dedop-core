@@ -1,4 +1,22 @@
 {
+  "__metainf__": {
+    "description": "DeDop Configuration File",
+    "version": 1,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          ["flag_azimuth_processing_method_cnf", "*", "integer codes changed to text enum"]
+        ],
+        "comment": "Update to azimuth processing method flag"
+      }
+    ]
+  },
   "flag_cal2_correction_cnf": {
     "value": false,
     "units": "flag",
@@ -40,9 +58,9 @@
     "description": "Location of the surface focusing target (altitude)"
   },
   "flag_azimuth_processing_method_cnf": {
-    "value": 0,
+    "value": "approx",
     "units": "flag",
-    "description": "Flag that indicates the azimuth processing method: Surface dependant (0); Approximate (1); Exact (2)"
+    "description": "Flag that indicates the azimuth processing method: Approximate ('approx'); Exact ('exact')"
   },
   "flag_postphase_azimuth_processing_cnf": {
     "value": false,
