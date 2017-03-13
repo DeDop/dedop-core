@@ -27,15 +27,16 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
   - conda create -q -n test-environment python=$CONDA_PY pytest pytest-cov
+  - conda install conda-build anaconda-client
   - source activate test-environment
   - conda install -c ccitools cate-util numpy scipy netcdf4 numexpr pyproj bokeh jupyter ipywidgets hdf4=4.2.12 matplotlib=1.5.1
-  - conda install conda-build anaconda-client
   - python setup.py install
 
 script:
   # For the unit-tests, disable Numba JIT, otherwise Coverage wont reach the actual Python code
   - export NUMBA_DISABLE_JIT=1
   - py.test -v --cov=dedop tests
+  - source activate root
   - conda build -c ccitools recipe
 
 after_success:

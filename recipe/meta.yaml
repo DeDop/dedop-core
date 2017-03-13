@@ -2,7 +2,7 @@
 # ref: https://www.python.org/dev/peps/pep-0440/#developmental-releases
 package:
   name: dedop
-  version: "0.5.4.dev1"
+  version: "0.5.4.dev"
 
 build:
   number: 0
@@ -15,9 +15,9 @@ build:
 
 source:
   # git_rev: v0.5.3
-  git_url: https://github.com/DeDop/dedop-core.git
+  # git_url: https://github.com/DeDop/dedop-core.git
   # Uncomment to skip the "git clone" step
-  # path: ../../dedop
+  path: ../dedop
 
 requirements:
   build:
