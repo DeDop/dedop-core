@@ -254,6 +254,13 @@ class WorkspaceManager:
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self.get_config_path(workspace_name, config_name, config_file_key + '.json')
 
+    def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
+        file_path = self.get_config_file(workspace_name, config_name, config_file_key)
+        with open(file_path, 'r+') as f:
+            f.seek(0)
+            f.write(configuration)
+            f.truncate()
+
     def get_config_names(self, workspace_name: str) -> List[str]:
         self._assert_workspace_exists(workspace_name)
         configs_dir = self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME)
