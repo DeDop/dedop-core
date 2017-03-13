@@ -1,0 +1,82 @@
+# Not released/deployed yet! Use PEP 440 versioning scheme
+# ref: https://www.python.org/dev/peps/pep-0440/#developmental-releases
+package:
+  name: dedop
+  version: "0.5.4.dev1"
+
+build:
+  number: 0
+  # noarch_python: False
+  # preserve_egg_dir: False
+  # osx_is_app: False
+  entry_points:
+    # Put any entry points (scripts to be generated automatically) here.
+    - dedop = dedop.cli.main:main
+
+source:
+  # git_rev: v0.5.3
+  git_url: https://github.com/DeDop/dedop-core.git
+  # Uncomment to skip the "git clone" step
+  # path: ../../dedop
+
+requirements:
+  build:
+    - python >=3.5,<3.6
+    - setuptools
+    - pytest
+    - pytest-cov
+
+  run:
+    - python >=3.5
+    - cate-util 0.7.0*  # need to be modified to using '>' or '<' after there is an official release of this lib
+    - numpy
+    - scipy
+    - netcdf4
+    - numexpr
+    # dedop.ui.analysis only:
+    - pyproj
+    - matplotlib
+    - bokeh
+    - jupyter
+    - ipywidgets
+    - menuinst                    # [win]
+
+test:
+  # Python imports
+  imports:
+    - dedop
+    - dedop.ui
+    - dedop.cli.main
+    - dedop.ui.inspect
+
+  commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+    - dedop --help
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  requires:
+    # Put any additional test requirements here.
+    - pytest
+    - pytest-cov
+
+# The app section is for creating entries in the Anaconda Launcher / Navigator
+app:
+  entry: open ${PREFIX}/Scripts/dedop-shell.bat      # [win]
+  entry: open ${PREFIX}/bin/dedop-shell.command      # [osx]
+  entry: open ${PREFIX}/bin/dedop-shell.sh           # [unix]
+  icon: dedop.png
+  own_environment: False
+  summary:  "Delay Doppler Altimeter Tool"
+
+about:
+  home: https://github.com/DeDop/dedop
+  license: MIT
+  license_file: LICENSE
+  summary: "DeDop is a User Configurable Tool for Processing Delay Doppler Altimeter Data."
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml

@@ -1,0 +1,11 @@
+{
+  "menu_name": "ESA DeDop",
+  "menu_items": [
+    {
+      "name": "DeDop Shell",
+      "system": "%COMSPEC%",
+      "scriptarguments": ["/K", "${PREFIX}\\Scripts\\dedop-shell.bat"],
+      "icon": "${MENU_DIR}/dedop.ico"
+    }
+  ]
+}
