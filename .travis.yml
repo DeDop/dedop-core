@@ -5,6 +5,7 @@ env:
     #  the following key was generated in 2 steps based on the example here https://github.com/quantopian/zipline/blob/master/.travis.yml
     # ANACONDA_TOKEN
     - secure: "LbdHrvf1y+B/pOSqbM5z3FJa6hHbja1zLP3lp7Wbh/9RMua65FoSj+yXiULi0zLmLT1fTEuDKdWkHXgFiWyIawN5Wb/xBNc7UuJi5L2ko0WPs0UxUn6/vzj+rdmAp7lLSJldELWTyDUpnactkLD/HO43LwKW7IGsXas6U1gzjws9LlX4RoAAGfRyPalSWDEA6+/AYmpofmBNCgktqdmDi+zq5wif9X7JTPtVMllW81NLSQqzJvSYzT6EyONFLTJh8bd9FzOeyrR90MahQo8HjVSXAA0yp1qxJGtJtlRLaMIr+Xz7sec/rfIjvT8Vob8ZeAas38uuU5mAg4UgUTidQRYwZZIv4V0dFIY8eMhSruSTP6vReewT2nGSDwGVhENoW+JFVZj2BQ92t81ml6FGhMN/03nrUd7FqH6/W30AjwqAXtYa6GKM3qcMPu1gPr25Y6D8Z1ybYaCkWaD5gRZTc2G67cb1TBxzh3scgMPuJtxYidPLPAjMXy2uFKOrV6o0ZCCztT3TOWUhQ2XQHRpj5hGsjIMWH6zcPHavAcYJZ2xSROkXrSlNyFluSlKnhl2Ix1EjvUYII60cHwIlqc7HprjNp4CsUBdmBWWy7A176Ph6oMuKvf535J27BNKViVOWYHxIx7O8MBP/MxMDHCSHyqedOcwwj6dEI/mSAC3chnU="
+    - CONDA_PY=3.5
 
 os:
   - linux
@@ -25,7 +26,7 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytest pytest-cov
+  - conda create -q -n test-environment python=$CONDA_PY pytest pytest-cov
   - source activate test-environment
   - conda install -c ccitools cate-util numpy scipy netcdf4 numexpr pyproj bokeh jupyter ipywidgets hdf4=4.2.12 matplotlib=1.5.1
   - conda install conda-build anaconda-client
