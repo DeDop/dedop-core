@@ -11,7 +11,7 @@ dependencies:
     - cycler=0.10.0=py35_0
     - decorator=4.0.11=py35_0
     - entrypoints=0.2.2=py35_1
-    - freetype=2.5.5=vc14_2
+    #- freetype=2.5.5=vc14_2
     - html5lib=0.999=py35_0
     - icu=57.1=vc14_0
     - ipykernel=4.5.2=py35_0
