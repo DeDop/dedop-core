@@ -19,7 +19,7 @@ dependencies:
     - ipython_genutils=0.1.0=py35_0
     - ipywidgets=5.2.2=py35_1
     - jinja2=2.9.5=py35_0
-    - jpeg=9b=vc14_0
+    #- jpeg=9b=vc14_0
     - jsonschema=2.5.1=py35_0
     - jupyter_client=5.0.0=py35_0
     - jupyter_core=4.3.0=py35_0
