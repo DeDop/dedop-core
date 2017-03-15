@@ -66,9 +66,9 @@ dependencies:
     #- tk=8.5.18=vc14_0
     - tornado=4.4.2=py35_0
     - traitlets=4.3.2=py35_0
-    - vs2015_runtime=14.0.25123=0
+    #- vs2015_runtime=14.0.25123=0
     - wcwidth=0.1.7=py35_0
     - wheel=0.29.0=py35_0
     - widgetsnbextension=1.2.6=py35_0
-    - win_unicode_console=0.5=py35_0
+    #- win_unicode_console=0.5=py35_0
     #- zlib=1.2.8=vc14_3
