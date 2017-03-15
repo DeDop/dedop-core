@@ -13,7 +13,7 @@ dependencies:
     - entrypoints=0.2.2=py35_1
     #- freetype=2.5.5=vc14_2
     - html5lib=0.999=py35_0
-    - icu=57.1=vc14_0
+    #- icu=57.1=vc14_0
     - ipykernel=4.5.2=py35_0
     - ipython=5.3.0=py35_0
     - ipython_genutils=0.1.0=py35_0
