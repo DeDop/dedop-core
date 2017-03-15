@@ -23,8 +23,8 @@ dependencies:
     - jsonschema=2.5.1=py35_0
     - jupyter_client=5.0.0=py35_0
     - jupyter_core=4.3.0=py35_0
-    - libpng=1.6.27=vc14_0
-    - libtiff=4.0.6=vc14_3
+    #- libpng=1.6.27=vc14_0
+    #- libtiff=4.0.6=vc14_3
     - markupsafe=0.23=py35_2
     - matplotlib=1.5.3=np111py35_1
     - mistune=0.7.3=py35_0
