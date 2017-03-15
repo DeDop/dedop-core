@@ -1,6 +1,7 @@
 name: dedop-docs
 channels:
     - ccitools
+    - conda-forge
 dependencies:
     - bleach=1.5.0=py35_0
     - bokeh=0.12.4=py35_0
