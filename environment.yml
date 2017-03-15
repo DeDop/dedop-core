@@ -36,7 +36,7 @@ dependencies:
     #- numexpr=2.6.2=np111py35_0
     - numpy=1.11.3=py35_0
     - olefile=0.44=py35_0
-    - openssl=1.0.2k=vc14_0
+    #- openssl=1.0.2k=vc14_0
     - pandocfilters=1.4.1=py35_0
     - path.py=10.1=py35_0
     - pickleshare=0.7.4=py35_0
@@ -55,7 +55,7 @@ dependencies:
     - pytz=2016.10=py35_0
     - pyyaml=3.12=py35_0
     - pyzmq=16.0.2=py35_0
-    - qt=5.6.2=vc14_3
+    #- qt=5.6.2=vc14_3
     - requests=2.13.0=py35_0
     - scipy=0.18.1=np111py35_1
     - setuptools=23.0.0=py35_0
@@ -63,7 +63,7 @@ dependencies:
     - sip=4.18=py35_0
     - six=1.10.0=py35_0
     - testpath=0.3=py35_0
-    - tk=8.5.18=vc14_0
+    #- tk=8.5.18=vc14_0
     - tornado=4.4.2=py35_0
     - traitlets=4.3.2=py35_0
     - vs2015_runtime=14.0.25123=0
@@ -71,4 +71,4 @@ dependencies:
     - wheel=0.29.0=py35_0
     - widgetsnbextension=1.2.6=py35_0
     - win_unicode_console=0.5=py35_0
-    - zlib=1.2.8=vc14_3
+    #- zlib=1.2.8=vc14_3
