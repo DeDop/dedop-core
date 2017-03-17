@@ -4,6 +4,7 @@ from cate.util import Monitor
 from netCDF4 import Dataset
 from typing import List
 
+from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceManager
 
 
@@ -96,6 +97,14 @@ class WebSocketService:
         self.workspace_manager.write_config_file(workspace_name, config_name, "CNF", cnf)
         cst = json.dumps(configurations.get("cst"), indent=4, separators=(',', ': '), sort_keys=True)
         self.workspace_manager.write_config_file(workspace_name, config_name, "CST", cst)
+
+    def process(self, process_name: str, workspace_name: str, config_name: str, output_path, l1a_file: str,
+                monitor: Monitor):
+        chd_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CHD")
+        cnf_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CNF")
+        cst_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CST")
+        processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path)
+        processor.process(l1a_file, monitor=monitor)
 
     @staticmethod
     def get_global_attributes(input_file_path):
