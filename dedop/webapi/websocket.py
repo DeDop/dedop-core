@@ -80,9 +80,9 @@ class WebSocketService:
         self.workspace_manager.set_current_config_name(workspace_name, config_name)
 
     def get_configs(self, workspace_name: str, config_name: str) -> dict:
-        chd_config_json = self._get_config_json(workspace_name, config_name, "CHD")
-        cnf_config_json = self._get_config_json(workspace_name, config_name, "CNF")
-        cst_config_json = self._get_config_json(workspace_name, config_name, "CST")
+        chd_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CHD")
+        cnf_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CNF")
+        cst_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CST")
         return {
             "name": config_name,
             "chd": chd_config_json,
@@ -110,9 +110,3 @@ class WebSocketService:
     def get_global_attributes(input_file_path):
         ds = Dataset(input_file_path)
         return ds.__dict__
-
-    def _get_config_json(self, workspace_name, config_name, config_file_key):
-        file_path = self.workspace_manager.get_config_file(workspace_name, config_name, config_file_key)
-        with open(file_path) as data_file:
-            config_json = json.load(data_file)
-        return config_json

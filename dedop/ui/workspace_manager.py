@@ -1,9 +1,11 @@
 import fnmatch
+import json
 import os.path
 import pkgutil
 import shutil
 import subprocess
 import sys
+
 from typing import List
 
 from dedop.ui.workspace import Workspace
@@ -180,7 +182,8 @@ class WorkspaceManager:
     def get_workspaces(self) -> List[str]:
         workspaces_dir = self._workspaces_dir
         if os.path.exists(workspaces_dir):
-            return [Workspace(os.path.join(workspaces_dir, name), name).to_json_dict() for name in os.listdir(workspaces_dir)]
+            return [Workspace(os.path.join(workspaces_dir, name), name).to_json_dict() for name in
+                    os.listdir(workspaces_dir)]
 
     def config_exists(self, workspace_name: str, config_name: str) -> bool:
         config_dir = self.get_config_path(workspace_name, config_name)
@@ -253,6 +256,12 @@ class WorkspaceManager:
 
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self.get_config_path(workspace_name, config_name, config_file_key + '.json')
+
+    def get_config_json(self, workspace_name: str, config_name: str, config_file_key: str):
+        file_path = self.get_config_file(workspace_name, config_name, config_file_key)
+        with open(file_path) as data_file:
+            config_json = json.load(data_file)
+        return config_json
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
