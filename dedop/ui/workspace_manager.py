@@ -11,6 +11,7 @@ from typing import List
 from dedop.ui.workspace import Workspace
 from dedop.util.config import get_config_value
 
+_DEFAULT_CONFIG_PACKAGE_NAME = 'dedop.ui.data.config'
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
 _INPUTS_DIR_NAME = 'inputs'
@@ -199,7 +200,7 @@ class WorkspaceManager:
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
         config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
-        package = 'dedop.ui.data.config'
+        package = _DEFAULT_CONFIG_PACKAGE_NAME
         # TODO (forman, 20160727): copy text files so that '\n' is replaced by OS-specific line separator
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
@@ -259,9 +260,7 @@ class WorkspaceManager:
 
     def get_config_json(self, workspace_name: str, config_name: str, config_file_key: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
-        with open(file_path) as data_file:
-            config_json = json.load(data_file)
-        return config_json
+        return self._open_config_json(file_path)
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
@@ -285,6 +284,87 @@ class WorkspaceManager:
         self._assert_workspace_exists(workspace_name)
         self._assert_config_exists(workspace_name, config_name)
         _writeline(self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
+
+    def get_config_version(self, workspace_name: str, config_name: str, config_file_key: str) -> int:
+        config = self.get_config_json(workspace_name, config_name, config_file_key)
+        return config['__metainf__']['version'] if '__metainf__' in config else -1
+
+    def get_all_config_version(self, workspace_name: str, config_name: str) -> tuple:
+        chd_config_version = self.get_config_version(workspace_name, config_name, "CHD")
+        cnf_config_version = self.get_config_version(workspace_name, config_name, "CNF")
+        cst_config_version = self.get_config_version(workspace_name, config_name, "CST")
+        return chd_config_version, cnf_config_version, cst_config_version
+
+    def get_default_config_version(self, config_file_key: str) -> int:
+        default_config = self._get_default_config(config_file_key)
+        return default_config['__metainf__']['version'] if '__metainf__' in default_config else -1
+
+    def get_all_default_config_version(self) -> tuple:
+        chd_config_version = self.get_default_config_version("CHD")
+        cnf_config_version = self.get_default_config_version("CNF")
+        cst_config_version = self.get_default_config_version("CST")
+        return chd_config_version, cnf_config_version, cst_config_version
+
+    def upgrade_all_config(self, workspace_name: str, config_name: str) -> tuple:
+        chd_new_version = self.upgrade_config(workspace_name, config_name, "CHD")
+        cnf_new_version = self.upgrade_config(workspace_name, config_name, "CNF")
+        cst_new_version = self.upgrade_config(workspace_name, config_name, "CST")
+        return chd_new_version, cnf_new_version, cst_new_version
+
+    def upgrade_config(self, workspace_name: str, config_name: str, config_file_key: str):
+        current_config = self.get_config_json(workspace_name, config_name, config_file_key)
+        default_config = self._get_default_config(config_file_key)
+        config_json = self._do_upgrade_config(current_config, default_config)
+        updated_version = config_json['__metainf__']['version'] if '__metainf__' in config_json else -1
+        updated_config = self._json_to_str(config_json)
+        self.write_config_file(workspace_name, config_name, config_file_key, updated_config)
+        return updated_version
+
+    @staticmethod
+    def _do_upgrade_config(current_config: dict, default_config: dict) -> dict:
+        try:
+            current_version = current_config['__metainf__']['version']
+        except KeyError:
+            current_version = -1
+        default_version = default_config['__metainf__']['version']
+        if current_version >= default_version:
+            return current_config
+        added_or_modified_list = []
+        removed_list = []
+        for change in default_config['__metainf__']['changelog']:
+            if change['version'] <= current_version:
+                continue
+            for parameter in change['parameters']:
+                parameter_key = parameter[0]
+                if parameter[1] == "*" or parameter[1] == "+":
+                    removed_list.remove(parameter_key) if parameter_key in removed_list else None
+                    added_or_modified_list.append(
+                        parameter_key) if parameter_key not in added_or_modified_list else None
+                elif parameter[1] == "-":
+                    added_or_modified_list.remove(parameter_key) if parameter_key in added_or_modified_list else None
+                    removed_list.append(parameter_key) if parameter_key not in removed_list else None
+        for key in added_or_modified_list:
+            current_config[key] = default_config[key]
+        for parameter_key in removed_list:
+            current_config.pop(parameter_key) if parameter_key in current_config else None
+        current_config['__metainf__'] = default_config['__metainf__']
+        return current_config
+
+    @staticmethod
+    def _json_to_str(json_dict):
+        return json.dumps(json_dict, indent=4, separators=(',', ': '), sort_keys=True)
+
+    @staticmethod
+    def _get_default_config(config_file_key):
+        default_config_data = pkgutil.get_data(_DEFAULT_CONFIG_PACKAGE_NAME, config_file_key + '.json')
+        default_config = json.loads(default_config_data.decode("utf-8"))
+        return default_config
+
+    @staticmethod
+    def _open_config_json(file_path):
+        with open(file_path) as data_file:
+            config_json = json.load(data_file)
+        return config_json
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
         """

@@ -1,0 +1,72 @@
+{
+  "__metainf__": {
+    "description": "DeDop Configuration File",
+    "version": 3,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "*",
+            "integer codes changed to text enum"
+          ]
+        ],
+        "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 2,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "*",
+            "change default value"
+          ],
+          [
+            "new_field",
+            "+",
+            "new field"
+          ]
+
+        ],
+        "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 3,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "-",
+            "remove flag_azimuth_processing_method_cnf"
+          ],
+          [
+            "flag_cal1_corrections_cnf",
+            "-",
+            "remove flag_cal1_corrections_cnf"
+          ],
+          [
+            "flag_cal2_correction_cnf",
+            "-",
+            "remove flag_cal2_correction_cnf"
+          ],
+          [
+            "flag_uso_correction_cnf",
+            "-",
+            "remove flag_uso_correction_cnf"
+          ]
+        ],
+        "comment": "remove some parameters"
+      }
+    ]
+  },
+  "new_field": {
+    "value": 123,
+    "units": null,
+    "description": "A test field"
+  }
+}

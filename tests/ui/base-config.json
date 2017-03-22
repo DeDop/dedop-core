@@ -1,0 +1,17 @@
+{
+  "flag_cal2_correction_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_uso_correction_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+  },
+  "flag_cal1_corrections_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the CAL1 corrections: Deactivated (false); Activated (true)"
+  }
+}

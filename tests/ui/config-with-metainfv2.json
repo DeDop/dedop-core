@@ -1,0 +1,67 @@
+{
+  "__metainf__": {
+    "description": "DeDop Configuration File",
+    "version": 2,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "*",
+            "integer codes changed to text enum"
+          ]
+        ],
+        "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 2,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "*",
+            "change default value"
+          ],
+          [
+            "new_field",
+            "+",
+            "new field"
+          ]
+
+        ],
+        "comment": "Update to azimuth processing method flag"
+      }
+    ]
+  },
+  "flag_cal2_correction_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
+  },
+  "flag_uso_correction_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+  },
+  "flag_cal1_corrections_cnf": {
+    "value": true,
+    "units": "flag",
+    "description": "Flag that activates the CAL1 corrections: Deactivated (false); Activated (true)"
+
+  },
+  "new_field": {
+    "value": 123,
+    "units": null,
+    "description": "A test field"
+  },
+  "flag_azimuth_processing_method_cnf": {
+    "value": false,
+    "units": "flag",
+    "description": "Flag for azimuth processing method"
+  }
+}

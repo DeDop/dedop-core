@@ -106,6 +106,10 @@ class WebSocketService:
         processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path)
         processor.process(l1a_file, monitor=monitor)
 
+    def upgrade_config(self, workspace_name: str, config_name: str):
+        self.workspace_manager.upgrade_all_config(workspace_name, config_name)
+        return self.get_configs(workspace_name, config_name)
+
     @staticmethod
     def get_global_attributes(input_file_path):
         ds = Dataset(input_file_path)

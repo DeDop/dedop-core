@@ -126,6 +126,25 @@ def _dir_size(dir_path):
     return total
 
 
+def _print_config_versions(chd_version, cnf_version, cst_version):
+    print("Config versions:")
+    print('    CHD.json:', 'version ' + str(chd_version) if chd_version > -1 else 'no-version')
+    print('    CNF.json:', 'version ' + str(cnf_version) if cnf_version > -1 else 'no-version')
+    print('    CST.json:', 'version ' + str(cst_version) if cst_version > -1 else 'no-version')
+
+
+def _require_upgrade(workspace_name: str, config_name: str) -> bool:
+    current_chd_version, current_cnf_version, current_cst_version = _WORKSPACE_MANAGER.get_all_config_version(
+        workspace_name, config_name)
+    default_chd_version, default_cnf_version, default_cst_version = _WORKSPACE_MANAGER.get_all_default_config_version()
+    if default_chd_version > current_chd_version \
+            or default_cnf_version > current_cnf_version \
+            or default_cst_version > current_cst_version:
+        return True
+    else:
+        return False
+
+
 class RunProcessorCommand(Command):
     CMD_NAME = 'run'
 
@@ -436,6 +455,17 @@ class ManageConfigsCommand(SubCommandCommand):
         cls.setup_default_parser_argument(parser_list)
         parser_list.set_defaults(cf_command=cls.execute_list)
 
+        parser_upgrade = subparsers.add_parser('upgrade', aliases=['up'],
+                                               help='Upgrade DDP configurations to the newest versions')
+        cls.setup_default_parser_argument(parser_upgrade)
+        parser_upgrade.add_argument(nargs='?', **config_name_attributes)
+        parser_upgrade.set_defaults(cf_command=cls.execute_upgrade)
+
+        parser_version = subparsers.add_parser('version', aliases=['v'], help='Show DDP configuration versions')
+        cls.setup_default_parser_argument(parser_version)
+        parser_version.add_argument(nargs='?', **config_name_attributes)
+        parser_version.set_defaults(cf_command=cls.execute_version)
+
     @classmethod
     def setup_default_parser_argument(cls, parser):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
@@ -585,6 +615,30 @@ class ManageConfigsCommand(SubCommandCommand):
         for i in range(num_configs):
             config_name = config_names[i]
             print('%3d: %s' % (i + 1, config_name))
+
+    @classmethod
+    def execute_upgrade(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        if not workspace_name:
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
+        if _require_upgrade(workspace_name, config_name):
+            chd_version, cnf_version, cst_version = _WORKSPACE_MANAGER.upgrade_all_config(workspace_name, config_name)
+            print("Upgrade successful!")
+            print()
+            _print_config_versions(chd_version, cnf_version, cst_version)
+        else:
+            print("Current configurations are already up to date. No upgrade has been performed.")
+
+    @classmethod
+    def execute_version(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        if not workspace_name:
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
+        chd_version, cnf_version, cst_version = _WORKSPACE_MANAGER.get_all_config_version(workspace_name, config_name)
+        print("Workspace name :", workspace_name)
+        print("Config name    :", config_name)
+        print()
+        _print_config_versions(chd_version, cnf_version, cst_version)
 
     @classmethod
     def create_default_config(cls, workspace_name) -> str:
