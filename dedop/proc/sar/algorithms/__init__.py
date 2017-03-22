@@ -9,9 +9,13 @@ from .multilooking import MultilookingAlgorithm
 from .sigma_zero_scaling import Sigma0ScalingFactorAlgorithm
 
 __all__ = [
-    "AzimuthProcessingAlgorithm", "BeamAnglesAlgorithm",
-    "GeometryCorrectionsAlgorithm", "StackGatheringAlgorithm",
-    "SurfaceLocationAlgorithm", "RangeCompressionAlgorithm",
-    "StackMaskingAlgorithm", "MultilookingAlgorithm",
+    "AzimuthProcessingAlgorithm",
+    "BeamAnglesAlgorithm",
+    "GeometryCorrectionsAlgorithm",
+    "StackGatheringAlgorithm",
+    "SurfaceLocationAlgorithm",
+    "RangeCompressionAlgorithm",
+    "StackMaskingAlgorithm",
+    "MultilookingAlgorithm",
     "Sigma0ScalingFactorAlgorithm"
 ]

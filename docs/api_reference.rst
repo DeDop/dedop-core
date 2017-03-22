@@ -26,6 +26,13 @@ Configuration
    :members:
 
 
+Model
+=====
+
+.. automodule:: dedop.model
+   :members:
+
+
 Processor
 =========
 
@@ -42,6 +49,12 @@ Processor
 
 
 .. automodule:: dedop.proc.functions
+   :members:
+
+Web Socket Service
+==================
+
+.. automodule:: dedop.webapi
    :members:
 
 
