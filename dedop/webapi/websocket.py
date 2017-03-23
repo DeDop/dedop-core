@@ -119,6 +119,8 @@ class WebSocketService:
         return self.get_configs(workspace_name, config_name)
 
     @staticmethod
-    def get_global_attributes(input_file_path):
+    def get_global_attributes(input_file_path) -> dict:
         ds = Dataset(input_file_path)
-        return ds.__dict__
+        global_attributes = ds.__dict__
+        ds.close()
+        return global_attributes
