@@ -90,6 +90,14 @@ class WebSocketService:
             "cst": cst_config_json
         }
 
+    def get_default_config_versions(self) -> dict:
+        chd_version, cnf_version, cst_version = self.workspace_manager.get_all_default_config_version()
+        return {
+            "chd_version": chd_version,
+            "cnf_version": cnf_version,
+            "cst_version": cst_version
+        }
+
     def save_configs(self, workspace_name: str, config_name: str, configurations: dict):
         chd = json.dumps(configurations.get("chd"), indent=4, separators=(',', ': '), sort_keys=True)
         self.workspace_manager.write_config_file(workspace_name, config_name, "CHD", chd)
@@ -106,7 +114,7 @@ class WebSocketService:
         processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path)
         processor.process(l1a_file, monitor=monitor)
 
-    def upgrade_config(self, workspace_name: str, config_name: str):
+    def upgrade_configs(self, workspace_name: str, config_name: str):
         self.workspace_manager.upgrade_all_config(workspace_name, config_name)
         return self.get_configs(workspace_name, config_name)
 
