@@ -1,8 +1,8 @@
 import json
+from typing import List
 
 from cate.util import Monitor
 from netCDF4 import Dataset
-from typing import List
 
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceManager
@@ -117,6 +117,14 @@ class WebSocketService:
     def upgrade_configs(self, workspace_name: str, config_name: str):
         self.workspace_manager.upgrade_all_config(workspace_name, config_name)
         return self.get_configs(workspace_name, config_name)
+
+    @staticmethod
+    def get_lat_lon(input_file_path) -> dict:
+        ds = Dataset(input_file_path)
+        return {
+            "lat": ds['lat_l1a_echo_sar_ku'][:].tolist(),
+            "lon": ds['lon_l1a_echo_sar_ku'][:].tolist()
+        }
 
     @staticmethod
     def get_global_attributes(input_file_path) -> dict:
