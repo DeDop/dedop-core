@@ -118,6 +118,15 @@ class WebSocketService:
         self.workspace_manager.upgrade_all_config(workspace_name, config_name)
         return self.get_configs(workspace_name, config_name)
 
+    def get_output_names(self, workspace_name: str, config_name: str) -> List[str]:
+        return self.workspace_manager.get_output_names(workspace_name, config_name)
+
+    def inspect_output(self, workspace_name: str, output_file_path: str):
+        self.workspace_manager.inspect_l1b_product(workspace_name, output_file_path)
+
+    def compare_outputs(self, workspace_name: str, output1_file_path: str, output2_file_path: str):
+        self.workspace_manager.compare_l1b_products(workspace_name, output1_file_path, output2_file_path)
+
     @staticmethod
     def get_lat_lon(input_file_path) -> dict:
         ds = Dataset(input_file_path)
