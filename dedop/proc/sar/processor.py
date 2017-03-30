@@ -235,10 +235,6 @@ class L1BProcessor(BaseProcessor):
                         self.l1b_file.write_record(working_loc)
                     if self.l1bs_file is not None:
                         self.l1bs_file.write_record(working_loc)
-                    if working_loc.target_focused:
-                        import matplotlib.pyplot as plt
-                        plt.imshow(abs(working_loc.beams_range_compr_iq))
-                        plt.show()
 
                     self.clear_old_records(working_loc)
 
