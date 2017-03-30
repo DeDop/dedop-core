@@ -23,7 +23,9 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                "inputs.txt"
 
     def initialise_algorithm(self, input_data):
-        self.cnf = ConfigurationFile()
+        self.cnf = ConfigurationFile(
+            flag_surface_focusing_cnf=False
+        )
         self.cst = ConstantsFile(
             c_cst=input_data['c_cst'],
             pi_cst=input_data['pi_cst'],

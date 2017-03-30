@@ -21,6 +21,36 @@ class SurfaceData:
     """
 
     @property
+    def focus_target_distance(self) -> float:
+        """
+        the distance from the surface position to the target
+        focus location given in the CNF
+        """
+        return self["focus_target_distance"]
+
+    @focus_target_distance.setter
+    def focus_target_distance(self, value: float):
+        self["focus_target_distance"] = value
+
+    @focus_target_distance.deleter
+    def focus_target_distance(self) -> None:
+        del self["focus_target_distance"]
+
+    @property
+    def target_focused(self) -> bool:
+        if "target_focused" not in self._data:
+            self._data["target_focused"] = False
+        return self["target_focused"]
+
+    @target_focused.setter
+    def target_focused(self, value: bool) -> None:
+        self["target_focused"] = value
+
+    @target_focused.deleter
+    def target_focused(self) -> None:
+        del self["target_focused"]
+
+    @property
     def surface_counter(self) -> int:
         """
         The sequence number of the Surface Location

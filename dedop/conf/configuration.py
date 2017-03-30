@@ -1,4 +1,5 @@
 from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod
+from math import radians
 
 from .auxiliary_file_reader import *
 
@@ -25,18 +26,18 @@ class ConfigurationFile(AuxiliaryFileReader):
 
     # surface focusing
     flag_surface_focusing = \
-        AuxiliaryParameter("flag_surface_focusing_cnf")
+        AuxiliaryParameter("flag_surface_focusing_cnf", param_type=bool)
     surface_focusing_lat = \
-        AuxiliaryParameter("surface_focusing_lat_cnf")
+        AuxiliaryParameter("surface_focusing_lat_cnf", cast_type=radians)
     surface_focusing_lon = \
-        AuxiliaryParameter("surface_focusing_lon_cnf")
+        AuxiliaryParameter("surface_focusing_lon_cnf", cast_type=radians)
     surface_focusing_alt = \
         AuxiliaryParameter("surface_focusing_alt_cnf")
 
     # azimuth processing
     flag_azimuth_processing_method = \
         AuxiliaryParameter("flag_azimuth_processing_method_cnf",
-                           param_type=AzimuthProcessingMethod) #todo: check this
+                           param_type=AzimuthProcessingMethod)  # todo: check this
     flag_postphase_azimuth_processing = \
         AuxiliaryParameter("flag_postphase_azimuth_processing_cnf")
     flag_azimuth_windowing_method = \
