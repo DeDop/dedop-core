@@ -1,8 +1,8 @@
 import json
-from typing import List
 
 from cate.util import Monitor
 from netCDF4 import Dataset
+from typing import List
 
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceManager
@@ -127,12 +127,18 @@ class WebSocketService:
     def compare_outputs(self, workspace_name: str, output1_file_path: str, output2_file_path: str):
         self.workspace_manager.compare_l1b_products(workspace_name, output1_file_path, output2_file_path)
 
+    def get_notebook_file_names(self, workspace_name: str):
+        return self.workspace_manager.get_notebook_names(workspace_name)
+
     @staticmethod
     def get_lat_lon(input_file_path) -> dict:
         ds = Dataset(input_file_path)
+        latitude = ds['lat_l1a_echo_sar_ku'][:].tolist() if 'lat_l1a_echo_sar_ku' in ds.variables.keys() else []
+        longitude = ds['lon_l1a_echo_sar_ku'][:].tolist() if 'lon_l1a_echo_sar_ku' in ds.variables.keys() else []
+        ds.close()
         return {
-            "lat": ds['lat_l1a_echo_sar_ku'][:].tolist(),
-            "lon": ds['lon_l1a_echo_sar_ku'][:].tolist()
+            "lat": latitude,
+            "lon": longitude
         }
 
     @staticmethod
