@@ -521,7 +521,8 @@ class WorkspaceManager:
         else:
             if sys.platform.startswith('win'):
                 # Windows
-                launch_notebook_command_template = 'start "{title}" /Min {command}'
+                #launch_notebook_command_template = 'start "{title}" /Min {command}'
+                launch_notebook_command_template = 'start "{title}" /Min "{command_file}"'
             elif sys.platform == 'darwin':
                 # Mac OS X
                 launch_notebook_command_template = 'open -a Terminal "{command_file}"'
@@ -565,7 +566,7 @@ class WorkspaceManager:
                                                                           command_file=command_file,
                                                                           prefix=sys.prefix)
         try:
-            # print('calling:', open_notebook_command)
+            print('calling:', launch_notebook_command)
             subprocess.check_call(launch_notebook_command, shell=True)
             if launch_notebook_in_new_terminal:
                 print('A terminal window titled "%s" has been opened.' % cls._limit_title(terminal_title, 30, mode='l'))
