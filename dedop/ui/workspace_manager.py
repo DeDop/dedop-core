@@ -14,6 +14,7 @@ from dedop.util.config import get_config_value
 _DEFAULT_CONFIG_PACKAGE_NAME = 'dedop.ui.data.config'
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
+_NOTEBOOKS_DIR_NAME = 'notebooks'
 _INPUTS_DIR_NAME = 'inputs'
 _OUTPUTS_DIR_NAME = 'outputs'
 _CURRENT_FILE_NAME = '.current'
@@ -453,6 +454,15 @@ class WorkspaceManager:
             return self.get_nc_filename_list(outputs_dir, pattern)
         return []
 
+    def get_notebook_names(self, workspace_name: str) -> List[str]:
+        self._assert_workspace_exists(workspace_name)
+        notebook_dir = self.get_workspace_path(workspace_name, _NOTEBOOKS_DIR_NAME)
+        if os.path.exists(notebook_dir):
+            return sorted(
+                [name for name in os.listdir(notebook_dir) if name.endswith(".ipynb")
+                 and os.path.isfile(os.path.join(notebook_dir, name))])
+        return []
+
     def inspect_l1b_product(self, workspace_name: str, l1b_path: str):
         template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'inspect-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
@@ -612,9 +622,9 @@ class WorkspaceManager:
             raise WorkspaceError(str(error))
 
     @staticmethod
-    def get_nc_filename_list(outputs_dir, pattern):
-        fn_list = [fn for fn in os.listdir(outputs_dir) if
-                   fn.endswith('.nc') and os.path.isfile(os.path.join(outputs_dir, fn))]
+    def get_nc_filename_list(directory, pattern):
+        fn_list = [fn for fn in os.listdir(directory) if
+                   fn.endswith('.nc') and os.path.isfile(os.path.join(directory, fn))]
         if isinstance(pattern, str):
             fn_list = [fn for fn in fn_list if fnmatch.fnmatch(fn, pattern)]
         elif pattern:
