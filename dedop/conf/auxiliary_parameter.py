@@ -25,7 +25,7 @@ class AuxiliaryParameter:
         self.type = param_type
         if cast_type is not None:
             self.cast = cast_type
-        if self.type is not None:
+        elif self.type is not None:
             self.cast = self.type
         else:
             self.cast = None

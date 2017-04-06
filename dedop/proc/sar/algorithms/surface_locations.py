@@ -10,6 +10,7 @@ from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 
 class SurfaceLocationAlgorithm(BaseAlgorithm):
     def __init__(self, chd: CharacterisationFile, cst: ConstantsFile, cnf: ConfigurationFile):
+        self.focus_found = False
         self.first_surf = False
         self.new_surf = False
 
@@ -47,7 +48,7 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         :return: data for surface
         """
-        return {
+        data = {
             'time_surf': self.time_surf,
             'x_surf': self.x_surf,
             'y_surf': self.y_surf,
@@ -74,6 +75,11 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             'prev_utc_secs': self.prev_utc_secs,
             'curr_day_length': self.curr_day_length
         }
+        # add distance to focusing target (if focus mode is on)
+        if self.cnf.flag_surface_focusing:
+            pos_surface = np.asarray([self.x_surf, self.y_surf, self.z_surf])
+            data['focus_target_distance'] = self.focus_target_distance(pos_surface)
+        return data
 
     def store_first_location(self, isps: Sequence[L1AProcessingData]) -> None:
         """
@@ -117,41 +123,126 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
 
         self.win_delay_surf = isp_record.win_delay_sar_ku
 
-    def __call__(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData], force_new: bool=False) -> bool:
+    def focus_surface(self, surface_to_move: SurfaceData, previous_surface: SurfaceData) -> None:
+        """
+        move the location of a surface to the closest approach to the target position
+        given by the user in the configuration file
+
+        :param surface_to_move: the surface that will be moved
+        :param previous_surface: the surface previous to the surface being moved
+        :return:
+        """
+        self.focus_found = True
+        # flag surface as being focused
+        surface_to_move.target_focused = True
+        # surface_to_move.surface_type = 4
+
+        # get position of target
+        lla_target = np.asarray(
+            [self.cnf.surface_focusing_lat,
+             self.cnf.surface_focusing_lon,
+             self.cnf.surface_focusing_alt])
+        pos_target = lla2ecef(lla_target, self.cst)
+
+        # get current position of focus surface & previous
+        pos_focus = np.asmatrix(surface_to_move.ecef_surf)
+        pos_prior = np.asmatrix(previous_surface.ecef_surf)
+
+        # calculate along-track direction vector
+        along_track = pos_focus - pos_prior
+        along_track /= np.linalg.norm(along_track)
+
+        # calculate vector from previous surface to target position
+        rel_target = pos_target - pos_prior
+
+        # project relative target vector onto along-track direction
+        cos_a = (along_track * rel_target.T) / np.linalg.norm(rel_target)
+        rel_focus = (np.linalg.norm(rel_target) * cos_a) * along_track
+
+        # get position to move surface to
+        x_move, y_move, z_move = np.ravel(rel_focus)
+        focus_x = previous_surface.x_surf + x_move
+        focus_y = previous_surface.y_surf + y_move
+        focus_z = previous_surface.z_surf + z_move
+        focus_ecef = np.asarray([focus_x, focus_y, focus_z])
+
+        # set new position of focus surface
+        surface_to_move.x_surf = focus_x
+        surface_to_move.y_surf = focus_y
+        surface_to_move.z_surf = focus_z
+
+        focus_lla = ecef2lla(focus_ecef, self.cst)
+        focus_lat, focus_lon, focus_alt = np.ravel(focus_lla)
+        surface_to_move.lat_surf = focus_lat
+        surface_to_move.lon_surf = focus_lon
+        surface_to_move.alt_surf = focus_alt
+
+        # TODO: interp. new time value, other params ?
+
+    def focus_target_distance(self, pos_surface: np.ndarray) -> float:
+        """
+        calculate distance from surface to focus target
+
+        :param pos_surface: the position of the surface
+        :return:
+        """
+        lla_target = np.asarray(
+            [self.cnf.surface_focusing_lat,
+             self.cnf.surface_focusing_lon,
+             self.cnf.surface_focusing_alt])
+        pos_target = lla2ecef(lla_target, self.cst)
+        return np.linalg.norm(pos_target - pos_surface)
+
+    def __call__(self, surfaces: Sequence[SurfaceData], bursts: Sequence[L1AProcessingData],
+                 force_new: bool=False) -> bool:
         """
         attempt to compute new surface location
 
-        :param locs: current surface locations
-        :param isps: current bursts
+        :param surfaces: current surface locations
+        :param bursts: current bursts
         :param force_new: flag to force a new surface directly beneath burst
         :return: 'True' if new surface was created
         """
-        if (not locs) or force_new:
+        if (not surfaces) or force_new:
             self.first_surf = True
             self.new_surf = True
 
-            self.store_first_location(isps)
+            self.store_first_location(bursts)
         else:
             self.first_surf = False
-            self.new_surf = self.find_new_location(locs, isps)
+            self.new_surf = self.find_new_location(surfaces, bursts)
+
+        if self.cnf.flag_surface_focusing and self.new_surf:
+            for prev_loc in surfaces:
+                if prev_loc.focus_target_distance is None:
+                    prev_loc.focus_target_distance =\
+                        self.focus_target_distance(prev_loc.ecef_surf)
+
+            new_pos = np.asarray([self.x_surf, self.y_surf, self.z_surf])
+            new_dist = self.focus_target_distance(new_pos)
+
+            if len(surfaces) > 1 and not self.focus_found and \
+               new_dist - surfaces[-1].focus_target_distance > 0:
+                self.focus_surface(surfaces[-1], surfaces[-2])
+
         return self.new_surf
 
-    def find_new_location(self, locs: Sequence[SurfaceData], isps: Sequence[L1AProcessingData]) -> bool:
+    def find_new_location(self, surfaces: Sequence[SurfaceData], bursts: Sequence[L1AProcessingData]) -> bool:
         """
         attempt to find a new surface location
 
-        :param locs: current surface locations
-        :param isps: current bursts
+        :param surfaces: current surface locations
+        :param bursts: current bursts
         :return: 'True' if surface is created
         """
-        surface = locs[-1]
-        isp_curr = isps[-1]
-        isp_prev = isps[-2]
+        surface = surfaces[-1]
+        isp_curr = bursts[-1]
+        isp_prev = bursts[-2]
 
         ground_surf_orbit_vector = np.matrix(
-            [[isp_curr.x_sar_surf - surface.x_sat,],
-             [isp_curr.y_sar_surf - surface.y_sat,],
-             [isp_curr.z_sar_surf - surface.z_sat,]],
+            [[isp_curr.x_sar_surf - surface.x_sat, ],
+             [isp_curr.y_sar_surf - surface.y_sat, ],
+             [isp_curr.z_sar_surf - surface.z_sat, ]],
             dtype=np.float64
         )
         ground_surf_orbit_angle = angle_between(
@@ -161,17 +252,14 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             return False
 
         ground_surf_orbit_vector_prev = np.matrix(
-            [[isp_prev.x_sar_surf - surface.x_sat,],
-             [isp_prev.y_sar_surf - surface.y_sat,],
-             [isp_prev.z_sar_surf - surface.z_sat,]],
+            [[isp_prev.x_sar_surf - surface.x_sat, ],
+             [isp_prev.y_sar_surf - surface.y_sat, ],
+             [isp_prev.z_sar_surf - surface.z_sat, ]],
             dtype=np.float64
         )
-        try:
-            ground_surf_orbit_angle_prev = angle_between(
-                surface.surf_sat_vector, ground_surf_orbit_vector_prev
-            )
-        except RuntimeWarning:
-            print(isp_curr.counter)
+        ground_surf_orbit_angle_prev = angle_between(
+            surface.surf_sat_vector, ground_surf_orbit_vector_prev
+        )
 
         # compute alpha - the ratio of the position of the surface
         #   between the two ISP readings
@@ -221,11 +309,11 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
             alpha * (isp_curr.alt_rate_sat_sar - isp_prev.alt_rate_sat_sar)
 
         self.roll_sat = isp_prev.roll_sar + \
-                     alpha * (isp_curr.roll_sar - isp_prev.roll_sar)
+            alpha * (isp_curr.roll_sar - isp_prev.roll_sar)
         self.pitch_sat = isp_prev.pitch_sar + \
-                     alpha * (isp_curr.pitch_sar - isp_prev.pitch_sar)
+            alpha * (isp_curr.pitch_sar - isp_prev.pitch_sar)
         self.yaw_sat = isp_prev.yaw_sar + \
-                     alpha * (isp_curr.yaw_sar - isp_prev.yaw_sar)
+            alpha * (isp_curr.yaw_sar - isp_prev.yaw_sar)
 
         self.win_delay_surf = (self.alt_sat - self.alt_surf) * 2. / self.cst.c
 
