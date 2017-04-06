@@ -1,3 +1,4 @@
+flag_surface_focusing_cnf False
 c_cst 299792458.0
 pi_cst 3.141592653589793
 semi_major_axis_cst 6378137

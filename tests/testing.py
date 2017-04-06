@@ -35,6 +35,8 @@ class TestDataLoader:
 
                 self._values[name] = vals
 
+        self.get = self._values.get
+
     def __getitem__(self, index):
         return self._values[index]
 
