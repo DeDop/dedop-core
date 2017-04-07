@@ -314,7 +314,8 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
                 x_vel_sat=inputs["x_vel_sat"][i],
                 y_vel_sat=inputs["y_vel_sat"][i],
                 z_vel_sat=inputs["z_vel_sat"][i],
-                focus_target_distance=inputs["focus_target_distance"][i]
+                focus_target_distance=inputs["focus_target_distance"][i],
+                win_delay_surf=inputs["win_delay_surf"][i]
             )
             surf.compute_surf_sat_vector()
             surf.compute_angular_azimuth_beam_resolution(
@@ -341,3 +342,5 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         self.assertAlmostEqual(surf.lat_surf, expected_data["lat_surf"], delta=1e-12)
         self.assertAlmostEqual(surf.lon_surf, expected_data["lon_surf"], delta=1e-12)
         self.assertAlmostEqual(surf.alt_surf, expected_data["alt_surf"], delta=1e-4)
+
+        self.assertAlmostEqual(surf.win_delay_surf, expected_data["win_delay_surf"])

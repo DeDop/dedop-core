@@ -177,6 +177,8 @@ class SurfaceLocationAlgorithm(BaseAlgorithm):
         surface_to_move.lon_surf = focus_lon
         surface_to_move.alt_surf = focus_alt
 
+        surface_to_move.win_delay_surf =\
+            (surface_to_move.alt_sat - surface_to_move.alt_surf) * 2. / self.cst.c
         # TODO: interp. new time value, other params ?
 
     def focus_target_distance(self, pos_surface: np.ndarray) -> float:
