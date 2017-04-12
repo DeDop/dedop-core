@@ -1,8 +1,9 @@
 import json
+import os
+from typing import List
 
 from cate.util import Monitor
 from netCDF4 import Dataset
-from typing import List
 
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceManager
@@ -129,6 +130,11 @@ class WebSocketService:
 
     def get_notebook_file_names(self, workspace_name: str):
         return self.workspace_manager.get_notebook_names(workspace_name)
+
+    def launch_notebook(self, workspace_name: str, notebook_name: str):
+        notebook_dir = os.path.join(self.workspace_manager.get_workspace_path(workspace_name), 'notebooks')
+        notebook_path = os.path.join(notebook_dir, notebook_name)
+        return self.workspace_manager.launch_notebook('DeDop - %s' % notebook_name, notebook_dir, notebook_path)
 
     @staticmethod
     def get_lat_lon(input_file_path) -> dict:
