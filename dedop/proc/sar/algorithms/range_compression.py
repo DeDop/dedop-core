@@ -30,14 +30,14 @@ class RangeCompressionAlgorithm(BaseAlgorithm):
             # calc. FFT with zero-padding & orthogonal scaling
             beam_fft = fft(
                 working_surface_location.beams_geo_corr[beam_index, :],
-                n=padded_size, norm="ortho"
+                n=padded_size#, norm="ortho"
             )
             # apply shift
             # NB: in some early L1A data products, the waveforms had had one-too-many or one-too-few FFT shifts applied.
             #     this meant that the L1B/L1B-S files produced by DeDop would also have incorrectly swapped waveforms.
             #     to prevent this problem, we previously disabled the following FFT shift, (with the line `beam_shift =
             #     beam_fft`), however, current L1As do not have this problem, so we apply the shift as expected.
-            beam_shift = fftshift(beam_fft)
+            beam_shift = fftshift(beam_fft / padded_size)
 
             # store complex result
             self.beam_range_compr_iq[beam_index, :] = beam_shift

@@ -38,10 +38,10 @@ class L1ADataset(InputDataset):
     def __getitem__(self, index: int) -> L1AProcessingData:
         # convert scale factor to linear value
         agc = self.get_value(L1AVariables.agc_ku_l1a_echo_sar_ku, index)
-        scale_factor = 1. / pow(10., -agc / 10.)
+        scale_factor = pow(10., -agc / 20.)
         # construct waveform
-        waveform = scale_factor * (self.get_value(L1AVariables.i_meas_ku_l1a_echo_sar_ku, index) +
-                              1j * self.get_value(L1AVariables.q_meas_ku_l1a_echo_sar_ku, index))
+        waveform = (self.get_value(L1AVariables.i_meas_ku_l1a_echo_sar_ku, index) +
+                    1j * self.get_value(L1AVariables.q_meas_ku_l1a_echo_sar_ku, index)) / scale_factor
         packet = L1AProcessingData(
             self.cst, self.chd, index,
             isp_pid=PacketPid.echo_sar,
