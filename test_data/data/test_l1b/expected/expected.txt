@@ -20,5 +20,5 @@ stdev_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
 skew_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
 kurt_stack_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
 beam_ang_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
-i2q2_meas_ku_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9
+i2q2_meas_ku_l1b_echo_sar_ku 0.0 0.5011872336272722 0.7962143411069944 0.9486832980505138 1.004754572603832 0.9976311574844399 0.9509359154766681 0.8812477882559171 0.8 0.7148954112518533
 range_ku_l1b_echo_sar_ku 0 1 2 3 4 5 6 7 8 9

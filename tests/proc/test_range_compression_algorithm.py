@@ -63,15 +63,15 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
         )
         expected_range_compr = np.reshape(
             expected["beams_range_compr"],
-            beam_range_compr.shape
+            beam_range_compr.shape, order='F'
         )
         expected_range_compr_i = np.reshape(
             expected["beams_range_compr_i"],
-            beam_range_compr.shape
+            beam_range_compr.shape, order='F'
         )
         expected_range_compr_q = np.reshape(
             expected["beams_range_compr_q"],
-            beam_range_compr.shape
+            beam_range_compr.shape, order='F'
         )
         self.assertTrue(
             np.allclose(beam_range_compr, expected_range_compr)

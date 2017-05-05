@@ -207,5 +207,5 @@ class L1BTests(unittest.TestCase):
             for j in range(256):
                 self.assertAlmostEqual(
                     output.variables["i2q2_meas_ku_l1b_echo_sar_ku"][i, j],
-                    expected["i2q2_meas_ku_l1b_echo_sar_ku"][i]
+                    expected["i2q2_meas_ku_l1b_echo_sar_ku"][i], places=3
                 )

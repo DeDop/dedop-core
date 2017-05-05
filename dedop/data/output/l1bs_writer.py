@@ -611,9 +611,9 @@ class L1BSWriter(NetCDFWriter):
 
         scale_factor = pow(10, -closest_burst.agc_ku / 10)
 
-        stack_real = np.real(surface_location_data.beams_range_compr_iq)
-        stack_imag = np.imag(surface_location_data.beams_range_compr_iq)
-        max_iq = max(np.max(np.abs(stack_real)), np.max(np.abs(stack_imag)))
+        stack_i = np.real(surface_location_data.beams_range_compr_iq)
+        stack_q = np.imag(surface_location_data.beams_range_compr_iq)
+        max_iq = max(np.max(np.abs(stack_i)), np.max(np.abs(stack_q)))
 
         dynamic_scale = max_iq / 127.
 
@@ -662,8 +662,8 @@ class L1BSWriter(NetCDFWriter):
             beam_form_l1bs_echo_sar_ku=None,
             burst_start_ind_l1bs_echo_sar_ku=None,
             burst_stop_ind_l1bs_echo_sar_ku=None,
-            i_echoes_ku_l1bs_echo_sar_ku=stack_real/dynamic_scale,
-            q_echoes_ku_l1bs_echo_sar_ku=stack_imag/dynamic_scale
+            i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
+            q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale
             # start_look_angle_stack_l1bs_echo_sar_ku=None,
             # stop_look_angle_stack_l1bs_echo_sar_ku=None,
             # start_beam_ang_stack_l1bs_echo_sar_ku=None,
