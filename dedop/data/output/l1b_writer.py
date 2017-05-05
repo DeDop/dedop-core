@@ -719,6 +719,8 @@ class L1BWriter(NetCDFWriter):
         else:
             utc_days = surface_location_data.prev_utc_days
 
+        scale_factor = pow(10, -closest_burst.agc_ku / 10)
+
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1b_echo_sar_ku=utc_days,
@@ -778,5 +780,5 @@ class L1BWriter(NetCDFWriter):
             kurt_stack_l1b_echo_sar_ku=surface_location_data.stack_kurtosis,
             beam_ang_l1b_echo_sar_ku=surface_location_data.beam_angles_surf,
             beam_form_l1b_echo_sar_ku=None,
-            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked
+            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor
         )

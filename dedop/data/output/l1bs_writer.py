@@ -609,6 +609,14 @@ class L1BSWriter(NetCDFWriter):
         else:
             utc_days = surface_location_data.prev_utc_days
 
+        scale_factor = pow(10, -closest_burst.agc_ku / 10)
+
+        stack_i = np.real(surface_location_data.beams_range_compr_iq)
+        stack_q = np.imag(surface_location_data.beams_range_compr_iq)
+        max_iq = max(np.max(np.abs(stack_i)), np.max(np.abs(stack_q)))
+
+        dynamic_scale = max_iq / 127.
+
         super().write_record(
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1bs_echo_sar_ku=utc_days,
@@ -640,10 +648,10 @@ class L1BSWriter(NetCDFWriter):
             cog_cor_l1bs_echo_sar_ku=None,
             agccode_ku_l1bs_echo_sar_ku=None,
             agc_ku_l1bs_echo_sar_ku=None,
-            scale_factor_ku_l1bs_echo_sar_ku=None,
+            scale_factor_ku_l1bs_echo_sar_ku=dynamic_scale,
             sig0_cal_ku_l1bs_echo_sar_ku=None,
             snr_ku_l1bs_echo_sar_ku=None,
-            i2q2_meas_ku_l1bs_echo_sar_ku=surface_location_data.waveform_multilooked,
+            i2q2_meas_ku_l1bs_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor,
             nb_stack_l1bs_echo_sar_ku=None,
             max_stack_l1bs_echo_sar_ku=None,
             max_loc_stack_l1bs_echo_sar_ku=None,
@@ -654,8 +662,8 @@ class L1BSWriter(NetCDFWriter):
             beam_form_l1bs_echo_sar_ku=None,
             burst_start_ind_l1bs_echo_sar_ku=None,
             burst_stop_ind_l1bs_echo_sar_ku=None,
-            i_echoes_ku_l1bs_echo_sar_ku=np.real(surface_location_data.beams_range_compr_iq),
-            q_echoes_ku_l1bs_echo_sar_ku=np.imag(surface_location_data.beams_range_compr_iq)
+            i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
+            q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale
             # start_look_angle_stack_l1bs_echo_sar_ku=None,
             # stop_look_angle_stack_l1bs_echo_sar_ku=None,
             # start_beam_ang_stack_l1bs_echo_sar_ku=None,
