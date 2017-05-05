@@ -721,12 +721,6 @@ class L1BWriter(NetCDFWriter):
 
         scale_factor = pow(10, -closest_burst.agc_ku / 10)
 
-        # import matplotlib.pyplot as plt
-        # print(scale_factor)
-        # # plt.plot(surface_location_data.waveform_multilooked)
-        # plt.plot(surface_location_data.waveform_multilooked * scale_factor)
-        # plt.show()
-
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
             UTC_day_l1b_echo_sar_ku=utc_days,
