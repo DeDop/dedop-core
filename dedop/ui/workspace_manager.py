@@ -1,5 +1,6 @@
 import fnmatch
 import json
+import ntpath
 import os.path
 import pkgutil
 import shutil
@@ -467,7 +468,11 @@ class WorkspaceManager:
         template_data = pkgutil.get_data('dedop.ui.data.notebooks', 'inspect-template.ipynb')
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH__', repr(l1b_path).replace('\\', '\\\\'))
-        return self._launch_notebook_from_template(workspace_name, 'inspect', notebook_json, 'inspect - [%s]' %
+        product_name = ntpath.basename(l1b_path)
+        return self._launch_notebook_from_template(workspace_name,
+                                                   'inspect-%s' % product_name,
+                                                   notebook_json,
+                                                   'inspect - [%s]' %
                                                    self._limit_title(l1b_path, 60))
 
     def compare_l1b_products(self, workspace_name, l1b_path_1: str, l1b_path_2: str):
@@ -475,9 +480,13 @@ class WorkspaceManager:
         notebook_json = template_data.decode("utf-8") \
             .replace('__L1B_FILE_PATH_1__', repr(l1b_path_1).replace('\\', '\\\\')) \
             .replace('__L1B_FILE_PATH_2__', repr(l1b_path_2).replace('\\', '\\\\'))
-        return self._launch_notebook_from_template(workspace_name, 'compare', notebook_json, 'compare - [%s] [%s]' % (
-            self._limit_title(l1b_path_1, 30),
-            self._limit_title(l1b_path_2, 30),))
+        product1_name = ntpath.basename(l1b_path_1)
+        product2_name = ntpath.basename(l1b_path_2)
+        return self._launch_notebook_from_template(workspace_name,
+                                                   'compare-%s-%s' % (product1_name, product2_name),
+                                                   notebook_json,
+                                                   'compare - [%s] [%s]' % (self._limit_title(l1b_path_1, 30),
+                                                                            self._limit_title(l1b_path_2, 30),))
 
     def _launch_notebook_from_template(self,
                                        workspace_name: str,
@@ -531,7 +540,7 @@ class WorkspaceManager:
         else:
             if sys.platform.startswith('win'):
                 # Windows
-                #launch_notebook_command_template = 'start "{title}" /Min {command}'
+                # launch_notebook_command_template = 'start "{title}" /Min {command}'
                 launch_notebook_command_template = 'start "{title}" /Min "{command_file}"'
             elif sys.platform == 'darwin':
                 # Mac OS X
