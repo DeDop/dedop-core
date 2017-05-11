@@ -1263,6 +1263,13 @@ COMMAND_REGISTRY = [
 ]
 
 
+# use by 'sphinxarg' to generate the documentation
+def _make_dedop_parser():
+    from cate.util.cli import _make_parser
+    return _make_parser(CLI_NAME, CLI_DESCRIPTION, __version__, COMMAND_REGISTRY, license_text=_LICENSE,
+                        docs_url=_DOCS_URL)
+
+
 def main(args=None, workspace_manager=None, processor_factory=None) -> int:
     if not processor_factory:
         processor_factory = get_config_value('processor_factory')

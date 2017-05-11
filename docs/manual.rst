@@ -5,7 +5,7 @@ Manual
 The DeDop software manual has not yet been written. While it is being prepared, please refer to the :doc:`quickstart`,
 which should give you a first impression how the DeDop Shell is used.
 
-Please not that all DeDop Shell commands and also its sub-commands have a ``--help``, or shorter ``-h``, option that
+Please note that all DeDop Shell commands and also its sub-commands have a ``--help``, or shorter ``-h``, option that
 you can use for getting more information.
 
 .. _tool_config:
@@ -57,3 +57,16 @@ Parameter name                       Description                                
 ``launch_editor_command``            An OS-specific shell command string used to launch a    *OS-specific*
                                      text editor for the processor configuration files.
 ===================================  =====================================================   ===========================
+
+
+.. _cli_examples:
+
+Examples
+========
+
+The following examples shall help you understand the basic concepts behind the various ``dedop`` commands.
+
+.. argparse::
+   :module: dedop.cli.main
+   :func: _make_dedop_parser
+   :prog: dedop
