@@ -13,11 +13,10 @@ import os.path
 import subprocess
 import sys
 
-from cate.util.cli import run_main, Command, SubCommandCommand, CommandError
-
 from dedop.model.processor import BaseProcessor, ProcessorException
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceError, WorkspaceManager
+from dedop.util.cli import run_main, Command, SubCommandCommand, CommandError
 from dedop.util.config import DEFAULT_CONFIG_FILE, get_config_path, get_config_value
 from dedop.util.monitor import Monitor
 from dedop.version import __version__
@@ -1265,7 +1264,7 @@ COMMAND_REGISTRY = [
 
 # use by 'sphinxarg' to generate the documentation
 def _make_dedop_parser():
-    from cate.util.cli import _make_parser
+    from dedop.util.cli import _make_parser
     return _make_parser(CLI_NAME, CLI_DESCRIPTION, __version__, COMMAND_REGISTRY, license_text=_LICENSE,
                         docs_url=_DOCS_URL)
 
