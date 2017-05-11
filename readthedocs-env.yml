@@ -8,6 +8,7 @@ dependencies:
     #- bzip2=1.0.6=vc14_3
     #- cate-util=0.7.0.dev1=2 (excluded for rtd, mocked instead)
     - colorama=0.3.7=py35_0
+    - commonmark=0.7.2=py35_0
     - coverage=4.1=py35_0
     - cycler=0.10.0=py35_0
     - decorator=4.0.11=py35_0
