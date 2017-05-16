@@ -88,9 +88,28 @@ To permanently install Cate into Python (not recommended while in development mo
 
 ## Getting started
 
+### Command Line Interface
+
 To test the installation from source, first run the DeDop command-line interface. Type
 
     $ dedop -h
+    
+More examples are available here http://dedop-core.readthedocs.io/en/latest/manual.html#examples
+    
+### Web API
+
+This is required by dedop-studio. To start the web API, type:
+
+    $ dedop-webapi start
+    
+A random port number will be assigned unless explicitly specified on the command like so:
+    
+    $ dedop-webapi --port 2999 start
+    
+To check if the wbe API has started successfully, open your browser and enter the web API URL. The following response should be displayed:
+    
+    {"status": "ok", "content": {"name": "dedop-webapi", "version": "0.5.4.dev", "timestamp": "2017-05-16"}}
+
 
 ## License
 
