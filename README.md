@@ -110,6 +110,9 @@ To check if the wbe API has started successfully, open your browser and enter th
     
     {"status": "ok", "content": {"name": "dedop-webapi", "version": "0.5.4.dev", "timestamp": "2017-05-16"}}
 
+To stop, go to **[host_name]:[port_number]/exit** on the browser. For example:
+
+    127.0.0.1:2999/exit
 
 ## License
 
