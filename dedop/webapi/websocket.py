@@ -1,9 +1,9 @@
 import json
 import os
-from typing import List
 
 from cate.util import Monitor
 from netCDF4 import Dataset
+from typing import List
 
 from dedop.proc.sar import L1BProcessor
 from dedop.ui.workspace_manager import WorkspaceManager
@@ -121,6 +121,9 @@ class WebSocketService:
 
     def get_output_names(self, workspace_name: str, config_name: str) -> List[str]:
         return self.workspace_manager.get_output_names(workspace_name, config_name)
+
+    def remove_output_files(self, workspace_name: str, config_name: str):
+        self.workspace_manager.remove_outputs(workspace_name, config_name)
 
     def inspect_output(self, workspace_name: str, output_file_path: str):
         self.workspace_manager.inspect_l1b_product(workspace_name, output_file_path)
