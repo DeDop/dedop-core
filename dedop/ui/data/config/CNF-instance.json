@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "flag_avoid_zeros_in_multilooking_cnf": true,
+  "flag_azimuth_windowing_method_cnf": "hanning",
+  "azimuth_window_width_cnf": 48,
+  "N_looks_stack_cnf": 20,
+  "flag_antenna_weighting_cnf": 2
+}

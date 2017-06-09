@@ -297,8 +297,14 @@ class WorkspaceManager:
         cst_config_version = self.get_config_version(workspace_name, config_name, "CST")
         return chd_config_version, cnf_config_version, cst_config_version
 
+    def get_all_descriptors(self):
+        chd_descriptor = self._get_config_file("CNF-descriptor")
+        cnf_descriptor = self._get_config_file("CNF-descriptor")
+        cst_descriptor = self._get_config_file("CNF-descriptor")
+        return chd_descriptor, cnf_descriptor, cst_descriptor
+
     def get_default_config_version(self, config_file_key: str) -> int:
-        default_config = self._get_default_config(config_file_key)
+        default_config = self._get_config_file(config_file_key)
         return default_config['__metainf__']['version'] if '__metainf__' in default_config else -1
 
     def get_all_default_config_version(self) -> tuple:
@@ -315,7 +321,7 @@ class WorkspaceManager:
 
     def upgrade_config(self, workspace_name: str, config_name: str, config_file_key: str):
         current_config = self.get_config_json(workspace_name, config_name, config_file_key)
-        default_config = self._get_default_config(config_file_key)
+        default_config = self._get_config_file(config_file_key)
         config_json = self._do_upgrade_config(current_config, default_config)
         updated_version = config_json['__metainf__']['version'] if '__metainf__' in config_json else -1
         updated_config = self._json_to_str(config_json)
@@ -357,10 +363,10 @@ class WorkspaceManager:
         return json.dumps(json_dict, indent=4, separators=(',', ': '), sort_keys=True)
 
     @staticmethod
-    def _get_default_config(config_file_key):
-        default_config_data = pkgutil.get_data(_DEFAULT_CONFIG_PACKAGE_NAME, config_file_key + '.json')
-        default_config = json.loads(default_config_data.decode("utf-8"))
-        return default_config
+    def _get_config_file(config_file_key):
+        config_data = pkgutil.get_data(_DEFAULT_CONFIG_PACKAGE_NAME, config_file_key + '.json')
+        config_json = json.loads(config_data.decode("utf-8"))
+        return config_json
 
     @staticmethod
     def _open_config_json(file_path):

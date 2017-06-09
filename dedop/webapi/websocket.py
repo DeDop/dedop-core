@@ -91,6 +91,14 @@ class WebSocketService:
             "cst": cst_config_json
         }
 
+    def get_config_descriptors(self) -> dict:
+        chd_descriptor, cnf_descriptor, cst_descriptor = self.workspace_manager.get_all_descriptors()
+        return {
+            "chd_descriptor": chd_descriptor,
+            "cnf_descriptor": cnf_descriptor,
+            "cst_descriptor": cst_descriptor
+        }
+
     def get_default_config_versions(self) -> dict:
         chd_version, cnf_version, cst_version = self.workspace_manager.get_all_default_config_version()
         return {

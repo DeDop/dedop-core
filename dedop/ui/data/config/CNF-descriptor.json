@@ -1,0 +1,85 @@
+{
+  "__metainf__": {
+    "version": 2,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          [
+            "flag_azimuth_processing_method_cnf",
+            "*",
+            "integer codes changed to text enum"
+          ]
+        ],
+        "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 2,
+        "parameters": [
+          "*",
+          "*",
+          "change to using configuration descriptor"
+        ],
+        "comment": "initial version"
+      }
+    ]
+  },
+  "flag_avoid_zeros_in_multilooking_cnf": {
+    "data_type": "boolean",
+    "description": "Flag that indicates if the samples set to zero in the beams will be avoided when averaging in multi-looking: No (false); Yes (true)",
+    "unit": "flag"
+  },
+  "flag_azimuth_windowing_method_cnf": {
+    "comment": "this is a parameter with value options",
+    "data_type": "string",
+    "description": "Flag the sets the azimuth windowing method: Disabled ('none'); Boxcar ('boxcar'); Hamming ('hamming'); Hanning ('hanning')",
+    "unit": "flag",
+    "value_set": [
+      "none",
+      "boxcar",
+      "hamming",
+      "hanning"
+    ]
+  },
+  "azimuth_window_width_cnf": {
+    "comment": "this is a parameter with value range",
+    "data_type": "integer",
+    "description": "Width of Azimuth window (minimum value: 32, maximum value: 64)",
+    "unit": "count",
+    "value_range": [
+      32,
+      64
+    ]
+  },
+  "N_looks_stack_cnf": {
+    "comment": "this is a parameter with a value dependency to other parameter",
+    "data_type": "integer",
+    "description": "Number of looks in 1 stack",
+    "unit": null,
+    "dependencies": [
+      {
+        "name": "flag_azimuth_windowing_method_cnf",
+        "relation": "value",
+        "value": "hanning"
+      }
+    ]
+  },
+  "flag_antenna_weighting_cnf": {
+    "comment": "this is a parameter with multiple dependencies to other parameter(s)",
+    "data_type": "boolean",
+    "description": "Flag that activates the antenna weighting: Deactivated (false); Activated (true)",
+    "unit": null,
+    "dependencies": [
+      {
+        "name": "azimuth_window_width_cnf",
+        "relation": "is_value",
+        "value": 40
+      }
+    ]
+  }
+}
