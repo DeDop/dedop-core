@@ -43,19 +43,19 @@
     "description": "Flag that activates the surface focussing: Deactivated (false); Activated (true)"
   },
   "surface_focusing_lat_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "Degrees North",
-    "description": "Location of the surface focusing target (latitude)"
+    "description": "Location of the surface focusing target (latitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "surface_focusing_lon_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "Degrees East",
-    "description": "Location of the surface focusing target (longitude)"
+    "description": "Location of the surface focusing target (longitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "surface_focusing_alt_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "m",
-    "description": "Location of the surface focusing target (altitude)"
+    "description": "Location of the surface focusing target (altitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "flag_azimuth_processing_method_cnf": {
     "value": "approx",
@@ -93,7 +93,7 @@
     "description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
   },
   "elevation_reference_value_cnf": {
-    "value": null,
+    "value": 0,
     "units": null,
     "description": "NOT YET IMPLEMENTED"
   },
@@ -108,7 +108,7 @@
     "description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
   },
   "ambiguity_mask_margin_cnf": {
-    "value": null,
+    "value": 0,
     "units": null,
     "description": "NOT YET IMPLEMENTED"
   },
