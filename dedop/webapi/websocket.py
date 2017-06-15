@@ -46,9 +46,9 @@ class WebSocketService:
         return workspace.to_json_dict()
 
     def get_all_workspaces(self) -> dict:
-        workspace_names = self.workspace_manager.get_workspace_names()
+        workspaces = self.workspace_manager.get_workspaces()
         return {
-            "workspaces": workspace_names
+            "workspaces": workspaces
         }
 
     def add_input_files(self, workspace_name: str, input_file_paths: List[str]):
@@ -148,6 +148,17 @@ class WebSocketService:
         return {
             "lat": latitude,
             "lon": longitude
+        }
+
+    @staticmethod
+    def get_max_min_coordinates(input_file_path) -> dict:
+        ds = Dataset(input_file_path)
+        latitude = ds['lat_l1a_echo_sar_ku'][:].tolist() if 'lat_l1a_echo_sar_ku' in ds.variables.keys() else []
+        longitude = ds['lon_l1a_echo_sar_ku'][:].tolist() if 'lon_l1a_echo_sar_ku' in ds.variables.keys() else []
+        ds.close()
+        return {
+            "lat": [latitude[0], latitude[-1]],
+            "lon": [longitude[0], longitude[-1]]
         }
 
     @staticmethod
