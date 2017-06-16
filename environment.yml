@@ -5,16 +5,16 @@ channels:
 dependencies:
     - python=3.5
     - bokeh >=0.12.4
-    - cate-util >=0.8.0rc3=np111py35_0
+    - cate-util=0.8.0rc3
     - hdf4 >=4.2.12
     - ipywidgets >=5.2.2
     - jupyter >=1.0.0
-    - netcdf4 >=1.2.4=np111py35_0
+    - netcdf4 >=1.2.4
     - matplotlib=1.5.1
-    - numexpr >=2.6.2=np111py35_0
-    - numpy 1.11.3
+    - numexpr >=2.6.2
+    - numpy=1.11.3
     - pyproj >=1.9.5.1
-    - scipy 0.19.0=np111py35_0
+    - scipy=0.19.0
     #
     # for testing only
     #
