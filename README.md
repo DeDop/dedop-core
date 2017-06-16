@@ -108,7 +108,7 @@ A random port number will be assigned unless explicitly specified on the command
     
 To check if the wbe API has started successfully, open your browser and enter the web API URL. The following response should be displayed:
     
-    {"status": "ok", "content": {"name": "dedop-webapi", "version": "0.5.4.dev", "timestamp": "2017-05-16"}}
+    {"status": "ok", "content": {"name": "dedop-webapi", "version": "1.0.0", "timestamp": "2017-05-16"}}
 
 To stop, go to **[host_name]:[port_number]/exit** on the browser. For example:
 
