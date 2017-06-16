@@ -3,7 +3,7 @@ channels:
     - ccitools
     - conda-forge
 dependencies:
-    - python 3.5
+    - python=3.5
     - bokeh >=0.12.4
     - cate-util >=0.8.0rc3=np111py35_0
     - hdf4 >=4.2.12
