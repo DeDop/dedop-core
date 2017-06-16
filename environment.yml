@@ -4,19 +4,19 @@ channels:
 dependencies:
     - python ==3.5
     - bokeh ==0.12.6
-    - cate-util=0.8.0rc3-np111py35_0
+    - cate-util=0.8.0rc3=np111py35_0
     - hdf4 ==4.2.12
     - ipywidgets ==6.0.0
     - jupyter ==1.0.0
     - netcdf4 ==1.2.4
     - matplotlib ==1.5.1
     - numexpr ==2.6.2
-    - numpy ==1.11.3=py35_0
+    - numpy=1.11.3=py35_0
     - pyproj ==1.9.5.1
     # pyqt >=5.6 clashes with matplotlib 1.5.1
     - pyqt ==4.11.4
     - qt ==4.8.7
-    - scipy ==0.19.0=np111py35_0
+    - scipy=0.19.0=np111py35_0
     #
     # for testing only
     #
