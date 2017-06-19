@@ -529,6 +529,8 @@ class WorkspaceManager:
         terminal_title = 'DeDop - %s' % title
 
         notebook_command = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
+        notebook_command_with_prefix = 'source {prefix}/bin/activate {prefix} && {notebook_command}' \
+            .format(prefix=sys.prefix, notebook_command=notebook_command)
         if notebook_path:
             notebook_command += ' "%s"' % notebook_path
 
@@ -559,7 +561,7 @@ class WorkspaceManager:
             elif shutil.which("xterm"):
                 launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
             else:
-                launch_notebook_command_template = notebook_command
+                launch_notebook_command_template = notebook_command_with_prefix
                 launch_notebook_in_new_terminal = False
 
         command_file = ''
@@ -586,7 +588,7 @@ class WorkspaceManager:
                 raise WorkspaceError(str(error))
 
         launch_notebook_command = launch_notebook_command_template.format(title=terminal_title,
-                                                                          command=notebook_command,
+                                                                          command=notebook_command_with_prefix,
                                                                           command_file=command_file,
                                                                           prefix=sys.prefix)
         try:
