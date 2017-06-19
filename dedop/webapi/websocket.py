@@ -115,7 +115,7 @@ class WebSocketService:
         chd_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CHD")
         cnf_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CNF")
         cst_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CST")
-        processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path)
+        processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path, skip_l1bs=False)
         processor.process(l1a_file, monitor=monitor)
 
     def upgrade_configs(self, workspace_name: str, config_name: str):
