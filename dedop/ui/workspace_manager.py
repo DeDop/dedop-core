@@ -529,8 +529,8 @@ class WorkspaceManager:
         terminal_title = 'DeDop - %s' % title
 
         notebook_command = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
-        notebook_command_with_prefix = 'source {prefix}/bin/activate {prefix} && {notebook_command}' \
-            .format(prefix=sys.prefix, notebook_command=notebook_command)
+        notebook_command_with_prefix = '{prefix}/bin/{notebook_command}'.format(prefix=sys.prefix,
+                                                                                notebook_command=notebook_command)
         if notebook_path:
             notebook_command += ' "%s"' % notebook_path
 
@@ -557,7 +557,7 @@ class WorkspaceManager:
                 launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
             elif shutil.which("gnome-terminal"):
                 # GNOME / Ubuntu
-                launch_notebook_command_template = 'gnome-terminal --title "{title}" -e "bash -c \'{command}\'"'
+                launch_notebook_command_template = 'gnome-terminal -e "\'{command}\'"'
             elif shutil.which("xterm"):
                 launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
             else:
