@@ -533,6 +533,7 @@ class WorkspaceManager:
                                                                                 notebook_command=notebook_command)
         if notebook_path:
             notebook_command += ' "%s"' % notebook_path
+            notebook_command_with_prefix += ' "%s"' % notebook_path
 
         launch_notebook_command_template = get_config_value('launch_notebook_command', None)
         launch_notebook_in_new_terminal = True
