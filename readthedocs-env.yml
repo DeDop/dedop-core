@@ -85,5 +85,7 @@ dependencies:
     - sphinx_rtd_theme=0.1.9
     # v 0.2.0 of sphinx-argparse needs a greater commonmark version than rtd
     - sphinx-argparse==0.1.17
+    # required by the RTD server
+    - mkdocs
     - pip:
       - sphinx_autodoc_annotation
