@@ -3,7 +3,7 @@ from typing import Iterator
 from dedop.model.l1a_processing_data import L1AProcessingData
 from ...conf import ConstantsFile, CharacterisationFile, ConfigurationFile
 
-from math import radians
+from math import radians, isclose
 
 class InputDataset:
     def __init__(self, dataset, cst: ConstantsFile, chd: CharacterisationFile, cnf: ConfigurationFile):
@@ -14,6 +14,17 @@ class InputDataset:
 
     def close(self) -> None:
         self._dset.close()
+
+    def is_valid(self, packet: L1AProcessingData) -> bool:
+        """
+        checks if the packet appears to contain valid data.
+        """
+        lat = packet.lat_sar_sat
+        lon = packet.lon_sar_sat
+
+        if isclose(lat, 0.) and isclose(lon, 0.):
+            return False
+        return True
 
     def in_range(self, packet: L1AProcessingData) -> bool:
         """checks if the location of the packet is
@@ -31,7 +42,7 @@ class InputDataset:
         if self.cnf.max_lon is not None and lon > radians(self.cnf.max_lon):
             return False
 
-        return True
+        return self.is_valid(packet)
 
     def __iter__(self) -> Iterator[L1AProcessingData]:
         for packet in self._dset:
