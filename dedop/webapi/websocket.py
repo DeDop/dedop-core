@@ -81,14 +81,17 @@ class WebSocketService:
         self.workspace_manager.set_current_config_name(workspace_name, config_name)
 
     def get_configs(self, workspace_name: str, config_name: str) -> dict:
-        chd_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CHD")
-        cnf_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CNF")
-        cst_config_json = self.workspace_manager.get_config_json(workspace_name, config_name, "CST")
+        chd_config_json, chd_order = self.workspace_manager.get_config_json(workspace_name, config_name, "CHD")
+        cnf_config_json, cnf_order = self.workspace_manager.get_config_json(workspace_name, config_name, "CNF")
+        cst_config_json, cst_order = self.workspace_manager.get_config_json(workspace_name, config_name, "CST")
         return {
             "name": config_name,
             "chd": chd_config_json,
+            "chd_order": chd_order,
             "cnf": cnf_config_json,
-            "cst": cst_config_json
+            "cnf_order": cnf_order,
+            "cst": cst_config_json,
+            "cst_order": cst_order
         }
 
     def get_default_config_versions(self) -> dict:
@@ -112,7 +115,7 @@ class WebSocketService:
         chd_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CHD")
         cnf_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CNF")
         cst_file = self.workspace_manager.get_config_file(workspace_name, config_name, "CST")
-        processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path)
+        processor = L1BProcessor(process_name, cnf_file, cst_file, chd_file, output_path, skip_l1bs=False)
         processor.process(l1a_file, monitor=monitor)
 
     def upgrade_configs(self, workspace_name: str, config_name: str):

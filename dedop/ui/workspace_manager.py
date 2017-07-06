@@ -1,3 +1,4 @@
+import collections
 import fnmatch
 import json
 import ntpath
@@ -264,7 +265,9 @@ class WorkspaceManager:
 
     def get_config_json(self, workspace_name: str, config_name: str, config_file_key: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
-        return self._open_config_json(file_path)
+        config_json = self._open_config_json(file_path)
+        config_order = [name for name in config_json]
+        return config_json, config_order
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
@@ -290,7 +293,7 @@ class WorkspaceManager:
         _writeline(self.get_workspace_path(workspace_name, _CONFIGS_DIR_NAME, _CURRENT_FILE_NAME), config_name)
 
     def get_config_version(self, workspace_name: str, config_name: str, config_file_key: str) -> int:
-        config = self.get_config_json(workspace_name, config_name, config_file_key)
+        config, _ = self.get_config_json(workspace_name, config_name, config_file_key)
         return config['__metainf__']['version'] if '__metainf__' in config else -1
 
     def get_all_config_version(self, workspace_name: str, config_name: str) -> tuple:
@@ -316,7 +319,7 @@ class WorkspaceManager:
         return chd_new_version, cnf_new_version, cst_new_version
 
     def upgrade_config(self, workspace_name: str, config_name: str, config_file_key: str):
-        current_config = self.get_config_json(workspace_name, config_name, config_file_key)
+        current_config, _ = self.get_config_json(workspace_name, config_name, config_file_key)
         default_config = self._get_default_config(config_file_key)
         config_json = self._do_upgrade_config(current_config, default_config)
         updated_version = config_json['__metainf__']['version'] if '__metainf__' in config_json else -1
@@ -361,13 +364,13 @@ class WorkspaceManager:
     @staticmethod
     def _get_default_config(config_file_key):
         default_config_data = pkgutil.get_data(_DEFAULT_CONFIG_PACKAGE_NAME, config_file_key + '.json')
-        default_config = json.loads(default_config_data.decode("utf-8"))
+        default_config = json.loads(default_config_data.decode("utf-8"), object_pairs_hook=collections.OrderedDict)
         return default_config
 
     @staticmethod
     def _open_config_json(file_path):
         with open(file_path) as data_file:
-            config_json = json.load(data_file)
+            config_json = json.load(data_file, object_pairs_hook=collections.OrderedDict)
         return config_json
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
@@ -526,8 +529,11 @@ class WorkspaceManager:
         terminal_title = 'DeDop - %s' % title
 
         notebook_command = 'jupyter notebook --notebook-dir "%s"' % notebook_dir
+        notebook_command_with_prefix = '{prefix}/bin/{notebook_command}'.format(prefix=sys.prefix,
+                                                                                notebook_command=notebook_command)
         if notebook_path:
             notebook_command += ' "%s"' % notebook_path
+            notebook_command_with_prefix += ' "%s"' % notebook_path
 
         launch_notebook_command_template = get_config_value('launch_notebook_command', None)
         launch_notebook_in_new_terminal = True
@@ -552,11 +558,11 @@ class WorkspaceManager:
                 launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
             elif shutil.which("gnome-terminal"):
                 # GNOME / Ubuntu
-                launch_notebook_command_template = 'gnome-terminal --title "{title}" -e "bash -c \'{command}\'"'
+                launch_notebook_command_template = 'gnome-terminal -e \'{command}\''
             elif shutil.which("xterm"):
                 launch_notebook_command_template = 'xterm  -T "{title}" -e \'{command}\''
             else:
-                launch_notebook_command_template = notebook_command
+                launch_notebook_command_template = notebook_command_with_prefix
                 launch_notebook_in_new_terminal = False
 
         command_file = ''
@@ -583,7 +589,7 @@ class WorkspaceManager:
                 raise WorkspaceError(str(error))
 
         launch_notebook_command = launch_notebook_command_template.format(title=terminal_title,
-                                                                          command=notebook_command,
+                                                                          command=notebook_command_with_prefix,
                                                                           command_file=command_file,
                                                                           prefix=sys.prefix)
         try:
