@@ -34,12 +34,14 @@ class L1BProcessor(BaseProcessor):
         """
         return self._packets
 
-    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool = True):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, cal_file: str, out_path: str,
+                 skip_l1bs: bool = True):
         """
         initialise the processor
         """
         # TODO: make this a param and add it to workspace manager
-        cal_file = '/home/mark/dedop/roger/cs_users_characterization_C002.nc'
+        # cal_file = '/home/mark/dedop/roger/cs_users_characterization_C002.nc'
+        print(cal_file)
 
         if not name:
             raise ValueError('name must be given')

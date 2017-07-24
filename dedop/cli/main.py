@@ -64,6 +64,7 @@ def new_l1b_processor(name: str,
                       cnf_file: str = None,
                       cst_file: str = None,
                       chd_file: str = None,
+                      cal_file: str = None,
                       output_dir: str = '.',
                       skip_l1bs: bool = True) -> BaseProcessor:
     """
@@ -77,7 +78,7 @@ def new_l1b_processor(name: str,
     :param skip_l1bs: whether to skip L1B-S output
     :return: an object of type :py_class:`BaseProcessor`
     """
-    return L1BProcessor(name, cnf_file, cst_file, chd_file, output_dir, skip_l1bs)
+    return L1BProcessor(name, cnf_file, cst_file, chd_file, cal_file, output_dir, skip_l1bs)
 
 
 def _input(prompt, default=None):
@@ -173,6 +174,8 @@ class RunProcessorCommand(Command):
                             help='Alternative output directory.')
         parser.add_argument('-a', '--all-configs', dest='all_configs', action='store_true',
                             help='Run all DDP configurations in workspace. Cannot be used with option -c')
+        parser.add_argument('-l', '--calibration', dest='calibration_file', metavar='CAL',
+                            help='Alternative calibration file, defaults to current DDP configuration.')
 
     def execute(self, command_args):
         try:
@@ -203,6 +206,7 @@ class RunProcessorCommand(Command):
                 chd_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CHD')
                 cnf_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CNF')
                 cst_file = _WORKSPACE_MANAGER.get_config_file(workspace_name, config_name, 'CST')
+                cal_file = _WORKSPACE_MANAGER.get_calibration_file(workspace_name, config_name)
                 output_dir = command_args.output_dir if command_args.output_dir else \
                     _WORKSPACE_MANAGER.get_outputs_path(workspace_name, config_name)
                 skip_l1bs = command_args.skip_l1bs
@@ -212,6 +216,7 @@ class RunProcessorCommand(Command):
                                                chd_file=chd_file,
                                                cnf_file=cnf_file,
                                                cst_file=cst_file,
+                                               cal_file=cal_file,
                                                output_dir=output_dir,
                                                skip_l1bs=skip_l1bs)
                 for input_file in inputs:
@@ -466,6 +471,12 @@ class ManageConfigsCommand(SubCommandCommand):
         parser_version.add_argument(nargs='?', **config_name_attributes)
         parser_version.set_defaults(cf_command=cls.execute_version)
 
+        parser_calibration = subparsers.add_parser('calibration', aliases=['cal'], help='Set DDP calibration data')
+        cls.setup_default_parser_argument(parser_calibration)
+        parser_calibration.add_argument(nargs='?', **config_name_attributes)
+        parser_calibration.add_argument('cal_path', metavar='CAL_PATH', help='Calibration data file')
+        parser_calibration.set_defaults(cf_command=cls.execute_cal)
+
     @classmethod
     def setup_default_parser_argument(cls, parser):
         workspace_name_attributes = dict(dest='workspace_name', metavar='WORKSPACE', help="Name of the workspace")
@@ -511,6 +522,21 @@ class ManageConfigsCommand(SubCommandCommand):
                         cls.set_current_config(workspace_name, None)
             except WorkspaceError as error:
                 raise CommandError(error)
+
+    @classmethod
+    def execute_cal(cls, command_args):
+        workspace_name, config_name = _get_workspace_and_config_name(command_args)
+        if not workspace_name:
+            raise CommandError('no current workspace, use option -w to name a WORKSPACE')
+        if not config_name:
+            raise CommandError(
+                'no current configuration, use "dedop config add CONFIG" or "dedop config cur CONFIG"')
+        cal_path = command_args.cal_path
+        try:
+            _WORKSPACE_MANAGER.set_calibration_file(workspace_name, config_name, cal_path)
+            print('copied DDP calibration data from "%s"' % cal_path)
+        except WorkspaceError as error:
+            raise CommandError(error)
 
     @classmethod
     def execute_copy(cls, command_args):
