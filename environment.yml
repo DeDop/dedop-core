@@ -4,7 +4,7 @@ channels:
 dependencies:
     - python ==3.6
     - bokeh ==0.12.6
-    - cate-util=0.9.0.dev4=py36hcb709f4_0
+    - cate-util=0.9.0.dev4
     - hdf4 ==4.2.12
     - ipywidgets ==6.0.0
     - jupyter ==1.0.0
