@@ -808,18 +808,18 @@ class SurfaceData:
         del self['stack_mask']
 
     @property
-    def range_sat_surf(self) -> float:
+    def range_sat_surf(self):
         """
         the range_sat_surf property
         """
         return self['range_sat_surf']
 
     @range_sat_surf.setter
-    def range_sat_surf(self, value: float) -> None:
+    def range_sat_surf(self, value) -> None:
         self['range_sat_surf'] = value
 
     @range_sat_surf.deleter
-    def range_sat_surf(self) -> float:
+    def range_sat_surf(self) -> None:
         del self['range_sat_surf']
 
     @property
@@ -852,6 +852,19 @@ class SurfaceData:
     @sigma0_scaling_factor.deleter
     def sigma0_scaling_factor(self) -> None:
         del self["sigma0_scaling_factor"]
+
+    @property
+    def sigma0_scaling_factor_beam(self) -> float:
+        """the sigma-nought scaling factor per beam"""
+        return self["sigma0_scaling_factor_beam"]
+
+    @sigma0_scaling_factor_beam.setter
+    def sigma0_scaling_factor_beam(self, value: float) -> None:
+        self["sigma0_scaling_factor_beam"] = value
+
+    @sigma0_scaling_factor_beam.deleter
+    def sigma0_scaling_factor_beam(self) -> None:
+        del self["sigma0_scaling_factor_beam"]
 
     @property
     def stack_std(self) -> float:
@@ -937,7 +950,6 @@ class SurfaceData:
     @property
     def curr_day_length(self):
         return self["curr_day_length"]
-
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: int=None,
                  *dicts: dict, **values: Any):

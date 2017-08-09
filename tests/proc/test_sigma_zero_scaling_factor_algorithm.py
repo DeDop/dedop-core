@@ -68,7 +68,7 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
             range_sat_surf=input_data['range_sat_surf'],
             stack_bursts=np.asarray(isps)
         )
-        sig0_scale_factor = self.sigma0_algorithm(
+        sig0_scale_factor, sig0_scale_factor_beam = self.sigma0_algorithm(
             working_loc,
             input_data['wv_length_ku'],
             input_data['chirp_slope_ku']
@@ -76,3 +76,8 @@ class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
         self.assertAlmostEqual(
             expected['sigma0_scaling_factor'], sig0_scale_factor,
         )
+        # todo: add beam data to expected data file
+        # self.assertTrue(
+        #     np.allclose(expected['sigma0_scaling_factor_beam'],
+        #                 sig0_scale_factor_beam)
+        # )
