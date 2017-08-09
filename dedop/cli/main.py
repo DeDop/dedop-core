@@ -605,7 +605,7 @@ class ManageConfigsCommand(SubCommandCommand):
         if not workspace_name:
             raise CommandError('no current workspace, use option -w to name a WORKSPACE')
         config_names = _WORKSPACE_MANAGER.get_config_names(workspace_name)
-        num_configs = len(config_names)
+        num_configs = len(config_names) if config_names else 0
         if num_configs == 0:
             print('no DDP configurations in workspace "%s"' % workspace_name)
         elif num_configs == 1:
