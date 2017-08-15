@@ -426,6 +426,8 @@ class L1BProcessor(BaseProcessor):
             self.sigma_zero_algorithm.sigma0_scaling_factor
         working_surface_location.sigma0_scaling_factor_beam =\
             self.sigma_zero_algorithm.sigma0_scaling_factor_beam
+        working_surface_location.waveform_multilooked =\
+            self.sigma_zero_algorithm.waveform_scaled
 
     def new_surface(self, loc_data: Dict[str, Any]) -> SurfaceData:
         """

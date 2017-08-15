@@ -23,6 +23,7 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
         self.sigma0_scaling_factor_beam = np.zeros(
             (max_stack,), dtype=np.float64
         )
+        padded_size = self.cnf.zp_fact_range * self.chd.n_samples_sar
 
         sigma0_offset = 10 * log10(64) - \
             10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku +\
@@ -50,7 +51,7 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
 
             # TODO: apply factor based on window width?
             widening_factor = {
-                AzimuthWindowingMethod.hamming: 1.486 * .92,
+                AzimuthWindowingMethod.hamming: 1.0,  # fixme: add correct value
                 AzimuthWindowingMethod.hanning: 1.0,  # fixme: add correct value
                 AzimuthWindowingMethod.boxcar: 1.0,  # fixme: add correct value
                 AzimuthWindowingMethod.disabled: 1.0
@@ -61,4 +62,5 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
                 40 * log10(range_sat_surf) - 20 * log10(wavelength_ku) - 10 * log10(surface_area)
 
         self.sigma0_scaling_factor = np.mean(self.sigma0_scaling_factor_beam)
+        self.waveform_scaled = working_surface_location.waveform_multilooked / sqrt(padded_size)
         return self.sigma0_scaling_factor, self.sigma0_scaling_factor_beam
