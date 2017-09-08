@@ -20,7 +20,6 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
     expected_02 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
                   "expected/expected.txt"
 
-
     def initialise_algorithm(self, input_data):
         self.cnf = ConfigurationFile()
         self.cst = ConstantsFile(
@@ -55,7 +54,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         for i, surf_num in enumerate(input_data["surface_counter"]):
             surf = SurfaceData(
                 self.cst, self.chd, surf_num,
-                time_surf=input_data["time_surf"][i],
+                # time_surf=input_data["time_surf"][i],
                 x_surf=input_data["x_surf"][i],
                 y_surf=input_data["y_surf"][i],
                 z_surf=input_data["z_surf"][i],
@@ -72,7 +71,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
             y_vel_sat_sar=input_data["y_vel_sat_sar"],
             z_vel_sat_sar=input_data["z_vel_sat_sar"],
-            pri_sar_pre_dat=input_data["pri_sar_pre_dat"]
+            pri_sar_pre_dat=input_data["pri_sar_pre_dat"],
+            doppler_angle_sar_sat=input_data["doppler_angle_sar_sat"]
         )
         work_loc = input_data["working_surface_location_counter"]
 
@@ -123,7 +123,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         for i, surf_num in enumerate(input_data["surface_counter"]):
             surf = SurfaceData(
                 self.cst, self.chd, surf_num,
-                time_surf=input_data["time_surf"][i],
+                # time_surf=input_data["time_surf"][i],
                 x_surf=input_data["x_surf"][i],
                 y_surf=input_data["y_surf"][i],
                 z_surf=input_data["z_surf"][i],
@@ -140,7 +140,8 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
             x_vel_sat_sar=input_data["x_vel_sat_sar"],
             y_vel_sat_sar=input_data["y_vel_sat_sar"],
             z_vel_sat_sar=input_data["z_vel_sat_sar"],
-            pri_sar_pre_dat=input_data["pri_sar_pre_dat"]
+            pri_sar_pre_dat=input_data["pri_sar_pre_dat"],
+            doppler_angle_sar_sat=input_data["doppler_angle_sar_sat"]
         )
         work_loc = input_data["working_surface_location_counter"]
 
