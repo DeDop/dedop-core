@@ -841,3 +841,6 @@ class L1AProcessingData:
         m = np.cross(w, n.T)
         # angle between v and m
         self.doppler_angle_sar_sat = angle_between(v, m)
+
+        if self.doppler_angle_sar_sat < self.cst.pi / 2:
+            self.doppler_angle_sar_sat *= -1
