@@ -20,6 +20,10 @@ the [DeDop User Manual](http://dedop-core.readthedocs.io/en/latest/installation.
 * `docs/` - documentation in Sphinx/RST format
 * `notebooks/` - some IPython notebooks demonstrating the use of the DeDop Python API
 
+## Installation using installer (recommended)
+
+Instructions on how to get the installer and how to install are available [here](https://github.com/DeDop/dedop-installer#install-dedop-core).
+
 ## Installation from Sources
 
 ### Using Conda
