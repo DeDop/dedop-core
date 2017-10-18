@@ -415,6 +415,9 @@ class ManageConfigsCommand(SubCommandCommand):
         parser_add = subparsers.add_parser('add', help='Add new DDP configuration')
         cls.setup_default_parser_argument(parser_add)
         parser_add.add_argument(**config_name_attributes)
+        parser_add.add_argument('--cryosat-adapted', action='store_true',
+                                help='Initialise configuration with parameters for '
+                                     'processing reconditioned Cryosat-2 FBR data')
         parser_add.set_defaults(cf_command=cls.execute_add)
 
         parser_remove = subparsers.add_parser('remove', aliases=['rm'], help='Remove DDP configuration')
@@ -481,7 +484,7 @@ class ManageConfigsCommand(SubCommandCommand):
     def execute_add(cls, command_args):
         workspace_name, config_name = _get_workspace_and_config_name(command_args)
         try:
-            cls.create_config(workspace_name, config_name, exist_ok=False)
+            cls.create_config(workspace_name, config_name, exist_ok=False, cryosat=command_args.cryosat_adapted)
         except WorkspaceError as error:
             raise CommandError(error)
 
@@ -645,7 +648,7 @@ class ManageConfigsCommand(SubCommandCommand):
         return cls.create_config(workspace_name, _DEFAULT_CONFIG_NAME, exist_ok=True)
 
     @classmethod
-    def create_config(cls, workspace_name, config_name, exist_ok=True) -> str:
+    def create_config(cls, workspace_name, config_name, exist_ok=True, cryosat=False) -> str:
         """
         Create a new configuration *config_name* in workspace *workspace_name*.
 
@@ -659,7 +662,7 @@ class ManageConfigsCommand(SubCommandCommand):
             workspace_name = ManageWorkspacesCommand.create_default_workspace()
         if exist_ok and _WORKSPACE_MANAGER.config_exists(workspace_name, config_name):
             return config_name
-        _WORKSPACE_MANAGER.create_config(workspace_name, config_name)
+        _WORKSPACE_MANAGER.create_config(workspace_name, config_name, cryosat=cryosat)
         print('created DDP configuration "%s" in workspace "%s"' % (config_name, workspace_name))
         cls.set_current_config(workspace_name, config_name)
         return config_name
