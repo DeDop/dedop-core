@@ -11,7 +11,7 @@
     ]
   },
   "mean_sat_alt_chd": {
-    "value": 1347000.0,
+    "value": 814.5e3,
     "description": "Mean satellite altitude",
     "units": "m"
   },
@@ -33,7 +33,7 @@
     "units": "Hz"
   },
   "pulse_length_chd": {
-    "value": 0.000032,
+    "value": 4.48e-5,
     "description": "Pulse length",
     "units": "s"
   },
@@ -49,7 +49,7 @@
     "units": "dB"
   },
   "antenna_gain_ku_chd": {
-    "value": 42.1,
+    "value": 41.9,
     "description": "Antenna gain for Ku-band",
     "units": "dB"
   },
