@@ -198,6 +198,7 @@ class WorkspaceManager:
 
     def create_config(self, workspace_name: str, config_name: str, cryosat: bool=False):
         """
+        :param cryosat: True to create a config based on cryosat template
         :param workspace_name: the workspace name where the config is to be created
         :param config_name: the name of the configuration to be added
         """

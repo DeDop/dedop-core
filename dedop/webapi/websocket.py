@@ -60,8 +60,8 @@ class WebSocketService:
     def get_config_names(self, workspace_name: str) -> List[str]:
         return self.workspace_manager.get_config_names(workspace_name)
 
-    def add_new_config(self, workspace_name: str, config_name: str):
-        self.workspace_manager.create_config(workspace_name, config_name)
+    def add_new_config(self, workspace_name: str, config_name: str, cryosat: bool):
+        self.workspace_manager.create_config(workspace_name, config_name, cryosat=cryosat)
 
     def delete_config(self, workspace_name: str, config_name: str):
         self.workspace_manager.delete_config(workspace_name, config_name)
