@@ -269,7 +269,7 @@ class WorkspaceManager:
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
         config_json = self._open_config_json(file_path)
         config_order = [name for name in config_json]
-        return config_json, config_order
+        return config_json, sorted(config_order, key=str.lower)
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
