@@ -180,3 +180,5 @@ class WebSocketServiceTest(unittest.TestCase):
                         or workspace['name'] == 'test_ws_config' \
                         or workspace['name'] == 'test_ws_input':
                     self.service.delete_workspace(workspace['name'])
+                else:
+                    self.service.set_current_workspace(workspace['name'])
