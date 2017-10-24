@@ -74,6 +74,9 @@ class WebSocketServiceTest(unittest.TestCase):
         self.assertIn('test_config_sentinel', config_names)
         self.assertEqual(len(config_names), config_count)
 
+        self.service.set_current_config(ws_name, 'test_config_sentinel')
+        self.assertEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel')
+
         sentinel_configs = self.service.get_configs(ws_name, 'test_config_sentinel')
         self.assertIn('name', sentinel_configs)
         self.assertEqual(sentinel_configs['name'], 'test_config_sentinel')
@@ -135,6 +138,38 @@ class WebSocketServiceTest(unittest.TestCase):
         self.assertIn('test_config_sentinel_renamed', config_names)
         self.assertEqual(len(config_names), config_count)
 
+        self.assertNotEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel_renamed')
+        self.service.set_current_config(ws_name, 'test_config_sentinel_renamed')
+        self.assertEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel_renamed')
+
+    def test_input_data_management(self):
+        input_file_name = "l1a_test.nc"
+        test_input_file_path = "test_data/data/test_l1a/inputs/%s" % input_file_name
+        ws_name = 'test_ws_input'
+        self.service.new_workspace(ws_name)
+        self.service.set_current_workspace('test_ws_input')
+
+        self.service.add_input_files('test_ws_input', [test_input_file_path])
+        global_attributes = self.service.get_global_attributes(test_input_file_path)
+        self.assertEqual(global_attributes['title'], 'IPF SRAL Level 1A Measurement')
+        self.assertEqual(global_attributes['altimeter_sensor_name'], 'SRAL')
+
+        max_min_coordinates = self.service.get_max_min_coordinates(test_input_file_path)
+        self.assertIn('lat', max_min_coordinates)
+        self.assertEqual(max_min_coordinates['lat'], [-1e-06, 9e-06])
+        self.assertIn('lon', max_min_coordinates)
+        self.assertEqual(max_min_coordinates['lon'], [-1e-06, 9e-06])
+
+        lat_lon = self.service.get_lat_lon(test_input_file_path)
+        self.assertIn('lat', lat_lon)
+        self.assertEqual(lat_lon['lat'],
+                         [-1e-06, 1e-06, 2e-06, 3e-06, 4e-06, 4.9999999999999996e-06, 6e-06, 7e-06, 8e-06, 9e-06])
+        self.assertIn('lon', lat_lon)
+        self.assertEqual(lat_lon['lon'],
+                         [-1e-06, 1e-06, 2e-06, 3e-06, 4e-06, 4.9999999999999996e-06, 6e-06, 7e-06, 8e-06, 9e-06])
+
+        self.service.remove_input_files(ws_name, [input_file_name])
+
     def clean_up_test_workspaces(self):
         all_workspaces = self.service.get_all_workspaces()
         if all_workspaces['workspaces']:
@@ -142,5 +177,6 @@ class WebSocketServiceTest(unittest.TestCase):
                 if workspace['name'] == 'test_workspace' \
                         or workspace['name'] == 'test_workspace_copied' \
                         or workspace['name'] == 'test_workspace_renamed' \
-                        or workspace['name'] == 'test_ws_config':
+                        or workspace['name'] == 'test_ws_config' \
+                        or workspace['name'] == 'test_ws_input':
                     self.service.delete_workspace(workspace['name'])

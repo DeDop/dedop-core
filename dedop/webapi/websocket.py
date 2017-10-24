@@ -54,7 +54,7 @@ class WebSocketService:
     def add_input_files(self, workspace_name: str, input_file_paths: List[str]):
         self.workspace_manager.add_inputs(workspace_name, input_file_paths, Monitor.NONE)
 
-    def remove_input_files(self, workspace_name: str, input_names: str):
+    def remove_input_files(self, workspace_name: str, input_names: List[str]):
         self.workspace_manager.remove_inputs(workspace_name, input_names, Monitor.NONE)
 
     def get_config_names(self, workspace_name: str) -> List[str]:
