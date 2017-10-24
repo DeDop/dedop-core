@@ -65,6 +65,13 @@ class WebSocketService:
 
     def delete_config(self, workspace_name: str, config_name: str):
         self.workspace_manager.delete_config(workspace_name, config_name)
+        all_configs = self.workspace_manager.get_config_names(workspace_name)
+        if 'default' in all_configs:
+            self.set_current_config(workspace_name, 'default')
+        elif len(all_configs) > 0:
+            self.set_current_config(workspace_name, all_configs[0])
+        else:
+            self.set_current_config(workspace_name, '')
 
     def copy_config(self, workspace_name: str, config_name: str, new_config_name: str):
         self.workspace_manager.copy_config(workspace_name, config_name, new_config_name)

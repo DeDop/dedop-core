@@ -142,6 +142,9 @@ class WebSocketServiceTest(unittest.TestCase):
         self.service.set_current_config(ws_name, 'test_config_sentinel_renamed')
         self.assertEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel_renamed')
 
+        self.service.delete_config(ws_name, 'test_config_sentinel_renamed')
+        self.assertNotEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel_renamed')
+
     def test_input_data_management(self):
         input_file_name = "l1a_test.nc"
         test_input_file_path = "test_data/data/test_l1a/inputs/%s" % input_file_name
@@ -182,3 +185,7 @@ class WebSocketServiceTest(unittest.TestCase):
                     self.service.delete_workspace(workspace['name'])
                 else:
                     self.service.set_current_workspace(workspace['name'])
+        self.assertNotEqual(self.service.get_current_workspace()['name'], 'test_workspace_copied')
+        self.assertNotEqual(self.service.get_current_workspace()['name'], 'test_workspace_renamed')
+        self.assertNotEqual(self.service.get_current_workspace()['name'], 'test_ws_config')
+        self.assertNotEqual(self.service.get_current_workspace()['name'], 'test_ws_input')
