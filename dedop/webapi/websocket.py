@@ -28,6 +28,13 @@ class WebSocketService:
 
     def delete_workspace(self, workspace_name) -> None:
         self.workspace_manager.delete_workspace(workspace_name)
+        all_workspaces = self.workspace_manager.get_workspace_names()
+        if 'default' in all_workspaces:
+            self.set_current_workspace('default')
+        elif len(all_workspaces) > 0:
+            self.set_current_workspace(all_workspaces[0])
+        else:
+            self.set_current_workspace('')
 
     def copy_workspace(self, workspace_name, new_workspace_name) -> dict:
         workspace = self.workspace_manager.copy_workspace(workspace_name, new_workspace_name)
