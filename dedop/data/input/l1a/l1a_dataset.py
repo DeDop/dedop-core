@@ -3,6 +3,7 @@ from math import log10, radians
 from typing import Iterator
 
 import netCDF4 as nc
+import numpy as np
 
 from dedop.conf import ConfigurationFile, CharacterisationFile, ConstantsFile
 from dedop.model.l1a_processing_data import L1AProcessingData, PacketPid
@@ -21,7 +22,50 @@ class L1ADataset(InputDataset):
         super().__init__(dset, cst=cst, chd=chd, cnf=cnf)
 
         self._file_path = filename
-        self._last_index = 0
+
+        if self._roi_enabled():
+            lats = dset.get_variable(L1AVariables.lat_l1a_echo_sar_ku)[:]
+            lons = dset.get_variable(L1AVariables.lon_l1a_echo_sar_ku)[:]
+
+            roi_filter = np.ones(lats.shape, dtype=bool)
+            if self.cnf.min_lat is not None:
+                roi_filter = np.logical_and(
+                    roi_filter, lats >= self.cnf.min_lat
+                )
+            if self.cnf.min_lon is not None:
+                roi_filter = np.logical_and(
+                    roi_filter, lons >= self.cnf.min_lon
+                )
+            if self.cnf.max_lat is not None:
+                roi_filter = np.logical_and(
+                    roi_filter, lats <= self.cnf.max_lat
+                )
+            if self.cnf.max_lon is not None:
+                roi_filter = np.logical_and(
+                    roi_filter, lons <= self.cnf.max_lon
+                )
+            self._roi_filter = roi_filter
+            indexes = np.argwhere(roi_filter)
+            self._start_index = indexes.min()
+            self._final_index = indexes.max()
+        else:
+            self._roi_filter = None
+            self._start_index = 0
+            self._final_index = self._get_data_size()
+
+        self._last_index = self._start_index
+
+    def _roi_enabled(self) -> bool:
+        return self.cnf.min_lat is not None or\
+               self.cnf.min_lon is not None or\
+               self.cnf.max_lat is not None or\
+               self.cnf.max_lon is not None
+
+    def _get_data_size(self) -> int:
+        dim = self._dset.dimensions[
+            L1ADimensions.time_l1a_echo_sar_ku.value
+        ]
+        return dim.size
 
     @property
     def file_path(self) -> str:
@@ -30,10 +74,10 @@ class L1ADataset(InputDataset):
     @property
     def max_index(self) -> int:
         """get size of primary dimension"""
-        dim = self._dset.dimensions[
-            L1ADimensions.time_l1a_echo_sar_ku.value
-        ]
-        return dim.size
+        return self._final_index - self._start_index
+
+    def __len__(self):
+        return self._final_index - self._start_index
 
     def __getitem__(self, index: int) -> L1AProcessingData:
         # convert scale factor to linear value
@@ -97,23 +141,28 @@ class L1ADataset(InputDataset):
             sig0_cal_ku=self.get_value(L1AVariables.sig0_cal_ku_l1a_echo_sar_ku, index),
             surf_type=self.get_value(L1AVariables.surf_type_l1a_echo_sar_ku, index)
         )
+
         packet.compute_location_sar_surf()
         packet.compute_doppler_angle()
         return packet
 
     def __iter__(self) -> Iterator[L1AProcessingData]:
-        for index in range(self.max_index):
-            packet = self[index]
-            if self.in_range(packet):
+        for index in range(self._start_index, self._final_index+1):
+            if self._roi_filter[index]:
                 yield self[index]
+            else:
+                yield None
 
     def __next__(self) -> L1AProcessingData:
-        if self._last_index == self.max_index:
-            return None
-        while not self.in_range(self[self._last_index]):
+        if self._last_index > self._final_index:
+            raise StopIteration()
+        # while not self.in_range(self[self._last_index]):
+        #     self._last_index += 1
+        #     if self._last_index == self.max_index:
+        #         return None
+        if not self._roi_filter[self._last_index]:
             self._last_index += 1
-            if self._last_index == self.max_index:
-                return None
+            return None
         packet = self[self._last_index]
         self._last_index += 1
 

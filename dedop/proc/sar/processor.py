@@ -100,7 +100,7 @@ class L1BProcessor(BaseProcessor):
 
         t0 = time.time()
 
-        with monitor.starting('processing', total_work=self.l1a_file.max_index + self.min_surfs):
+        with monitor.starting('processing', total_work=len(self.l1a_file)):
             status = self._process(l1a_file, monitor)
 
         dt = time.time() - t0
@@ -171,15 +171,22 @@ class L1BProcessor(BaseProcessor):
             #  before reading another input.
             if not gap_processing:
 
-                monitor.progress(1)
+                # monitor.progress(1)
 
                 # if this is the first iteration after finishing a gap, then the next packet has already been read
                 #  so another one should not be retrieved from the L1A
                 if not gap_resume:
-                    input_packet = next(self.l1a_file)
+                    # input_packet = next(self.l1a_file)
+                    try:
+                        input_packet = next(self.l1a_file)
+                    except StopIteration:
+                        input_packet = None
+                        if not surface_processing:
+                            raise Exception("insufficient input records")
+                    else:
+                        monitor.progress(1)
 
                 if input_packet is not None:
-
                     # check if there is a gap (or if this is the first packet & prev_time has not been set)
                     if prev_time is None or input_packet.time_sar_ku - prev_time < self.gap_threshold:
 

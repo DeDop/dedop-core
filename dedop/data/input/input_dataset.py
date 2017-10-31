@@ -47,8 +47,9 @@ class InputDataset:
     def __iter__(self) -> Iterator[L1AProcessingData]:
         for packet in self._dset:
             if not self.in_range(packet):
-                continue
-            yield packet
+                yield None
+            else:
+                yield packet
 
     def __getitem__(self, index: int) -> L1AProcessingData:
         return self._dset[index]
