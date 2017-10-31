@@ -196,8 +196,9 @@ class WorkspaceManager:
         config_dir = self.get_config_path(workspace_name, config_name)
         return os.path.isdir(config_dir) and os.listdir(config_dir)
 
-    def create_config(self, workspace_name: str, config_name: str, cryosat: bool=False):
+    def create_config(self, workspace_name: str, config_name: str, cryosat: bool = False):
         """
+        :param cryosat: True to create a config based on cryosat template
         :param workspace_name: the workspace name where the config is to be created
         :param config_name: the name of the configuration to be added
         """
@@ -268,7 +269,7 @@ class WorkspaceManager:
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
         config_json = self._open_config_json(file_path)
         config_order = [name for name in config_json]
-        return config_json, config_order
+        return config_json, sorted(config_order, key=str.lower)
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)

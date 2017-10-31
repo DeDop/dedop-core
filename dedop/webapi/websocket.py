@@ -28,6 +28,13 @@ class WebSocketService:
 
     def delete_workspace(self, workspace_name) -> None:
         self.workspace_manager.delete_workspace(workspace_name)
+        all_workspaces = self.workspace_manager.get_workspace_names()
+        if 'default' in all_workspaces:
+            self.set_current_workspace('default')
+        elif len(all_workspaces) > 0:
+            self.set_current_workspace(all_workspaces[0])
+        else:
+            self.set_current_workspace('')
 
     def copy_workspace(self, workspace_name, new_workspace_name) -> dict:
         workspace = self.workspace_manager.copy_workspace(workspace_name, new_workspace_name)
@@ -54,17 +61,24 @@ class WebSocketService:
     def add_input_files(self, workspace_name: str, input_file_paths: List[str]):
         self.workspace_manager.add_inputs(workspace_name, input_file_paths, Monitor.NONE)
 
-    def remove_input_files(self, workspace_name: str, input_names: str):
+    def remove_input_files(self, workspace_name: str, input_names: List[str]):
         self.workspace_manager.remove_inputs(workspace_name, input_names, Monitor.NONE)
 
     def get_config_names(self, workspace_name: str) -> List[str]:
         return self.workspace_manager.get_config_names(workspace_name)
 
-    def add_new_config(self, workspace_name: str, config_name: str):
-        self.workspace_manager.create_config(workspace_name, config_name)
+    def add_new_config(self, workspace_name: str, config_name: str, cryosat: bool):
+        self.workspace_manager.create_config(workspace_name, config_name, cryosat=cryosat)
 
     def delete_config(self, workspace_name: str, config_name: str):
         self.workspace_manager.delete_config(workspace_name, config_name)
+        all_configs = self.workspace_manager.get_config_names(workspace_name)
+        if 'default' in all_configs:
+            self.set_current_config(workspace_name, 'default')
+        elif len(all_configs) > 0:
+            self.set_current_config(workspace_name, all_configs[0])
+        else:
+            self.set_current_config(workspace_name, '')
 
     def copy_config(self, workspace_name: str, config_name: str, new_config_name: str):
         self.workspace_manager.copy_config(workspace_name, config_name, new_config_name)
