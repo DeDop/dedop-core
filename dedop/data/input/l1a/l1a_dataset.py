@@ -61,6 +61,11 @@ class L1ADataset(InputDataset):
                self.cnf.max_lat is not None or\
                self.cnf.max_lon is not None
 
+    def _check_roi(self, index) -> bool:
+        if self._roi_filter is None:
+            return True
+        return self._roi_filter[index]
+
     def _get_data_size(self) -> int:
         dim = self._dset.dimensions[
             L1ADimensions.time_l1a_echo_sar_ku.value
@@ -147,8 +152,8 @@ class L1ADataset(InputDataset):
         return packet
 
     def __iter__(self) -> Iterator[L1AProcessingData]:
-        for index in range(self._start_index, self._final_index+1):
-            if self._roi_filter[index]:
+        for index in range(self._start_index, self._final_index):
+            if self._check_roi(index):
                 yield self[index]
             else:
                 yield None
@@ -160,7 +165,7 @@ class L1ADataset(InputDataset):
         #     self._last_index += 1
         #     if self._last_index == self.max_index:
         #         return None
-        if not self._roi_filter[self._last_index]:
+        if not self._check_roi(self._last_index):
             self._last_index += 1
             return None
         packet = self[self._last_index]
