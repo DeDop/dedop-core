@@ -11,7 +11,7 @@
     ]
   },
   "mean_sat_alt_chd": {
-    "value": 814.5e3,
+    "value": 815e3,
     "description": "Mean satellite altitude",
     "units": "m"
   },
@@ -44,12 +44,12 @@
   },
 
   "power_tx_ant_ku_chd": {
-    "value": 7.5,
+    "value": 7,
     "description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
     "units": "dB"
   },
   "antenna_gain_ku_chd": {
-    "value": 41.9,
+    "value": 42.36,
     "description": "Antenna gain for Ku-band",
     "units": "dB"
   },
@@ -65,12 +65,12 @@
     "units": null
   },
   "prf_sar_chd": {
-    "value": 17825.311,
+    "value": 17825,
     "description": "pulse repetition frequency",
-    "units": "s"
+    "units": "Hz"
   },
   "brf_sar_chd": {
-    "value": 78.53069,
+    "value": 78.52,
     "description": "burst repetition frequency",
     "units": "Hz"
   }
