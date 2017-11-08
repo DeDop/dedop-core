@@ -222,6 +222,8 @@ if it does not involve current configuration.
 
 In **CASE 3**, the specified configuration inside a specified workspace will be removed.
 
+``remove`` has an alias ``rm``.
+
 Modify a configuration
 -----------------------
 
@@ -242,14 +244,17 @@ In **CASE 3**, the text editor will open all the configuration files of the spec
 
 When you are finished, just save the files and close the editor.
 
+``edit`` has an alias ``ed``.
+
 Copy a configuration
 ---------------------
 
 To copy a configuration, run one of the following commands::
 
-   dedop c copy                                                # CASE 1
-   dedop c copy config_name_to_be_copied                       # CASE 2
-   dedop c copy -w other_workspace config_name_to_be_copied    # CASE 3
+   dedop c copy                                                               # CASE 1
+   dedop c copy config_name_to_be_copied                                      # CASE 2
+   dedop c copy config_name_to_be_copied new_config_name                      # CASE 3
+   dedop c copy -w other_workspace config_name_to_be_copied new_config_name   # CASE 4
 
 In **CASE 1**, neither the configuration to be copied nor the new configuration name is specified, so in this case a new
 name with the format of ``current_config_name + _copy_ + unique_number`` is created. The unique number will be incremented
@@ -257,12 +262,99 @@ until a unique combination is constructed. For example, for a current config ``c
 named ``config1_copy``, ``config1_copy_2``, ``config1_copy_3``, and so on.
 
 In **CASE 2**, the configuration to be copied is specified, but not the name of the new config. It will then follow the
-same rule as in **CASE 1**, by creating a new config with a name that is of format ``workspace_to_be_copied + _ + unique_number``.
+same rule as in **CASE 1**, by creating a new config with a name that is of format
+``current_config_name + _copy_ + unique_number``.
 
-In **CASE 3**, both the workspace to be copied and the name of the new workspace are specified. It is very clear that
-it will copy the specified workspace to a new workspace with the specified name.
+In **CASE 3**, the specified configuration will be copied as ``new_config_name`` inside the current workspace
 
-One thing that is worth mentioning is that copying a workspace does not automatically change the current workspace.
+In **CASE 4**, the specified configuration will be copied as ``new_config_name`` inside the specified workspace
+
+As in workspace management, copying a configuration does **NOT** automatically change the current configuration.
+
+``copy`` has an alias ``cp``.
+
+Rename a configuration
+-----------------------
+
+To rename a configuration, run one of the following commands::
+
+   dedop c rename new_config_name                                          # CASE 1
+   dedop c rename config_to_be_renamed new_config_name                     # CASE 2
+   dedop c rename -w other_workspace config_to_be_renamed new_config_name  # CASE 3
+
+In **CASE 1**, the current config name will be renamed to ``new_config_name``. The current configuration will also be
+changed to ``new_config_name``.
+
+In **CASE 2**, the specified config name in the current workspace will be renamed to ``new_config_name``.
+
+In **CASE 3**, the specified config name in the specified workspace will be renamed to ``new_config_name``.
+
+``rename`` has an alias ``rn``.
+
+Show configuration info
+------------------------
+
+To display information about the configuration such as current configuration path, list of files, as well as the file sizes,
+run the following command::
+
+   dedop c info                                 # CASE 1
+   dedop c info other_config                    # CASE 2
+   dedop c info -w other_workspace config_name  # CASE 3
+
+In **CASE 1**, information for the current configuration in the current workspace will be displayed.
+
+In **CASE 2**, information for the specified configuration in the current workspace will be displayed.
+
+In **CASE 3**, information for the specified configuration in the specified workspace will be displayed.
+
+``info`` has an alias ``i``.
+
+Get current configuration
+--------------------------
+
+To get the current configuration name, run the following::
+
+   dedop c current
+
+If there is a current configuration, the name of the current configuration will be returned. Otherwise,
+``no current DDP configuration`` will be returned.
+
+It is also possible to get the current configuration in the other workspace by adding this parameter
+``-w other_workspace_name`` in the command.
+
+``current`` has an alias ``cur``.
+
+List configurations
+--------------------
+
+To list available configurations, run one of the following commands::
+
+   dedop c list
+
+As before, to list available configurations in the other workspace, just add ``-w other_workspace_name`` in the command.
+
+``list`` has an alias ``ls``.
+
+Upgrade configurations
+-----------------------
+
+A new version of DeDop Core sometimes comes with new versions of configuration files. In order to update your configurations,
+run the following command::
+
+   dedop c upgrade
+
+Failure to use the latest version of configurations may result in processing errors.
+
+``upgrade`` has an alias ``up``.
+
+Show configuration version
+---------------------------
+
+To display the current configuration version, run the following command::
+
+   dedop c version
+
+``version`` has an alias ``v``.
 
 .. _run_proc:
 
