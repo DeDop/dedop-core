@@ -12,7 +12,7 @@ Workspace Management
 ====================
 
 **Workspace** in DeDop Shell refers to a space in the file system in which all the requires parts for processing are located.
-They include input files, configurations, output files, as well as the Jupyter notebooks. It is possible to have multiple
+They include source files, configurations, output files, as well as the Jupyter notebooks. It is possible to have multiple
 workspaces and by default they are located under ``$USER_DIR/.dedop/workspaces``.
 For example::
 
@@ -123,14 +123,146 @@ To list available workspaces, run the following command::
 L1A Source File Management
 ==========================
 
-TODO
+After creating a workspace, the next step is to manage the L1A source files.
+
+Add new L1A source file
+------------------------
+
+To add a new L1A file(s) into this workspace, run the following command::
+
+   dedop i add /path/to/file1 /path/to/file2 /path/to/file3
+
+What this command does is copying those files into the current workspace directory. When successful, those files will be
+located inside ``inputs`` directory under the current workspace directory.
+
+Remove L1A source file
+-----------------------
+
+To remove the previously-added L1A file(s), run one of the following commands::
+
+   dedop i remove                                           # CASE 1
+   dedop i remove file_name1 file_name2                     # CASE 2
+   dedop i remove -w workspace_name                         # CASE 3
+   dedop i remove -w workspace_name file_name1 file_name2   # CASE 4
+
+In all cases, a confirmation prompt will appear to really ensure that this action is intentional. To disable this prompt,
+use the optional argument ``--quiet`` (eg. ``dedop i remove --quiet``).
+
+In **CASE 1**, all previously-added source files in the current workspace will be removed.
+
+In **CASE 2**, the specified files in the current workspace will be removed.
+
+In **CASE 3**, all previously-added source in the specified workspace will be removed.
+
+In **CASE 4**, the specified files in the specified workspace will be removed.
+
+``remove`` has an alias ``rm``.
+
+List all L1A source files
+--------------------------
+
+To list all source files that have been added, run one of the following commands::
+
+   dedop i list                     # CASE 1
+   dedop i list -w other_workspace  # CASE 2
+   dedop i list L1A*                # CASE 3
+
+In **CASE 1**, the tool will return a list of all source files in the current workspace.
+
+In **CASE 2**, the tool will return a list of all source files in the specified workspace.
+
+In **CASE 3**, the tool will return a list of all source files that match the given regex ``L1A*``.
+
+``list`` has an alias ``ls``.
 
 .. _config_manag:
 
 Processor Configuration Management
 ==================================
 
-TODO
+The next step before running an actual process is to manage the configurations.
+
+Add a new configuration
+------------------------
+
+To add a new configuration, run one of the following commands::
+
+   dedop c add new_config_name                     # CASE 1
+   dedop c add -w other_workspace new_config_name  # CASE 2
+   dedop c add --cryosat-adapted new_config_name   # CASE 3
+
+In all cases, a new folder named ``new_config_name`` is created under a workspace and it consists of three default configuration
+files ``CHD.json``, ``CNF.json``, and ``CST.json``. The generated configurations are by default for ``Sentinel-3`` processing
+unless when ``--cryosat-adapted`` is specified.
+
+In **CASE 1**, a new configuration will be created under the current workspace directory.
+
+In **CASE 2**, a new configuration will be created under the specified workspace directory.
+
+In **CASE 3**, a new configuration suited for Adapted Cryosat-2 FBR data will be created under the current workspace directory.
+
+Remove a configuration
+-----------------------
+
+To remove a configuration, run one of the following commands::
+
+   dedop c remove                                  # CASE 1
+   dedop c remove config_name                      # CASE 2
+   dedop c remove -w other_workspace config_name   # CASE 3
+
+In all cases, a confirmation prompt will appear to really ensure that this action is intentional. To disable this prompt,
+use the optional argument ``--yes`` (eg. ``dedop c remove --yes``). Removing a configuration means deleting a configuration
+folder including its contents (all the CHD, CNF, and CST files).
+
+In **CASE 1**, the current configuration in the current workspace will be removed. It will then change the current configuration
+to the next configuration. When none left, it will go into a state where there are no current configurations.
+
+In **CASE 2**, the specified configuration in the current workspace will be removed. There is no change of current configuration
+if it does not involve current configuration.
+
+In **CASE 3**, the specified configuration inside a specified workspace will be removed.
+
+Modify a configuration
+-----------------------
+
+To modify a configuration, run one of the following commands::
+
+   dedop c edit                                 # CASE 1
+   dedop c edit config_name                     # CASE 2
+   dedop c edit -w other_workspace config_name  # CASE 3
+
+In all cases, it will launch a text editor and open all three configuration files. The text editor to be launched is OS-dependent
+and it is configurable on the :ref:`Tool Configuration <tool_config>` with the key name :ref:`launch_editor_command <tool_config_parameters>`.
+
+In **CASE 1**, the text editor will open all the configuration files of the current configuration under the current workspace.
+
+In **CASE 2**, the text editor will open all the configuration files of the specified configuration under the current workspace.
+
+In **CASE 3**, the text editor will open all the configuration files of the specified configuration under the specified workspace.
+
+When you are finished, just save the files and close the editor.
+
+Copy a configuration
+---------------------
+
+To copy a configuration, run one of the following commands::
+
+   dedop c copy                                                # CASE 1
+   dedop c copy config_name_to_be_copied                       # CASE 2
+   dedop c copy -w other_workspace config_name_to_be_copied    # CASE 3
+
+In **CASE 1**, neither the configuration to be copied nor the new configuration name is specified, so in this case a new
+name with the format of ``current_config_name + _copy_ + unique_number`` is created. The unique number will be incremented
+until a unique combination is constructed. For example, for a current config ``config1``, it will create a new config
+named ``config1_copy``, ``config1_copy_2``, ``config1_copy_3``, and so on.
+
+In **CASE 2**, the configuration to be copied is specified, but not the name of the new config. It will then follow the
+same rule as in **CASE 1**, by creating a new config with a name that is of format ``workspace_to_be_copied + _ + unique_number``.
+
+In **CASE 3**, both the workspace to be copied and the name of the new workspace are specified. It is very clear that
+it will copy the specified workspace to a new workspace with the specified name.
+
+One thing that is worth mentioning is that copying a workspace does not automatically change the current workspace.
 
 .. _run_proc:
 
@@ -185,6 +317,8 @@ To force writing a new DeDop tools configuration file use::
 
 This may be useful after DeDop software updates. It will ensure that you get the latest configuration parameters
 supported by a given DeDop version.
+
+.. _tool_config_parameters:
 
 Configuration Parameters
 ------------------------
