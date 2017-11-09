@@ -366,6 +366,8 @@ class L1BProcessor(BaseProcessor):
         """
         self.stack_gathering_algorithm(working_surface_location)
 
+        working_surface_location.data_stack_size = \
+            self.stack_gathering_algorithm.data_stack_size
         working_surface_location.stack_bursts = \
             self.stack_gathering_algorithm.stack_bursts
         working_surface_location.beams_surf = \

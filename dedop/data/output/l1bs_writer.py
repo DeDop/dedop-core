@@ -592,6 +592,26 @@ class L1BSWriter(NetCDFWriter):
             units="FFT power unit",
             fill_value=32767
         )
+        self.define_variable(
+            L1BSVariables.start_beam_ang_stack_l1bs_echo_sar_ku,
+            np.int16,
+            (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="start doppler beam angle in stack: l1bs_echo_sar_ku mode",
+            units="rad",
+            fill_value=32767,
+            scale_factor=1e-6,
+            add_offset=1.57
+        )
+        self.define_variable(
+            L1BSVariables.stop_beam_ang_stack_l1bs_echo_sar_ku,
+            np.int16,
+            (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="stop doppler beam angle in stack: l1bs_echo_sar_ku mode",
+            units="rad",
+            fill_value=32767,
+            scale_factor=1e-6,
+            add_offset=1.57
+        )
 
     def write_record(self, surface_location_data: SurfaceData) -> None:
         """
@@ -599,7 +619,7 @@ class L1BSWriter(NetCDFWriter):
         """
 
         closest_burst = surface_location_data.closest_burst
-
+        stack_end = surface_location_data.data_stack_size-1
         time_interval = surface_location_data.time_surf - surface_location_data.prev_tai
         utc_secs = surface_location_data.prev_utc_secs + time_interval
 
@@ -616,6 +636,7 @@ class L1BSWriter(NetCDFWriter):
         max_iq = max(np.max(np.abs(stack_i)), np.max(np.abs(stack_q)))
 
         dynamic_scale = max_iq / 127.
+        print(surface_location_data.data_stack_size)
 
         super().write_record(
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
@@ -624,7 +645,7 @@ class L1BSWriter(NetCDFWriter):
             lat_l1bs_echo_sar_ku=degrees(surface_location_data.lat_surf),
             lon_l1bs_echo_sar_ku=degrees(surface_location_data.lon_surf),
             surf_type_l1bs_echo_sar_ku=surface_location_data.surface_type.value,
-            # records_count_l1bs_echo_sar_ku=None,
+            records_count_l1bs_echo_sar_ku=surface_location_data.surface_counter,
             alt_l1bs_echo_sar_ku=surface_location_data.alt_sat,
             orb_alt_rate_l1bs_echo_sar_ku=surface_location_data.alt_rate_sat,
             x_pos_l1bs_echo_sar_ku=surface_location_data.x_sat,
@@ -643,29 +664,29 @@ class L1BSWriter(NetCDFWriter):
             pitch_sral_mispointing_l1bs_echo_sar_ku=None,
             yaw_sral_mispointing_l1bs_echo_sar_ku=None,
             range_ku_l1bs_echo_sar_ku=surface_location_data.win_delay_surf * self.cst.c / 2.,
-            int_path_cor_ku_l1bs_echo_sar_ku=None,
-            # uso_cor_l1bs_echo_sar_ku=surface_location_data.closest_burst.uso_drift,
+            int_path_cor_ku_l1bs_echo_sar_ku=closest_burst.int_path_cor_ku,
+            uso_cor_l1bs_echo_sar_ku=closest_burst.uso_cor,
             cog_cor_l1bs_echo_sar_ku=None,
-            agccode_ku_l1bs_echo_sar_ku=None,
-            agc_ku_l1bs_echo_sar_ku=None,
+            agccode_ku_l1bs_echo_sar_ku=closest_burst.agccode_ku,
+            agc_ku_l1bs_echo_sar_ku=closest_burst.agc_ku,
             scale_factor_ku_l1bs_echo_sar_ku=dynamic_scale,
-            sig0_cal_ku_l1bs_echo_sar_ku=None,
+            sig0_cal_ku_l1bs_echo_sar_ku=closest_burst.sig0_cal_ku,
             snr_ku_l1bs_echo_sar_ku=None,
             i2q2_meas_ku_l1bs_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor,
-            nb_stack_l1bs_echo_sar_ku=None,
-            max_stack_l1bs_echo_sar_ku=None,
+            nb_stack_l1bs_echo_sar_ku=surface_location_data.data_stack_size,
+            max_stack_l1bs_echo_sar_ku=surface_location_data.stack_max,
             max_loc_stack_l1bs_echo_sar_ku=None,
             stdev_stack_l1bs_echo_sar_ku=surface_location_data.stack_std,
             skew_stack_l1bs_echo_sar_ku=surface_location_data.stack_skewness,
             kurt_stack_l1bs_echo_sar_ku=surface_location_data.stack_kurtosis,
-            beam_ang_l1bs_echo_sar_ku=None,
+            beam_ang_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf,
             beam_form_l1bs_echo_sar_ku=None,
-            burst_start_ind_l1bs_echo_sar_ku=None,
-            burst_stop_ind_l1bs_echo_sar_ku=None,
+            burst_start_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[0].source_seq_count,
+            burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[stack_end].source_seq_count,
             i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
-            q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale
-            # start_look_angle_stack_l1bs_echo_sar_ku=None,
-            # stop_look_angle_stack_l1bs_echo_sar_ku=None,
-            # start_beam_ang_stack_l1bs_echo_sar_ku=None,
-            # stop_beam_ang_stack_l1bs_echo_sar_ku=None,
+            q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale,
+            start_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.look_angles_surf[0],
+            stop_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.look_angles_surf[stack_end],
+            start_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf[0],
+            stop_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf[stack_end]
         )
