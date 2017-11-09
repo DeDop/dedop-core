@@ -17,9 +17,7 @@ Contents:
 
    introduction
    quickstart
-   installation
-   manual_shell
-   manual_studio
+   user_manual
    api_reference
 
 
