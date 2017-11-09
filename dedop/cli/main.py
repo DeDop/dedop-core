@@ -38,7 +38,7 @@ CLI_NAME = 'dedop'
 CLI_DESCRIPTION = 'Delay Doppler Altimeter Data (DeDop) command-line interface'
 
 _LICENSE_INFO_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'LICENSE')
-_DOCS_URL = 'http://dedop.readthedocs.io/en/latest/'
+_DOCS_URL = 'http://dedop-core.readthedocs.io/en/latest/'
 _LICENSE = """
 {dedop} - ESA DeDop Shell, copyright (C) 2016 by the DeDop team and contributors
 
