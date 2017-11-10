@@ -3,7 +3,7 @@ DeDop Studio
 =============
 
 DeDop Studio is a desktop application with a primary aim of providing a user-friendly experience for processing L1A files.
-It was designed based on the already-existing DeDop Shell, so the behavior is almost the same with its command line counterpart.
+It was designed based on the already-existing :doc:`um_shell`, so the behavior is almost the same with its command line counterpart.
 
 .. figure:: ../_static/figures/dedop-studio.png
    :scale: 75%
@@ -107,7 +107,17 @@ To initiate a processing, click ``Run`` button inside **Processor Runs** panel. 
 required parameters (input file, configuration, and output directory) have been selected. When any of them are missing,
 a dialog box will pop up with the information on which field you have to fill up. Otherwise, the processing will be started,
 marked by a new entry on the table. You can monitor the progress of the processing and at the moment, because the tool is
-capable only running one process at a time, the ``Run`` button is blocked as long as a process is running.
+capable only running one process at a time, the ``Run`` button is blocked, displayed as a spinner, as long as a process
+is running.
+
+In the end, a process can either be successful or fail. This status is indicated by the icon under ``Action`` column on
+the table in **Processor Runs** panel. On the image above, for example, the first three rows indicate that the processes
+are successful and when icon is clicked, the page will transition to screen 4,
+:ref:`Result & Analysis <analyse_l1b_studio>`. In the case of failure, mouse over on the icon to show a short description
+of the error as a tooltip text.
+
+When DeDop Studio is closed, the information in the table is preserved, by storing the data into ``dedop-prefs.json``.
+During the next startup of DeDop Studio, this information is loaded and used to populate the table.
 
 
 .. _analyse_l1b_studio:
@@ -119,4 +129,13 @@ Analysing L1B Results
    :scale: 75%
    :align: center
 
-
+The purpose of this screen is to manage what to do with the result products after a processing. There are two panels:
+Output Files and Analysis Configuration. In **Output Files**, users can navigate to different output files in the current
+workspace directory, grouped by configurations. By clicking a file name, the said file is selected. This has an implication
+on which actions are available, depending on how many files are selected. If only one file is selected, the ``Inspect``
+button on **Analysis Configuration** panel is enabled. When two files are selected, the ``Compare`` button is enabled.
+Clicking one of these buttons will trigger a creation of a Jupyter notebook suitable for inspecting or comparing the
+file(s) that have been selected, and to start a local instance of Jupyter notebook server. This behavior is consistent
+with DeDop Shell command :ref:`dedop output compare/inspect <analyse_l1b>`. The dropdown list at the bottom of
+**Analysis Configuration** is used to select a notebook file that has been previously created through ``Inspect`` and
+``Compare`` buttons.

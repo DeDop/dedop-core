@@ -2,10 +2,16 @@
 DeDop Shell
 ============
 
+Overview
+========
+
 The DeDop tool set currently comprises the *DeDop Shell* - a command-line interface to the
 Delay Doppler Processor (DDP) - and *DeDop Studio* - a graphical user interface to the
 Delay Doppler Processor (DDP). In this section, you will find the manual for DeDop Shell.
 For the manual of DeDop Studio go to :doc:`um_studio`.
+
+The DeDop Shell comprises a single command-line executable, which is called ``dedop`` and is available after installing
+the DeDop Shell on your computer. See section :doc:`um_setup` for more information.
 
 
 .. _workspace_manag:
