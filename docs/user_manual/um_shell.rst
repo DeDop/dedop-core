@@ -19,15 +19,6 @@ the DeDop Shell on your computer. See section :doc:`um_setup` for more informati
 Workspace Management
 ====================
 
-**Workspace** in DeDop Shell refers to a space in the file system in which all the requires parts for processing are located.
-They include source files, configurations, output files, as well as the Jupyter notebooks. It is possible to have multiple
-workspaces and by default they are located under ``$USER_DIR/.dedop/workspaces``.
-For example::
-
-   C:\\Users\\dummy_user\\.dedop\\workspaces  # Windows
-   /home/dummy_user/.dedop/workspaces         # Linux
-   /Users/dummy_user/.dedop/workspaces        # MacOS
-
 Add a new workspace
 --------------------
 
@@ -35,7 +26,7 @@ When DeDop Shell runs for the first time, there is no workspace available. An au
 be triggered by running ``dedop input add some/path/to/your/L1A.nc`` or ``dedop run`` command as described
 :ref:`here <processing_l1a_l1b>`.
 
-Another (more recommended) way to add a new workspace is by running the following command::
+To add a new workspace is by running the following command::
 
    $ dedop w add workspace_name
 

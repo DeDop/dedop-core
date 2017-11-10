@@ -42,7 +42,7 @@ type:
 
 If you want the environment to be installed in another location, e.g. due to disk space limitations, type:
 
-    $ conda env create --file environment.yml --prefix some/other/location/for/cate
+    $ conda env create --file environment.yml --prefix some/other/location/for/dedop
 
 Next step is to activate the new environment. On Linux/Darwin type:
 
@@ -53,11 +53,11 @@ Windows users can omit the `source` command and just type
 
     > activate dedop
 
-You can now safely install and run Cate sources into the new `dedop` environment.
+You can now safely install and run DeDop sources into the new `dedop` environment.
 
     (dedop) $ python setup.py develop
 
-To permanently install Cate into the Python environment (not recommended while in development mode!), type:
+To permanently install DeDop into the Python environment (not recommended while in development mode!), type:
 
     (dedop) $ python setup.py install
 
@@ -82,11 +82,11 @@ If you like to perform L1B product analysis tasks with DeDop using an IPython No
 
 The most up-to-date and complete list of module requirements is found in the project's `environment.yml` file.
 
-To install and run Cate from sources directly, type:
+To install and run DeDop from sources directly, type:
 
     $ python setup.py develop
 
-To permanently install Cate into Python (not recommended while in development mode!), type:
+To permanently install DeDop into Python (not recommended while in development mode!), type:
 
     $ python setup.py install
 
