@@ -2,25 +2,22 @@
 DeDop Shell
 ============
 
+Overview
+========
+
 The DeDop tool set currently comprises the *DeDop Shell* - a command-line interface to the
 Delay Doppler Processor (DDP) - and *DeDop Studio* - a graphical user interface to the
 Delay Doppler Processor (DDP). In this section, you will find the manual for DeDop Shell.
 For the manual of DeDop Studio go to :doc:`um_studio`.
+
+The DeDop Shell comprises a single command-line executable, which is called ``dedop`` and is available after installing
+the DeDop Shell on your computer. See section :doc:`um_setup` for more information.
 
 
 .. _workspace_manag:
 
 Workspace Management
 ====================
-
-**Workspace** in DeDop Shell refers to a space in the file system in which all the requires parts for processing are located.
-They include source files, configurations, output files, as well as the Jupyter notebooks. It is possible to have multiple
-workspaces and by default they are located under ``$USER_DIR/.dedop/workspaces``.
-For example::
-
-   C:\\Users\\dummy_user\\.dedop\\workspaces  # Windows
-   /home/dummy_user/.dedop/workspaces         # Linux
-   /Users/dummy_user/.dedop/workspaces        # MacOS
 
 Add a new workspace
 --------------------
@@ -29,7 +26,7 @@ When DeDop Shell runs for the first time, there is no workspace available. An au
 be triggered by running ``dedop input add some/path/to/your/L1A.nc`` or ``dedop run`` command as described
 :ref:`here <processing_l1a_l1b>`.
 
-Another (more recommended) way to add a new workspace is by running the following command::
+To add a new workspace is by running the following command::
 
    $ dedop w add workspace_name
 
