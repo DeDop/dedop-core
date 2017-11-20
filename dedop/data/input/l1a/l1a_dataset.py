@@ -114,6 +114,10 @@ class L1ADataset(InputDataset):
             roll_sar=radians(self.get_value(L1AVariables.roll_sral_mispointing_l1a_echo_sar_ku, index)),
             pitch_sar=radians(self.get_value(L1AVariables.pitch_sral_mispointing_l1a_echo_sar_ku, index)),
             yaw_sar=radians(self.get_value(L1AVariables.yaw_sral_mispointing_l1a_echo_sar_ku, index)),
+            roll_sral_mispointing=self.get_value(L1AVariables.roll_sral_mispointing_l1a_echo_sar_ku, index),
+            pitch_sral_mispointing=self.get_value(L1AVariables.pitch_sral_mispointing_l1a_echo_sar_ku, index),
+            yaw_sral_mispointing=self.get_value(L1AVariables.yaw_sral_mispointing_l1a_echo_sar_ku, index),
+            cog_cor=self.get_value(L1AVariables.cog_cor_l1a_echo_sar_ku, index),
             h0_sar=self.get_value(L1AVariables.h0_applied_l1a_echo_sar_ku, index),
             t0_sar=self.chd.t0_nom,  # * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
             uso_cor=self.get_value(L1AVariables.uso_cor_l1a_echo_sar_ku, index),
@@ -159,7 +163,7 @@ class L1ADataset(InputDataset):
                 yield None
 
     def __next__(self) -> L1AProcessingData:
-        if self._last_index > self._final_index:
+        if self._last_index >= self._final_index:
             raise StopIteration()
         # while not self.in_range(self[self._last_index]):
         #     self._last_index += 1

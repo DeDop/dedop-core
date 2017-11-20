@@ -59,6 +59,7 @@ class L1BSVariables(Enum):
     beam_form_l1bs_echo_sar_ku = 'beam_form_l1bs_echo_sar_ku'
     burst_start_ind_l1bs_echo_sar_ku = 'burst_start_ind_l1bs_echo_sar_ku'
     burst_stop_ind_l1bs_echo_sar_ku = 'burst_stop_ind_l1bs_echo_sar_ku'
+    iq_scale_factor_l1bs_echo_sar_ku = 'iq_scale_factor_l1bs_echo_sar_ku'
     i_echoes_ku_l1bs_echo_sar_ku = 'i_echoes_ku_l1bs_echo_sar_ku'
     q_echoes_ku_l1bs_echo_sar_ku = 'q_echoes_ku_l1bs_echo_sar_ku'
     start_look_angle_stack_l1bs_echo_sar_ku = 'start_look_angle_stack_l1bs_echo_sar_ku'
@@ -534,29 +535,39 @@ class L1BSWriter(NetCDFWriter):
             fill_value=2147483647
         )
         self.define_variable(
+            L1BSVariables.iq_scale_factor_l1bs_echo_sar_ku,
+            np.float64,
+            (L1BSDimensions.time_l1bs_echo_sar_ku,),
+            long_name="dynamic scale factor for I/Q waveforms i_echoes_ku_l1bs_echo_sar_ku and"
+                      "q_echos_ku_l1bs_echo_sar_ku",
+            comment="dynamic scale factor for I/Q waveforms i_echoes_ku_l1bs_echo_sar_ku and"
+                    "q_echos_ku_l1bs_echo_sar_ku",
+            fill_value=18446744073709551616
+        )
+        self.define_variable(
             L1BSVariables.i_echoes_ku_l1bs_echo_sar_ku,
-            np.int16,
+            np.int8,
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind,
              L1BSDimensions.echo_sample_ind),
             long_name="fully calibrated ky band echoes, i measurements aligned"\
                       " within the stack: l1bs_echo_sar_ku mode",
             units="count",
-            fill_value=32767,
+            fill_value=-128,
             comment="Fully calibrate ku band echoes, I values (300*128 samples) in the frequency domain, " \
                     "and aligned within the stack. The useful echoes of the table are the first " \
                     "nb_stack_l1bs_echo_sar_ku echos."
         )
         self.define_variable(
             L1BSVariables.q_echoes_ku_l1bs_echo_sar_ku,
-            np.int16,
+            np.int8,
             (L1BSDimensions.time_l1bs_echo_sar_ku,
              L1BSDimensions.max_multi_stack_ind,
              L1BSDimensions.echo_sample_ind),
             long_name="fully calibrated ky band echoes, q measurements aligned" \
                       " within the stack: l1bs_echo_sar_ku mode",
             units="count",
-            fill_value=32767,
+            fill_value=-128,
             comment="Fully calibrate ku band echoes, Q values (300*128 samples) in the frequency domain, " \
                     "and aligned within the stack. The useful echoes of the table are the first " \
                     "nb_stack_l1bs_echo_sar_ku echos."
@@ -636,7 +647,6 @@ class L1BSWriter(NetCDFWriter):
         max_iq = max(np.max(np.abs(stack_i)), np.max(np.abs(stack_q)))
 
         dynamic_scale = max_iq / 127.
-        print(surface_location_data.data_stack_size)
 
         super().write_record(
             time_l1bs_echo_sar_ku=surface_location_data.time_surf,
@@ -660,16 +670,16 @@ class L1BSWriter(NetCDFWriter):
             roll_sat_pointing_l1bs_echo_sar_ku=surface_location_data.roll_sat,
             pitch_sat_pointing_l1bs_echo_sar_ku=surface_location_data.pitch_sat,
             yaw_sat_pointing_l1bs_echo_sar_ku=surface_location_data.yaw_sat,
-            roll_sral_mispointing_l1bs_echo_sar_ku=None,
-            pitch_sral_mispointing_l1bs_echo_sar_ku=None,
-            yaw_sral_mispointing_l1bs_echo_sar_ku=None,
+            roll_sral_mispointing_l1bs_echo_sar_ku=closest_burst.roll_sral_mispointing,
+            pitch_sral_mispointing_l1bs_echo_sar_ku=closest_burst.pitch_sral_mispointing,
+            yaw_sral_mispointing_l1bs_echo_sar_ku=closest_burst.yaw_sral_mispointing,
             range_ku_l1bs_echo_sar_ku=surface_location_data.win_delay_surf * self.cst.c / 2.,
             int_path_cor_ku_l1bs_echo_sar_ku=closest_burst.int_path_cor_ku,
             uso_cor_l1bs_echo_sar_ku=closest_burst.uso_cor,
-            cog_cor_l1bs_echo_sar_ku=None,
+            cog_cor_l1bs_echo_sar_ku=closest_burst.cog_cor,
             agccode_ku_l1bs_echo_sar_ku=closest_burst.agccode_ku,
             agc_ku_l1bs_echo_sar_ku=closest_burst.agc_ku,
-            scale_factor_ku_l1bs_echo_sar_ku=dynamic_scale,
+            scale_factor_ku_l1bs_echo_sar_ku=surface_location_data.sigma0_scaling_factor,
             sig0_cal_ku_l1bs_echo_sar_ku=closest_burst.sig0_cal_ku,
             snr_ku_l1bs_echo_sar_ku=None,
             i2q2_meas_ku_l1bs_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor,
@@ -683,6 +693,7 @@ class L1BSWriter(NetCDFWriter):
             beam_form_l1bs_echo_sar_ku=None,
             burst_start_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[0].source_seq_count,
             burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[stack_end].source_seq_count,
+            iq_scale_factor_l1bs_echo_sar_ku=dynamic_scale,
             i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
             q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale,
             start_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.look_angles_surf[0],

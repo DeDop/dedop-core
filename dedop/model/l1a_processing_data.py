@@ -727,6 +727,22 @@ class L1AProcessingData:
         return self["surf_type"]
 
     @property
+    def roll_sral_mispointing(self):
+        return self["roll_sral_mispointing"]
+
+    @property
+    def pitch_sral_mispointing(self):
+        return self["pitch_sral_mispointing"]
+
+    @property
+    def yaw_sral_mispointing(self):
+        return self["yaw_sral_mispointing"]
+
+    @property
+    def cog_cor(self):
+        return self["cog_cor"]
+
+    @property
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
 
