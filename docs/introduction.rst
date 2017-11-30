@@ -10,11 +10,11 @@ Introduction
 Delay Doppler Altimeter Data
 ============================
 
-The recent development of SAR altimetry, or more properly Delay Doppler altimetry, as
-implemented on CryoSat-2 and soon to be operated on Sentinel-3, opens an exciting new era for
+The recent development of SAR altimetry, or more properly Delay Doppler altimetry, as first
+implemented on CryoSat-2 and now also operated on Sentinel-3, opens an exciting new era for
 the scientific community. This new approach offers to scientists an opportunity to develop new
-processing schemes and derive new and improved products, and so maximise the benef
-its of the measurements available from upcoming missions.
+processing schemes and derive new and improved products, and so maximise the benefits
+of the measurements available from upcoming missions.
 Historically, in conventional altimetry, the understanding of the Level 1b processor was the
 responsibility of the instrument engineers with system expertise. This was logical as the
 subsequent levels of processing only needed the results produced by the Level 1b processor
@@ -28,7 +28,7 @@ Doppler processing lead to different L1B waveform shapes,and peculiarities of th
 Processor* (DeDop processor) have a noticeable effect on the L1B waveform leading to changes in the
 geophysical retrievals.
 
-Due to this strong link between the Level 1b process ing and the final geophysical retrievals, it is
+Due to this strong link between the Level 1b processing and the final geophysical retrievals, it is
 important that the SAR Altimetry scientific community gains a much better understanding the Level
 1B processor, and is involved in new developments. For various reasons (e.g. the novelty of the
 processing, previous unavailability of adequate documentation, restricted availability of the low
