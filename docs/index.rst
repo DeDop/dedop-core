@@ -7,9 +7,6 @@
 ===========================
 
 
-.. warning::  This user manual for the DeDop software is still under construction while we are developing towards the first release of the DeDop software.
-
-
 Contents:
 
 .. toctree::
@@ -18,6 +15,7 @@ Contents:
    introduction
    quickstart
    user_manual
+   faq
    api_reference
 
 

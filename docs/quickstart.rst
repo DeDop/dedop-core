@@ -15,7 +15,7 @@ This chapter is a tutorial for users new to the DeDop Shell.
 Before you start
 ================
 
-If you haven't installed DeDop yet, please refer to :doc:`installation`.
+If you haven't installed DeDop yet, please refer to :doc:`user_manual/um_setup`.
 
 During installation, a new menu entry or desktop shortcut named **DeDop Shell** should have been created.
 If you click it, a new terminal window should open up. If you can't see a menu entry nor a desktop shortcut
@@ -59,7 +59,7 @@ Now run the processor with default settings::
 If the command succeeded, the L1B output files can be found in ``workspaces/default/configs/default/outputs``,
 which is by default located in the DeDop user data directory. On Unixes and Darwin (OS) this directory
 is ``~/.dedop`` while on Windows it is ``C:/Users/<username>/.dedop``. The location of your workspaces directory
-can be changed by configuration. Please refer to the :doc:`manual`.
+can be changed by configuration. Please refer to the :ref:`tool_config_parameters`.
 
 If the processor run was successful you can inspect the generated L1B file::
 

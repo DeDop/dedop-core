@@ -2,18 +2,23 @@
 DeDop Studio
 =============
 
+.. _studio_intro:
+
 DeDop Studio is a desktop application with a primary aim of providing a user-friendly experience for processing L1A files.
 It was designed based on the already-existing :doc:`um_shell`, so the behavior is almost the same with its command line counterpart.
+In order to be able to use DeDop Studio, one must have a specific version of DeDop Core installed. The table below shows
+the dependency information between DeDop Core and DeDop Studio.
 
-.. figure:: ../_static/figures/dedop-studio.png
-   :scale: 75%
-   :align: center
+=============  =========================
+DeDop Studio    ...depends on DeDop Core
+=============  =========================
+   v1.2.0            v1.2.0
+   v1.1.0            v1.1.0
+   v1.0.0            v1.0.0
+=============  =========================
 
-DeDop Studio was designed at a window size of 1366 x 768, which is at the moment the most common laptop screen resolution.
-This means that all the component placements were decided based on what looks best at 1366 x 768 resolution. However,
-using other window sizes should not affect your experience greatly.
 
-The image above shows the first screen of DeDop Studio. At the top there is a screen title that will be updated once the
+The image below shows the first screen of DeDop Studio. At the top there is a screen title that will be updated once the
 user navigates to another screen. On the right side of this top section, there is a section for **Workspace management**.
 This is the area where user can perform workspace-related operations, such as adding, removing, copying, renaming, changing,
 and deleting a workspace. Right under the screen title, there are breadcrumbs showing the available four screens of this
@@ -22,6 +27,10 @@ components act as the **navigator** of the application, to give the user an idea
 and also in the workflow. Both the workspace management and the navigator are components that are static, which means they
 will be visible on all the screens. **Functionality panels**, on the other hand, is the main area of the application where
 users can interact and it will change depending on which screen is selected.
+
+.. figure:: ../_static/figures/dedop-studio.png
+   :scale: 75%
+   :align: center
 
 .. _workspace_manag_studio:
 
