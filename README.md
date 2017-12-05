@@ -10,7 +10,7 @@ DeDop is a User Configurable Tool for Processing Delay Doppler Altimeter Data.
 
 For more information about the project please visit [www.dedop.org](http://www.dedop.org/).
 For more information about the software have a look into
-the [DeDop User Manual](http://dedop-core.readthedocs.io/en/latest/installation.html).
+the [DeDop User Manual](http://dedop.readthedocs.io/en/latest/user_manual.html).
 
 ## Contents
 
