@@ -148,7 +148,11 @@ class L1ADataset(InputDataset):
             int_path_cor_ku=self.get_value(L1AVariables.int_path_cor_ku_l1a_echo_sar_ku, index),
             agc_ku=self.get_value(L1AVariables.agc_ku_l1a_echo_sar_ku, index),
             sig0_cal_ku=self.get_value(L1AVariables.sig0_cal_ku_l1a_echo_sar_ku, index),
-            surf_type=self.get_value(L1AVariables.surf_type_l1a_echo_sar_ku, index)
+            surf_type=self.get_value(L1AVariables.surf_type_l1a_echo_sar_ku, index),
+            # CAL 1 & CAL 2
+            cal1_power=self.get_value(L1AVariables.burst_power_cor_ku_l1a_echo_sar_ku, index),
+            cal1_phase=self.get_value(L1AVariables.burst_phase_cor_ku_l1a_echo_sar_ku, index),
+            cal2_array=self.get_value(L1AVariables.gprw_meas_ku_l1a_echo_sar_ku, index)
         )
 
         packet.compute_location_sar_surf()

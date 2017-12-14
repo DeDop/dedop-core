@@ -742,6 +742,52 @@ class L1AProcessingData:
     def cog_cor(self):
         return self["cog_cor"]
 
+    # CAL 1 & CAL 2
+    @property
+    def cal1_power(self) -> np.ndarray:
+        """
+        CAL1 power correction
+        """
+        return self["cal1_power"]
+
+    @cal1_power.setter
+    def cal1_power(self, value: np.ndarray) -> None:
+        self["cal1_power"] = value
+
+    @cal1_power.deleter
+    def cal1_power(self) -> None:
+        del self["cal1_power"]
+
+    @property
+    def cal1_phase(self) -> np.ndarray:
+        """
+        CAL1 phase correction
+        """
+        return self["cal1_phase"]
+
+    @cal1_phase.setter
+    def cal1_phase(self, value: np.ndarray) -> None:
+        self["cal1_phase"] = value
+
+    @cal1_phase.deleter
+    def cal1_phase(self) -> None:
+        del self["cal1_phase"]
+
+    @property
+    def cal2_array(self) -> np.ndarray:
+        """
+        CAL2 correction
+        """
+        return self["cal2_array"]
+
+    @cal2_array.setter
+    def cal2_array(self, value: np.ndarray) -> None:
+        self["cal2_array"] = value
+
+    @cal2_array.deleter
+    def cal2_array(self) -> None:
+        del self["cal2_array"]
+
     @property
     def leap_secs_since_2000(self):
         return self.time_sar_ku - (self.days * self.cst.sec_in_day + self.seconds)
