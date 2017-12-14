@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/DeDop/dedop-core.svg?branch=master)](https://travis-ci.org/DeDop/dedop-core)
+[![Build status](https://ci.appveyor.com/api/projects/status/2461996aau28tsm9/branch/master?svg=true)](https://ci.appveyor.com/project/hans-permana/dedop-core/branch/master)
 [![codecov](https://codecov.io/gh/DeDop/dedop-core/branch/master/graph/badge.svg)](https://codecov.io/gh/DeDop/dedop-core)
 [![Documentation Status](https://readthedocs.org/projects/dedop-core/badge/?version=latest)](http://dedop-core.readthedocs.io/en/latest/?badge=latest)
 
