@@ -53,7 +53,7 @@ class CliTest(WorkspaceTestBase, TestCase):
         self._test_main(['-h'], expected_stdout='usage: dedop [-h]')
 
     def test_option_version(self):
-        self._test_main(['--version'], expected_stdout='1.0.0')
+        self._test_main(['--version'], expected_stdout='1.2.0')
 
     # TODO(hans-permana, 20170217): try to investigate why no output is shown in the case of error
     # def test_command_none(self):

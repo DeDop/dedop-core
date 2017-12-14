@@ -1,0 +1,48 @@
+{
+  "__metainf__": {
+    "description": "DeDop Constants File",
+    "version": 0,
+    "changelog": [
+      {
+        "version": 0,
+        "parameters": [],
+        "comment": "initial version"
+      }
+    ]
+  },
+  "semi_major_axis_cst": {
+	"units": "m",
+	"value": 6378137.0,
+	"description": "Semi-major axis of WGS84 ellipsoid"
+  },
+  "semi_minor_axis_cst": {
+	"units": "m",
+	"value": 6356752.3142,
+	"description": "Semi-minor axis of WGS84 ellipsoid"
+  },
+  "flat_coeff_cst": {
+    "units": null,
+    "value": 0.00335281067183084,
+    "description": "Flattening coefficient of WGS84 ellipsoid"
+  },
+  "earth_radius_cst": {
+    "units": "m",
+    "value": 6378137.0,
+    "description": "Earth Radius"
+  },
+  "pi_cst": {
+    "units": null,
+    "value": 3.1415926535897932,
+    "description": "Pi number"
+  },
+  "c_cst": {
+    "units": "m/s",
+    "value": 299792458.0,
+    "description": "Speed of light"
+  },
+  "sec_in_day_cst": {
+    "units": "s",
+    "value": 86400,
+    "description": "Number of seconds in a day"
+  }
+}

@@ -14,6 +14,7 @@ setup(
     package_data={
         'dedop.ui.data.notebooks': ['*.ipynb'],
         'dedop.ui.data.config': ['*.json'],
+        'dedop.ui.data.cryosat_config': ['*.json']
     },
     entry_points={
         'console_scripts': [

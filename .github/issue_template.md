@@ -12,7 +12,7 @@
 
 ### Actual behavior
 
-*Describe here what you expected DeDop to do.*
+*Describe here what you observed.*
 
 ### Steps to reproduce the issue
 

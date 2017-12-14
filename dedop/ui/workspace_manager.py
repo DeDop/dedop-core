@@ -14,6 +14,7 @@ from dedop.ui.workspace import Workspace
 from dedop.util.config import get_config_value
 
 _DEFAULT_CONFIG_PACKAGE_NAME = 'dedop.ui.data.config'
+_CRYOSAT_CONFIG_PACKAGE_NAME = 'dedop.ui.data.cryosat_config'
 _WORKSPACES_DIR_NAME = 'workspaces'
 _CONFIGS_DIR_NAME = 'configs'
 _NOTEBOOKS_DIR_NAME = 'notebooks'
@@ -195,8 +196,9 @@ class WorkspaceManager:
         config_dir = self.get_config_path(workspace_name, config_name)
         return os.path.isdir(config_dir) and os.listdir(config_dir)
 
-    def create_config(self, workspace_name: str, config_name: str):
+    def create_config(self, workspace_name: str, config_name: str, cryosat: bool = False):
         """
+        :param cryosat: True to create a config based on cryosat template
         :param workspace_name: the workspace name where the config is to be created
         :param config_name: the name of the configuration to be added
         """
@@ -205,7 +207,7 @@ class WorkspaceManager:
             raise WorkspaceError('workspace "%s" already contains a configuration "%s"' % (workspace_name, config_name))
         config_dir = self.get_config_path(workspace_name, config_name)
         dir_path = self._ensure_dir_exists(config_dir)
-        package = _DEFAULT_CONFIG_PACKAGE_NAME
+        package = _CRYOSAT_CONFIG_PACKAGE_NAME if cryosat else _DEFAULT_CONFIG_PACKAGE_NAME
         # TODO (forman, 20160727): copy text files so that '\n' is replaced by OS-specific line separator
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
@@ -271,7 +273,7 @@ class WorkspaceManager:
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)
         config_json = self._open_config_json(file_path)
         config_order = [name for name in config_json]
-        return config_json, config_order
+        return config_json, sorted(config_order, key=str.lower)
 
     def write_config_file(self, workspace_name: str, config_name: str, config_file_key: str, configuration: str):
         file_path = self.get_config_file(workspace_name, config_name, config_file_key)

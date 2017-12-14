@@ -17,8 +17,7 @@ Contents:
 
    introduction
    quickstart
-   installation
-   manual
+   user_manual
    api_reference
 
 

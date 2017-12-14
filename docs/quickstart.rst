@@ -31,6 +31,8 @@ to list the available DeDop sub-commands. You can get help on sub-commands as we
     $ dedop run -h
 
 
+.. _processing_l1a_l1b:
+
 Processing a L1A to L1B
 =======================
 
