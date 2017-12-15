@@ -212,7 +212,6 @@ class WorkspaceManager:
         self._copy_resource(package, 'CHD.json', dir_path)
         self._copy_resource(package, 'CNF.json', dir_path)
         self._copy_resource(package, 'CST.json', dir_path)
-        self._copy_resource(package, 'CAL.nc', dir_path)
 
     def delete_config(self, workspace_name: str, config_name: str):
         """
@@ -262,9 +261,6 @@ class WorkspaceManager:
                 os.rename(dir_path, dir_path_new)
             except (IOError, OSError) as e:
                 raise WorkspaceError(str(e))
-
-    def get_calibration_file(self, workspace_name: str, config_name: str) -> str:
-        return os.path.join(self.get_config_path(workspace_name, config_name), 'CAL.nc')
 
     def get_config_file(self, workspace_name: str, config_name: str, config_file_key: str) -> str:
         return self.get_config_path(workspace_name, config_name, config_file_key + '.json')
@@ -378,19 +374,6 @@ class WorkspaceManager:
         with open(file_path) as data_file:
             config_json = json.load(data_file, object_pairs_hook=collections.OrderedDict)
         return config_json
-
-    def set_calibration_file(self, workspace_name: str, config_name: str, input_path: str):
-        """
-        :param workspace_name: the workspace name to add the calibrations to
-        :param config_name: the name of the configuration
-        :param input_path: path to the calibrations file
-        :return:
-        """
-        config_dir = self._ensure_dir_exists(self.get_config_path(workspace_name, config_name))
-        try:
-            shutil.copy(input_path, os.path.join(config_dir, 'CAL.nc'))
-        except (IOError, OSError) as e:
-            raise WorkspaceError(str(e))
 
     def add_inputs(self, workspace_name: str, input_paths, monitor):
         """

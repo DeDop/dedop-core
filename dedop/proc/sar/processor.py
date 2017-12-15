@@ -5,7 +5,6 @@ from typing import Optional, Sequence, Dict, Any, List
 
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.data.input.l1a import L1ADataset
-from dedop.data.input.cal import CALDataset
 from dedop.data.output import L1BSWriter, L1BWriter
 from dedop.model import SurfaceData, L1AProcessingData
 from dedop.model.processor import BaseProcessor
@@ -34,14 +33,11 @@ class L1BProcessor(BaseProcessor):
         """
         return self._packets
 
-    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, cal_file: str, out_path: str,
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str,
                  skip_l1bs: bool = True):
         """
         initialise the processor
         """
-        # TODO: make this a param and add it to workspace manager
-        # cal_file = '/home/mark/dedop/roger/cs_users_characterization_C002.nc'
-        print(cal_file)
 
         if not name:
             raise ValueError('name must be given')
@@ -51,8 +47,6 @@ class L1BProcessor(BaseProcessor):
             raise ValueError('cst_file must be given')
         if not chd_file:
             raise ValueError('chd_file must be given')
-        if not cal_file:
-            raise ValueError('cal_file must be given')
         if out_path is None:
             raise ValueError('out_path must be given')
 
@@ -60,7 +54,6 @@ class L1BProcessor(BaseProcessor):
         self.cst = ConstantsFile(cst_file)
         self.chd = CharacterisationFile(self.cst, chd_file)
         self.cnf = ConfigurationFile(cnf_file)
-        self.cal = CALDataset(cal_file)
 
         self.skip_l1bs = skip_l1bs
         self.out_path = out_path
@@ -99,9 +92,9 @@ class L1BProcessor(BaseProcessor):
 
         # init. the calibrations
         self.cal1_algorithm =\
-            CAL1Algorithm(self.chd, self.cst, self.cnf, self.cal)
+            CAL1Algorithm(self.chd, self.cst, self.cnf)
         self.cal2_algorithm =\
-            CAL2Algorithm(self.chd, self.cst, self.cnf, self.cal)
+            CAL2Algorithm(self.chd, self.cst, self.cnf)
 
         # set threshold for gaps
         self.gap_threshold = self.chd.bri_sar * 1.5
