@@ -24,10 +24,6 @@ class CharacterisationFile(AuxiliaryFileReader):
         "N_ku_pulses_burst_chd",
         """number of ku-band pulses per burst""",
         param_type=int)
-    n_bursts_cycle = AuxiliaryParameter(
-        "N_bursts_cycle_chd",
-        """number of bursts per cycle""",
-        param_type=int)
 
     freq_ku = AuxiliaryParameter(
         "freq_ku_chd",
