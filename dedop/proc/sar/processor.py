@@ -197,7 +197,6 @@ class L1BProcessor(BaseProcessor):
 
                 if input_packet is not None:
                     # apply calibrations
-                    input_packet.apply_fai_alignment()
                     self.cal1_algorithm(input_packet)
                     self.cal2_algorithm(input_packet)
 

@@ -853,19 +853,6 @@ class L1AProcessingData:
     def __delitem__(self, key: str) -> None:
         del self._data[key]
 
-    def apply_fai_alignment(self) -> None:
-        # TODO: move this to CAL1?
-        n_samples = self.chd.n_samples_sar
-        i_samples = np.arange(n_samples)
-
-        correction = np.exp(-2j*self.cst.pi *
-                    ((((self.cai - self.cai[0])*self.chd.cai_h0_unit_conv + self.fai)
-                      / self.chd.t0_h0_unit_conv)[:, np.newaxis] *
-                    (np.ones((self.chd.n_ku_pulses_burst, 1))*i_samples / n_samples)))
-
-        self.waveform_cor_sar *= correction
-
-
     def compute_location_sar_surf(self) -> None:
         lla = (
             self.lat_sar_sat,

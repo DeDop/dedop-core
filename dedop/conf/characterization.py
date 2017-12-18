@@ -83,24 +83,6 @@ class CharacterisationFile(AuxiliaryFileReader):
         """spacing between antenna angles""",
         param_type=float)
 
-    # unit conversion params
-    t0_h0_unit_conv = AuxiliaryParameter(
-        "T0_h0_unit_conv_chd",
-        """conversion factor from T0 to H0""",
-        param_type=float)
-    cai_cor2_unit_conv = AuxiliaryParameter(
-        "cai_cor2_unit_conv_chd",
-        """conversion factor from CAI to COR2""",
-        param_type=float)
-    h0_cor2_unit_conv = AuxiliaryParameter(
-        "h0_cor2_unit_conv_chd",
-        """conversion factor from H0 to COR2""",
-        param_type=float)
-
-    @property
-    def cai_h0_unit_conv(self):
-        return self.cai_cor2_unit_conv / self.h0_cor2_unit_conv
-
     @property
     def pri_sar(self):
         return 1. / self.prf_sar
