@@ -11,6 +11,7 @@ from dedop.model.processor import BaseProcessor
 from dedop.util.monitor import Monitor
 
 from .algorithms import *
+from .cal import *
 
 
 class L1BProcessor(BaseProcessor):
@@ -32,10 +33,12 @@ class L1BProcessor(BaseProcessor):
         """
         return self._packets
 
-    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool = True):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str,
+                 skip_l1bs: bool = True):
         """
         initialise the processor
         """
+
         if not name:
             raise ValueError('name must be given')
         if not cnf_file:
@@ -86,6 +89,12 @@ class L1BProcessor(BaseProcessor):
             MultilookingAlgorithm(self.chd, self.cst, self.cnf)
         self.sigma_zero_algorithm = \
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst, self.cnf)
+
+        # init. the calibrations
+        self.cal1_algorithm =\
+            CAL1Algorithm(self.chd, self.cst, self.cnf)
+        self.cal2_algorithm =\
+            CAL2Algorithm(self.chd, self.cst, self.cnf)
 
         # set threshold for gaps
         self.gap_threshold = self.chd.bri_sar * 1.5
@@ -187,6 +196,10 @@ class L1BProcessor(BaseProcessor):
                         monitor.progress(1)
 
                 if input_packet is not None:
+                    # apply calibrations
+                    self.cal1_algorithm(input_packet)
+                    self.cal2_algorithm(input_packet)
+
                     # check if there is a gap (or if this is the first packet & prev_time has not been set)
                     if prev_time is None or input_packet.time_sar_ku - prev_time < self.gap_threshold:
 
