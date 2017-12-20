@@ -4,11 +4,11 @@ min_num_contributing_looks_cnf	486
 roughness_seed_cnf	0.01
 N_beams_sub_stack_cnf	480
 epoch_seed_cnf	50
-flag_azimuth_windowing_method_cnf	"boxcar"
-azimuth_window_width_cnf	48
+flag_azimuth_windowing_method_cnf	"none"
+azimuth_window_width_cnf	64
 flag_l1bs_file_cnf	False
 thermal_noise_width_cnf	10
-flag_postphase_azimuth_processing_cnf	True
+flag_postphase_azimuth_processing_cnf	False
 right_avoided_samples_cal2_cnf	26
 max_fitting_iterations_cnf	100
 flag_antenna_weighting_cnf	False
@@ -18,7 +18,7 @@ flag_azimuth_weighting_cnf	True
 sigma_z_seed_cnf	0.025
 parameter_fitting_flag_cnf	0
 zero_freq_sample_number_lrm_cnf	128
-zp_fact_range_cnf	128
+zp_fact_range_cnf	2
 flag_cal1_corrections_cnf	True
 flag_doppler_range_correction_cnf	False
 flag_avoid_zeros_in_multilooking_cnf	True

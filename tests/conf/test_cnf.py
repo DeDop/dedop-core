@@ -33,7 +33,7 @@ class TestCNF(unittest.TestCase):
         )
         actual = self.actual.flag_azimuth_windowing_method
 
-        self.assertAlmostEqual(expected, actual)
+        self.assertEqual(expected, actual)
 
     def test_azimuth_window_width(self):
         expected = self.expected["azimuth_window_width_cnf"]
