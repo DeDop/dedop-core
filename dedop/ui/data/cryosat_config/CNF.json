@@ -1,7 +1,7 @@
 {
   "__metainf__": {
     "description": "DeDop Configuration File",
-    "version": 1,
+    "version": 2,
     "changelog": [
       {
         "version": 0,
@@ -14,6 +14,12 @@
           ["flag_azimuth_processing_method_cnf", "*", "integer codes changed to text enum"]
         ],
         "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 2,
+        "parameters": [
+          ["flag_cal2_table_index_cnf", "+", "added CAL2 table index"]
+        ]
       }
     ]
   },
@@ -26,6 +32,11 @@
     "value": true,
     "units": "flag",
     "description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+  },
+  "flag_cal2_table_index_cnf": {
+    "value": 2,
+    "units": null,
+    "description": "CAL2 table index, one of [0, 1, 2] (default: 2)"
   },
   "flag_cal1_corrections_cnf": {
     "value": true,

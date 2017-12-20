@@ -9,7 +9,7 @@ class ConfigurationFile(AuxiliaryFileReader):
     class for loading the Configuration File
     """
     _id = "CNF"
-    _fileversion = 1
+    _fileversion = 2
 
     def __init__(self, filename: str=None, **kwargs: Any):
         super().__init__(filename, **kwargs)
@@ -19,6 +19,8 @@ class ConfigurationFile(AuxiliaryFileReader):
         AuxiliaryParameter("flag_cal2_correction_cnf")
     flag_uso_correction = \
         AuxiliaryParameter("flag_uso_correction_cnf")
+    flag_cal2_table_index = \
+        AuxiliaryParameter("flag_cal2_table_index_cnf", param_type=int)
     flag_cal1_corrections = \
         AuxiliaryParameter("flag_cal1_corrections_cnf")
     flag_cal1_intraburst_corrections = \

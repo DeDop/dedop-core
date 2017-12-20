@@ -152,7 +152,7 @@ class L1ADataset(InputDataset):
             # CAL 1 & CAL 2
             cal1_power=self.get_value(L1AVariables.burst_power_cor_ku_l1a_echo_sar_ku, index),
             cal1_phase=self.get_value(L1AVariables.burst_phase_cor_ku_l1a_echo_sar_ku, index),
-            cal2_array=self.get_value(L1AVariables.gprw_meas_ku_l1a_echo_sar_ku, index)
+            cal2_array=self.get_value(L1AVariables.gprw_meas_ku_l1a_echo_sar_ku, index)[self.cnf.flag_cal2_table_index, :]
         )
 
         packet.compute_location_sar_surf()
