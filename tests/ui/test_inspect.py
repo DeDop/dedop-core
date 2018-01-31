@@ -4,8 +4,12 @@ from dedop.ui.inspect import inspect_l1b_product
 
 
 class L1bProductInspectorTest(TestCase):
-    def test_it(self):
-        # Ok, not really a test yet, but at least we import L1bInspector
+    # Ok, not really a test yet, but at least we import L1bInspector
+
+    def test_without_file(self):
         with self.assertRaises(ValueError) as e:
-            inspect_l1b_product(None, False)
-        self.assertEquals(str(e.exception), 'output_path must be given')
+            inspect_l1b_product(None)
+        self.assertEquals(str(e.exception), 'product_file_path must be given')
+
+    def test_with_file(self):
+        inspect_l1b_product("test_data/data/test_l1b/temp/output.nc")
