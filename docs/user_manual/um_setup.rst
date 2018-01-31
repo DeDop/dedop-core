@@ -31,7 +31,7 @@ After installing Miniconda open a terminal window and create an isolated Python 
 
 Then install the DeDop library requirements::
 
-    conda install -c conda-forge -c ccitools numpy scipy netcdf4 numexpr pyproj cate-util
+    conda install -c conda-forge -c ccitools numpy scipy netcdf4 numexpr pyproj cate-util=0.8.0rc3
 
 If you like to perform analysis tasks with DeDop, then also install::
 
