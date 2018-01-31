@@ -49,11 +49,11 @@ def compare_l1b_products(product_file_path_1: str,
     :param output_path: The output path where plot figures are written to.
     :param output_format: The output format. Supported formats are "pdf" and "dir".
     """
-    if bokeh.util.platform.is_notebook():
+    if output_path:
+        figure_writer = FigureWriter(output_path, output_format)
+    else:
         bokeh.io.output_notebook(hide_banner=True)
         figure_writer = None
-    else:
-        figure_writer = FigureWriter(output_path, output_format)
     return L1bProductComparator(product_file_path_1, product_file_path_2, figure_writer)
 
 
