@@ -1,7 +1,7 @@
 import sys, os
 from datetime import date
 
-from cate.util.web import JsonRcpWebSocketHandler
+from cate.util.web import JsonRpcWebSocketHandler
 from cate.util.web.webapi import run_main, url_pattern, WebAPIRequestHandler, WebAPIExitHandler
 from tornado.web import Application
 
@@ -38,7 +38,7 @@ def create_application():
     application = Application([
         (url_pattern('/'), WebAPIVersionHandler),
         (url_pattern('/exit'), WebAPIExitHandler),
-        (url_pattern('/app'), JsonRcpWebSocketHandler, dict(service_factory=service_factory,
+        (url_pattern('/app'), JsonRpcWebSocketHandler, dict(service_factory=service_factory,
                                                             report_defer_period=WEBAPI_PROGRESS_DEFER_PERIOD)),
     ])
     application.workspace_manager = WorkspaceManager()
