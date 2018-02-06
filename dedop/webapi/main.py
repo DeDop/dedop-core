@@ -1,11 +1,11 @@
-import sys
+import sys, os
 from datetime import date
 
 from cate.util.web import JsonRcpWebSocketHandler
 from cate.util.web.webapi import run_main, url_pattern, WebAPIRequestHandler, WebAPIExitHandler
 from tornado.web import Application
 
-from dedop.conf.defaults import WEBAPI_PROGRESS_DEFER_PERIOD, WEBAPI_LOG_FILE_PREFIX
+from dedop.conf.defaults import WEBAPI_PROGRESS_DEFER_PERIOD, WEBAPI_LOG_FILE_PREFIX, DEFAULT_VERSION_DATA_PATH
 from dedop.ui.workspace_manager import WorkspaceManager
 from dedop.version import __version__
 from dedop.webapi.websocket import WebSocketService
@@ -46,6 +46,8 @@ def create_application():
 
 
 def main(args=None) -> int:
+    if not os.path.exists(DEFAULT_VERSION_DATA_PATH):
+        os.makedirs(DEFAULT_VERSION_DATA_PATH, exist_ok=True)
     return run_main(CLI_NAME, CLI_DESCRIPTION, __version__,
                     application_factory=create_application,
                     log_file_prefix=WEBAPI_LOG_FILE_PREFIX,

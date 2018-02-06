@@ -71,8 +71,10 @@ class BeamAnglesAlgorithm(BaseAlgorithm):
             np.dot(surf_burst, isp_record.vel_sat_sar) /
             (norm(surf_burst) * isp_record.vel_sat_sar_norm)
         )
+
+        beam_angle_tangent = beam_angle - isp_record.doppler_angle_sar_sat
         # if the angle is within the q-range, it can be seen
-        if q_min <= beam_angle <= q_max:
+        if q_min <= beam_angle_tangent <= q_max:
             location_seen = True
         else:
             location_seen = False

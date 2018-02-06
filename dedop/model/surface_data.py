@@ -522,12 +522,7 @@ class SurfaceData:
         """
         The number of bursts in the stack
         """
-        try:
-            return self["data_stack_size"]
-        except KeyError:
-            self["data_stack_size"] =\
-                len(self.stack_all_bursts)
-            return self["data_stack_size"]
+        return self["data_stack_size"]
 
     @data_stack_size.setter
     def data_stack_size(self, value: int) -> None:

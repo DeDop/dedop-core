@@ -39,6 +39,9 @@ class NetCDFReader:
             # if size[0] > self.chunk_size:
             #     size[0] = self.chunk_size
 
+    def get_variable(self, varname: L1AVariables) -> nc.Variable:
+        return self._doc.variables[varname.value]
+
     def get_value(self, varname: L1AVariables, index: int):
         """
         get the value of a variable at a specific index

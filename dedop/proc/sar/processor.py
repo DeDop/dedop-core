@@ -11,6 +11,7 @@ from dedop.model.processor import BaseProcessor
 from dedop.util.monitor import Monitor
 
 from .algorithms import *
+from .cal import *
 
 
 class L1BProcessor(BaseProcessor):
@@ -32,10 +33,12 @@ class L1BProcessor(BaseProcessor):
         """
         return self._packets
 
-    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str, skip_l1bs: bool = True):
+    def __init__(self, name: str, cnf_file: str, cst_file: str, chd_file: str, out_path: str,
+                 skip_l1bs: bool = True):
         """
         initialise the processor
         """
+
         if not name:
             raise ValueError('name must be given')
         if not cnf_file:
@@ -87,6 +90,12 @@ class L1BProcessor(BaseProcessor):
         self.sigma_zero_algorithm = \
             Sigma0ScalingFactorAlgorithm(self.chd, self.cst, self.cnf)
 
+        # init. the calibrations
+        self.cal1_algorithm =\
+            CAL1Algorithm(self.chd, self.cst, self.cnf)
+        self.cal2_algorithm =\
+            CAL2Algorithm(self.chd, self.cst, self.cnf)
+
         # set threshold for gaps
         self.gap_threshold = self.chd.bri_sar * 1.5
 
@@ -100,7 +109,7 @@ class L1BProcessor(BaseProcessor):
 
         t0 = time.time()
 
-        with monitor.starting('processing', total_work=self.l1a_file.max_index + self.min_surfs):
+        with monitor.starting('processing', total_work=len(self.l1a_file)):
             status = self._process(l1a_file, monitor)
 
         dt = time.time() - t0
@@ -171,14 +180,25 @@ class L1BProcessor(BaseProcessor):
             #  before reading another input.
             if not gap_processing:
 
-                monitor.progress(1)
+                # monitor.progress(1)
 
                 # if this is the first iteration after finishing a gap, then the next packet has already been read
                 #  so another one should not be retrieved from the L1A
                 if not gap_resume:
-                    input_packet = next(self.l1a_file)
+                    # input_packet = next(self.l1a_file)
+                    try:
+                        input_packet = next(self.l1a_file)
+                    except StopIteration:
+                        input_packet = None
+                        if not surface_processing:
+                            raise Exception("insufficient input records")
+                    else:
+                        monitor.progress(1)
 
                 if input_packet is not None:
+                    # apply calibrations
+                    self.cal1_algorithm(input_packet)
+                    self.cal2_algorithm(input_packet)
 
                     # check if there is a gap (or if this is the first packet & prev_time has not been set)
                     if prev_time is None or input_packet.time_sar_ku - prev_time < self.gap_threshold:
@@ -359,6 +379,8 @@ class L1BProcessor(BaseProcessor):
         """
         self.stack_gathering_algorithm(working_surface_location)
 
+        working_surface_location.data_stack_size = \
+            self.stack_gathering_algorithm.data_stack_size
         working_surface_location.stack_bursts = \
             self.stack_gathering_algorithm.stack_bursts
         working_surface_location.beams_surf = \

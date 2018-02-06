@@ -1,0 +1,141 @@
+================
+L1B Output Files
+================
+
+File Description
+----------------
+
+The L1B file is the primary output created by the dedop processor. Each record in the L1B file represents
+information about a surface position beneath the satellite track.
+
+Dimensions
+----------
+
+- time_l1b_echo_sar_ku
+    - description: Number of L1B ECHO_SAR_Ku measurements
+- echo_sample_ind
+    - description: Number of samples in a waveform
+- max_multi_stack_ind
+    - description: Maximum number of multilook beams per stack
+
+Variables
+---------
+
+- time_l1b_echo_sar_ku
+    - description: UTC Seconds since 2000-01-01 00:00:00.0
+- UTC_day_l1b_echo_sar_ku
+    - description: UTC Days since 2000-01-01 00:00:00.0
+- UTC_sec_l1b_echo_sar_ku
+    - description: Seconds since the start of the current UTC day
+- GPS_time_l1b_echo_sar_ku
+    - description: GPS time
+- isp_coarse_time_l1b_echo_sar_ku
+    - description: ISP coarse time
+- isp_fine_time_l1b_echo_sar_ku
+    - description: ISP fine time
+- sral_fine_time_l1b_echo_sar_ku
+    - description: ISP SRAL fine datation
+- lat_l1b_echo_sar_ku
+    - description: latitude (degrees north)
+- lon_l1b_echo_sar_ku
+    - description: longitude (degrees east)
+- alt_l1b_echo_sar_ku
+    - description: altitude of satellite
+- orb_alt_rate_l1b_echo_sar_ku
+    - description: orbital altitude rate
+- flag_time_status_l1b_echo_sar_ku
+    - description: time status flag
+- time_time_corr_val_l1b_echo_sar_ku
+    - description: time correlation validity flag
+- flag_man_pres_l1b_echo_sar_ku
+    - description: manoeuvre presence flag (no manoeuvre/ongoing manoeuvre)
+- flag_man_thrust_l1b_echo_sar_ku
+    - description: manoeuvre thrust flag (no thrust/ongoing thrust)
+- flag_man_plane_l1b_echo_sar_ku
+    - description: manoeuvre plane flag (in plane/out of plane)
+- flag_gnss_status_l1b_echo_sar_ku
+    - description: validity flag for the navigation message from the gnss receiver
+- x_pos_l1b_echo_sar_ku
+    - description: satellite altitude - x component
+- y_pos_l1b_echo_sar_ku
+    - description: satellite altitude - y component
+- z_pos_l1b_echo_sar_ku
+    - description: satellite altitude - z component
+- x_vel_l1b_echo_sar_ku
+    - description: satellite velocity - x component
+- y_vel_l1b_echo_sar_ku
+    - description: satellite velocity - y component
+- z_vel_l1b_echo_sar_ku
+    - description: satellite velocity - z component
+- nav_bul_status_l1b_echo_sar_ku
+    - description: navigation bulletin status (ok/ko)
+- nav_bul_source_l1b_echo_sar_ku
+    - description: navigation bulletin source identifier (gps/doris)
+- nav_bul_coarse_time_l1b_echo_sar_ku
+    - description: navigation bulletin coarse time
+- nav_bul_fine_time_l1b_echo_sar_ku
+    - description: navigation bulletin fine time
+- seq_count_l1b_echo_sar_ku
+    - description: sequence count
+- isp_time_status_echo_sar_ku
+    - description: ISP time status
+- oper_instr_l1b_echo_sar_ku
+    - description: operating instrument
+- SAR_mode_l1b_echo_sar_ku
+    - description: LRM mode identifier
+- cl_gain_l1b_echo_sar_ku
+    - description: tracking configuration - closed loop gain
+- acq_stat_l1b_echo_sar_ku
+    - description: tracking configuration - acquisition status
+- dem_eeprom_l1b_echo_sar_ku
+    - description: tracking configuration - DEM EEPROM read access
+- weighting_l1b_echo_sar_ku
+    - description: altimeter configuration - weighting function
+- loss_track_l1b_echo_sar_ku
+    - description: loss of track criterion
+- h0_nav_dem_l1b_echo_sar_ku
+    - description: altitude command H0 computed with nav DEM
+- h0_applied_l1b_echo_sar_ku
+    - description: applied altitude command H0
+- cor2_nav_dem_l1b_echo_sar_ku
+    - description: altitude command COR2 computed with nav DEM
+- cor2_applied_l1b_echo_sar_ku
+    - description: applied altitude command COR2
+- dh0_l1b_echo_sar_ku
+    - description: distance error computed on the echo of the cycle (N-2) in open loop mode 
+- agccode_ku_l1b_echo_sar_ku
+    - description: AGCCODE for ku band
+- surf_type_l1b_echo_sar_ku
+    - description: altimeter surface type
+- range_ku_l1b_echo_sar_ku
+    - description: corrected range for ku band
+- uso_cor_l1b_echo_sar_ku
+    - description: USO frequency drift correction
+- int_path_cor_ku_l1b_echo_sar_ku
+    - description: internal path correction for ku band
+- range_rate_l1b_echo_sar_ku
+    - description: range rate
+- agc_ku_l1b_echo_sar_ku
+    - description: corrected AGC for ku band
+- scale_factor_ku_l1b_echo_sar_ku
+    - description: scaling factor for sigma0 evaluation for ku band
+- agc_cor_ku_l1b_echo_sar_ku
+    - description: correction for instrumental errors on AGC for ku band
+- sig0_cal_ku_l1b_echo_sar_ku
+    - description: internal calibration correction on Sigma0 for ku band
+- nb_stack_l1b_echo_sar_ku
+    - description: number of waveforms summed in stack
+- max_stack_l1b_echo_sar_ku
+    - description: maximum power of stack
+- stdev_stack_l1b_echo_sar_ku
+    - description: standard deviation of stack
+- skew_stack_l1b_echo_sar_ku
+    - description: skewness of stack
+- kurt_stack_l1b_echo_sar_ku
+    - description: kurtosis of stack
+- beam_ang_l1b_echo_sar_ku
+    - description: look angles in stack
+- beam_form_l1b_echo_sar_ku
+    - description: flag on beam formation quality in stack
+- i2q2_meas_ku_l1b_echo_sar_ku
+    - description: I2+Q2 measurement for ku band

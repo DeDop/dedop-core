@@ -1,0 +1,73 @@
+{
+    "N_ku_pulses_burst_chd": {
+        "description": "Number of Ku-band pulses per burst",
+        "units": null,
+        "value": 64
+    },
+    "N_samples_sar_chd": {
+        "description": "Number of samples per each SAR pulse",
+        "units": null,
+        "value": 128
+    },
+    "__metainf__": {
+        "changelog": [
+            {
+                "comment": "initial version",
+                "parameters": [],
+                "version": 0
+            }
+        ],
+        "description": "DeDop Characterisation File",
+        "version": 0
+    },
+    "alt_freq_multiplier_chd": {
+        "description": "Factor to convert from USO frequency to altimeter frequency",
+        "units": null,
+        "value": 32
+    },
+    "antenna_gain_ku_chd": {
+        "description": "Antenna gain for Ku-band",
+        "units": "dB",
+        "value": 42.6
+    },
+    "brf_sar_chd": {
+        "description": "burst repetition frequency",
+        "units": "Hz",
+        "value": 85.515218502072671
+    },
+    "bw_ku_chd": {
+        "description": "Ku-band bandwidth",
+        "units": "Hz",
+        "value": 320000000
+    },
+    "freq_ku_chd": {
+        "description": "Emitted frequency in Ku-band",
+        "units": "Hz",
+        "value": 13575000000
+    },
+    "mean_sat_alt_chd": {
+        "description": "Mean satellite altitude",
+        "units": "m",
+        "value": 717000
+    },
+    "power_tx_ant_ku_chd": {
+        "description": "Antenna SSPA RF Peak Transmitted Power in Ku band",
+        "units": "dB",
+        "value": 13.0103
+    },
+    "prf_sar_chd": {
+        "description": "pulse repetition frequency",
+        "units": "Hz",
+        "value": 18181.81818181818
+    },
+    "pulse_length_chd": {
+        "description": "Pulse length",
+        "units": "s",
+        "value": 4.48e-05
+    },
+    "uso_freq_nom_chd": {
+        "description": "USO nominal frequency",
+        "units": "Hz",
+        "value": 10000000
+    }
+}

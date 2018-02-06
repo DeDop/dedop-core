@@ -1,0 +1,1 @@
+The '_static' directory static documentation content.

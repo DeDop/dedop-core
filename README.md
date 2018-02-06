@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/DeDop/dedop-core.svg?branch=master)](https://travis-ci.org/DeDop/dedop-core)
+[![Build status](https://ci.appveyor.com/api/projects/status/2461996aau28tsm9/branch/master?svg=true)](https://ci.appveyor.com/project/hans-permana/dedop-core/branch/master)
 [![codecov](https://codecov.io/gh/DeDop/dedop-core/branch/master/graph/badge.svg)](https://codecov.io/gh/DeDop/dedop-core)
 [![Documentation Status](https://readthedocs.org/projects/dedop-core/badge/?version=latest)](http://dedop-core.readthedocs.io/en/latest/?badge=latest)
 
@@ -10,7 +11,7 @@ DeDop is a User Configurable Tool for Processing Delay Doppler Altimeter Data.
 
 For more information about the project please visit [www.dedop.org](http://www.dedop.org/).
 For more information about the software have a look into
-the [DeDop User Manual](http://dedop-core.readthedocs.io/en/latest/installation.html).
+the [DeDop User Manual](http://dedop.readthedocs.io/en/latest/user_manual.html).
 
 ## Contents
 
@@ -19,6 +20,10 @@ the [DeDop User Manual](http://dedop-core.readthedocs.io/en/latest/installation.
 * `test/` - test package and test code
 * `docs/` - documentation in Sphinx/RST format
 * `notebooks/` - some IPython notebooks demonstrating the use of the DeDop Python API
+
+## Installation using installer (recommended)
+
+Instructions on how to get the installer and how to install are available [here](https://github.com/DeDop/dedop-installer#install-dedop-core).
 
 ## Installation from Sources
 
@@ -38,7 +43,7 @@ type:
 
 If you want the environment to be installed in another location, e.g. due to disk space limitations, type:
 
-    $ conda env create --file environment.yml --prefix some/other/location/for/cate
+    $ conda env create --file environment.yml --prefix some/other/location/for/dedop
 
 Next step is to activate the new environment. On Linux/Darwin type:
 
@@ -49,11 +54,11 @@ Windows users can omit the `source` command and just type
 
     > activate dedop
 
-You can now safely install and run Cate sources into the new `dedop` environment.
+You can now safely install and run DeDop sources into the new `dedop` environment.
 
     (dedop) $ python setup.py develop
 
-To permanently install Cate into the Python environment (not recommended while in development mode!), type:
+To permanently install DeDop into the Python environment (not recommended while in development mode!), type:
 
     (dedop) $ python setup.py install
 
@@ -78,11 +83,11 @@ If you like to perform L1B product analysis tasks with DeDop using an IPython No
 
 The most up-to-date and complete list of module requirements is found in the project's `environment.yml` file.
 
-To install and run Cate from sources directly, type:
+To install and run DeDop from sources directly, type:
 
     $ python setup.py develop
 
-To permanently install Cate into Python (not recommended while in development mode!), type:
+To permanently install DeDop into Python (not recommended while in development mode!), type:
 
     $ python setup.py install
 

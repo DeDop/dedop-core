@@ -1,7 +1,7 @@
 {
-    "__metainf__": {
+  "__metainf__": {
     "description": "DeDop Configuration File",
-    "version": 1,
+    "version": 2,
     "changelog": [
       {
         "version": 0,
@@ -14,6 +14,12 @@
           ["flag_azimuth_processing_method_cnf", "*", "integer codes changed to text enum"]
         ],
         "comment": "Update to azimuth processing method flag"
+      },
+      {
+        "version": 2,
+        "parameters": [
+          ["flag_cal2_table_index_cnf", "+", "added CAL2 table index"]
+        ]
       }
     ]
   },
@@ -26,6 +32,11 @@
     "value": true,
     "units": "flag",
     "description": "Flag that activates the USO correction: Deactivated (false); Activated (true)"
+  },
+  "flag_cal2_table_index_cnf": {
+    "value": 2,
+    "units": null,
+    "description": "CAL2 table index, one of [0, 1, 2] (default: 2)"
   },
   "flag_cal1_corrections_cnf": {
     "value": true,
@@ -43,37 +54,37 @@
     "description": "Flag that activates the surface focussing: Deactivated (false); Activated (true)"
   },
   "surface_focusing_lat_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "Degrees North",
-    "description": "Location of the surface focusing target (latitude)"
+    "description": "Location of the surface focusing target (latitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "surface_focusing_lon_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "Degrees East",
-    "description": "Location of the surface focusing target (longitude)"
+    "description": "Location of the surface focusing target (longitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "surface_focusing_alt_cnf": {
-    "value": null,
+    "value": 0.0,
     "units": "m",
-    "description": "Location of the surface focusing target (altitude)"
+    "description": "Location of the surface focusing target (altitude) (ignored unless flag_surface_focusing_cnf is 'true')"
   },
   "flag_azimuth_processing_method_cnf": {
-    "value": 0,
+    "value": "approx",
     "units": "flag",
-    "description": "Flag that indicates the azimuth processing method: Surface dependant (0); Approximate (1); Exact (2)"
+    "description": "Flag that indicates the azimuth processing method: Approximate ('approx'); Exact ('exact')"
   },
   "flag_postphase_azimuth_processing_cnf": {
-    "value": true,
+    "value": false,
     "units": "flag",
     "description": "Flag that enables the post-phase azimuth processing: Deactivated (false); Activated (true)"
   },
   "flag_azimuth_windowing_method_cnf": {
-    "value": "boxcar",
+    "value": "none",
     "units": "flag",
     "description": "Flag the sets the azimuth windowing method: Disabled ('none'); Boxcar ('boxcar'); Hamming ('hamming'); Hanning ('hanning')"
   },
   "azimuth_window_width_cnf": {
-    "value": 48,
+    "value": 64,
     "units": "count",
     "description": "Width of Azimuth window (minimum value: 32, maximum value: 64)"
   },
@@ -93,7 +104,7 @@
     "description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
   },
   "elevation_reference_value_cnf": {
-    "value": null,
+    "value": 0,
     "units": null,
     "description": "NOT YET IMPLEMENTED"
   },
@@ -108,7 +119,7 @@
     "description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
   },
   "ambiguity_mask_margin_cnf": {
-    "value": null,
+    "value": 0,
     "units": null,
     "description": "NOT YET IMPLEMENTED"
   },
@@ -128,7 +139,7 @@
     "description": "Flag that activates the antenna weighting: Deactivated (false); Activated (true)"
   },
   "zp_fact_range_cnf": {
-    "value": 128,
+    "value": 2,
     "units": null,
     "description": "Zero padding factor used during range compression"
   },
