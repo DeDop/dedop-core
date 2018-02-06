@@ -1,4 +1,4 @@
-name: dedop2
+name: dedop
 channels:
     - conda-forge
     - ccitools
