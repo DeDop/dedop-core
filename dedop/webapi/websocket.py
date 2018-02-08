@@ -1,7 +1,7 @@
 import json
 import os
 
-from cate.util import Monitor
+from cate.util.monitor import Monitor
 from netCDF4 import Dataset
 from typing import List
 

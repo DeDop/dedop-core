@@ -70,3 +70,4 @@ target/
 
 *-checkpoint.ipynb
 /test_data/data/test_l1b/temp/*
+.pytest_cache
