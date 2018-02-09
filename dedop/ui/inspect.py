@@ -51,11 +51,11 @@ def inspect_l1b_product(product_file_path, output_path=None, output_format=None)
     :param output_path: The output path where plot figures are written to.
     :param output_format: The output format. Supported formats are "pdf" and "dir".
     """
-    if bokeh.util.platform.is_notebook():
+    if output_path:
+        figure_writer = FigureWriter(output_path, output_format)
+    else:
         bokeh.io.output_notebook(hide_banner=True)
         figure_writer = None
-    else:
-        figure_writer = FigureWriter(output_path, output_format)
     return L1bProductInspector(product_file_path, figure_writer)
 
 

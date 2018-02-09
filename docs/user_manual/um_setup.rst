@@ -23,27 +23,23 @@ DeDop is programmed in Python so you first need to setup a suitable Python envir
 We recommend using a `Miniconda <http://conda.pydata.org/miniconda.html>`_ Python3 environment, so
 you don't need to install the DeDop library dependencies in your default Python.
 
-After installing Miniconda open a terminal window and create an isolated Python environment and *activate* it. Type::
-
-    conda create -n dedop python=3.5
-    source activate dedop
-
-
-Then install the DeDop library requirements::
-
-    conda install numpy scipy netcdf4 numexpr pyproj
-
-If you like to perform analysis tasks with DeDop, then also install::
-
-    conda install matplotlib bokeh jupyter ipywidgets
-
-Then checkout the DeDop source code from GitHub::
+First, checkout the DeDop source code from GitHub::
 
     git clone https://github.com/DeDop/dedop-core.git
 
-Step into the newly created source directory and install DeDop in the Python environment `dedop`::
+Step into the newly created source directory::
 
     cd dedop-core
+
+After installing Miniconda, open a terminal window and create an isolated Python environment with all the required
+dependencies as listed in `environment.yml` and *activate* it. Type::
+
+    conda env create --file environment.yml
+    source activate dedop  # Linux, MacOS
+    activate dedop         # Windows
+
+Install DeDop in the Python environment `dedop`::
+
     python setup.py develop
 
 After installing from source, you should be able to run the DeDop Shell, try::
