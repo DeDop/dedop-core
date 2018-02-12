@@ -46,6 +46,13 @@ After installing from source, you should be able to run the DeDop Shell, try::
 
     dedop --help
 
+If you plan to run DeDop Studio, please run the following command::
+
+    dedop-webapi
+
+This is necessary to trigger the creation of `~/.dedop/<version_num>/dedop-location` file. In the installation from binary,
+this is not required because at the end of the installation, this file is automatically created.
+
 
 DeDop Studio Installation
 ==========================
