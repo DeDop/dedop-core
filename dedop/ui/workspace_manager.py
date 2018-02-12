@@ -557,7 +557,7 @@ class WorkspaceManager:
                 launch_notebook_command_template = 'open -a Terminal "{command_file}"'
             elif shutil.which("konsole"):
                 # KDE
-                launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\''
+                launch_notebook_command_template = 'konsole -p tabtitle="{title}" -e \'{command}\' & disown'
             elif shutil.which("gnome-terminal"):
                 # GNOME / Ubuntu
                 launch_notebook_command_template = 'gnome-terminal -e \'{command}\''
