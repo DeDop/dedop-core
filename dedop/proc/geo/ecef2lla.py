@@ -6,11 +6,98 @@ from typing import Sequence, Tuple
 from .geo_error import GeolocationError
 from dedop.conf import ConstantsFile
 
+# ATK patch for newer ecef2lla():
+from numpy import mod, pi, abs, logical_and
+import numbers
+
 COORD_ITERS = 10
 GEODETIC_ERR = 1e-9
 
 
 def ecef2lla(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, float]:
+    """ECEF (x, y, z) -> (Alt, Lat, Lon)
+
+    (Lat, Lon) in radians, (Alt, x, y, z) in meters.
+
+    ECEF: Earth-Centered, Earth-Fixed
+    (Cf. http://en.wikipedia.org/wiki/ECEF)
+
+    For input ellipsoid codes (ell_code), cf. ellipsoid_collection in
+    this module.
+
+    * More details:
+
+    x = ECEF X-coordinate (m)
+    y = ECEF Y-coordinate (m)
+    z = ECEF Z-coordinate (m)
+    lat = geodetic latitude (rads)
+    lon = longitude (rads)
+    alt = height above ellipsoid (m)
+    
+    Notes: This function assumes al ellipsoid model.
+    Latitude is customary geodetic (not geocentric).
+    
+    Source: "Department of Defense World Geodetic System 1984"
+        Page 4-4
+        National Imagery and Mapping Agency
+        Last updated June, 2004
+        NIMA TR8350.2
+
+    Initially written in Matlab by Michael Kleder, July 2005.
+    https://fr.mathworks.com/matlabcentral/fileexchange/7941-convert-cartesian--ecef--coordinates-to-lat--lon--alt?s_tid=prof_contriblnk
+
+    2006-07-10, Matlab version modified by Nicolas Bercher (for MSW
+    software), TETIS lab (Cemagref), Maison de la Teledetection,
+    France.
+
+    2013-11-04, Python version modified by Nicolas Bercher (for
+    AltiHydro software), LEGOS lab (CNRS), Observatoire Midi-Pyrénées,
+    Toulouse, France.
+
+    2014-11-01 ownwards: maintained by Nicolas Bercher & Along-Track
+    SAS, Plougonvelin, France.
+
+    Nicolas Bercher
+    nbercher@along-track
+    Since 2013-11-04.
+
+    """
+
+    x, y, z = ecef
+
+    sma, inv_flatt_coeff = cst.semi_major_axis, cst.flat_coeff
+
+    smna = (1. - inv_flatt_coeff) * sma
+    e = sqrt(1. - (smna**2.)/(sma**2.))
+
+    b   = sqrt(sma**2. * (1. - e**2.))
+    ep  = sqrt((sma**2. - b**2.) / b**2.)
+    p   = sqrt(x**2. + y**2.)
+    th  = arctan2(sma*z, b*p)
+    lon = arctan2(y, x)
+    lat = arctan2((z + ep**2. * b * sin(th)**3.), (p - e**2. * sma * cos(th)**3.))
+    N   = sma / sqrt(1. - e**2. * sin(lat)**2.)
+    alt = p / cos(lat) - N
+    
+    # return lon in range [0,2*pi]
+    lon = mod(lon, 2.*pi)
+    
+    # correct for numerical instability in altitude near exact poles:
+    # (after this correction, error is about 2 millimeters, which is about
+    # the same as the numerical precision of the overall function)
+
+    if isinstance(alt, numbers.Number):
+        if abs(x)<1 and abs(y)<1:
+            alt = z - b
+    else:
+        k = logical_and(abs(x)<1, abs(y)<1)
+        alt[k] = abs(z[k]) - b
+    
+    # NB: removed rad2deg conversion since output is expected in radians
+    return lat, lon, alt
+    
+
+def ecef2lla_iterative(ecef: Sequence[float], cst: ConstantsFile) -> Tuple[float, float, float]:
     """
     converts a cartesian (x, y, z) earth-centred
      earth-fixed coordinate to a radial (lat, lon, alt)

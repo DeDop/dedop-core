@@ -161,7 +161,7 @@ class L1ADataset(InputDataset):
 
     def __iter__(self) -> Iterator[L1AProcessingData]:
         for index in range(self._start_index, self._final_index):
-            if self._check_roi(index):
+            if self._check_roi(index) and self.is_valid(self[index]):
                 yield self[index]
             else:
                 yield None
@@ -179,6 +179,8 @@ class L1ADataset(InputDataset):
         packet = self[self._last_index]
         self._last_index += 1
 
+        if not self.is_valid(packet):
+            return None
         return packet
 
     def get_value(self, varname, index):
