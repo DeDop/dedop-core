@@ -103,7 +103,7 @@ Do npm install::
 Create a dedop-config.js and put the location of ``dedop-webapi.exe`` (more information about the can be found in ``dedop-config.template.js``::
 
     webAPIConfig: {
-      command: "C:\\Miniconda3\\envs\\pycharm-dedop\\Scripts\\dedop-webapi.exe",
+      command: "C:\\Miniconda3\\envs\\dedop\\Scripts\\dedop-webapi.exe",
       servicePort: 2999,
       processOptions: {}
     }
