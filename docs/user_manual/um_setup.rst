@@ -100,10 +100,27 @@ Do npm install::
     cd dedop-studio
     npm install
 
-Create a dedop-config.js and put the location of ``dedop-webapi.exe`` (more information about the can be found in ``dedop-config.template.js``::
+Create a dedop-config.js and put the location of ``dedop-webapi.exe`` (Windows) or ``dedop-webapi`` (MacOS and Linux) under ``webAPIConfig`` field.
+More information about the can be found in ``dedop-config.template.js``. Sample values for ``webAPIConfig`` in different OS's are
+provided here::
 
+    # Windows
     webAPIConfig: {
       command: "C:\\Miniconda3\\envs\\dedop\\Scripts\\dedop-webapi.exe",
+      servicePort: 2999,
+      processOptions: {}
+    }
+
+    # MacOS
+    webAPIConfig: {
+      command: "/Users/userName/miniconda3/envs/dedop/bin/dedop-webapi",
+      servicePort: 2999,
+      processOptions: {}
+    }
+
+    # Linux
+    webAPIConfig: {
+      command: "/home/userName/miniconda3/envs/dedop/bin/dedop-webapi",
       servicePort: 2999,
       processOptions: {}
     }
