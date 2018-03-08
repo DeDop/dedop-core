@@ -6,21 +6,12 @@
 Quick Start
 ===========
 
-
-The DeDop tool set currently comprises only the *DeDop Shell* - a command-line interface to the Delay Doppler Processor
-(DPP).
-
 This chapter is a tutorial for users new to the DeDop Shell.
 
-Before you start
-================
+Refer to :doc:`user_manual/um_setup` for installing DeDop.
 
-If you haven't installed DeDop yet, please refer to :doc:`user_manual/um_setup`.
-
-During installation, a new menu entry or desktop shortcut named **DeDop Shell** should have been created.
-If you click it, a new terminal window should open up. If you can't see a menu entry nor a desktop shortcut
-open the ``bin`` (Unix and Darwin/OS X) or ``Scripts`` (Windows) directory of your DeDop installation directory.
-The you should find a ``dedop-shell`` script. Click this instead of a missing menu entry / desktop shortcut.
+Using DeDop Shell
+=================
 
 In the new terminal window, type::
 
@@ -33,8 +24,9 @@ to list the available DeDop sub-commands. You can get help on sub-commands as we
 
 .. _processing_l1a_l1b:
 
+-----------------------
 Processing a L1A to L1B
-=======================
+-----------------------
 
 To perform L1A to L1B processing using the Delay Doppler Processor (DDP) you need to add one or more L1A
 input files to your current DeDop *workspace*::
@@ -83,8 +75,9 @@ To generate a directory of figure images, run the script with a directory name o
     $ python inspect-script.py some/path/L1B_default.nc inspect-out dir
 
 
+------------------------------------
 Changing the processor configuration
-====================================
+------------------------------------
 
 From the last steps above, the current DDP configuration should be still ``default``. Verify::
 

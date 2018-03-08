@@ -3,14 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-|DeDop3| Tool Documentation
-===========================
+|DeDop3| - a User Configurable Tool for Processing Delay Doppler Altimeter Data
+=============================================================================
 
-
-Contents:
+.. figure:: _static/figures/dedop-studio-frontpage.png
+   :scale: 50%
+   :align: center
 
 .. toctree::
-   :maxdepth: 2
+   :caption: Table of Contents
+   :maxdepth: 1
+   :numbered:
 
    introduction
    quickstart

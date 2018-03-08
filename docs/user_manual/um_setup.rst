@@ -2,28 +2,47 @@
 Setup
 ======
 
-DeDop Shell Installation
-=========================
+DeDop Core Installation
+========================
 
 From Binaries
 --------------
 
-DeDop is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop-core/releases/tag/v1.2.0>`_.
-For the windows Windows platforms there is a dedicated installer executable. For Mac OS and Unixes a ZIP file is provided.
-All platform distributions have a bundled Python interpreter, that's also the reason why they are quite large in size
-(roughly 300 megabytes). As mentioned before, this package also contains DeDop processor and DeDop webapi.
+DeDop Core is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop-core/releases/tag/v1.3.0>`_.
+For the windows Windows platforms there is a dedicated installer executable. For MacOS and Unix a shell script file is
+provided. All platform distributions have a bundled Python interpreter, which makes it rather large in size
+(roughly 300-400 MB). As mentioned before, this package also contains DeDop processor and DeDop webapi. To install DeDop
+Core in Windows, double click the ``exe`` file.
 
-After installing (on Windows) / unpacking (on Unixes) you find an executable file named `dedop-shell` in the
-installation's root directory. Running it brings up the *DeDop Shell*.
+In MacOS, run the following commands::
+
+    chmod u+x DeDop-core-1.x.x-MacOSX-x86_64.sh
+    ./DeDop-core-1.x.x-MacOSX-x86_64.sh
+
+In Unix, run the following commands::
+
+    chmod u+x DeDop-core-1.x.x-Linux-x86_64.sh
+    ./DeDop-core-1.x.x-Linux-x86_64.sh
+
+During installation, you will be requested the installation location as well as a preference to add this location to
+your PATH. When unsure, just follow the default (no).
+
+Run the following command to start DeDop Shell::
+
+    <dedop_core_installation_dir>\Scripts\dedop-shell.bat   # Windows
+    <dedop_core_installation_dir>/bin/dedop-shell.command   # MacOS
+    <dedop_core_installation_dir>/bin/dedop-shell.sh        # Unix
 
 From Source
 ------------
 
 DeDop is programmed in Python so you first need to setup a suitable Python environment.
-We recommend using a `Miniconda <http://conda.pydata.org/miniconda.html>`_ Python3 environment, so
-you don't need to install the DeDop library dependencies in your default Python.
+We recommend using a `Miniconda <http://conda.pydata.org/miniconda.html>`_ Python3 environment to create an isolated
+environment that is independent from the default Python in your machine. Refer to `this page <https://conda.io/docs/user-guide/install/index.html>`_
+for the instruction on how to install Miniconda on your machine. It is recommended to install Miniconda with Python 3.x
+since DeDop Core uses Python 3.
 
-First, checkout the DeDop source code from GitHub::
+To install DeDop Core from source, first you need to checkout the DeDop Core GitHub repository::
 
     git clone https://github.com/DeDop/dedop-core.git
 
@@ -31,24 +50,27 @@ Step into the newly created source directory::
 
     cd dedop-core
 
-After installing Miniconda, open a terminal window and create an isolated Python environment with all the required
-dependencies as listed in `environment.yml` and *activate* it. Type::
+After installing Miniconda, open a terminal window and create ``dedop`` environment with all the required
+dependencies as listed in `environment.yml` by typing::
 
-    conda env create --file environment.yml
-    source activate dedop  # Linux, MacOS
-    activate dedop         # Windows
+    <miniconda_installation_dir>/bin/conda env create --file environment.yml
+
+To activate this environment, type::
+
+    source <miniconda_installation_dir>/bin/activate dedop      # Linux, MacOS
+    <miniconda_installation_dir>\Scripts\activate dedop         # Windows
 
 Install DeDop in the Python environment `dedop`::
 
-    python setup.py develop
+    python setup.py install
 
-After installing from source, you should be able to run the DeDop Shell, try::
+After the installation is finished, start DeDop Shell by typing::
 
     dedop --help
 
 If you plan to run DeDop Studio, please run the following command::
 
-    dedop-webapi
+    dedop-webapi --version
 
 This is necessary to trigger the creation of `~/.dedop/<version_num>/dedop-location` file. In the installation from binary,
 this is not required because at the end of the installation, this file is automatically created.
@@ -57,23 +79,23 @@ this is not required because at the end of the installation, this file is automa
 DeDop Studio Installation
 ==========================
 
-As illustrated in :ref:`this diagram<dedop_diagram>`, DeDop studio is dependent on DeDop core in performing any processing duties.
-For this reason, make sure that DeDop core has been installed in your computer before performing DeDop studio installation.
-Failure to do that will result in the DeDop studio failing to startup.
+As illustrated in :ref:`this diagram<dedop_diagram>`, DeDop Studio is dependent on DeDop Core in performing any processing
+tasks. For this reason, make sure that DeDop Core has been installed in your computer before performing DeDop Studio
+installation. Failure to do that will result in the DeDop studio failing to startup.
 
 From Binaries
 --------------
 
 DeDop is distributed as pre-compiled binaries which can be retrieved from
-`DeDop Studio release page <https://github.com/DeDop/dedop-studio/releases/tag/v1.2.0>`_.
-For the windows Windows platforms there is an easy one-click installer executable. For Mac OS, the installer is available
-as dmg file and zip file, while for Unix, the installer is availble as tar.gz, zip, and AppImage files. Please make sure that
-you have already installed DeDop-core before starting the DeDop-studio installation. More information about this can be found
-:ref:`in this section <studio_intro>`.
+`DeDop Studio release page <https://github.com/DeDop/dedop-studio/releases/tag/v1.3.0>`_.
+For the windows Windows platforms there is an easy one-click installer executable. For MacOS, the installer is available
+as dmg file and zip file, while for Unix, the installer is available as tar.gz, zip, and AppImage files. All DeDop Studio
+installers (except  the Unix tar.gz and zip files) are light-weight and executed by double clicking them. They don’t
+require any extra user input.
 
-Please note that in Windows, you may need to accept the warning at the beginning in regards to installing a third-party software.
-Similarly in MacOS, you may need to enable an installation of third-party software: More information about it can be found
-`in Gatekeeper page <https://support.apple.com/en-us/HT202491>`_.
+Please note that in Windows, you may need to accept the warning at the beginning in regards to installing a third-party
+software. Similarly in MacOS, you may need to allow installation of apps downloaded from `App Store and identified developers`.
+More information about it can be found `in Gatekeeper page <https://support.apple.com/en-us/HT202491>`_.
 
 After the installation has been completed, you will find an executable file named `DeDop-Studio`, which you can search using
 start menu (Windows) or Spotlight (MacOS).
@@ -81,17 +103,23 @@ start menu (Windows) or Spotlight (MacOS).
 From Source
 ------------
 
+---------------
 Pre-requisites
 ---------------
-- nodejs v6.9.1
-- npm v3.10.8
-- git
-- dedop-core
 
+The following software needs to be installed on your machine before you can start installing DeDop Studio from source:
+
+    - nodejs v6.9.1
+    - npm v3.10.8 (comes with nodejs)
+
+Go to `here <https://nodejs.org/en/download/releases/>`_ for downloading nodejs and go to
+`this page <https://nodejs.org/en/download/package-manager/>`_ for the installation guide.
+
+---------------
 How-to-install
 ---------------
 
-First of all, clone the dedop-core repository::
+Clone dedop-studio repository::
 
     git clone https://github.com/DeDop/dedop-studio.git
 
@@ -100,7 +128,17 @@ Do npm install::
     cd dedop-studio
     npm install
 
-Create a `dedop-config.js` and put the location of ``dedop-webapi.exe`` (Windows) or ``dedop-webapi`` (MacOS and Linux) under ``webAPIConfig`` field.
+Create a `dedop-config.js` inside `dedop-studio` directory and put the location of ``dedop-webapi.exe`` (Windows) or
+``dedop-webapi`` (MacOS and Linux) under ``webAPIConfig`` field. The location of ``dedop-webapi`` will be where the
+dedop environment is, eg.::
+
+    <miniconda_installation_dir>\envs\dedop\Scripts\dedop-webapi.exe    # Windows with installation from source
+    <miniconda_installation_dir>/envs/dedop/bin/dedop-webapi            # MacOS & Unix with installation from source
+
+    <dedop-core_installation_dir>\Scripts\dedop-webapi.exe              # Windows with installation from binary
+    <dedop-core_installation_dir>/bin/dedop-webapi                      # MacOS & Unix with installation from source
+
+
 More information about the can be found in ``dedop-config.template.js``. Sample values for ``webAPIConfig`` in different OS's are
 provided here::
 
