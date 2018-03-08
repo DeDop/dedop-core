@@ -132,11 +132,11 @@ Create a `dedop-config.js` inside `dedop-studio` directory and put the location 
 ``dedop-webapi`` (MacOS and Linux) under ``webAPIConfig`` field. The location of ``dedop-webapi`` will be where the
 dedop environment is, eg.::
 
-    <miniconda_installation_dir>\envs\dedop\Scripts\dedop-webapi.exe    # Windows with installation from source
-    <miniconda_installation_dir>/envs/dedop/bin/dedop-webapi            # MacOS & Unix with installation from source
+    <miniconda_installation_dir>\envs\dedop\Scripts\dedop-webapi.exe    # Windows with DeDop Core installation from source
+    <miniconda_installation_dir>/envs/dedop/bin/dedop-webapi            # MacOS & Unix with DeDop Core installation from source
 
-    <dedop-core_installation_dir>\Scripts\dedop-webapi.exe              # Windows with installation from binary
-    <dedop-core_installation_dir>/bin/dedop-webapi                      # MacOS & Unix with installation from source
+    <dedop-core_installation_dir>\Scripts\dedop-webapi.exe              # Windows with DeDop Core installation from binary
+    <dedop-core_installation_dir>/bin/dedop-webapi                      # MacOS & Unix with DeDop Core installation from binary
 
 
 More information about the can be found in ``dedop-config.template.js``. Sample values for ``webAPIConfig`` in different OS's are
