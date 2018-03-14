@@ -5,8 +5,19 @@ DeDop Shell
 Overview
 ========
 
-The DeDop Shell comprises a single command-line executable, which is called ``dedop`` and is available after installing
-the DeDop Shell on your computer. See section :doc:`um_setup` for more information on how to initialize DeDop Shell.
+DeDop Shell comprises a single command-line executable, which is called ``dedop`` and is available after installing
+the DeDop Shell on your computer. With this tool, users can have a complete interaction with the input data, processor,
+configuration, and finally the output products. If you have not done so, see section :doc:`um_setup` to install and
+initialize DeDop Shell.
+
+In this section, you will find a complete manual on how to use DeDop Shell. This can be sub-divided into the following
+parts:
+
+- :ref:`Workspace Management <workspace_manag>`
+- :ref:`Source File Management <source_file_manag>`
+- :ref:`Processor Configuration Management <config_manag>`
+- :ref:`Running the Processor <run_proc>`
+- :ref:`Analyse the Results <analyse_results>`
 
 
 .. _workspace_manag:
@@ -114,8 +125,8 @@ To list available workspaces, run the following command::
 
 .. _source_file_manag:
 
-L1A Source File Management
-==========================
+Source File Management
+======================
 
 After creating a workspace, the next step is to manage the L1A source files.
 
@@ -127,7 +138,8 @@ To add a new L1A file(s) into this workspace, run the following command::
    $ dedop i add /path/to/file1 /path/to/file2 /path/to/file3
 
 What this command does is copying those files into the current workspace directory. When successful, those files will be
-located inside ``inputs`` directory under the current workspace directory.
+located inside ``inputs`` directory under the current workspace directory. Every workspace will have its own ``inputs``
+directory, which in the end can be used as a source file for running multiple processes with different configurations.
 
 Remove L1A source file
 -----------------------
@@ -372,10 +384,10 @@ the outputs, the flag ``--output DIR`` can be used.
 When the flag ``--skip-l1bs`` is added to the command above, the process will generate only L1B files.
 
 
-.. _analyse_l1b:
+.. _analyse_results:
 
-Analysing L1B Results
-=====================
+Analyse the Results
+====================
 
 After the processing has been finished, we can now compare the L1B outputs in an interactive Jupyter Notebook::
 
@@ -449,4 +461,4 @@ The following examples shall help you understand the basic concepts behind the v
 .. argparse::
    :module: dedop.cli.main
    :func: _make_dedop_parser
-   :prog: dedop
+   :prog: dmkae edop

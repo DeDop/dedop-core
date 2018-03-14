@@ -40,11 +40,13 @@ Configuration
 ==============
 
 **DeDop configuration** refers to a set of configurations (Configuration, Characterization, Constants), which in the file
-system are stored as CNF.json, CHD.json, and CST.json. Most of the time, users will need to modify only the **Configuration**.
+system are stored as CNF.json, CHD.json, and CST.json. Most of the time, users will need to modify only the **Configuration**
+(CNF.json).
 A configuration is represented by a directory with a name of the configuration name and is located under ``configs``
 directory inside a workspace directory. It is possible to have multiple configurations under each workspace and it is
-recommended to have a new configuration for different set of configuration values. This way, an output can be easily reproduced
-if needed in the future.
+recommended to have a new configuration for different set of configuration values because in the end the generated output
+products have a one-to-one relationship with the configuration. This enables a particular output to be easily reproduced
+in the future, if required.
 
 As in ``workspaces`` directory, there is a ``.current`` file inside ``configs`` directory. It works following exactly the same
 concept: this file has the information on what is the current configuration. In the case of no current configuration,

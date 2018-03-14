@@ -13,14 +13,12 @@ import os.path
 import subprocess
 import sys
 
-from dedop.model.processor import BaseProcessor, ProcessorException
-from dedop.proc.sar import L1BProcessor
-from dedop.ui.workspace_manager import WorkspaceError, WorkspaceManager
+from cate.util.cli import run_main, Command, SubCommandCommand, CommandError
+
+from dedop.ui.exception import WorkspaceError
 from dedop.util.config import DEFAULT_CONFIG_FILE, get_config_path, get_config_value
 from dedop.util.monitor import Monitor
 from dedop.version import __version__
-
-from cate.util.cli import run_main, Command, SubCommandCommand, CommandError
 
 _DEFAULT_SUFFIX = '_1'
 
@@ -58,26 +56,6 @@ Type "{dedop} license" for details.
 
 _WORKSPACE_MANAGER = None
 _PROCESSOR_FACTORY = None
-
-
-def new_l1b_processor(name: str,
-                      cnf_file: str = None,
-                      cst_file: str = None,
-                      chd_file: str = None,
-                      output_dir: str = '.',
-                      skip_l1bs: bool = True) -> BaseProcessor:
-    """
-    Create a new L1B processor instance.
-
-    :param name: the processor "run" name
-    :param cnf_file: configuration definition file
-    :param cst_file: constants definition file
-    :param chd_file: characterisation definition file
-    :param output_dir: the output directory for L1B, L1B-S, and log-files, etc.
-    :param skip_l1bs: whether to skip L1B-S output
-    :return: an object of type :py_class:`BaseProcessor`
-    """
-    return L1BProcessor(name, cnf_file, cst_file, chd_file, output_dir, skip_l1bs)
 
 
 def _input(prompt, default=None):
@@ -175,6 +153,8 @@ class RunProcessorCommand(Command):
                             help='Run all DDP configurations in workspace. Cannot be used with option -c')
 
     def execute(self, command_args):
+        from dedop.model.exception import ProcessorException
+
         try:
             if command_args.all_configs and command_args.config_name:
                 raise CommandError('option -a cannot be used with option -c"')
@@ -652,6 +632,7 @@ class ManageConfigsCommand(SubCommandCommand):
         """
         Create a new configuration *config_name* in workspace *workspace_name*.
 
+        :param cryosat: if true, create a new configuration based on Cryosat-2 FBR config template
         :param workspace_name: Workspace name
         :param config_name: Configuration name
         :param exist_ok: if True, *config_name* may already exist
@@ -1274,6 +1255,29 @@ def _make_dedop_parser():
 
 
 def main(args=None, workspace_manager=None, processor_factory=None) -> int:
+    from dedop.model.processor import BaseProcessor
+    from dedop.proc.sar import L1BProcessor
+    from dedop.ui.workspace_manager import WorkspaceManager
+
+    def new_l1b_processor(name: str,
+                          cnf_file: str = None,
+                          cst_file: str = None,
+                          chd_file: str = None,
+                          output_dir: str = '.',
+                          skip_l1bs: bool = True) -> BaseProcessor:
+        """
+        Create a new L1B processor instance.
+
+        :param name: the processor "run" name
+        :param cnf_file: configuration definition file
+        :param cst_file: constants definition file
+        :param chd_file: characterisation definition file
+        :param output_dir: the output directory for L1B, L1B-S, and log-files, etc.
+        :param skip_l1bs: whether to skip L1B-S output
+        :return: an object of type :py_class:`BaseProcessor`
+        """
+        return L1BProcessor(name, cnf_file, cst_file, chd_file, output_dir, skip_l1bs)
+
     if not processor_factory:
         processor_factory = get_config_value('processor_factory')
 

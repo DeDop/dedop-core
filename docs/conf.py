@@ -22,11 +22,11 @@ import shlex
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-# packages thare are difficult to import, becuase the collide with pillow==3.0.0 requirement by rtd
+# packages thare are difficult to import, because the collide with pillow==3.0.0 requirement by rtd
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 import mock
 
-MOCK_MODULES = ['numexpr']
+MOCK_MODULES = ['numexpr', 'cate', 'numpy', 'scipy', 'netCDF4', 'cate-util']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
@@ -47,6 +47,7 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
+    'sphinxarg.ext'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

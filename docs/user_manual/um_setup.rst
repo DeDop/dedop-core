@@ -112,8 +112,8 @@ The following software needs to be installed on your machine before you can star
     - nodejs v6.9.1
     - npm v3.10.8 (comes with nodejs)
 
-Go to `here <https://nodejs.org/en/download/releases/>`_ for downloading nodejs and go to
-`this page <https://nodejs.org/en/download/package-manager/>`_ for the installation guide.
+Go to `here <https://nodejs.org/en/download/releases/>` for downloading nodejs and go to
+`this page <https://nodejs.org/en/download/package-manager/>` for the installation guide.
 
 ---------------
 How-to-install

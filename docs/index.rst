@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 |DeDop3| - a User Configurable Tool for Processing Delay Doppler Altimeter Data
-=============================================================================
+================================================================================
 
 .. figure:: _static/figures/dedop-studio-frontpage.png
    :scale: 50%

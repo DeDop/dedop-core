@@ -145,6 +145,6 @@ on which actions are available, depending on how many files are selected. If onl
 button on **Analysis Configuration** panel is enabled. When two files are selected, the ``Compare`` button is enabled.
 Clicking one of these buttons will trigger a creation of a Jupyter notebook suitable for inspecting or comparing the
 file(s) that have been selected, and to start a local instance of Jupyter notebook server. This behavior is consistent
-with DeDop Shell command :ref:`dedop output compare/inspect <analyse_l1b>`. The dropdown list at the bottom of
+with DeDop Shell command :ref:`dedop output compare/inspect <analyse_results>`. The dropdown list at the bottom of
 **Analysis Configuration** is used to select a notebook file that has been previously created through ``Inspect`` and
 ``Compare`` buttons.

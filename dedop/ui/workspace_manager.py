@@ -11,6 +11,7 @@ import sys
 from typing import List
 
 from dedop.ui.workspace import Workspace
+from dedop.ui.exception import WorkspaceError
 from dedop.util.config import get_config_value
 
 _DEFAULT_CONFIG_PACKAGE_NAME = 'dedop.ui.data.config'
@@ -24,14 +25,6 @@ _CURRENT_FILE_NAME = '.current'
 
 DEFAULT_WORKSPACES_DIR = os.path.expanduser(os.path.join('~', '.dedop', _WORKSPACES_DIR_NAME))
 DEFAULT_TEMP_DIR = os.path.expanduser(os.path.join('~', '.dedop', 'temp'))
-
-
-class WorkspaceError(Exception):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
 
 
 def _readline(file_path: str) -> str or None:
