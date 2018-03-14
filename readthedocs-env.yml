@@ -4,13 +4,14 @@ channels:
     - defaults
 dependencies:
   - python=3.6*
+  - cate-util
+  - mock
   #
   # for testing
   #
   - pytest
   - pytest-cov
   - tornado
-  - mock
   - sphinx-argparse
   - pip:
     - sphinx_autodoc_annotation

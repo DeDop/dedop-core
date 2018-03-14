@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 import mock
 
-MOCK_MODULES = ['numexpr', 'cate', 'numpy', 'scipy', 'netCDF4', 'cate-util']
+MOCK_MODULES = ['numexpr', 'numpy', 'scipy', 'netCDF4', 'cate-util']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
