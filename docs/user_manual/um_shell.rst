@@ -461,4 +461,4 @@ The following examples shall help you understand the basic concepts behind the v
 .. argparse::
    :module: dedop.cli.main
    :func: _make_dedop_parser
-   :prog: dmkae edop
+   :prog: dedop
