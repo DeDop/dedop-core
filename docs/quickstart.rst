@@ -24,14 +24,17 @@ to list the available DeDop sub-commands. You can get help on sub-commands as we
 
 .. _processing_l1a_l1b:
 
------------------------
-Processing a L1A to L1B
------------------------
+----------------------
+Processing L1A to L1B
+----------------------
 
 To perform L1A to L1B processing using the Delay Doppler Processor (DDP) you need to add one or more L1A
-input files to your current DeDop *workspace*::
+input files to your current DeDop *workspace*. For example, download
+`Amazon <http://dedop.org/data/resources/Amazon/CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL.nc>`_
+or `Iceberg <http://dedop.org/data/resources/Icebergs/CS_LTA__SIR1SAR_FR_20130303T030418_20130303T030503_C001.DBL.nc>`_
+L1A data. And then, add the file(s) to your dedop workspace::
 
-    $ dedop input add some/path/to/your/L1A.nc
+    $ dedop input add some/path/to/CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL.nc
     created workspace "default"
     current workspace is "default"
     adding inputs: done
@@ -43,7 +46,7 @@ Now run the processor with default settings::
     $ dedop run
     created DDP configuration "default" in workspace "default"
     current DDP configuration is "default"
-    processing ~/.dedop/workspaces/default/inputs/L1A.nc using "default"
+    processing ~/.dedop/workspaces/default/inputs/CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL.nc using "default"
     processing: [##########------------------------------] 25%
     ...
     processing took 0:05:03.159575

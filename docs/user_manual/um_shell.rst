@@ -376,10 +376,10 @@ This command calls a processor to process L1A files to L1B (and possible L1BS). 
 works, go to :ref:`here <processor_info_not_yet_exists>`. By default, the command above will process every single L1A files
 inside the ``inputs`` directory under the current workspace, unless ``--inputs [L1A_FILE [L1A_FILE ...]]`` flag is specified.
 
-The default behaviour is that the processor will run based on the current configuration. However, when ``--all-configs``
-flag is set, it will process the same input files with all available configurations in the current workspace. The output
-products will be located inside ``outputs`` directory under each configuration directory. To specify other locations for
-the outputs, the flag ``--output DIR`` can be used.
+The default behaviour is that the current configuration is used for processing. However, when ``--all-configs``
+flag is set, it will process the input files with all available configurations in the current workspace, producing an
+output for each configuration. The output products will be located inside ``outputs`` directory under each configuration
+directory. To specify other locations for the outputs, the flag ``--output DIR`` can be used.
 
 When the flag ``--skip-l1bs`` is added to the command above, the process will generate only L1B files.
 
