@@ -52,13 +52,20 @@ Now run the processor with default settings::
     processing took 0:05:03.159575
 
 If the command succeeded, the L1B output files can be found in ``workspaces/default/configs/default/outputs``,
-which is by default located in the DeDop user data directory. On Unixes and Darwin (OS) this directory
+which is by default located in the DeDop user data directory. On Unix and MacOS this directory
 is ``~/.dedop`` while on Windows it is ``C:/Users/<username>/.dedop``. The location of your workspaces directory
 can be changed by configuration. Please refer to the :ref:`tool_config_parameters`.
 
-If the processor run was successful you can inspect the generated L1B file::
+If the processor run was successful you can observe new L1B and L1BS files::
 
-    $ dedop output inspect L1B_default.nc
+    $ dedop output ls
+    2 outputs created with config "default" in workspace "default":
+      1: L1BS_CS_LTA__SIR1SAR_FR_20130303T030418_20130303T030503_C001.DBL_default.nc
+      2: L1B_CS_LTA__SIR1SAR_FR_20130303T030418_20130303T030503_C001.DBL_default.nc
+
+To inspect and interact with the generated L1B file::
+
+    $ dedop output inspect L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc
 
 This command should open up a web browser window that displays an interactive *Jupyter Notebook*.
 Also a second terminal window should have opened up. This hosts the Jupyter Notebook server process.
