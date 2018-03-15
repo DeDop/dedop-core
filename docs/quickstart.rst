@@ -66,23 +66,33 @@ If the processor run was successful you can observe new L1B and L1BS files::
 To inspect and interact with the generated L1B file::
 
     $ dedop output inspect L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc
+    wrote notebook file "C:\Users\dedop-user\.dedop\workspaces\default\notebooks\inspect-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc.ipynb"
+    calling: start "DeDop - inspect - [...AR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc]" /Min "C:\Users\dedop-user\.dedop\temp\dedop-notebook-server.bat"
+    A terminal window titled "DeDop - inspect - [...AR_FR..." has been opened.
+    Close that window or press CTRL+C within it to terminate the Notebook session.
+
+**NOTE**: the command above was executed in Windows machine. Command output in Unix or MacOS maybe different but comparable.
 
 This command should open up a web browser window that displays an interactive *Jupyter Notebook*.
 Also a second terminal window should have opened up. This hosts the Jupyter Notebook server process.
-Just close the terminal window, if you no longer require the Notebook.
+If you are not familiar with Jupyter Notebook, read the introduction `here <https://jupyter-notebook.readthedocs.io/en/stable/ui_components.html#>`_.
+Try to run the commands in the Notebook by selecting **Cell > Run All**. Here is a `sample inspect Notebook <https://github.com/DeDop/dedop-core/blob/master/docs/notebooks/inspect-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc-1.ipynb>`_
+to show how it looks like for a successful run of ``inspect`` notebook (some graphics may not be able
+to be displayed by GitHub).
+When you are done with the Notebook, simply close the Notebook tab in the browser as well as the second terminal window.
 
 If you like to perform your analysis in batch mode rather than using the interactive Notebook,
 you can do so by writing your own analysis script in Python. An example is given in DeDop's
 source code repository: `inspect-script.py <https://github.com/DeDop/dedop/blob/master/inspect-script.py>`_.
 
-This script can by run with the Python interpreter bundled with the dedop installation. To generate a multi page PDF use an
-output filename that has the ``.pdf`` extension::
+This script can by run with the Python interpreter bundled with the DeDop Core installation. To generate a multi page PDF,
+with all the figures use an output filename that has the ``.pdf`` extension::
 
-    $ python inspect-script.py some/path/L1B_default.nc inspect-out.pdf
+    $ python inspect-script.py "C:\Users\dedop-user\.dedop\workspaces\default\configs\default\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc" inspect-out.pdf
 
 To generate a directory of figure images, run the script with a directory name or with ``dir`` as 3rd argument::
 
-    $ python inspect-script.py some/path/L1B_default.nc inspect-out dir
+    $ python inspect-script.py "C:\Users\dedop-user\.dedop\workspaces\default\configs\default\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc" inspect-out dir
 
 
 ------------------------------------
@@ -130,23 +140,33 @@ Now run the processor with the modified DDP configuration ``myconf``::
 
 We can now compare the L1B outputs in an interactive Jupyter Notebook::
 
-    $ dedop output compare -C default L1B_myconf.nc L1B_default.nc
+    $ dedop output compare -C default L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc
+    wrote notebook file "C:\Users\dedop-user\.dedop\workspaces\default\notebooks\compare-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc-1.ipynb"
+    calling: start "DeDop - compare - [...1T034235_C001.DBL_myconf.nc] [...T034235_C001.DBL_default.nc]" /Min "C:\Users\dedop-user\.dedop\temp\dedop-notebook-server.bat"
+    A terminal window titled "DeDop - compare - [...1T034..." has been opened.
+    Close that window or press CTRL+C within it to terminate the Notebook session.
 
 When you pass just file *names* to the ``dedop output compare`` command, DeDop must know to which configurations they
 refer to. The first filename corresponds to the *current* DDP configuration or the one given by the ``-c`` option.
 The second filename corresponds to a DDP configuration given by the ``-C`` (upper case!) option.
-You can also pass file *paths* to the ``dedop output compare`` command in which case the configuration names are ignored.
+Here is a `sample compare Notebook <https://github.com/DeDop/dedop-core/blob/master/docs/notebooks/compare-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc-L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc-1.ipynb>`_
+to show how it looks like for a successful run of ``compare`` notebook (some graphics may not be able
+to be displayed by GitHub).
+
+Instead of specifying the configuration name, you can also pass any two L1B *file paths* to the ``dedop output compare`` command::
+
+    $ dedop output compare "C:\Users\dedop-user\.dedop\workspaces\default\configs\default\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc" "C:\Users\dedop-user\.dedop\workspaces\default\configs\myconf\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc"
 
 Again, if you like to perform your analysis in batch mode, you can do so by writing your own comparison analysis script
 in Python. An example is given in DeDop's source code repository:
 `compare-script.py <https://github.com/DeDop/dedop/blob/master/compare-script.py>`_.
 
-This script can be run with the Python interpreter bundled with the dedop installation. To generate a multi page PDF use an
+This script can be run with the Python interpreter bundled with the DeDop Core installation. To generate a multi page PDF use an
 output filename that has the ``.pdf`` extension::
 
-    $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out.pdf
+    $ python compare-script.py "C:\Users\dedop-user\.dedop\workspaces\default\configs\default\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc" "C:\Users\dedop-user\.dedop\workspaces\default\configs\myconf\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc" compare-out.pdf
 
 To generate a directory of figure images, run the script with a directory name or with ``dir`` as 4th argument::
 
-    $ python compare-script.py some/path/L1B_myconf.nc some/other/path/L1B_default.nc compare-out dir
+    $ python compare-script.py "C:\Users\dedop-user\.dedop\workspaces\default\configs\default\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_default.nc" "C:\Users\dedop-user\.dedop\workspaces\default\configs\myconf\outputs\L1B_CS_LTA__SIR1SAR_FR_20150331T034023_20150331T034235_C001.DBL_myconf.nc" compare-out dir
 
