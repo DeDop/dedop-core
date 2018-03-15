@@ -1,4 +1,4 @@
-version: '1.4.0.dev1.{build}'
+version: '1.4.0.{build}'
 
 environment:
   global:
