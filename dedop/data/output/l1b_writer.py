@@ -74,6 +74,14 @@ class L1BVariables(Enum):
     beam_ang_l1b_echo_sar_ku = 'beam_ang_l1b_echo_sar_ku'
     beam_form_l1b_echo_sar_ku = 'beam_form_l1b_echo_sar_ku'
     i2q2_meas_ku_l1b_echo_sar_ku = 'i2q2_meas_ku_l1b_echo_sar_ku'
+    roll_sat_pointing_l1b_echo_sar_ku = 'roll_sat_pointing_l1b_echo_sar_ku'
+    pitch_sat_pointing_l1b_echo_sar_ku = 'pitch_sat_pointing_l1b_echo_sar_ku'
+    yaw_sat_pointing_l1b_echo_sar_ku = 'yaw_sat_pointing_l1b_echo_sar_ku'
+    start_look_angle_stack_l1b_echo_sar_ku = 'start_look_angle_stack_l1b_echo_sar_ku'
+    stop_look_angle_stack_l1b_echo_sar_ku = 'stop_look_angle_stack_l1b_echo_sar_ku'
+    start_beam_ang_stack_l1b_echo_sar_ku = 'start_beam_ang_stack_l1b_echo_sar_ku'
+    stop_beam_ang_stack_l1b_echo_sar_ku = 'stop_beam_ang_stack_l1b_echo_sar_ku'
+    stack_mask_vector_l1b_echo_sar_ku = 'stack_mask_vector_l1b_echo_sar_ku'
 
 
 class L1BWriter(NetCDFWriter):
@@ -702,6 +710,95 @@ class L1BWriter(NetCDFWriter):
             units="count",
             fill_value=4294967295
         )
+        # attitude vars
+        self.define_variable(
+            L1BVariables.roll_sat_pointing_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="satellite pointing angle - roll: l1b_echo_sar_ku mode",
+            scale_factor=1e-4,
+            add_offset=0,
+            units="degrees",
+            fill_value=32767,
+            comment="value for the closest in time from the burst time tag, given " \
+                    "in the nadir pointing reference frame."
+        )
+        self.define_variable(
+            L1BVariables.pitch_sat_pointing_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="satellite pointing angle - pitch: l1b_echo_sar_ku mode",
+            scale_factor=1e-4,
+            add_offset=0,
+            units="degrees",
+            fill_value=32767,
+            comment="value for the closest in time from the burst time tag, given " \
+                    "in the nadir pointing reference frame."
+        )
+        self.define_variable(
+            L1BVariables.yaw_sat_pointing_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="satellite pointing angle - yaw: l1b_echo_sar_ku mode",
+            scale_factor=1e-4,
+            add_offset=0,
+            units="degrees",
+            fill_value=32767,
+            comment="value for the closest in time from the burst time tag, given " \
+                    "in the nadir pointing reference frame."
+        )
+
+        # beam & look angles
+        self.define_variable(
+            L1BVariables.start_look_angle_stack_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="start look angle in stack: l1b_echo_sar_ku mode",
+            scale_factor=1e-6,
+            add_offset=1.57,
+            units="rad",
+            fill_value=32767
+        )
+        self.define_variable(
+            L1BVariables.stop_look_angle_stack_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="stop look angle in stack: l1b_echo_sar_ku mode",
+            scale_factor=1e-6,
+            add_offset=1.57,
+            units="rad",
+            fill_value=32767
+        )
+        self.define_variable(
+            L1BVariables.start_beam_ang_stack_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="start doppler beam angle in stack: l1b_echo_sar_ku mode",
+            units="rad",
+            fill_value=32767,
+            scale_factor=1e-6,
+            add_offset=1.57
+        )
+        self.define_variable(
+            L1BVariables.stop_beam_ang_stack_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="stop doppler beam angle in stack: l1b_echo_sar_ku mode",
+            units="rad",
+            fill_value=32767,
+            scale_factor=1e-6,
+            add_offset=1.57
+        )
+        # stack mask vector
+        self.define_variable(
+            L1BVariables.stack_mask_vector_l1b_echo_sar_ku,
+            np.int16,
+            (L1BDimensions.time_l1b_echo_sar_ku,
+             L1BDimensions.max_multi_stack_ind),
+            long_name="stack mask vector: l1b_echo_sar_ku mode",
+            units="count",
+            fill_value=32767
+        )
 
     def write_record(self, surface_location_data: SurfaceData) -> None:
         """
@@ -745,6 +842,9 @@ class L1BWriter(NetCDFWriter):
             x_vel_l1b_echo_sar_ku=surface_location_data.x_vel_sat,
             y_vel_l1b_echo_sar_ku=surface_location_data.y_vel_sat,
             z_vel_l1b_echo_sar_ku=surface_location_data.z_vel_sat,
+            roll_sat_pointing_l1b_echo_sar_ku=surface_location_data.roll_sat,
+            pitch_sat_pointing_l1b_echo_sar_ku=surface_location_data.pitch_sat,
+            yaw_sat_pointing_l1b_echo_sar_ku=surface_location_data.yaw_sat,
             nav_bul_status_l1b_echo_sar_ku=closest_burst.nav_bul_status,
             nav_bul_source_l1b_echo_sar_ku=closest_burst.nav_bul_source,
             nav_bul_coarse_time_l1b_echo_sar_ku=None,
@@ -773,12 +873,17 @@ class L1BWriter(NetCDFWriter):
             scale_factor_ku_l1b_echo_sar_ku=surface_location_data.sigma0_scaling_factor,
             agc_cor_ku_l1b_echo_sar_ku=closest_burst.agc_ku - closest_burst.agccode_ku,
             sig0_cal_ku_l1b_echo_sar_ku=closest_burst.sig0_cal_ku,
-            nb_stack_l1b_echo_sar_ku=surface_location_data.data_stack_size,
+            nb_stack_l1b_echo_sar_ku=surface_location_data.n_beams_start_stop,
             max_stack_l1b_echo_sar_ku=surface_location_data.stack_max,
             stdev_stack_l1b_echo_sar_ku=surface_location_data.stack_std,
             skew_stack_l1b_echo_sar_ku=surface_location_data.stack_skewness,
             kurt_stack_l1b_echo_sar_ku=surface_location_data.stack_kurtosis,
-            beam_ang_l1b_echo_sar_ku=surface_location_data.beam_angles_surf,
+            beam_ang_l1b_echo_sar_ku=surface_location_data.beam_angles_start_stop,
             beam_form_l1b_echo_sar_ku=None,
-            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor
+            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor,
+            start_look_angle_stack_l1b_echo_sar_ku=surface_location_data.start_look_angle,
+            stop_look_angle_stack_l1b_echo_sar_ku=surface_location_data.stop_look_angle,
+            start_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.start_beam_angle,
+            stop_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.stop_beam_angle,
+            stack_mask_vector_l1b_echo_sar_ku=surface_location_data.stack_mask_vector
         )

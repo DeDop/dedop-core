@@ -53,6 +53,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.stop_pointing_angle = 0
         self.look_angle_centre = 0
         self.pointing_angle_centre = 0
+        self.start_beam_angle = 0
+        self.stop_beam_angle = 0
+        self.start_burst_index = 0
+        self.stop_burst_index = 0
 
         self.stack_std = None
         self.stack_max = None
@@ -238,6 +242,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (self.n_looks_stack,),
             dtype=surface.stack_mask_vector.dtype
         )
+        self.beam_angles_start_stop = np.zeros(
+            (self.n_looks_stack,),
+            dtype=surface.beam_angles_surf.dtype
+        )
 
         max_stack = min(self.n_looks_stack, surface.data_stack_size)
         for beam_index in range(max_stack):
@@ -264,7 +272,18 @@ class MultilookingAlgorithm(BaseAlgorithm):
 
         if stop_beam_index is None or start_beam_index is None:
             self.n_beams_start_stop = 0
+            self.start_look_angle = 0
+            self.stop_look_angle = 0
+            self.start_doppler_angle = 0
+            self.stop_doppler_angle = 0
+            self.start_pointing_angle = 0
+            self.stop_pointing_angle = 0
+            self.start_beam_angle = 0
+            self.stop_beam_angle = 0
+            self.start_burst_index = 0
+            self.stop_burst_index = 0
             return
+
         self.n_beams_start_stop = stop_beam_index - start_beam_index + 1
 
         self.start_look_angle =\
@@ -282,5 +301,17 @@ class MultilookingAlgorithm(BaseAlgorithm):
         self.stop_pointing_angle = \
             surface.pointing_angles_surf[stop_beam_index]
 
+        self.start_beam_angle = \
+            surface.beam_angles_surf[start_beam_index]
+        self.stop_beam_angle = \
+            surface.beam_angles_surf[stop_beam_index]
+
+        self.start_burst_index = \
+            surface.stack_bursts[start_beam_index].source_seq_count
+        self.stop_burst_index = \
+            surface.stack_bursts[stop_beam_index].source_seq_count
+
         self.stack_mask_vector_start_stop[:self.n_beams_start_stop] =\
             surface.stack_mask_vector[start_beam_index:stop_beam_index+1]
+        self.beam_angles_start_stop[:self.n_beams_start_stop] = \
+            surface.beam_angles_surf[start_beam_index:stop_beam_index+1]

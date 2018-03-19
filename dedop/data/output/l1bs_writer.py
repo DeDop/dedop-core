@@ -630,7 +630,7 @@ class L1BSWriter(NetCDFWriter):
         """
 
         closest_burst = surface_location_data.closest_burst
-        stack_end = surface_location_data.data_stack_size-1
+        stack_end = surface_location_data.n_beams_start_stop-1
         time_interval = surface_location_data.time_surf - surface_location_data.prev_tai
         utc_secs = surface_location_data.prev_utc_secs + time_interval
 
@@ -689,15 +689,15 @@ class L1BSWriter(NetCDFWriter):
             stdev_stack_l1bs_echo_sar_ku=surface_location_data.stack_std,
             skew_stack_l1bs_echo_sar_ku=surface_location_data.stack_skewness,
             kurt_stack_l1bs_echo_sar_ku=surface_location_data.stack_kurtosis,
-            beam_ang_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf,
+            beam_ang_l1bs_echo_sar_ku=surface_location_data.beam_angles_start_stop,
             beam_form_l1bs_echo_sar_ku=None,
-            burst_start_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[0].source_seq_count,
-            burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[stack_end].source_seq_count,
+            burst_start_ind_l1bs_echo_sar_ku=surface_location_data.start_burst_index,
+            burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stop_burst_index,
             iq_scale_factor_l1bs_echo_sar_ku=dynamic_scale,
             i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
             q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale,
-            start_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.look_angles_surf[0],
-            stop_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.look_angles_surf[stack_end],
-            start_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf[0],
-            stop_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf[stack_end]
+            start_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.start_look_angle,
+            stop_look_angle_stack_l1bs_echo_sar_ku=surface_location_data.stop_look_angle,
+            start_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.start_beam_angle,
+            stop_beam_ang_stack_l1bs_echo_sar_ku=surface_location_data.stop_beam_angle
         )

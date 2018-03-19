@@ -933,6 +933,109 @@ class SurfaceData:
     def curr_day_length(self):
         return self["curr_day_length"]
 
+    @property
+    def n_beams_start_stop(self) -> float:
+        return self["n_beams_start_stop"]
+
+    @n_beams_start_stop.setter
+    def n_beams_start_stop(self, value: int) -> None:
+        self["n_beams_start_stop"] = value
+
+    @property
+    def start_look_angle(self) -> int:
+        return self["start_look_angle"]
+
+    @start_look_angle.setter
+    def start_look_angle(self, value: float) -> None:
+        self["start_look_angle"] = value
+
+    @property
+    def stop_look_angle(self) -> float:
+        return self["stop_look_angle"]
+
+    @stop_look_angle.setter
+    def stop_look_angle(self, value: float) -> None:
+        self["stop_look_angle"] = value
+
+    @property
+    def start_doppler_angle(self) -> float:
+        return self["start_doppler_angle"]
+
+    @start_doppler_angle.setter
+    def start_doppler_angle(self, value: float) -> None:
+        self["start_doppler_angle"] = value
+
+    @property
+    def stop_doppler_angle(self) -> float:
+        return self["stop_doppler_angle"]
+
+    @stop_doppler_angle.setter
+    def stop_doppler_angle(self, value: float) -> None:
+        self["stop_doppler_angle"] = value
+
+    @property
+    def start_pointing_angle(self) -> float:
+        return self["start_pointing_angle"]
+
+    @start_pointing_angle.setter
+    def start_pointing_angle(self, value: float) -> None:
+        self["start_pointing_angle"] = value
+
+    @property
+    def stop_pointing_angle(self) -> float:
+        return self["stop_pointing_angle"]
+
+    @stop_pointing_angle.setter
+    def stop_pointing_angle(self, value: float) -> None:
+        self["stop_pointing_angle"] = value
+
+    @property
+    def stack_mask_vector_start_stop(self) -> np.ndarray:
+        return self["stack_mask_vector_start_stop"]
+
+    @stack_mask_vector_start_stop.setter
+    def stack_mask_vector_start_stop(self, value: np.ndarray) -> None:
+        self["stack_mask_vector_start_stop"] = value
+
+    @property
+    def start_beam_angle(self) -> float:
+        return self["start_beam_angle"]
+
+    @start_beam_angle.setter
+    def start_beam_angle(self, value: float) -> None:
+        self["start_beam_angle"] = value
+
+    @property
+    def stop_beam_angle(self) -> float:
+        return self["stop_beam_angle"]
+
+    @stop_beam_angle.setter
+    def stop_beam_angle(self, value: float) -> None:
+        self["stop_beam_angle"] = value
+
+    @property
+    def start_burst_index(self) -> float:
+        return self["start_burst_index"]
+
+    @start_burst_index.setter
+    def start_burst_index(self, value: float) -> None:
+        self["start_burst_index"] = value
+
+    @property
+    def stop_burst_index(self) -> float:
+        return self["stop_burst_index"]
+
+    @stop_burst_index.setter
+    def stop_burst_index(self, value: float) -> None:
+        self["stop_burst_index"] = value
+
+    @property
+    def beam_angles_start_stop(self) -> np.ndarray:
+        return self["beam_angles_start_stop"]
+
+    @beam_angles_start_stop.setter
+    def beam_angles_start_stop(self, value: np.ndarray) -> None:
+        self["beam_angles_start_stop"] = value
 
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: int=None,
                  *dicts: dict, **values: Any):

@@ -433,6 +433,34 @@ class L1BProcessor(BaseProcessor):
         working_surface_location.stack_kurtosis = \
             self.multilooking_algorithm.stack_kurtosis
 
+        working_surface_location.n_beams_start_stop = \
+            self.multilooking_algorithm.n_beams_start_stop
+        working_surface_location.start_look_angle = \
+            self.multilooking_algorithm.start_look_angle
+        working_surface_location.stop_look_angle = \
+            self.multilooking_algorithm.stop_look_angle
+        working_surface_location.start_doppler_angle = \
+            self.multilooking_algorithm.start_doppler_angle
+        working_surface_location.stop_doppler_angle = \
+            self.multilooking_algorithm.stop_doppler_angle
+        working_surface_location.start_pointing_angle = \
+            self.multilooking_algorithm.start_pointing_angle
+        working_surface_location.stop_pointing_angle = \
+            self.multilooking_algorithm.stop_pointing_angle
+        working_surface_location.start_beam_angle = \
+            self.multilooking_algorithm.start_beam_angle
+        working_surface_location.stop_beam_angle = \
+            self.multilooking_algorithm.stop_beam_angle
+        working_surface_location.start_burst_index = \
+            self.multilooking_algorithm.start_burst_index
+        working_surface_location.stop_burst_index = \
+            self.multilooking_algorithm.stop_burst_index
+
+        working_surface_location.stack_mask_vector_start_stop = \
+            self.multilooking_algorithm.stack_mask_vector_start_stop
+        working_surface_location.beam_angles_start_stop = \
+            self.multilooking_algorithm.beam_angles_start_stop
+
         working_surface_location.waveform_multilooked = \
             self.multilooking_algorithm.waveform_multilooked
 
