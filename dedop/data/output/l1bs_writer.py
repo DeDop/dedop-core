@@ -578,7 +578,7 @@ class L1BSWriter(NetCDFWriter):
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
             long_name="start look angle in stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
-            add_offset=1.57,
+            add_offset=0,
             units="rad",
             fill_value=32767
         )
@@ -588,7 +588,7 @@ class L1BSWriter(NetCDFWriter):
             (L1BSDimensions.time_l1bs_echo_sar_ku,),
             long_name="stop look angle in stack: l1bs_echo_sar_ku mode",
             scale_factor=1e-6,
-            add_offset=1.57,
+            add_offset=0,
             units="rad",
             fill_value=32767
         )

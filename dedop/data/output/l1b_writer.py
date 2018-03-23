@@ -107,7 +107,7 @@ class L1BWriter(NetCDFWriter):
             L1BDimensions.echo_sample_ind, chd.n_samples_sar * cnf.zp_fact_range
         )
         self.define_dimension(
-            L1BDimensions.max_multi_stack_ind, None
+            L1BDimensions.max_multi_stack_ind, cnf.n_looks_stack
         )
         # create variable definitions
         self.define_variable(
@@ -755,7 +755,7 @@ class L1BWriter(NetCDFWriter):
             (L1BDimensions.time_l1b_echo_sar_ku,),
             long_name="start look angle in stack: l1b_echo_sar_ku mode",
             scale_factor=1e-6,
-            add_offset=1.57,
+            add_offset=0,
             units="rad",
             fill_value=32767
         )
@@ -765,7 +765,7 @@ class L1BWriter(NetCDFWriter):
             (L1BDimensions.time_l1b_echo_sar_ku,),
             long_name="stop look angle in stack: l1b_echo_sar_ku mode",
             scale_factor=1e-6,
-            add_offset=1.57,
+            add_offset=0,
             units="rad",
             fill_value=32767
         )
@@ -885,5 +885,5 @@ class L1BWriter(NetCDFWriter):
             stop_look_angle_stack_l1b_echo_sar_ku=surface_location_data.stop_look_angle,
             start_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.start_beam_angle,
             stop_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.stop_beam_angle,
-            stack_mask_vector_l1b_echo_sar_ku=surface_location_data.stack_mask_vector
+            stack_mask_vector_l1b_echo_sar_ku=surface_location_data.stack_mask_vector_start_stop
         )
