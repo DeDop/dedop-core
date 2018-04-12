@@ -82,6 +82,7 @@ class L1BVariables(Enum):
     start_beam_ang_stack_l1b_echo_sar_ku = 'start_beam_ang_stack_l1b_echo_sar_ku'
     stop_beam_ang_stack_l1b_echo_sar_ku = 'stop_beam_ang_stack_l1b_echo_sar_ku'
     stack_mask_vector_l1b_echo_sar_ku = 'stack_mask_vector_l1b_echo_sar_ku'
+    i2q2_scale_factor_l1b_echo_sar_ku = 'i2q2_scale_factor_l1b_echo_sar_ku'
 
 
 class L1BWriter(NetCDFWriter):
@@ -703,12 +704,21 @@ class L1BWriter(NetCDFWriter):
             (L1BDimensions.time_l1b_echo_sar_ku,
              L1BDimensions.echo_sample_ind),
             long_name="I2+Q2 measurement for ku band: l1b_echo_sar_ku mode",
-            comment="the echo is corrected for Doppler range effect, phase/power burst calibration"
-                    "and GPRW effect. The echo is scaled using the correlated AGC (agc_ku_l1b_echo_sar_ku)",
-            scale_factor=1.0e-03,
-            add_offset=0.00,
+            comment="the echo is corrected for Doppler range effect, phase/power burst calibration "
+                    "and GPRW effect. The echo is scaled using the i2q2_scale_factor_l1b_echo_sar_ku value",
             units="count",
+            scale_factor=1./4294967294.,
+            add_offset=0,
             fill_value=4294967295
+        )
+        self.define_variable(
+            L1BVariables.i2q2_scale_factor_l1b_echo_sar_ku,
+            np.float64,
+            (L1BDimensions.time_l1b_echo_sar_ku,),
+            long_name="I2+Q2 dynamic scale factor: l1b_echo_sar_ku mode",
+            comment="Scale factor for the i2q2_meas_ku_l1b_echo_sar_ku waveform. The waveform should "
+                    "be multiplied by this value after reading.",
+            units="count"
         )
         # attitude vars
         self.define_variable(
@@ -816,7 +826,12 @@ class L1BWriter(NetCDFWriter):
         else:
             utc_days = surface_location_data.prev_utc_days
 
-        scale_factor = pow(10, -closest_burst.agc_ku / 10)
+        # scale_factor = pow(10, -closest_burst.agc_ku / 10)
+        scale_factor = surface_location_data.waveform_multilooked.max()
+
+        # import matplotlib.pyplot as plt
+        # plt.plot(surface_location_data.waveform_multilooked)
+        # plt.show()
 
         super().write_record(
             time_l1b_echo_sar_ku=surface_location_data.time_surf,
@@ -880,7 +895,8 @@ class L1BWriter(NetCDFWriter):
             kurt_stack_l1b_echo_sar_ku=surface_location_data.stack_kurtosis,
             beam_ang_l1b_echo_sar_ku=surface_location_data.beam_angles_start_stop,
             beam_form_l1b_echo_sar_ku=None,
-            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor,
+            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked/scale_factor,
+            i2q2_scale_factor_l1b_echo_sar_ku=scale_factor,
             start_look_angle_stack_l1b_echo_sar_ku=surface_location_data.start_look_angle,
             stop_look_angle_stack_l1b_echo_sar_ku=surface_location_data.stop_look_angle,
             start_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.start_beam_angle,
