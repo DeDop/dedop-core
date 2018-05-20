@@ -23,3 +23,11 @@ class AzimuthWeighting(Enum):
 
     enabled = 1
     disabled = 0
+
+class OutputFormat(Enum):
+    """
+    Enum for output format option
+    """
+
+    s3 = 'sentinel-3'
+    extended = 'extended'

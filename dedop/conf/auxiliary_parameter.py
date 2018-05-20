@@ -51,7 +51,7 @@ class AuxiliaryParameter:
 
         value = self._retreive_value(instance)
 
-        if self.cast is not None:
+        if self.cast is not None and value is not None:
             value = self.cast(value)
 
         if self.type is not None and not isinstance(value, self.type):

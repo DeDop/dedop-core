@@ -1037,6 +1037,14 @@ class SurfaceData:
     def beam_angles_start_stop(self, value: np.ndarray) -> None:
         self["beam_angles_start_stop"] = value
 
+    @property
+    def look_angles_start_stop(self) -> np.ndarray:
+        return self["look_angles_start_stop"]
+
+    @look_angles_start_stop.setter
+    def look_angles_start_stop(self, value: np.ndarray) -> None:
+        self["look_angles_start_stop"] = value
+
     def __init__(self, cst: ConstantsFile, chd: CharacterisationFile, surf_num: int=None,
                  *dicts: dict, **values: Any):
         """

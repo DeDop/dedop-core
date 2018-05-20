@@ -68,7 +68,8 @@ class StackGatheringAlgorithm(BaseAlgorithm):
                 np.abs(look_angles_all)
             )
             stack_begin_offset = np.min(
-                look_angles_all_indices[stack_elements_to_remove:]
+                #look_angles_all_indices[stack_elements_to_remove:]
+                look_angles_all_indices[:self.n_looks_stack]
             )
 
         self.stack_bursts = np.zeros(

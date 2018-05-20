@@ -1,4 +1,4 @@
-from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod
+from dedop.conf.enums import AzimuthWindowingMethod, AzimuthProcessingMethod, OutputFormat
 from math import radians
 
 from .auxiliary_file_reader import *
@@ -93,3 +93,9 @@ class ConfigurationFile(AuxiliaryFileReader):
         AuxiliaryParameter("min_lon_cnf", optional=True)
     max_lon = \
         AuxiliaryParameter("max_lon_cnf", optional=True)
+
+    # output format
+    output_format = \
+        AuxiliaryParameter("output_format_flag_cnf",
+                           param_type=OutputFormat,
+                           default_value=OutputFormat.extended)

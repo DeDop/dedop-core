@@ -4,8 +4,9 @@ import time
 from typing import Optional, Sequence, Dict, Any, List
 
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
+from dedop.conf.enums import OutputFormat
 from dedop.data.input.l1a import L1ADataset
-from dedop.data.output import L1BSWriter, L1BWriter
+from dedop.data.output import L1BSWriter, L1BWriter, L1BWriterExtended
 from dedop.model import SurfaceData, L1AProcessingData
 from dedop.model.processor import BaseProcessor
 from dedop.util.monitor import Monitor
@@ -152,7 +153,8 @@ class L1BProcessor(BaseProcessor):
         l1b_path = os.path.join(self.out_path, l1b_name)
 
         # create output file objects
-        self.l1b_file = L1BWriter(filename=l1b_path, chd=self.chd, cnf=self.cnf, cst=self.cst)
+        writerCls = L1BWriter if self.cnf.output_format == OutputFormat.s3 else L1BWriterExtended
+        self.l1b_file = writerCls(filename=l1b_path, chd=self.chd, cnf=self.cnf, cst=self.cst)
         if not self.skip_l1bs:
             self.l1bs_file = L1BSWriter(filename=l1bs_path, chd=self.chd, cnf=self.cnf, cst=self.cst)
         else:
@@ -460,6 +462,8 @@ class L1BProcessor(BaseProcessor):
             self.multilooking_algorithm.stack_mask_vector_start_stop
         working_surface_location.beam_angles_start_stop = \
             self.multilooking_algorithm.beam_angles_start_stop
+        working_surface_location.look_angles_start_stop = \
+            self.multilooking_algorithm.look_angles_start_stop
 
         working_surface_location.waveform_multilooked = \
             self.multilooking_algorithm.waveform_multilooked

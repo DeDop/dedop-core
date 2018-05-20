@@ -2,6 +2,7 @@ from .auxiliary_file_reader import *
 from .constants import ConstantsFile
 
 from typing import Any
+from math import radians
 
 
 class CharacterisationFile(AuxiliaryFileReader):
@@ -78,6 +79,18 @@ class CharacterisationFile(AuxiliaryFileReader):
         "antenna_angles_spacing_chd",
         """spacing between antenna angles""",
         param_type=float)
+
+    # look angle mask params
+    look_angle_mask_min = AuxiliaryParameter(
+        "look_angle_mask_min_chd",
+        cast_type=radians,
+        optional=True
+    )
+    look_angle_mask_max = AuxiliaryParameter(
+        "look_angle_mask_max_chd",
+        cast_type=radians,
+        optional=True
+    )
 
     @property
     def pri_sar(self):

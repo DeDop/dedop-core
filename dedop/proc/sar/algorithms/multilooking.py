@@ -246,6 +246,10 @@ class MultilookingAlgorithm(BaseAlgorithm):
             (self.n_looks_stack,),
             dtype=surface.beam_angles_surf.dtype
         )
+        self.look_angles_start_stop = np.zeros(
+            (self.n_looks_stack,),
+            dtype=surface.look_angles_surf.dtype
+        )
 
         max_stack = min(self.n_looks_stack, surface.data_stack_size)
         for beam_index in range(max_stack):
@@ -307,11 +311,13 @@ class MultilookingAlgorithm(BaseAlgorithm):
             surface.beam_angles_surf[stop_beam_index]
 
         self.start_burst_index = \
-            surface.stack_bursts[start_beam_index].source_seq_count
+            surface.stack_bursts[0].source_seq_count
         self.stop_burst_index = \
-            surface.stack_bursts[stop_beam_index].source_seq_count
+            surface.stack_bursts[max_stack-1].source_seq_count
 
         self.stack_mask_vector_start_stop[:self.n_beams_start_stop] =\
             surface.stack_mask_vector[start_beam_index:stop_beam_index+1]
         self.beam_angles_start_stop[:self.n_beams_start_stop] = \
             surface.beam_angles_surf[start_beam_index:stop_beam_index+1]
+        self.look_angles_start_stop[:self.n_beams_start_stop] = \
+            surface.look_angles_surf[start_beam_index:stop_beam_index+1]
