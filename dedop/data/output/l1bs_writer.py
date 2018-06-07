@@ -691,8 +691,8 @@ class L1BSWriter(NetCDFWriter):
             kurt_stack_l1bs_echo_sar_ku=surface_location_data.stack_kurtosis,
             beam_ang_l1bs_echo_sar_ku=surface_location_data.beam_angles_surf,
             beam_form_l1bs_echo_sar_ku=None,
-            burst_start_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[0].source_seq_count,
-            burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[stack_end].source_seq_count,
+            burst_start_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[0].counter, # burst_sar_ku, source_seq_count
+            burst_stop_ind_l1bs_echo_sar_ku=surface_location_data.stack_bursts[stack_end].counter,
             iq_scale_factor_l1bs_echo_sar_ku=dynamic_scale,
             i_echoes_ku_l1bs_echo_sar_ku=stack_i/dynamic_scale,
             q_echoes_ku_l1bs_echo_sar_ku=stack_q/dynamic_scale,
