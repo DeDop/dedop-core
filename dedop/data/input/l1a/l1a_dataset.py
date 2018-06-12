@@ -91,6 +91,10 @@ class L1ADataset(InputDataset):
         # construct waveform
         waveform = (self.get_value(L1AVariables.i_meas_ku_l1a_echo_sar_ku, index) +
                     1j * self.get_value(L1AVariables.q_meas_ku_l1a_echo_sar_ku, index)) / scale_factor
+        zcog = np.cos(self.get_value(L1AVariables.pitch_sat_pointing_l1a_echo_sar_ku, index)) *\
+               self.get_value(L1AVariables.cog_cor_l1a_echo_sar_ku, index)
+        range = self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index) + zcog
+
         packet = L1AProcessingData(
             self.cst, self.chd, index,
             isp_pid=PacketPid.echo_sar,
@@ -122,7 +126,7 @@ class L1ADataset(InputDataset):
             t0_sar=self.chd.t0_nom,  # * (1. + 2. * self.uso_cor_l1a_echo_sar_ku[index] / self.cst.c),
             uso_cor=self.get_value(L1AVariables.uso_cor_l1a_echo_sar_ku, index),
             cor2_sar=self.get_value(L1AVariables.cor2_applied_l1a_echo_sar_ku, index),
-            win_delay_sar_ku=self.get_value(L1AVariables.range_ku_l1a_echo_sar_ku, index) * 2 / self.cst.c,
+            win_delay_sar_ku=range * 2 / self.cst.c,
             x_sar_sat=self.get_value(L1AVariables.x_pos_l1a_echo_sar_ku, index),
             y_sar_sat=self.get_value(L1AVariables.y_pos_l1a_echo_sar_ku, index),
             z_sar_sat=self.get_value(L1AVariables.z_pos_l1a_echo_sar_ku, index),
