@@ -15,45 +15,46 @@ class Sigma0ScalingFactorAlgorithm(BaseAlgorithm):
         :param wavelength_ku: ku band wavelength
         :param chirp_slope_ku: chirp slope
         """
-        sigma0_scaling_factor_beam = np.zeros(
+        self.sigma0_scaling_factor_beam = np.zeros(
             (working_surface_location.data_stack_size,),
             dtype=np.float64
         )
-        # TODO: come back to this and replace it with something less messy
-        if self.n_looks_stack is not None:
-            max_stack = min(working_surface_location.data_stack_size, self.n_looks_stack)
-        else:
-            max_stack = working_surface_location.data_stack_size  # TODO
+        max_stack = min(working_surface_location.data_stack_size, self.cnf.n_looks_stack)
 
-        sigma0_offset = 10 * log10(64) - \
-            10 * log10(self.chd.power_tx_ant_ku) - 2 * self.chd.antenna_gain_ku +\
-            10 * log10(self.chd.n_samples_sar * self.zp_fact_range) -\
-            10 * log10(self.chd.pulse_length * self.chd.pulse_length * chirp_slope_ku)
+        sigma0_offset =\
+            10 * log10(64) +\
+            30 * log10(self.cst.pi) -\
+            10 * log10(self.chd.power_tx_ant_ku) -\
+            2 * self.chd.antenna_gain_ku -\
+            20 * log10(wavelength_ku) +\
+            self.chd.ratio_trc_ku +\
+            10 * log10(self.chd.n_ku_pulses_burst) # Np_PTR_SAR_Ku
+
             
         for beam_index in range(max_stack):
             range_sat_surf = working_surface_location.range_sat_surf[beam_index]
+            burst = working_surface_location.stack_bursts[beam_index]
 
             vel_sat_sar_norm =\
-                working_surface_location.stack_bursts[beam_index].vel_sat_sar_norm
+                burst.vel_sat_sar_norm
 
             pri_sar_pre_dat =\
-                working_surface_location.stack_bursts[beam_index].pri_sar_pre_dat
+                burst.pri_sar_pre_dat
 
             with np.errstate(divide='ignore'):
                 azimuth_distance =\
-                    (1 + range_sat_surf) / self.cst.earth_radius *\
+                    (1 + range_sat_surf / self.cst.earth_radius) *\
                     wavelength_ku * range_sat_surf / pri_sar_pre_dat /\
                     (2 * vel_sat_sar_norm * self.chd.n_ku_pulses_burst)
             range_distance = 2 * sqrt(
-                self.cst.c * range_sat_surf /
-                (self.chd.pulse_length * chirp_slope_ku) *
+                self.cst.c * range_sat_surf * self.chd.ptr_width *
                 self.cst.earth_radius / (self.cst.earth_radius + range_sat_surf)
             )
-            surface_area = azimuth_distance * range_distance
+            surface_area = azimuth_distance * range_distance * 0.886
 
-            sigma0_scaling_factor_beam[beam_index] = sigma0_offset +\
-                30 * log10(self.cst.pi) + 40 * log10(range_sat_surf) -\
-                20 * log10(wavelength_ku) - 10 * log10(surface_area)
+            self.sigma0_scaling_factor_beam[beam_index] = -1. * (sigma0_offset +
+                40 * log10(range_sat_surf) - 10 * log10(surface_area) - #burst.agc_ku)
+                working_surface_location.closest_burst.agc_ku)
 
-        self.sigma0_scaling_factor = np.mean(sigma0_scaling_factor_beam)
+        self.sigma0_scaling_factor = np.mean(self.sigma0_scaling_factor_beam)
         return self.sigma0_scaling_factor

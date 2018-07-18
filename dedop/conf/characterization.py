@@ -92,6 +92,19 @@ class CharacterisationFile(AuxiliaryFileReader):
         optional=True
     )
 
+    ptr_width = AuxiliaryParameter(
+        "ptr_width_chd",
+        param_type=float
+    )
+    fft_step_freq_ku = AuxiliaryParameter(
+        "fft_step_freq_ku_chd",
+        param_type=float
+    )
+    ratio_trc_ku = AuxiliaryParameter(
+        "ratio_trc_ku_chd",
+        param_type=float
+    )
+
     @property
     def pri_sar(self):
         return 1. / self.prf_sar

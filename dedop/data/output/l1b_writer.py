@@ -1620,7 +1620,7 @@ class L1BWriter(NetCDFWriter):
             stdev_stack_l1b_echo_sar_ku=surface_location_data.stack_std,
             skew_stack_l1b_echo_sar_ku=surface_location_data.stack_skewness,
             kurt_stack_l1b_echo_sar_ku=surface_location_data.stack_kurtosis,
-            beam_ang_l1b_echo_sar_ku=surface_location_data.look_angles_surf,
+            beam_ang_l1b_echo_sar_ku=-surface_location_data.look_angles_surf,
             beam_form_l1b_echo_sar_ku=None,
-            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked*scale_factor
+            i2q2_meas_ku_l1b_echo_sar_ku=surface_location_data.waveform_multilooked #*scale_factor
         )
