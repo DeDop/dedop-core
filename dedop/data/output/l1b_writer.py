@@ -1517,7 +1517,7 @@ class L1BWriter(NetCDFWriter):
             comment="the useful values of the table are the first n_useful values where n_useful is"
                     "the number of waveforms summed in the stack",
             scale_factor=1.0e-06,
-            add_offset=1.57,
+            add_offset=0.00,
             units="rad",
             fill_value=32767
         )
