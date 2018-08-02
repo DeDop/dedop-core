@@ -2,6 +2,7 @@ import datetime
 import os
 import time
 from typing import Optional, Sequence, Dict, Any, List
+from netCDF4 import getlibversion
 
 from dedop.conf import CharacterisationFile, ConstantsFile, ConfigurationFile
 from dedop.conf.enums import OutputFormat
@@ -10,6 +11,8 @@ from dedop.data.output import L1BSWriter, L1BWriter, L1BWriterExtended
 from dedop.model import SurfaceData, L1AProcessingData
 from dedop.model.processor import BaseProcessor
 from dedop.util.monitor import Monitor
+from dedop.util.time import iso_format
+from dedop.version import __version__
 
 from .algorithms import *
 from .cal import *
@@ -272,7 +275,42 @@ class L1BProcessor(BaseProcessor):
                     running = False
                     status = None
 
+        l1a_globals = self.l1a_file.read_globals()
+
+        ctime = iso_format()
+        ftime = iso_format(self.l1a_file.first_time())
+        ltime = iso_format(self.l1a_file.last_time())
         # close output files
+        self.l1b_file.write_globals(
+            title='DeDop SRAL Level 1 Measurement',
+            mission_name=l1a_globals.mission_name,
+            altimeter_sensor_name=l1a_globals.altimeter_sensor_name,
+            gnss_sensor_name=l1a_globals.gnss_sensor_name,
+            doris_sensor_name=l1a_globals.doris_sensor_name,
+            references=l1a_globals.references,
+            acq_station_name=l1a_globals.acq_station_name,
+            xref_altimeter_level0=l1a_globals.xref_altimeter_level0,
+            xref_navatt_level0=l1a_globals.xref_navatt_level0,
+            xref_altimeter_orbit=l1a_globals.xref_altimeter_orbit,
+            xref_doris_uso=l1a_globals.xref_doris_uso,
+            xref_altimeter_ltm_lrm_cal1=l1a_globals.xref_altimeter_ltm_lrm_cal1,
+            xref_altimeter_ltm_sar_cal1=l1a_globals.xref_altimeter_ltm_sar_cal1,
+            xref_altimeter_ltm_ku_cal2=l1a_globals.xref_altimeter_ltm_ku_cal2,
+            xref_altimeter_ltm_c_cal2=l1a_globals.xref_altimeter_ltm_c_cal2,
+            xref_altimeter_characterisation=l1a_globals.xref_altimeter_characterisation,
+            xref_time_correlation=l1a_globals.xref_time_correlation,
+            semi_major_ellipsoid_axis=self.cst.semi_major_axis,
+            ellipsoid_flattening=self.cst.flat_coeff,
+            netcdf_version=getlibversion(),
+            product_name=l1a_globals.get_l1b_product_name(),
+            institution='isardSAT',
+            source='DeDop {}'.format(__version__),
+            history=l1a_globals.history,
+            contact='http://www.dedop.org/',
+            creation_time=ctime,
+            first_meas_time=ftime,
+            last_meas_time=ltime
+        )
         self.l1b_file.close()
         if self.l1bs_file is not None:
             self.l1bs_file.close()

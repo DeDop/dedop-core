@@ -374,6 +374,18 @@ class NetCDFWriter(metaclass=ABCMeta):
 
         self.output_index += 1
 
+    def write_globals(self, **global_attrs) -> None:
+        """
+        write values of global attributes to the netCDF file
+        """
+        for global_name, value in global_attrs.items():
+            self.write_global(global_name, value)
+
+    def write_global(self, global_name: str, value: str=None) -> None:
+        if value is None:
+            value = 'Not available'
+        self._root.setncattr(global_name, value)
+
 
 class WriteError(Exception):
     def __init__(self, desc: str, child: Exception):
