@@ -7,6 +7,10 @@ from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms import MultilookingAlgorithm
 from tests.testing import TestDataLoader
 
+class FakeBurst:
+    def __init__(self, index: int):
+        self.source_seq_count = index
+
 
 class MultilookingAlgorithmTests(unittest.TestCase):
     inputs_01 = "test_data/proc/multilooking_algorithm/" \
@@ -87,6 +91,8 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             (data_stack_size, n_samples_max)
         )
 
+        stack_bursts = [FakeBurst(i) for i in range(data_stack_size)]
+
         working_location = SurfaceData(
             self.cst, self.chd,
             data_stack_size=data_stack_size,
@@ -96,7 +102,8 @@ class MultilookingAlgorithmTests(unittest.TestCase):
             doppler_angles_surf=input_data['doppler_angles_surf'],
             stack_mask_vector=input_stack_mask_vector,
             stack_mask=stack_mask,
-            beams_masked=beams_masked
+            beams_masked=beams_masked,
+            stack_bursts=stack_bursts
         )
         self.multilooking_algorithm.zp_fact_range =\
             input_data['zp_fact_range_cnf']

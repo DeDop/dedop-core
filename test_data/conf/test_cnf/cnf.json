@@ -1,7 +1,7 @@
 {
   "__metainf__": {
     "description": "DeDop Configuration File",
-    "version": 2,
+    "version": 3,
     "changelog": [
       {
         "version": 0,
@@ -20,6 +20,13 @@
         "parameters": [
           ["flag_cal2_table_index_cnf", "+", "added CAL2 table index"]
         ]
+      },
+      {
+        "version": 3,
+        "parameters": [
+          ["output_format_flag_cnf", "+", "new optional parameter"]
+        ],
+        "comment": "added option for selecting output format"
       }
     ]
   },
