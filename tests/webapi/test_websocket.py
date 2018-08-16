@@ -59,9 +59,9 @@ class WebSocketServiceTest(unittest.TestCase):
 
         versions = self.service.get_default_config_versions()
         self.assertIn('cnf_version', versions)
-        self.assertEqual(versions['cnf_version'], 2)
+        self.assertEqual(versions['cnf_version'], 3)
         self.assertIn('chd_version', versions)
-        self.assertEqual(versions['chd_version'], 0)
+        self.assertEqual(versions['chd_version'], 1)
         self.assertIn('cst_version', versions)
         self.assertEqual(versions['cst_version'], 0)
 
@@ -82,7 +82,7 @@ class WebSocketServiceTest(unittest.TestCase):
         self.assertEqual(sentinel_configs['name'], 'test_config_sentinel')
         self.assertIn('chd', sentinel_configs)
         self.assertIsInstance(sentinel_configs['chd'], dict)
-        self.assertEqual(len(sentinel_configs['chd']), 13)
+        self.assertEqual(len(sentinel_configs['chd']), 16)
         self.assertEqual(sentinel_configs['chd']['mean_sat_alt_chd']['value'], 814500.0)
         self.assertEqual(sentinel_configs['chd']['brf_sar_chd']['value'], 78.53069)
         self.assertIn('cnf', sentinel_configs)

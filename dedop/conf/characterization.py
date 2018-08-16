@@ -2,6 +2,7 @@ from .auxiliary_file_reader import *
 from .constants import ConstantsFile
 
 from typing import Any
+from math import radians
 
 
 class CharacterisationFile(AuxiliaryFileReader):
@@ -9,7 +10,7 @@ class CharacterisationFile(AuxiliaryFileReader):
     class for loading the Characterisation File
     """
     _id = "CHD"
-    _fileversion = 0
+    _fileversion = 1
 
     mean_sat_alt = AuxiliaryParameter(
         "mean_sat_alt_chd",
@@ -78,6 +79,31 @@ class CharacterisationFile(AuxiliaryFileReader):
         "antenna_angles_spacing_chd",
         """spacing between antenna angles""",
         param_type=float)
+
+    # look angle mask params
+    look_angle_mask_min = AuxiliaryParameter(
+        "look_angle_mask_min_chd",
+        cast_type=radians,
+        optional=True
+    )
+    look_angle_mask_max = AuxiliaryParameter(
+        "look_angle_mask_max_chd",
+        cast_type=radians,
+        optional=True
+    )
+
+    ptr_width = AuxiliaryParameter(
+        "ptr_width_chd",
+        param_type=float
+    )
+    fft_step_freq_ku = AuxiliaryParameter(
+        "fft_step_freq_ku_chd",
+        param_type=float
+    )
+    ratio_trc_ku = AuxiliaryParameter(
+        "ratio_trc_ku_chd",
+        param_type=float
+    )
 
     @property
     def pri_sar(self):

@@ -8,6 +8,7 @@ from dedop.data.output import L1BWriter
 from dedop.model.surface_data import SurfaceData, SurfaceType
 from dedop.model.l1a_processing_data import L1AProcessingData
 from dedop.conf import *
+from dedop.conf.enums import OutputFormat
 
 
 class L1BTests(unittest.TestCase):
@@ -21,7 +22,9 @@ class L1BTests(unittest.TestCase):
 
     def setUp(self):
         self.cst = ConstantsFile(self._cst_file)
-        self.cnf = ConfigurationFile(self._cnf_file)
+        self.cnf = ConfigurationFile(
+            self._cnf_file, flag_output_format_cnf=OutputFormat.s3
+        )
         self.chd = CharacterisationFile(
             self.cst, self._chd_file
         )
@@ -96,7 +99,7 @@ class L1BTests(unittest.TestCase):
                 stack_std=data["stack_std"][i],
                 stack_skewness=data["stack_skewness"][i],
                 stack_kurtosis=data["stack_kurtosis"][i],
-                beam_angles_surf=data["beam_angles_surf"],
+                look_angles_surf=data["beam_angles_surf"],
                 waveform_multilooked=data["waveform_multilooked"][i] * np.ones((256)),
                 stack_max=data["stack_max"][i],
                 closest_burst_index=0,

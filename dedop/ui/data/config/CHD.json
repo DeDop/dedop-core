@@ -1,12 +1,21 @@
 {
   "__metainf__": {
     "description": "DeDop Characterisation File",
-    "version": 0,
+    "version": 1,
     "changelog": [
       {
         "version": 0,
         "parameters": [],
         "comment": "initial version"
+      },
+      {
+        "version": 1,
+        "parameters": [
+          ["ratio_trc_ku_chd", "+", "required for sigma-0 scaling factor"],
+          ["fft_step_freq_ku_chd", "+", "required for sigma-0 scaling factor"],
+          ["ptr_width_chd", "+", "required for sigma-0 scaling factor"]
+        ],
+        "comment": "added new parameters for update to sigma-0 algorithm"
       }
     ]
   },
@@ -73,5 +82,16 @@
     "value": 78.53069,
     "description": "burst repetition frequency",
     "units": "Hz"
+  },
+  "ptr_width_chd": {
+    "value": 19821
+  },
+  "fft_step_freq_ku_chd": {
+    "value": 22321.43
+  },
+  "ratio_trc_ku_chd": {
+    "value": -98.66,
+    "description": "Ratio of the losses between the transmission/Reception and the Calibration paths - Ku band",
+    "units": "dB"
   }
 }

@@ -7,6 +7,7 @@ from dedop.model import SurfaceData
 from dedop.proc.sar.algorithms import RangeCompressionAlgorithm
 from tests.testing import TestDataLoader
 
+
 @unittest.skip("need to update expected values for Range Compression tests")
 class RangeCompressionAlgorithmTests(unittest.TestCase):
     """

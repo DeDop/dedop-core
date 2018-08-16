@@ -12,6 +12,36 @@ from .enums import L1AVariables, L1ADimensions
 
 from ..netcdf_reader import NetCDFReader
 
+class L1AGlobals:
+    __slots__ = [
+        "mission_name",
+        "altimeter_sensor_name",
+        "gnss_sensor_name",
+        "doris_sensor_name",
+        "references",
+        "acq_station_name",
+        "xref_altimeter_level0",
+        "xref_navatt_level0",
+        "xref_altimeter_orbit",
+        "xref_doris_uso",
+        "xref_altimeter_ltm_lrm_cal1",
+        "xref_altimeter_ltm_sar_cal1",
+        "xref_altimeter_ltm_ku_cal2",
+        "xref_altimeter_ltm_c_cal2",
+        "xref_altimeter_characterisation",
+        "xref_time_correlation",
+        "history",
+        "product_name"
+    ]
+
+    def __init__(self, **attrs):
+        for name in self.__slots__:
+            value = attrs.get(name)
+            setattr(self, name, value)
+
+    def get_l1b_product_name(self):
+        return self.product_name.replace('_A__', '____')
+
 
 class L1ADataset(InputDataset):
     def __init__(self, filename: str, cst: ConstantsFile, chd: CharacterisationFile, cnf: ConfigurationFile):
@@ -80,6 +110,12 @@ class L1ADataset(InputDataset):
     def max_index(self) -> int:
         """get size of primary dimension"""
         return self._final_index - self._start_index
+
+    def first_time(self) -> float:
+        return self.get_value(L1AVariables.time_l1a_echo_sar_ku, self._start_index)
+
+    def last_time(self) -> float:
+        return self.get_value(L1AVariables.time_l1a_echo_sar_ku, self._final_index-1)
 
     def __len__(self):
         return self._final_index - self._start_index
@@ -197,3 +233,6 @@ class L1ADataset(InputDataset):
         var = self._dset.variables[variable_name]
         var.set_auto_mask(False)
         return var
+
+    def read_globals(self) -> L1AGlobals:
+        return L1AGlobals(**self._dset.read_globals())

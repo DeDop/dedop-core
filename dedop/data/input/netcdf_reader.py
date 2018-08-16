@@ -76,3 +76,9 @@ class NetCDFReader:
 
     def close(self):
         self._doc.close()
+
+    def read_globals(self):
+        attrs = {}
+        for attr_name in self._doc.ncattrs():
+            attrs[attr_name] = self._doc.getncattr(attr_name)
+        return attrs
