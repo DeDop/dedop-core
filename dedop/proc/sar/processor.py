@@ -514,6 +514,8 @@ class L1BProcessor(BaseProcessor):
         working_surface_location.sigma0_scaling_factor = self.sigma_zero_algorithm(
             working_surface_location, self.chd.wv_length_ku, self.chd.chirp_slope_ku
         )
+        working_surface_location.sigma0_scaling_factor_beam =\
+            self.sigma_zero_algorithm.sigma0_scaling_factor_beam
 
     def new_surface(self, loc_data: Dict[str, Any]) -> SurfaceData:
         """

@@ -84,6 +84,7 @@ class L1BVariables(Enum):
     stop_beam_ang_stack_l1b_echo_sar_ku = 'stop_beam_ang_stack_l1b_echo_sar_ku'
     stack_mask_vector_l1b_echo_sar_ku = 'stack_mask_vector_l1b_echo_sar_ku'
     i2q2_scale_factor_l1b_echo_sar_ku = 'i2q2_scale_factor_l1b_echo_sar_ku'
+    stack_scale_factor_ku_l1b_echo_sar_ku = 'stack_scale_factor_ku_l1b_echo_sar_ku'
 
 
 class L1BWriterExtended(NetCDFWriter):
@@ -823,6 +824,18 @@ class L1BWriterExtended(NetCDFWriter):
             units="count",
             fill_value=32767
         )
+        self.define_variable(
+            L1BVariables.stack_scale_factor_ku_l1b_echo_sar_ku,
+            np.int32,
+            (L1BDimensions.time_l1b_echo_sar_ku,
+             L1BDimensions.max_multi_stack_ind),
+            long_name="per-beam values for scaling factor for sigma0 evaluation for ku band: l1b_echo_sar_ku mode",
+            scale_factor=1.0e-02,
+            add_offset=0.00,
+            units="dB",
+            comment="scaling factor corrected for AGC instrumental errors and internal calibration (per-beam)",
+            fill_value=2147483647
+        )
 
     def write_record(self, surface_location_data: SurfaceData) -> None:
         """
@@ -916,7 +929,8 @@ class L1BWriterExtended(NetCDFWriter):
             stop_look_angle_stack_l1b_echo_sar_ku=surface_location_data.stop_look_angle,
             start_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.start_beam_angle,
             stop_beam_ang_stack_l1b_echo_sar_ku=surface_location_data.stop_beam_angle,
-            stack_mask_vector_l1b_echo_sar_ku=surface_location_data.stack_mask_vector_start_stop
+            stack_mask_vector_l1b_echo_sar_ku=surface_location_data.stack_mask_vector_start_stop,
+            stack_scale_factor_ku_l1b_echo_sar_ku=surface_location_data.sigma0_scaling_factor_beam
         )
 
 class L1BWriter(NetCDFWriter):

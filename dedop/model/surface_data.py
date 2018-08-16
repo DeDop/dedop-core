@@ -21,6 +21,21 @@ class SurfaceData:
     """
 
     @property
+    def sigma0_scaling_factor_beam(self) -> np.ndarray:
+        """
+        per-beam values for sigma-0 scaling factor
+        """
+        return self['sigma0_scaling_factor_beam']
+    
+    @sigma0_scaling_factor_beam.setter
+    def sigma0_scaling_factor_beam(self, value: np.ndarray) -> None:
+        self['sigma0_scaling_factor_beam'] = value
+
+    @sigma0_scaling_factor_beam.deleter
+    def sigma0_scaling_factor_beam(self) -> None:
+        del self['sigma0_scaling_factor_beam']
+
+    @property
     def focus_target_distance(self) -> float:
         """
         the distance from the surface position to the target
