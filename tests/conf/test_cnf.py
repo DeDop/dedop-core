@@ -71,12 +71,6 @@ class TestCNF(unittest.TestCase):
 
         self.assertAlmostEqual(expected, actual)
 
-    def test_flag_remove_doppler_ambiguities(self):
-        expected = self.expected["flag_remove_doppler_ambiguities_cnf"]
-        actual = self.actual.flag_remove_doppler_ambiguities
-
-        self.assertAlmostEqual(expected, actual)
-
     def test_flag_postphase_azimuth_processing(self):
         expected = self.expected["flag_postphase_azimuth_processing_cnf"]
         actual = self.actual.flag_postphase_azimuth_processing
