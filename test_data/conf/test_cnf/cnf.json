@@ -24,7 +24,10 @@
       {
         "version": 3,
         "parameters": [
-          ["output_format_flag_cnf", "+", "new optional parameter"]
+          ["output_format_flag_cnf", "+", "new optional parameter"],
+          ["flag_remove_doppler_ambiguities_cnf", "-", "removed unused parameter"],
+          ["ambiguity_mask_margin_cnf", "-", "removed unused parameter"],
+          ["elevation_reference_value_cnf", "-", "removed unused parameter"]
         ],
         "comment": "added option for selecting output format"
       }
@@ -110,25 +113,10 @@
     "units": "flag",
     "description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
   },
-  "elevation_reference_value_cnf": {
-    "value": 0,
-    "units": null,
-    "description": "NOT YET IMPLEMENTED"
-  },
   "flag_stack_masking_cnf": {
     "value": true,
     "units": "flag",
     "description": "Flag that activates the Stack Masking algorithm: Activated (true); Deactivated (false)"
-  },
-  "flag_remove_doppler_ambiguities_cnf": {
-    "value": false,
-    "units": "flag",
-    "description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
-  },
-  "ambiguity_mask_margin_cnf": {
-    "value": 0,
-    "units": null,
-    "description": "NOT YET IMPLEMENTED"
   },
   "flag_avoid_zeros_in_multilooking_cnf": {
     "value": true,
