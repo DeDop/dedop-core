@@ -88,7 +88,7 @@ class WebSocketServiceTest(unittest.TestCase):
         self.assertIn('cnf', sentinel_configs)
         self.assertIsInstance(sentinel_configs['cnf'], dict)
         self.assertEqual(len(sentinel_configs['cnf']), 23)
-        self.assertEqual(sentinel_configs['cnf']['flag_cal2_correction_cnf']['value'], False)
+        self.assertEqual(sentinel_configs['cnf']['flag_cal2_correction_cnf']['value'], True)
         self.assertEqual(sentinel_configs['cnf']['N_looks_stack_cnf']['value'], 240)
         self.assertIn('cst', sentinel_configs)
         self.assertIsInstance(sentinel_configs['cst'], dict)
