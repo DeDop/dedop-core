@@ -30,17 +30,56 @@ class L1AGlobals:
         "xref_altimeter_ltm_c_cal2",
         "xref_altimeter_characterisation",
         "xref_time_correlation",
+        "xref_platform",
         "history",
         "product_name"
     ]
 
     def __init__(self, **attrs):
-        for name in self.__slots__:
-            value = attrs.get(name)
-            setattr(self, name, value)
+        self.mission_name =\
+            attrs.get('mission_name')
+        self.altimeter_sensor_name =\
+            attrs.get('altimeter_sensor_name')
+        self.gnss_sensor_name =\
+            attrs.get('gnss_sensor_name')
+        self.doris_sensor_name =\
+            attrs.get('doris_sensor_name')
+        self.references =\
+            attrs.get('references')
+        self.acq_station_name =\
+            attrs.get('acq_station_name')
+        self.xref_altimeter_level0 =\
+            attrs.get('xref_altimeter_level0')
+        self.xref_navatt_level0 =\
+            attrs.get('xref_navatt_level0')
+        self.xref_altimeter_orbit =\
+            attrs.get('xref_altimeter_orbit')
+        self.xref_doris_uso =\
+            attrs.get('xref_doris_uso')
+        self.xref_altimeter_ltm_lrm_cal1 =\
+            attrs.get('xref_altimeter_ltm_lrm_cal1')
+        self.xref_altimeter_ltm_sar_cal1 =\
+            attrs.get('xref_altimeter_ltm_sar_cal1')
+        self.xref_altimeter_ltm_ku_cal2 =\
+            attrs.get('xref_altimeter_ltm_ku_cal2')
+        self.xref_altimeter_ltm_c_cal2 =\
+            attrs.get('xref_altimeter_ltm_c_cal2')
+        self.xref_altimeter_characterisation =\
+            attrs.get('xref_altimeter_characterisation')
+        self.xref_time_correlation =\
+            attrs.get('xref_time_correlation')
+        self.xref_platform =\
+            attrs.get('xref_platform')
+        self.history =\
+            attrs.get('history')
+        self.product_name =\
+            attrs.get('product_name')
 
     def get_l1b_product_name(self):
         return self.product_name.replace('_A__', '____')
+
+    def get_l1bs_product_name(self):
+        return self.product_name.replace('_A__', '_BS_')
 
 
 class L1ADataset(InputDataset):
