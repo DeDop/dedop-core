@@ -24,14 +24,17 @@
       {
         "version": 3,
         "parameters": [
-          ["output_format_flag_cnf", "+", "new optional parameter"]
+          ["output_format_flag_cnf", "+", "new optional parameter"],
+          ["flag_remove_doppler_ambiguities_cnf", "-", "removed unused parameter"],
+          ["ambiguity_mask_margin_cnf", "-", "removed unused parameter"],
+          ["elevation_reference_value_cnf", "-", "removed unused parameter"]
         ],
         "comment": "added option for selecting output format"
       }
     ]
   },
   "flag_cal2_correction_cnf": {
-    "value": false,
+    "value": true,
     "units": "flag",
     "description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
   },
@@ -96,7 +99,7 @@
     "description": "Width of Azimuth window (minimum value: 32, maximum value: 64)"
   },
   "flag_doppler_range_correction_cnf": {
-    "value": false,
+    "value": true,
     "units": "flag",
     "description": "Flag that activates the Doppler range correction in the geometry corrections: Deactivated (false); Activated (true)"
   },

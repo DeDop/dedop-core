@@ -1,7 +1,7 @@
 {
   "__metainf__": {
     "description": "DeDop Configuration File",
-    "version": 2,
+    "version": 3,
     "changelog": [
       {
         "version": 0,
@@ -20,11 +20,21 @@
         "parameters": [
           ["flag_cal2_table_index_cnf", "+", "added CAL2 table index"]
         ]
+      },
+      {
+        "version": 3,
+        "parameters": [
+          ["output_format_flag_cnf", "+", "new optional parameter"],
+          ["flag_remove_doppler_ambiguities_cnf", "-", "removed unused parameter"],
+          ["ambiguity_mask_margin_cnf", "-", "removed unused parameter"],
+          ["elevation_reference_value_cnf", "-", "removed unused parameter"]
+        ],
+        "comment": "added option for selecting output format"
       }
     ]
   },
   "flag_cal2_correction_cnf": {
-    "value": false,
+    "value": true,
     "units": "flag",
     "description": "Flag that activates the CAL2 corrections: Deactivated (false); Activated (true)"
   },
@@ -89,7 +99,7 @@
     "description": "Width of Azimuth window (minimum value: 32, maximum value: 64)"
   },
   "flag_doppler_range_correction_cnf": {
-    "value": false,
+    "value": true,
     "units": "flag",
     "description": "Flag that activates the Doppler range correction in the geometry corrections: Deactivated (false); Activated (true)"
   },
@@ -103,25 +113,10 @@
     "units": "flag",
     "description": "Flag to indicate the window delay alignment method: Surface dependent (0); Beam max integrated power (1); Satellite position above surface (2); Look angle 0 (3); Doppler angle 0 (4)"
   },
-  "elevation_reference_value_cnf": {
-    "value": 0,
-    "units": null,
-    "description": "NOT YET IMPLEMENTED"
-  },
   "flag_stack_masking_cnf": {
     "value": true,
     "units": "flag",
     "description": "Flag that activates the Stack Masking algorithm: Activated (true); Deactivated (false)"
-  },
-  "flag_remove_doppler_ambiguities_cnf": {
-    "value": false,
-    "units": "flag",
-    "description": "Flag that indicates if the Doppler ambiguities will be removed: No (false); Yes (true)"
-  },
-  "ambiguity_mask_margin_cnf": {
-    "value": 0,
-    "units": null,
-    "description": "NOT YET IMPLEMENTED"
   },
   "flag_avoid_zeros_in_multilooking_cnf": {
     "value": true,
