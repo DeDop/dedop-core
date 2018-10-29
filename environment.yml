@@ -2,7 +2,7 @@ name: dedop
 channels:
     - conda-forge
     - ccitools
-    - anaconda
+    - defaults
 dependencies:
     - python ==3.6
     - cate-util=1.1.0.dev1=py36_0
