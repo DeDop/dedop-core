@@ -172,6 +172,7 @@ class L1BProcessor(BaseProcessor):
         gap_processing = False
         gap_resume = False
         sub_monitor = None
+        any_surface = False
 
         index = -1
 
@@ -196,7 +197,8 @@ class L1BProcessor(BaseProcessor):
                     except StopIteration:
                         input_packet = None
                         if not surface_processing:
-                            raise Exception("insufficient input records")
+                            break
+                            # raise Exception("insufficient input records")
                     else:
                         monitor.progress(1)
 
@@ -262,6 +264,7 @@ class L1BProcessor(BaseProcessor):
                         self.l1bs_file.write_record(working_loc)
 
                     self.clear_old_records(working_loc)
+                    any_surface = True
 
             if not self.surf_locs:
                 if gap_processing:
@@ -345,6 +348,9 @@ class L1BProcessor(BaseProcessor):
                 last_meas_time=ltime
             )
             self.l1bs_file.close()
+
+        if not any_surface:
+            raise Exception("insufficient input records to create output data")
 
         return status
 
