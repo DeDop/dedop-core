@@ -142,5 +142,10 @@
     "value": 240,
     "units": null,
     "description": "Number of looks in 1 stack"
+  },
+  "output_format_flag_cnf": {
+    "value": "extended",
+    "units": "flag",
+    "description": "Flag that specifies output format: the DeDop extended format ('extended') or default Sentinel-3 format ('sentinel-3')"
   }
 }

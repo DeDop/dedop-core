@@ -8,7 +8,7 @@ DeDop Core Installation
 From Binaries
 --------------
 
-DeDop Core is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop-core/releases/tag/v1.3.0>`_.
+DeDop Core is distributed as pre-compiled binaries which can be retrieved from `here <https://github.com/DeDop/dedop-core/releases/tag/v1.5.0>`_.
 For the windows Windows platforms there is a dedicated installer executable. For MacOS and Unix a shell script file is
 provided. All platform distributions have a bundled Python interpreter, which makes it rather large in size
 (roughly 300-400 MB). As mentioned before, this package also contains DeDop processor and DeDop webapi. To install DeDop

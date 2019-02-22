@@ -2,7 +2,7 @@ name: dedop
 channels:
     - conda-forge
     - ccitools
-    - anaconda
+    - defaults
 dependencies:
     - python ==3.6
     - cate-util=1.1.0.dev1=py36_0
@@ -16,6 +16,7 @@ dependencies:
     - jupyter ==1.0.0
     - matplotlib ==2.0.2
     - pyproj ==1.9.5.1
+    - tornado >=4.0,<5.0
     #
     # for testing only
     #
