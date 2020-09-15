@@ -6,7 +6,7 @@ import bokeh
 import bokeh.io
 import bokeh.model
 import bokeh.plotting
-import bokeh.util.platform
+# import bokeh.util.platform
 import matplotlib.pyplot as plt
 import pyproj
 from bokeh.models import ColumnDataSource, Circle
