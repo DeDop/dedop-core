@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -11,10 +12,11 @@ from tests.testing import TestDataLoader
 
 @unittest.skip("need to update expected values for Sigma-0 tests")
 class Sigma0ScalingFactorAlgorithmTests(unittest.TestCase):
-    inputs_01 = 'test_data/proc/sigma0_scaling_factor_algorithm/' \
-               'sigma0_scaling_factor_algorithm_01/input/inputs.txt'
-    expected_01 = 'test_data/proc/sigma0_scaling_factor_algorithm/' \
-                  'sigma0_scaling_factor_algorithm_01/expected/expected.txt'
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "sigma0_scaling_factor_algorithm")
+
+    inputs_01 = os.path.join(_folder, "sigma0_scaling_factor_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "sigma0_scaling_factor_algorithm_01", "expected", "expected.txt")
 
     def initialise_algorithm(self, input_data):
         self.cnf = ConfigurationFile(

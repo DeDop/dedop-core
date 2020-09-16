@@ -20,7 +20,7 @@ class L1BTests(unittest.TestCase):
     _input_file = os.path.join(_folder_data, "inputs", "l1a_test.nc")
     _expected_file = os.path.join(_folder_data, "expected", "expected.txt")
 
-    _input_data = os.path.join(_folder_data, "inputs", "input.txt")
+    _input_data = os.path.join(_folder_data, "inputs", "inputs.txt")
     _output_fname = os.path.join(_folder_data, "temp", "output.nc")
     _expected_data = os.path.join(_folder_data, "expected", "expected.txt")
 

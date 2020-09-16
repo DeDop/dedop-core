@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -15,26 +16,17 @@ class GeometryCorrectionsAlgorithmTests(unittest.TestCase):
     """
 
     # set paths for input / expected files
-    inputs_01 = "test_data/proc/geometry_corrections_algorithm/" \
-                "geometry_corrections_algorithm_01/" \
-                "input/inputs.txt"
-    expected_01 = "test_data/proc/geometry_corrections_algorithm/" \
-                  "geometry_corrections_algorithm_01/" \
-                  "expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "geometry_corrections_algorithm")
 
-    inputs_02 = "test_data/proc/geometry_corrections_algorithm/" \
-                "geometry_corrections_algorithm_02/" \
-                "input/inputs.txt"
-    expected_02 = "test_data/proc/geometry_corrections_algorithm/" \
-                  "geometry_corrections_algorithm_02/" \
-                  "expected/expected.txt"
+    inputs_01 = os.path.join(_folder, "geometry_corrections_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "geometry_corrections_algorithm_01", "expected", "expected.txt")
 
-    inputs_03 = "test_data/proc/geometry_corrections_algorithm/" \
-                "geometry_corrections_algorithm_03/" \
-                "input/inputs.txt"
-    expected_03 = "test_data/proc/geometry_corrections_algorithm/" \
-                  "geometry_corrections_algorithm_03/" \
-                  "expected/expected.txt"
+    inputs_02 = os.path.join(_folder, "geometry_corrections_algorithm_02", "input", "inputs.txt")
+    expected_02 = os.path.join(_folder, "geometry_corrections_algorithm_02", "expected", "expected.txt")
+
+    inputs_03 = os.path.join(_folder, "geometry_corrections_algorithm_03", "input", "inputs.txt")
+    expected_03 = os.path.join(_folder, "geometry_corrections_algorithm_03", "expected", "expected.txt")
 
     def initialize_algorithm(self, input_data):
         self.cnf = ConfigurationFile(

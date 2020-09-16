@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -10,10 +11,12 @@ from tests.testing import TestDataLoader
 
 
 class StackGatheringAlgorithmTests(unittest.TestCase):
-    inputs_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
-                "input/input.txt"
-    expected_01 = "test_data/proc/stacking_algorithm/stacking_algorithm_01/" \
-                  "expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "stacking_algorithm")
+
+    inputs_01 = os.path.join(_folder, "stacking_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "stacking_algorithm_01", "expected", "expected.txt")
+
 
     def initialise_algorithm(self, input_data):
         self.cnf = ConfigurationFile(

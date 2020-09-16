@@ -2,7 +2,7 @@ import sys, os
 from datetime import date
 
 from cate.util.web import JsonRpcWebSocketHandler
-from cate.util.web.webapi import run_main, url_pattern, WebAPIRequestHandler, WebAPIExitHandler
+from cate.util.web.webapi import url_pattern, WebAPIRequestHandler, WebAPIExitHandler
 from tornado.web import Application
 
 from dedop.conf.defaults import WEBAPI_PROGRESS_DEFER_PERIOD, WEBAPI_LOG_FILE_PREFIX, DEFAULT_VERSION_DATA_PATH, \
