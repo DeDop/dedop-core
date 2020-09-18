@@ -146,8 +146,11 @@ class WebSocketServiceTest(unittest.TestCase):
         self.assertNotEqual(self.service.get_current_config(ws_name)['name'], 'test_config_sentinel_renamed')
 
     def test_input_data_management(self):
+        _root = os.path.join(os.path.dirname(__file__), '..', '..')
+        _folder = os.path.join(_root, "test_data", "data", "test_l1a", "inputs")
+
         input_file_name = "l1a_test.nc"
-        test_input_file_path = "test_data/data/test_l1a/inputs/%s" % input_file_name
+        test_input_file_path = os.path.join(_folder, input_file_name)
         ws_name = 'test_ws_input'
         self.service.new_workspace(ws_name)
         self.service.set_current_workspace('test_ws_input')

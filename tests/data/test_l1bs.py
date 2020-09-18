@@ -16,7 +16,7 @@ class L1BTests(unittest.TestCase):
     _folder = os.path.join(_root, "test_data", "common")
     _folder_data = os.path.join(_root, "test_data", "data", "test_l1bs")
 
-    _input_data = os.path.join(_folder_data, "inputs", "input.txt")
+    _input_data = os.path.join(_folder_data, "inputs", "inputs.txt")
     _output_fname = os.path.join(_folder_data, "temp", "output.txt")
     _expected_data = os.path.join(_folder_data, "expected", "expected.txt")
 

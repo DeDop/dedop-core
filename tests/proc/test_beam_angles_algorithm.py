@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -10,15 +11,14 @@ from tests.testing import TestDataLoader
 
 
 class BeamAnglesAlgorithmTests(unittest.TestCase):
-    input_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
-               "input/inputs.txt"
-    expected_01 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_01/" \
-                  "expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "beam_angles_algorithm")
 
-    input_02 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
-               "input/inputs.txt"
-    expected_02 = "test_data/proc/beam_angles_algorithm/beam_angles_algorithm_02/" \
-                  "expected/expected.txt"
+    expected_01 = os.path.join(_folder, "beam_angles_algorithm_01", "expected", "expected.txt")
+    inputs_01 = os.path.join(_folder, "beam_angles_algorithm_01", "input", "inputs.txt")
+
+    expected_02 = os.path.join(_folder, "beam_angles_algorithm_02", "expected", "expected.txt")
+    inputs_02 = os.path.join(_folder, "beam_angles_algorithm_02", "input", "inputs.txt")
 
     def initialise_algorithm(self, input_data):
         self.cnf = ConfigurationFile()
@@ -44,7 +44,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         expected = TestDataLoader(self.expected_01, delim=' ')
 
         # load the input data
-        input_data = TestDataLoader(self.input_01, delim=' ')
+        input_data = TestDataLoader(self.inputs_01, delim=' ')
 
         self.initialise_algorithm(input_data)
 
@@ -114,7 +114,7 @@ class BeamAnglesAlgorithmTests(unittest.TestCase):
         expected = TestDataLoader(self.expected_02, delim=' ')
 
         # load the input data
-        input_data = TestDataLoader(self.input_02, delim=' ')
+        input_data = TestDataLoader(self.inputs_02, delim=' ')
 
         self.initialise_algorithm(input_data)
         # create surface location objects

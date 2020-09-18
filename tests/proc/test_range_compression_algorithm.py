@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -13,10 +14,11 @@ class RangeCompressionAlgorithmTests(unittest.TestCase):
     """
     Range compression algorithm tests
     """
-    inputs_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
-                "input/inputs.txt"
-    expected_01 = "test_data/proc/range_compression_algorithm/range_compression_algorithm_01/" \
-                  "expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "range_compression_algorithm")
+
+    inputs_01 = os.path.join(_folder, "range_compression_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "range_compression_algorithm_01", "expected", "expected.txt")
 
     def initialise_algotithm(self, input_data):
         self.cnf = ConfigurationFile(
