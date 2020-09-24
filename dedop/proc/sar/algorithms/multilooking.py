@@ -125,12 +125,23 @@ class MultilookingAlgorithm(BaseAlgorithm):
         for beam_index in range(first_left_beam, last_right_beam+1):
             rel_beam_index = beam_index - first_left_beam
 
-            beam_power_center[rel_beam_index] =\
-                beam_power[beam_index] / max_beam_power
-            look_angles_surf_center[rel_beam_index] =\
-                working_surface_location.look_angles_surf[beam_index]
-            pointing_angles_surf_center[rel_beam_index] =\
-                working_surface_location.pointing_angles_surf[beam_index]
+            # with warnings.catch_warnings():
+            #     warnings.simplefilter("error", RuntimeWarning)
+            #
+            #     try:
+            #         beam_power_center[rel_beam_index] = beam_power[beam_index] / max_beam_power
+            #         look_angles_surf_center[rel_beam_index] = working_surface_location.look_angles_surf[beam_index]
+            #         pointing_angles_surf_center[rel_beam_index] = working_surface_location.pointing_angles_surf[beam_index]
+            #     except RuntimeWarning:
+            #         # print('dedop run: error: `ydata` must not be empty!')
+            #         pass  #all good here
+
+            # avoid division by zero
+            div_by_zero = np.isclose(np.max(beam_power[beam_index]), 0.0)
+            beam_power_center[rel_beam_index] = beam_power[beam_index] if div_by_zero else beam_power[beam_index] / max_beam_power
+
+            look_angles_surf_center[rel_beam_index] = working_surface_location.look_angles_surf[beam_index]
+            pointing_angles_surf_center[rel_beam_index] = working_surface_location.pointing_angles_surf[beam_index]
 
         x = np.arange(n_samples_fitting)
 
