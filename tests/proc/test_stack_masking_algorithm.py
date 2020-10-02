@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -12,16 +13,14 @@ class StackMaskingAlgorithmTests(unittest.TestCase):
     """
     test cases for the stack masking algorithm
     """
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "stack_masking_algorithm")
 
-    inputs_01 = "test_data/proc/stack_masking_algorithm/" \
-                "stack_masking_algorithm_01/input/inputs.txt"
-    expected_01 = "test_data/proc/stack_masking_algorithm/" \
-                  "stack_masking_algorithm_01/expected/expected.txt"
+    inputs_01 = os.path.join(_folder, "stack_masking_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "stack_masking_algorithm_01", "expected", "expected.txt")
 
-    inputs_02 = "test_data/proc/stack_masking_algorithm/" \
-                "stack_masking_algorithm_02/input/inputs.txt"
-    expected_02 = "test_data/proc/stack_masking_algorithm/" \
-                  "stack_masking_algorithm_02/expected/expected.txt"
+    inputs_02 = os.path.join(_folder, "stack_masking_algorithm_02", "input", "inputs.txt")
+    expected_02 = os.path.join(_folder, "stack_masking_algorithm_02", "expected", "expected.txt")
 
     def initilise_algorithm(self, input_data):
         self.cnf = ConfigurationFile(

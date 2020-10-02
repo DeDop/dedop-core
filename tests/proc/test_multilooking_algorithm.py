@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -13,15 +14,14 @@ class FakeBurst:
 
 
 class MultilookingAlgorithmTests(unittest.TestCase):
-    inputs_01 = "test_data/proc/multilooking_algorithm/" \
-                  "multilooking_algorithm_01/input/input.txt"
-    expected_01 = "test_data/proc/multilooking_algorithm/" \
-                  "multilooking_algorithm_01/expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "multilooking_algorithm")
 
-    inputs_02 = "test_data/proc/multilooking_algorithm/" \
-               "multilooking_algorithm_02/input/input.txt"
-    expected_02 = "test_data/proc/multilooking_algorithm/" \
-                  "multilooking_algorithm_02/expected/expected.txt"
+    inputs_01 = os.path.join(_folder, "multilooking_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "multilooking_algorithm_01", "expected", "expected.txt")
+
+    inputs_02 = os.path.join(_folder, "multilooking_algorithm_02", "input", "inputs.txt")
+    expected_02 = os.path.join(_folder, "multilooking_algorithm_02", "expected", "expected.txt")
 
     def initialise_algorithm(self, input_data):
         self.cnf = ConfigurationFile(

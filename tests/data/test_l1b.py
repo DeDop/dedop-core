@@ -1,3 +1,4 @@
+import os
 import unittest
 from tests.testing import TestDataLoader
 import netCDF4 as nc
@@ -12,13 +13,20 @@ from dedop.conf.enums import OutputFormat
 
 
 class L1BTests(unittest.TestCase):
-    _input_data = "test_data/data/test_l1b/inputs/input.txt"
-    _output_fname = "test_data/data/test_l1b/temp/output.nc"
-    _expected_data = "test_data/data/test_l1b/expected/expected.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder_common = os.path.join(_root, "test_data", "common")
+    _folder_data = os.path.join(_root, "test_data", "data", "test_l1b")
 
-    _chd_file = "test_data/common/CHD.json"
-    _cst_file = "test_data/common/CST.json"
-    _cnf_file = "test_data/common/CNF.json"
+    _input_file = os.path.join(_folder_data, "inputs", "l1a_test.nc")
+    _expected_file = os.path.join(_folder_data, "expected", "expected.txt")
+
+    _input_data = os.path.join(_folder_data, "inputs", "inputs.txt")
+    _output_fname = os.path.join(_folder_data, "temp", "output.nc")
+    _expected_data = os.path.join(_folder_data, "expected", "expected.txt")
+
+    _chd_file = os.path.join(_folder_common, "CHD.json")
+    _cst_file = os.path.join(_folder_common, "CST.json")
+    _cnf_file = os.path.join(_folder_common, "CNF.json")
 
     def setUp(self):
         self.cst = ConstantsFile(self._cst_file)

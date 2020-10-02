@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import numpy as np
@@ -8,10 +9,11 @@ from tests.testing import TestDataLoader
 
 
 class CAL1AlgorithmTests(unittest.TestCase):
-    expected_01 = "test_data/proc/cal1_algorithm/cal1_algorithm_01/" \
-                  "expected/expected.txt"
-    inputs_01 = "test_data/proc/cal1_algorithm/cal1_algorithm_01/" \
-                "input/inputs.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "cal1_algorithm")
+
+    expected_01 = os.path.join(_folder, "cal1_algorithm_01", "expected", "expected.txt")
+    inputs_01 = os.path.join(_folder, "cal1_algorithm_01", "input", "inputs.txt")
 
     def initialise_algorithm(self, input_data: TestDataLoader) -> None:
         self.cnf = ConfigurationFile(

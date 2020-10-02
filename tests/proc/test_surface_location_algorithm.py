@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from dedop.conf import ConstantsFile, CharacterisationFile, ConfigurationFile
@@ -7,25 +8,20 @@ from dedop.proc.sar.algorithms import SurfaceLocationAlgorithm
 from tests.testing import TestDataLoader
 
 class SurfaceLocationAlgorithmTests(unittest.TestCase):
-    expected_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/expected/"\
-                  "Hr_Algorithms.Surface_Location_Algorithm_Processing_01.Expected_01.txt"
-    input_01 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_01/input/"\
-               "inputs.txt"
+    _root = os.path.join(os.path.dirname(__file__), '..', '..')
+    _folder = os.path.join(_root, "test_data", "proc", "surface_location_algorithm")
 
-    expected_02 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_02/expected/" \
-                  "Hr_Algorithms.Surface_Location_Algorithm_Processing_02.Expected_01.txt"
-    input_02 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_02/input/" \
-               "inputs.txt"
+    inputs_01 = os.path.join(_folder, "surface_location_algorithm_01", "input", "inputs.txt")
+    expected_01 = os.path.join(_folder, "surface_location_algorithm_01", "expected", "Hr_Algorithms.Surface_Location_Algorithm_Processing_01.Expected_01.txt")
 
-    expected_03 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_03/expected/" \
-                  "Hr_Algorithms.Surface_Location_Algorithm_Processing_03.Expected_01.txt"
-    input_03 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_03/input/" \
-               "inputs.txt"
+    inputs_02 = os.path.join(_folder, "surface_location_algorithm_02", "input", "inputs.txt")
+    expected_02 = os.path.join(_folder, "surface_location_algorithm_02", "expected", "Hr_Algorithms.Surface_Location_Algorithm_Processing_02.Expected_01.txt")
 
-    expected_04 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_04/expected/" \
-                  "Hr_Algorithms.Surface_Location_Algorithm_Processing_04.Expected_01.txt"
-    input_04 = "test_data/proc/surface_location_algorithm/surface_location_algorithm_04/input/" \
-               "inputs.txt"
+    inputs_03 = os.path.join(_folder, "surface_location_algorithm_03", "input", "inputs.txt")
+    expected_03 = os.path.join(_folder, "surface_location_algorithm_03", "expected", "Hr_Algorithms.Surface_Location_Algorithm_Processing_03.Expected_01.txt")
+
+    inputs_04 = os.path.join(_folder, "surface_location_algorithm_04", "input", "inputs.txt")
+    expected_04 = os.path.join(_folder, "surface_location_algorithm_04", "expected", "Hr_Algorithms.Surface_Location_Algorithm_Processing_04.Expected_01.txt")
 
     def initialise_algorithm(self, input_data: TestDataLoader):
         self.cnf = ConfigurationFile(
@@ -65,7 +61,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         # load expected data
         expected_data = TestDataLoader(self.expected_01, delim=' ')
         # load input data
-        packet = TestDataLoader(self.input_01, delim=' ')
+        packet = TestDataLoader(self.inputs_01, delim=' ')
 
         self.initialise_algorithm(packet)
 
@@ -123,7 +119,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         calculated
         """
         # load input data
-        inputs = TestDataLoader(self.input_02, delim=' ')
+        inputs = TestDataLoader(self.inputs_02, delim=' ')
         self.initialise_algorithm(inputs)
 
         # generate input packet objects
@@ -178,7 +174,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         expected_data = TestDataLoader(self.expected_03, delim=' ')
 
         # load the input data
-        inputs = TestDataLoader(self.input_03, delim=' ')
+        inputs = TestDataLoader(self.inputs_03, delim=' ')
 
         self.initialise_algorithm(inputs)
 
@@ -263,7 +259,7 @@ class SurfaceLocationAlgorithmTests(unittest.TestCase):
         expected_data = TestDataLoader(self.expected_04, delim=' ')
 
         # load the input data
-        inputs = TestDataLoader(self.input_04, delim=' ')
+        inputs = TestDataLoader(self.inputs_04, delim=' ')
 
         self.initialise_algorithm(inputs)
 

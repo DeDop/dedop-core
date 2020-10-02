@@ -4,7 +4,6 @@ import bokeh
 import bokeh.io
 import bokeh.model
 import bokeh.plotting
-import bokeh.util.platform
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import numpy as np
@@ -114,7 +113,7 @@ class L1bProductInspector:
         time = time_var[:]
         self.time = num2date(time, time_var.units, calendar=time_var.calendar)
         self.time_0 = num2date(time.mean(), time_var.units, calendar=time_var.calendar)
-        self.time_range = self.time.min(), self.time.max()
+        self.time_range = min(self.time), max(self.time)
 
         waveform_counts = dataset['i2q2_meas_ku_%s_echo_sar_ku' % product_type][:]
         waveform_scaling = dataset['scale_factor_ku_%s_echo_sar_ku' % product_type][:]
